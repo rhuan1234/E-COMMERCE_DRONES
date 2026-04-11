@@ -1,0 +1,59 @@
+package armas.mapper;
+
+import armas.dto.armas.RiflePrecisaoRequestDTO;
+import armas.dto.armas.RiflePrecisaoResponseDTO;
+import armas.model.armas.Calibre;
+import armas.model.armas.RiflePrecisao;
+import armas.model.armas.TipoFuncionamento;
+import armas.repository.FornecedorRepository;
+
+public class RiflePrecisaoMapper {
+
+    public static RiflePrecisao toEntity(RiflePrecisaoRequestDTO dto) {
+        
+        RiflePrecisao rifle = new RiflePrecisao();
+
+        rifle.setNome(dto.nome());
+        rifle.setMarca(dto.marca());
+        rifle.setModelo(dto.modelo());
+        rifle.setNumeroSerie(dto.numeroSerie());
+        rifle.setPreco(dto.preco());
+        
+        rifle.setAtiva(dto.ativa());
+         if(dto.fornecedorId() != null){
+            FornecedorRepository fornecedorRepository = new FornecedorRepository();
+            if (fornecedorRepository.findById(dto.fornecedorId()) != null) {
+                rifle.setFornecedor(fornecedorRepository.findById(dto.fornecedorId()));
+            } 
+
+        }
+        rifle.setCalibre(Calibre.fromDescricao(dto.calibre()));
+        rifle.setComprimentoCano(dto.comprimentoCano());
+        rifle.setPossuiMiraTelescopica(dto.possuiMiraTelescopica());
+        rifle.setAlcanceEfetivo(dto.alcanceEfetivo());
+        // assumindo que o tipo funciona como enum; ajuste caso seja diferente
+        rifle.setTipoFuncionamento(TipoFuncionamento.fromTipo(dto.tipoFuncionamento()));
+
+        return rifle;
+    }
+
+    public static RiflePrecisaoResponseDTO toResponseDTO(RiflePrecisao rifle) {
+        return new RiflePrecisaoResponseDTO(
+            rifle.getId(),
+            rifle.getNome(),
+            rifle.getMarca(),
+            rifle.getModelo(),
+            rifle.getNumeroSerie(),
+            rifle.getPreco(),
+            
+            rifle.isAtiva(),
+            rifle.getCalibre() != null ? rifle.getCalibre().name() : null,
+            rifle.getFornecedor() != null ? rifle.getFornecedor().getId() : null,
+            rifle.getComprimentoCano(),
+            rifle.isPossuiMiraTelescopica(),
+            rifle.getAlcanceEfetivo(),
+            rifle.getTipoFuncionamento() != null ? rifle.getTipoFuncionamento().name() : null
+        );
+    }
+}
+
