@@ -7,7 +7,7 @@ public record FornecedorResponseDTO(
     String nome,
     String cnpj,
     String email,
-    String telefone,
+    Long telefone,
     String endereco,
     List<Long> armasIds,
     boolean ativo,

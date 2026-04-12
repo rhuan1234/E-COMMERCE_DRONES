@@ -6,6 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,6 @@ public class Fornecedor {
     private String nome;
     private String cnpj;
     private String email;
-    private String telefone;
     private String endereco;
     private boolean ativo;
 
@@ -34,13 +34,17 @@ public class Fornecedor {
     @JoinColumn(name = "administrador_id", nullable = false)
     private Administrador administrador;
 
+    @OneToOne
+    @JoinColumn(name = "telefone_id", unique = true)
+    private Telefone telefone;
+
     // 🔹 Construtor padrão (OBRIGATÓRIO pro JPA)
     public Fornecedor() {
         this.ativo = true;
     }
 
     // 🔹 Construtor com parâmetros
-    public Fornecedor(String nome, String cnpj, String email, String telefone, String endereco, Administrador administrador) {
+    public Fornecedor(String nome, String cnpj, String email, Telefone telefone, String endereco, Administrador administrador) {
         this.nome = nome;
         this.cnpj = cnpj;
         this.email = email;
@@ -93,11 +97,11 @@ public class Fornecedor {
         this.email = email;
     }
 
-    public String getTelefone() {
+    public Telefone getTelefone() {
         return telefone;
     }
 
-    public void setTelefone(String telefone) {
+    public void setTelefone(Telefone telefone) {
         this.telefone = telefone;
     }
 

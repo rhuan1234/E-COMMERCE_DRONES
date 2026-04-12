@@ -17,7 +17,6 @@ public class RiflePrecisaoMapper {
         rifle.setNome(dto.nome());
         rifle.setMarca(dto.marca());
         rifle.setModelo(dto.modelo());
-        rifle.setNumeroSerie(dto.numeroSerie());
         rifle.setPreco(dto.preco());
         
         rifle.setAtiva(dto.ativa());
@@ -45,7 +44,6 @@ public class RiflePrecisaoMapper {
             rifle.getNome(),
             rifle.getMarca(),
             rifle.getModelo(),
-            rifle.getNumeroSerie(),
             rifle.getPreco(),
             
             rifle.isAtiva(),

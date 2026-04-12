@@ -1,7 +1,8 @@
 package armas.services;
 
 import java.util.List;
-import armas.model.administrador.Telefone;
+
+import armas.model.fornecedor.Telefone;
 import armas.repository.TelefoneRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -41,7 +42,6 @@ public class TelefoneService implements TelefoneServiceInterface {
     public Telefone update(Long id, Telefone dados) {
         Telefone telefone = telefoneRepository.findById(id);
         telefone.setNumero(dados.getNumero());
-        telefone.setAdministrador(dados.getAdministrador());
         return telefone;
     }
 }

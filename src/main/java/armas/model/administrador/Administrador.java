@@ -10,6 +10,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import java.util.List;
 
+import armas.model.fornecedor.Telefone;
+
 @Entity
 public class Administrador {
     @Id
@@ -22,8 +24,8 @@ public class Administrador {
     private String cpf;
     private String senha;
 
-    @OneToMany(mappedBy = "administrador")
-    private List<Telefone> telefones = new ArrayList<>();
+    // @OneToMany(mappedBy = "administrador")
+    //private List<Telefone> telefones = new ArrayList<>();
 
 
 
@@ -36,7 +38,7 @@ public class Administrador {
         this.telefone = telefone;
         this.cpf = cpf;
         this.senha = senha;
-        this.telefones = telefones;
+        
       
     }
     
@@ -85,13 +87,13 @@ public class Administrador {
         this.senha = senha;
     }
 
-    public List<Telefone> getTelefones() {
-        return telefones;
-    }
+    // public List<Telefone> getTelefones() {
+    //     return telefones;
+    // }
 
-    public void setTelefones(List<Telefone> telefones) {
-        this.telefones = telefones;
-    }
+    // public void setTelefones(List<Telefone> telefones) {
+    //     this.telefones = telefones;
+    // }
     
 
 

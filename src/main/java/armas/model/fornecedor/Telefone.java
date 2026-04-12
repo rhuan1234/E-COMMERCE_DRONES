@@ -1,11 +1,11 @@
-package armas.model.administrador;
+package armas.model.fornecedor;
+
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+
 
 @Entity
 public class Telefone {
@@ -15,9 +15,6 @@ public class Telefone {
     private Long id;
     private String numero;
 
-    @ManyToOne
-    @JoinColumn(name = "administrador_id")
-    private Administrador administrador;
 
     public Telefone() {
     }
@@ -40,13 +37,7 @@ public class Telefone {
         return id;
     }
 
-    public Administrador getAdministrador() {
-        return administrador;
-    }
-
-    public void setAdministrador(Administrador administrador) {
-        this.administrador = administrador;
-    }
+ 
     
     
     

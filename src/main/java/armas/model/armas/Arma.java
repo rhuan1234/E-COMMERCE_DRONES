@@ -28,7 +28,6 @@ public abstract class Arma {
     private String nome;
     private String marca;
     private String modelo;
-    private String numeroSerie;
     private double preco;
     private boolean ativa;
   
@@ -62,7 +61,6 @@ public abstract class Arma {
         this.nome = nome;
         this.marca = marca;
         this.modelo = modelo;
-        this.numeroSerie = numeroSerie;
         this.preco = preco;
         this.calibres = calibres;
         
@@ -106,13 +104,6 @@ public abstract class Arma {
         this.modelo = modelo;
     }
 
-    public String getNumeroSerie() {
-        return numeroSerie;
-    }
-
-    public void setNumeroSerie(String numeroSerie) {
-        this.numeroSerie = numeroSerie;
-    }
 
     public double getPreco() {
         return preco;

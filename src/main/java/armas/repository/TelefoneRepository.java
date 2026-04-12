@@ -1,6 +1,6 @@
 package armas.repository;
 
-import armas.model.administrador.Telefone;
+import armas.model.fornecedor.Telefone;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;

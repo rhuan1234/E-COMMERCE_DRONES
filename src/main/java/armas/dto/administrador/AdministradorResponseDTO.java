@@ -8,8 +8,8 @@ public record AdministradorResponseDTO(
     String nome,
     String email,
     String telefone,
-    String cpf,
-    List<String> telefonesId
+    String cpf
+    // List<String> telefonesId
 ) {
 
 }

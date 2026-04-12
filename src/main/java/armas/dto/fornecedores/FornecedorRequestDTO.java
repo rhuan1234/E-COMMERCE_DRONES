@@ -5,7 +5,7 @@ public record FornecedorRequestDTO(
      String nome,
      String cnpj,
      String email,
-     String telefone,
+     Long telefone,
      String endereco,
      boolean ativo,
      Long administradorId

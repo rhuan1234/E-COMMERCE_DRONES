@@ -26,8 +26,8 @@ public class AdministradorMapper {
         administrador.getNome(),
         administrador.getEmail(),
         administrador.getTelefone(),
-        administrador.getCpf(),
-        administrador.getTelefones().stream().map(telefone -> telefone.getId().toString()).toList()    
+        administrador.getCpf()
+        // administrador.getTelefones().stream().map(telefone -> telefone.getId().toString()).toList()    
     );
     }
 }

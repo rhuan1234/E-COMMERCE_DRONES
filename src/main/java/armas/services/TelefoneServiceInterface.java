@@ -1,7 +1,8 @@
 package armas.services;
 
 import java.util.List;
-import armas.model.administrador.Telefone;
+
+import armas.model.fornecedor.Telefone;
 
 public interface TelefoneServiceInterface {
     List<Telefone> findAll();

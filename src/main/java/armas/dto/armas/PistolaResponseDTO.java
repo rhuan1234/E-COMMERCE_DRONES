@@ -7,7 +7,6 @@ public record PistolaResponseDTO(
      String nome,
      String marca,
      String modelo,
-     String numeroSerie,
      double preco,
      
      boolean ativa,

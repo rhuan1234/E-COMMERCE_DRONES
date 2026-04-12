@@ -46,9 +46,8 @@ public class FuzilService implements FuzilServiceInterface{
         fuzil.setNome(dados.getNome());
         fuzil.setMarca(dados.getMarca());
         fuzil.setModelo(dados.getModelo());
-        fuzil.setNumeroSerie(dados.getNumeroSerie());
         fuzil.setPreco(dados.getPreco());
-        
+        fuzil.setRegistro(dados.getRegistro());
         fuzil.setAtiva(dados.isAtiva());
         fuzil.setCalibres(dados.getCalibres());
         fuzil.setModoDisparo(dados.getModoDisparo());

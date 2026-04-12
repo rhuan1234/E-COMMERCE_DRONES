@@ -1,8 +1,8 @@
 package armas.mapper;
 
-import armas.dto.administrador.TelefoneRequestDTO;
-import armas.dto.administrador.TelefoneResponseDTO;
-import armas.model.administrador.Telefone;
+import armas.dto.fornecedores.TelefoneRequestDTO;
+import armas.dto.fornecedores.TelefoneResponseDTO;
+import armas.model.fornecedor.Telefone;
 
 public class TelefoneMapper {
     
@@ -15,8 +15,8 @@ public class TelefoneMapper {
     public static TelefoneResponseDTO toResponseDTO(Telefone telefone) {
         return new TelefoneResponseDTO(
             telefone.getId(),
-            telefone.getNumero(),
-            telefone.getAdministrador() != null ? telefone.getAdministrador().getId() : null
+            telefone.getNumero()
+            
         );
     }
 }

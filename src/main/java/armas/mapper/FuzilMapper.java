@@ -16,7 +16,6 @@ public class FuzilMapper {
         fuzil.setNome(dto.nome());
         fuzil.setMarca(dto.marca());
         fuzil.setModelo(dto.modelo());
-        fuzil.setNumeroSerie(dto.numeroSerie());
         fuzil.setPreco(dto.preco());
         
         fuzil.setAtiva(dto.ativa());
@@ -46,7 +45,6 @@ public class FuzilMapper {
         fuzil.getNome(),
         fuzil.getMarca(),
         fuzil.getModelo(),
-        fuzil.getNumeroSerie(),
         fuzil.getPreco(),
         
         fuzil.isAtiva(),

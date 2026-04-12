@@ -41,7 +41,7 @@ public class FornecedorController {
     public Response salvar(FornecedorRequestDTO fornecedor){
         Fornecedor novo = fornecedorService.create(FornecedorMapper.toEntity(fornecedor));
         FornecedorResponseDTO dto = FornecedorMapper.toResponseDTO(novo);
-        return Response.ok(novo).entity(dto).build();
+        return Response.status(Response.Status.CREATED).entity(dto).build();
     }
 
     @GET

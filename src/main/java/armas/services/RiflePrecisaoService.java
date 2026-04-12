@@ -43,7 +43,7 @@ public class RiflePrecisaoService implements RiflePrecisaoServiceInterface {
         rifle.setNome(dados.getNome());
         rifle.setMarca(dados.getMarca());
         rifle.setModelo(dados.getModelo());
-        rifle.setNumeroSerie(dados.getNumeroSerie());
+        rifle.setRegistro(dados.getRegistro());
         rifle.setPreco(dados.getPreco());
         rifle.setCalibres(dados.getCalibres());
         rifle.setAtiva(dados.isAtiva());

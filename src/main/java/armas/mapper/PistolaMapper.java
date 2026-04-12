@@ -16,7 +16,6 @@ public class PistolaMapper {
         pistola.setNome(dto.nome());
         pistola.setMarca(dto.marca());
         pistola.setModelo(dto.modelo());
-        pistola.setNumeroSerie(dto.numeroSerie());
         pistola.setPreco(dto.preco());
         
         pistola.setAtiva(dto.ativa());
@@ -47,7 +46,6 @@ public class PistolaMapper {
         pistola.getNome(),
         pistola.getMarca(),
         pistola.getModelo(),
-        pistola.getNumeroSerie(),
         pistola.getPreco(),
         
         pistola.isAtiva(),

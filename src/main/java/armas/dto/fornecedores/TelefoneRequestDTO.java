@@ -1,4 +1,4 @@
-package armas.dto.administrador;
+package armas.dto.fornecedores;
 
 public record TelefoneRequestDTO(
     

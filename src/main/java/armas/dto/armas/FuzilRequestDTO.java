@@ -6,7 +6,6 @@ public record FuzilRequestDTO(
      String nome,
      String marca,
      String modelo,
-     String numeroSerie,
      double preco,
      
      boolean ativa,
