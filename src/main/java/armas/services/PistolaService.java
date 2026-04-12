@@ -45,7 +45,7 @@ public class PistolaService implements PistolaServiceInterface{
         pistola.setModelo(dados.getModelo());
         pistola.setNumeroSerie(dados.getNumeroSerie());
         pistola.setPreco(dados.getPreco());
-        
+        pistola.setCalibres(dados.getCalibres());
         pistola.setAtiva(dados.isAtiva());
         pistola.setCapacidadeCarregador(dados.getCapacidadeCarregador());
         pistola.setTipoAcao(dados.getTipoAcao());

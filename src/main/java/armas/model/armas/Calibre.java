@@ -1,37 +1,61 @@
 package armas.model.armas;
 
+import java.util.ArrayList;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import java.util.List;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum Calibre {
-    CAL_9MM(1L, "9mm"),
-    CAL_380(2L, "380"),
-    CAL_40(3L, "40mm"),
-    CAL_556MM(4L, "556mm"),
-    CAL_762MM(5L, "762mm");
+@Entity
+public class Calibre {
+    @Id
+    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY )
+    private Long id;
 
-    private final Long ID;
-    private final String DESCRICAO;
+    private String nome;
+    private String marca;
+    @ManyToMany(mappedBy = "calibres")
+    private List<Arma> armas = new ArrayList<>();
+    public Calibre() {
+    }
 
-    Calibre(Long id, String descricao) {
-        this.ID = id;
-        this.DESCRICAO = descricao;
+    public Calibre(String nome, String marca) {
+        this.nome = nome;
+        this.marca = marca;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getMarca() {
+        return marca;
+    }
+
+    public void setMarca(String marca) {
+        this.marca = marca;
     }
     
-    public Long getID() {
-        return ID;
+    public List<Arma> getArmas() {
+        return armas;
     }
 
-    public String getDESCRICAO() {
-        return DESCRICAO;
+    public void setArmas(List<Arma> armas) {
+        this.armas = armas;
     }
+    
 
-     public static Calibre fromDescricao(String descricao) {
-        for (Calibre c : values()) {
-            if (c.DESCRICAO.equalsIgnoreCase(descricao)) {
-                return c;
-            }
-        }
-        throw new IllegalArgumentException("Calibre inválido: " + descricao);
-    }
+    
 }

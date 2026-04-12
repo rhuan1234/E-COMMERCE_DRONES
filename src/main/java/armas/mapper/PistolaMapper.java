@@ -6,6 +6,7 @@ import armas.model.armas.Calibre;
 import armas.model.armas.Pistola;
 import armas.model.armas.TipoAcao;
 import armas.repository.FornecedorRepository;
+import armas.repository.CalibreRepository;
 
 public class PistolaMapper {
 
@@ -19,7 +20,8 @@ public class PistolaMapper {
         pistola.setPreco(dto.preco());
         
         pistola.setAtiva(dto.ativa());
-        pistola.setCalibre(Calibre.fromDescricao(dto.calibre()));
+        CalibreRepository calibreRepository = new CalibreRepository();
+        pistola.setCalibres(dto.calibres().stream().map(calibreRepository::findById).toList());
         if(dto.fornecedorId() != null){
             FornecedorRepository fornecedorRepository = new FornecedorRepository();
             if (fornecedorRepository.findById(dto.fornecedorId()) != null) {
@@ -49,8 +51,9 @@ public class PistolaMapper {
         pistola.getPreco(),
         
         pistola.isAtiva(),
-        pistola.getCalibre().name(),
-        pistola.getFornecedor() != null ? pistola.getFornecedor().getId() : null,
+        pistola.getCalibres().stream().map(Calibre::getId).toList(),
+         // pegando o nome do primeiro calibre, ajuste conforme necessário
+         pistola.getFornecedor() != null ? pistola.getFornecedor().getId() : null,
         // 🔹 Pistola
         pistola.getCapacidadeCarregador(),
         pistola.getTipoAcao().name(),

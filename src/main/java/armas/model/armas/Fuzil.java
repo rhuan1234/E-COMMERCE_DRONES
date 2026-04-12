@@ -2,7 +2,7 @@ package armas.model.armas;
 
 import armas.model.fornecedor.Fornecedor;
 import jakarta.persistence.Entity;
-
+import java.util.List;
 @Entity
 public class Fuzil extends Arma {
     private ModoDisparo modoDisparo;
@@ -14,9 +14,9 @@ public class Fuzil extends Arma {
     }
 
     public Fuzil(String nome, String marca, String modelo, String numeroSerie, double preco, int estoque,
-            Calibre calibre, Fornecedor fornecedor, ModoDisparo modoDisparo, int capacidadeCarregador, double alcanceEfetivo,
+            List<Calibre> calibres, Fornecedor fornecedor, ModoDisparo modoDisparo, int capacidadeCarregador, double alcanceEfetivo,
             boolean possuiTrilhoTatico) {
-        super(nome, marca, modelo, numeroSerie, preco, calibre, fornecedor);
+        super(nome, marca, modelo, numeroSerie, preco, calibres, fornecedor);
         this.modoDisparo = modoDisparo;
         this.capacidadeCarregador = capacidadeCarregador;
         this.alcanceEfetivo = alcanceEfetivo;

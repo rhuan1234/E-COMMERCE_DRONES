@@ -2,7 +2,7 @@ package armas.model.armas;
 
 import armas.model.fornecedor.Fornecedor;
 import jakarta.persistence.Entity;
-
+import java.util.List;
 @Entity
 public class Pistola extends Arma{
     private int capacidadeCarregador;
@@ -14,8 +14,8 @@ public class Pistola extends Arma{
     }
 
     public Pistola(String nome, String marca, String modelo, String numeroSerie, double preco, int estoque,
-             Calibre calibre, Fornecedor fornecedor, int capacidadeCarregador, TipoAcao tipoAcao, boolean possuiTravaSeguranca, boolean possuiTrilho) {
-        super(nome, marca, modelo, numeroSerie, preco, calibre, fornecedor);
+             List<Calibre> calibres, Fornecedor fornecedor, int capacidadeCarregador, TipoAcao tipoAcao, boolean possuiTravaSeguranca, boolean possuiTrilho) {
+        super(nome, marca, modelo, numeroSerie, preco, calibres, fornecedor);
         this.capacidadeCarregador = capacidadeCarregador;
         this.tipoAcao = tipoAcao;
         this.possuiTravaSeguranca = possuiTravaSeguranca;

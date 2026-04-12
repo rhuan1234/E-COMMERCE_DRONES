@@ -50,7 +50,7 @@ public class FuzilService implements FuzilServiceInterface{
         fuzil.setPreco(dados.getPreco());
         
         fuzil.setAtiva(dados.isAtiva());
-        fuzil.setCalibre(dados.getCalibre());
+        fuzil.setCalibres(dados.getCalibres());
         fuzil.setModoDisparo(dados.getModoDisparo());
         fuzil.setCapacidadeCarregador(dados.getCapacidadeCarregador());
         fuzil.setAlcanceEfetivo(dados.getAlcanceEfetivo());

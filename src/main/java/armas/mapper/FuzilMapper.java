@@ -5,6 +5,7 @@ import armas.dto.armas.FuzilResponseDTO;
 import armas.model.armas.Calibre;
 import armas.model.armas.Fuzil;
 import armas.model.armas.ModoDisparo;
+import armas.repository.CalibreRepository;
 import armas.repository.FornecedorRepository;
 
 public class FuzilMapper {
@@ -19,7 +20,8 @@ public class FuzilMapper {
         fuzil.setPreco(dto.preco());
         
         fuzil.setAtiva(dto.ativa());
-        fuzil.setCalibre(Calibre.fromDescricao(dto.calibre()));
+        CalibreRepository calibreRepository = new CalibreRepository();
+        fuzil.setCalibres(dto.calibres().stream().map(calibreRepository::findById).toList());
             if(dto.fornecedorId() != null){
                 FornecedorRepository fornecedorRepository = new FornecedorRepository();
                 if (fornecedorRepository.findById(dto.fornecedorId()) != null) {
@@ -48,7 +50,8 @@ public class FuzilMapper {
         fuzil.getPreco(),
         
         fuzil.isAtiva(),
-        fuzil.getCalibre().name(),
+        fuzil.getCalibres().stream().map(Calibre::getId).toList(),
+         // pegando o nome do primeiro calibre, ajuste conforme necessário
         fuzil.getFornecedor() != null ? fuzil.getFornecedor().getId() : null,
         fuzil.getRegistro() != null ? fuzil.getRegistro().getId() : null,
         // 🔹 Fuzil

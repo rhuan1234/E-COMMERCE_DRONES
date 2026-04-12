@@ -5,6 +5,7 @@ import armas.dto.armas.RiflePrecisaoResponseDTO;
 import armas.model.armas.Calibre;
 import armas.model.armas.RiflePrecisao;
 import armas.model.armas.TipoFuncionamento;
+import armas.repository.CalibreRepository;
 import armas.repository.FornecedorRepository;
 
 public class RiflePrecisaoMapper {
@@ -27,7 +28,8 @@ public class RiflePrecisaoMapper {
             } 
 
         }
-        rifle.setCalibre(Calibre.fromDescricao(dto.calibre()));
+        CalibreRepository calibreRepository = new CalibreRepository();
+        rifle.setCalibres(dto.calibres().stream().map(calibreRepository::findById).toList());
         rifle.setComprimentoCano(dto.comprimentoCano());
         rifle.setPossuiMiraTelescopica(dto.possuiMiraTelescopica());
         rifle.setAlcanceEfetivo(dto.alcanceEfetivo());
@@ -47,7 +49,8 @@ public class RiflePrecisaoMapper {
             rifle.getPreco(),
             
             rifle.isAtiva(),
-            rifle.getCalibre() != null ? rifle.getCalibre().name() : null,
+            rifle.getCalibres().stream().map(Calibre::getId).toList(),
+             // pegando o nome do primeiro calibre, ajuste conforme necessário
             rifle.getFornecedor() != null ? rifle.getFornecedor().getId() : null,
             rifle.getComprimentoCano(),
             rifle.isPossuiMiraTelescopica(),

@@ -1,5 +1,7 @@
 package armas.dto.armas;
 
+import java.util.List;
+
 public record RiflePrecisaoResponseDTO(
     Long id,
     String nome,
@@ -9,7 +11,7 @@ public record RiflePrecisaoResponseDTO(
     double preco,
     
     boolean ativa,
-    String calibre,
+    List<Long> calibres,
     Long fornecedorId,
     double comprimentoCano,
     boolean possuiMiraTelescopica,

@@ -1,5 +1,7 @@
 package armas.dto.armas;
 
+import java.util.List;
+
 public record RiflePrecisaoRequestDTO(
 
     // 🔹 campos da Arma
@@ -10,7 +12,7 @@ public record RiflePrecisaoRequestDTO(
     double preco,
     
     boolean ativa,
-    String calibre,
+    List<Long> calibres,
     Long fornecedorId,
 
     // 🔹 campos do RiflePrecisao

@@ -7,8 +7,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+
+import java.util.ArrayList;
+import java.util.List;
 import armas.model.fornecedor.Fornecedor;
 import armas.model.registro.Registro;
 
@@ -26,7 +31,7 @@ public abstract class Arma {
     private String numeroSerie;
     private double preco;
     private boolean ativa;
-    private Calibre calibre;
+  
 
     @ManyToOne
     @JoinColumn(name = "fornecedor_id")
@@ -35,6 +40,14 @@ public abstract class Arma {
     @OneToOne(cascade = jakarta.persistence.CascadeType.ALL) 
     @JoinColumn(name = "registro_id", unique = true)
     private Registro registro;
+
+    @ManyToMany
+    @JoinTable(
+        name = "arma_calibre",
+        joinColumns = @JoinColumn(name = "arma_id"),
+        inverseJoinColumns = @JoinColumn(name = "calibre_id")
+    )
+    private List<Calibre> calibres = new ArrayList<>();
 
 
 
@@ -45,13 +58,13 @@ public abstract class Arma {
         this.ativa = true;
     }
 
-    public Arma(String nome, String marca, String modelo, String numeroSerie, double preco, Calibre calibre, Fornecedor fornecedor) {
+    public Arma(String nome, String marca, String modelo, String numeroSerie, double preco, List<Calibre> calibres, Fornecedor fornecedor) {
         this.nome = nome;
         this.marca = marca;
         this.modelo = modelo;
         this.numeroSerie = numeroSerie;
         this.preco = preco;
-        this.calibre = calibre;
+        this.calibres = calibres;
         
         this.ativa = true;
         this.fornecedor = fornecedor;
@@ -118,12 +131,12 @@ public abstract class Arma {
         this.ativa = ativa;
     }
 
-    public Calibre getCalibre() {
-        return calibre;
+    public List<Calibre> getCalibres() {
+        return calibres;
     }
 
-    public void setCalibre(Calibre calibre) {
-        this.calibre = calibre;
+    public void setCalibres(List<Calibre> calibres) {
+        this.calibres = calibres;
     }
 
     public Fornecedor getFornecedor() {
