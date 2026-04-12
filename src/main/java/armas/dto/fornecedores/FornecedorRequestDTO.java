@@ -6,7 +6,7 @@ public record FornecedorRequestDTO(
      String cnpj,
      String email,
      Long telefone,
-     String endereco,
+     Long enderecoId,
      boolean ativo
 ) {
 

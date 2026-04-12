@@ -23,7 +23,11 @@ public class Fornecedor {
     private String nome;
     private String cnpj;
     private String email;
-    private String endereco;
+
+    @OneToOne
+    @JoinColumn(name = "endereco_id", unique = true)
+    private Endereco endereco;
+    
     private boolean ativo;
 
     @OneToMany(mappedBy = "fornecedor")
@@ -39,7 +43,7 @@ public class Fornecedor {
     }
 
     // 🔹 Construtor com parâmetros
-    public Fornecedor(String nome, String cnpj, String email, Telefone telefone, String endereco) {
+    public Fornecedor(String nome, String cnpj, String email, Telefone telefone, Endereco endereco) {
         this.nome = nome;
         this.cnpj = cnpj;
         this.email = email;
@@ -100,11 +104,11 @@ public class Fornecedor {
         this.telefone = telefone;
     }
 
-    public String getEndereco() {
+    public Endereco getEndereco() {
         return endereco;
     }
 
-    public void setEndereco(String endereco) {
+    public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
     }
 
