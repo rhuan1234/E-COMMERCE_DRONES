@@ -4,14 +4,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import armas.model.administrador.Administrador;
+
 import armas.model.armas.Arma;
 
 @Entity
@@ -30,10 +29,6 @@ public class Fornecedor {
     @OneToMany(mappedBy = "fornecedor")
     public List<Arma> armas = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "administrador_id", nullable = false)
-    private Administrador administrador;
-
     @OneToOne
     @JoinColumn(name = "telefone_id", unique = true)
     private Telefone telefone;
@@ -44,13 +39,13 @@ public class Fornecedor {
     }
 
     // 🔹 Construtor com parâmetros
-    public Fornecedor(String nome, String cnpj, String email, Telefone telefone, String endereco, Administrador administrador) {
+    public Fornecedor(String nome, String cnpj, String email, Telefone telefone, String endereco) {
         this.nome = nome;
         this.cnpj = cnpj;
         this.email = email;
         this.telefone = telefone;
         this.endereco = endereco;
-        this.administrador = administrador;
+
         this.ativo = true;
     }
     
@@ -119,14 +114,6 @@ public class Fornecedor {
 
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
-    }
-
-    public void setAdministrador(Administrador administrador) {
-        this.administrador = administrador;
-    }
-
-    public Administrador getAdministrador() {
-        return administrador;
     }
 
     

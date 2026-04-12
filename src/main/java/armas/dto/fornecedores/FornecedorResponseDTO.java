@@ -10,8 +10,7 @@ public record FornecedorResponseDTO(
     Long telefone,
     String endereco,
     List<Long> armasIds,
-    boolean ativo,
-    Long administradorId
+    boolean ativo
 ) {
 
 }
