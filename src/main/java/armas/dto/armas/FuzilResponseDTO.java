@@ -13,6 +13,7 @@ public record FuzilResponseDTO(
     boolean ativa,
     String calibre,
     Long fornecedorId,
+    Long registroId,
     // 🔹 campos da Fuzil
     String modoDisparo,
     int capacidadeCarregador,

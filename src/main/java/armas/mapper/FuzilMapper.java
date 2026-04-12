@@ -50,6 +50,7 @@ public class FuzilMapper {
         fuzil.isAtiva(),
         fuzil.getCalibre().name(),
         fuzil.getFornecedor() != null ? fuzil.getFornecedor().getId() : null,
+        fuzil.getRegistro() != null ? fuzil.getRegistro().getId() : null,
         // 🔹 Fuzil
         fuzil.getModoDisparo().name(),
         fuzil.getCapacidadeCarregador(),

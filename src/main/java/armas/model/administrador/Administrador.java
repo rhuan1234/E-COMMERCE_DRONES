@@ -3,9 +3,12 @@ package armas.model.administrador;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
+import java.util.ArrayList;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-
+import jakarta.persistence.OneToMany;
+import java.util.List;
 
 @Entity
 public class Administrador {
@@ -19,18 +22,21 @@ public class Administrador {
     private String cpf;
     private String senha;
 
+    @OneToMany(mappedBy = "administrador")
+    private List<Telefone> telefones = new ArrayList<>();
 
 
 
     public Administrador() {
     }
 
-    public Administrador(String nome, String email, String telefone, String cpf, String senha) {
+    public Administrador(String nome, String email, String telefone, String cpf, String senha, List<Telefone> telefones) {
         this.nome = nome;
         this.email = email;
         this.telefone = telefone;
         this.cpf = cpf;
         this.senha = senha;
+        this.telefones = telefones;
       
     }
     
@@ -78,6 +84,15 @@ public class Administrador {
     public void setSenha(String senha) {
         this.senha = senha;
     }
+
+    public List<Telefone> getTelefones() {
+        return telefones;
+    }
+
+    public void setTelefones(List<Telefone> telefones) {
+        this.telefones = telefones;
+    }
+    
 
 
 

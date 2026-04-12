@@ -8,9 +8,9 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
-
+import jakarta.persistence.OneToOne;
 import armas.model.fornecedor.Fornecedor;
+import armas.model.registro.Registro;
 
 
 @Entity
@@ -31,6 +31,10 @@ public abstract class Arma {
     @ManyToOne
     @JoinColumn(name = "fornecedor_id")
     public Fornecedor fornecedor;
+
+    @OneToOne(cascade = jakarta.persistence.CascadeType.ALL) 
+    @JoinColumn(name = "registro_id", unique = true)
+    private Registro registro;
 
 
 
@@ -129,4 +133,16 @@ public abstract class Arma {
     public void setFornecedor(Fornecedor fornecedor) {
         this.fornecedor = fornecedor;
     }
+
+    
+
+    public void setRegistro(Registro registro) {
+        this.registro = registro;
+    }
+
+    public Registro getRegistro() {
+        return registro;
+    }
+
+    
 }

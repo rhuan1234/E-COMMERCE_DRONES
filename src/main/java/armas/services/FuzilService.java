@@ -3,6 +3,7 @@ package armas.services;
 import java.util.List;
 
 import armas.model.armas.Fuzil;
+import armas.model.registro.Registro;
 import armas.repository.FuzilRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -15,6 +16,8 @@ public class FuzilService implements FuzilServiceInterface{
 
     @Override
     public Fuzil create(Fuzil fuzil) {
+        Registro registro = new Registro();
+        fuzil.setRegistro(registro);
         fuzilRepository.salvar(fuzil);
         return fuzil;
     }

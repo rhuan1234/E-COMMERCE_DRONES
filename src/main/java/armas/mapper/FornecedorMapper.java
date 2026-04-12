@@ -3,10 +3,12 @@ package armas.mapper;
 import armas.dto.fornecedores.FornecedorRequestDTO;
 import armas.dto.fornecedores.FornecedorResponseDTO;
 import armas.model.fornecedor.Fornecedor;
+import armas.repository.AdministradorRepository;
 
 public class FornecedorMapper {
     public static Fornecedor toEntity(FornecedorRequestDTO dto){
         Fornecedor fornecedor = new Fornecedor();
+        AdministradorRepository  adminRepo = new AdministradorRepository();
 
         fornecedor.setNome(dto.nome());
         fornecedor.setEmail(dto.email());
@@ -14,6 +16,7 @@ public class FornecedorMapper {
         fornecedor.setCnpj(dto.cnpj());
         fornecedor.setTelefone(dto.telefone());
         fornecedor.setAtivo(dto.ativo());
+        fornecedor.setAdministrador(adminRepo.findById(dto.administradorId()));
 
         return fornecedor;
     }
@@ -27,7 +30,8 @@ public class FornecedorMapper {
     fornecedor.getTelefone(),
     fornecedor.getEndereco(),
     fornecedor.getArmas() != null ? fornecedor.getArmas().stream().map(arma -> arma.getId()).toList() : null,
-    fornecedor.isAtivo()
+    fornecedor.isAtivo(),
+    fornecedor.getAdministrador() != null ? fornecedor.getAdministrador().getId() : null
             );
     }
 }
