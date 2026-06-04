@@ -24,7 +24,6 @@ import armas.dto.armas.FuzilRequestDTO;
 import armas.dto.armas.FuzilResponseDTO;
 import armas.dto.armas.FuzilResponseEcommerceDTO;
 import armas.mapper.FuzilMapper;
-import armas.mapper.FuzilMapperEcommerce;
 import armas.model.armas.Fuzil;
 
 @ApplicationScoped
@@ -63,7 +62,7 @@ public class FuzilController {
     public Response findAllEcommerce(){
         List<FuzilResponseEcommerceDTO> fuzis = fuzilService.buscarTodos()
         .stream()
-        .map(e -> FuzilMapperEcommerce.toResponseDTO(e))
+        .map(e -> FuzilMapper.toResponseEcommerceDTO(e))
         .toList();
         return Response.ok(fuzis).build();
     }
@@ -72,8 +71,8 @@ public class FuzilController {
     @Path("/admin/{id}")
     @RolesAllowed("ADMIN")
     public Response findById(@PathParam("id") Long id){
-        if (id == null) {
-            throw new ValidationException("Id do fuzil é obrigatório", "id");
+        if (id == null || id <= 0) {
+            throw new ValidationException("Id do fuzil é inválido", "id");
         }
         Fuzil fuzilEntity = fuzilService.buscarPorId(id);
         if (fuzilEntity == null) {
@@ -86,14 +85,14 @@ public class FuzilController {
     @GET
     @Path("/{id}")
     public Response findByIdEcommerce(@PathParam("id") Long id){
-        if (id == null) {
-            throw new ValidationException("Id do fuzil é obrigatório", "id");
+        if (id == null || id <= 0) {
+            throw new ValidationException("Id do fuzil é inválido", "id");
         }
         Fuzil fuzilEntity = fuzilService.buscarPorId(id);
         if (fuzilEntity == null) {
             throw new NotFoundException("Fuzil não encontrado");
         }
-        FuzilResponseEcommerceDTO fuzil = FuzilMapperEcommerce.toResponseDTO(fuzilEntity);
+        FuzilResponseEcommerceDTO fuzil = FuzilMapper.toResponseEcommerceDTO(fuzilEntity);
         return Response.ok(fuzil).build();
     }
 
@@ -122,7 +121,7 @@ public class FuzilController {
         if (fuzilEntity == null) {
             throw new NotFoundException("Fuzil não encontrado");
         }
-        FuzilResponseEcommerceDTO fuzil = FuzilMapperEcommerce.toResponseDTO(fuzilEntity);
+        FuzilResponseEcommerceDTO fuzil = FuzilMapper.toResponseEcommerceDTO(fuzilEntity);
         return Response.ok(fuzil).build();
     }
 
@@ -134,7 +133,7 @@ public class FuzilController {
         }
         List<Fuzil> fuzis = fuzilService.buscarPorMarca(marca);
         List<FuzilResponseEcommerceDTO> fuzisDTO = fuzis.stream()
-            .map(FuzilMapperEcommerce::toResponseDTO)
+            .map(FuzilMapper::toResponseEcommerceDTO)
             .toList();
         return Response.ok(fuzisDTO).build();
     }
@@ -147,7 +146,7 @@ public class FuzilController {
         }
         List<Fuzil> fuzis = fuzilService.buscarPorModelo(modelo);
         List<FuzilResponseEcommerceDTO> fuzisDTO = fuzis.stream()
-            .map(FuzilMapperEcommerce::toResponseDTO)
+            .map(FuzilMapper::toResponseEcommerceDTO)
             .toList();
         return Response.ok(fuzisDTO).build();
     }
@@ -160,7 +159,7 @@ public class FuzilController {
         }
         List<Fuzil> fuzis = fuzilService.buscarPorPreco(precoMin, precoMax);
         List<FuzilResponseEcommerceDTO> fuzisDTO = fuzis.stream()
-            .map(FuzilMapperEcommerce::toResponseDTO)
+            .map(FuzilMapper::toResponseEcommerceDTO)
             .toList();
         return Response.ok(fuzisDTO).build();
     }

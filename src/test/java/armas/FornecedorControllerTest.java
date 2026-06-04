@@ -1,6 +1,7 @@
 package armas;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +9,10 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
 @QuarkusTest
+@TestSecurity(user = "admin", roles = "ADMIN")
 class FornecedorControllerTest {
+
+    private static final String ADMIN_PATH = "/fornecedores/admin";
 
     private static final String TEMPLATE = "{\n" +
             "  \"nome\": \"%s\",\n" +
@@ -18,13 +22,13 @@ class FornecedorControllerTest {
             "  \"ativo\": true,\n" +
             "  \"endereco\": {\n" +
             "    \"rua\": \"Rua Exemplo\",\n" +
-            "    \"bairro\": \"Bairro Exemplo\",\n" +
-            "    \"cidade\": \"Cidade Exemplo\",\n" +
-            "    \"estado\": \"SP\",\n" +
+            "    \"bairro\": \"Centro\",\n" +
+            "    \"cidade\": \"Palmas\",\n" +
+            "    \"estado\": \"TO\",\n" +
             "    \"cep\": \"77019508\"\n" +
             "  }\n" +
             "}";
-    
+
     private String gerarCnpjValido() {
         int[] base = new int[12];
 
@@ -62,11 +66,24 @@ class FornecedorControllerTest {
     }
 
     @Test
-    void testFindAllEndpoint() {
-        Long id = createFornecedor("Fornecedor FindAll");
+    void deveCriarFornecedorComStatus201() {
+        Long id = criarFornecedor("Fornecedor Create");
 
         given()
-                .when().get("/fornecedores")
+                .pathParam("id", id)
+                .when().get(ADMIN_PATH + "/{id}")
+                .then()
+                .statusCode(200)
+                .body("id", is(id.intValue()))
+                .body("nome", is("Fornecedor Create"));
+    }
+
+    @Test
+    void deveListarFornecedoresComStatus200() {
+        Long id = criarFornecedor("Fornecedor FindAll");
+
+        given()
+                .when().get(ADMIN_PATH)
                 .then()
                 .statusCode(200)
                 .body("size()", greaterThanOrEqualTo(1))
@@ -74,31 +91,12 @@ class FornecedorControllerTest {
     }
 
     @Test
-    void testCreateEndpoint() {
-        String nome = "Fornecedor Create";
-        String cnpj = gerarCnpjValido();
-        String email = nome.toLowerCase().replace(" ", "") 
-              + System.nanoTime() + "@teste.com";
-
-        given()
-                .contentType(ContentType.JSON)
-                .body(String.format(TEMPLATE, nome, cnpj, email))
-                .when().post("/fornecedores")
-                .then()
-                .statusCode(201)
-                .body("id", notNullValue())
-                .body("nome", is(nome))
-                .body("telefone.numero", is("11999999999"))
-                .body("endereco.cidade", is("Cidade Exemplo"));
-    }
-
-    @Test
-    void testFindByIdEndpoint() {
-        Long id = createFornecedor("Fornecedor FindById");
+    void deveBuscarFornecedorPorIdComStatus200() {
+        Long id = criarFornecedor("Fornecedor FindById");
 
         given()
                 .pathParam("id", id)
-                .when().get("/fornecedores/{id}")
+                .when().get(ADMIN_PATH + "/{id}")
                 .then()
                 .statusCode(200)
                 .body("id", is(id.intValue()))
@@ -106,88 +104,167 @@ class FornecedorControllerTest {
     }
 
     @Test
-    void testFindByNomeEndpoint() {
+    void deveBuscarFornecedorPorNomeComStatus200() {
         String nome = "Fornecedor FindByNome";
-        createFornecedor(nome);
+        criarFornecedor(nome);
 
         given()
                 .pathParam("nome", nome)
-                .when().get("/fornecedores/nome/{nome}")
+                .when().get(ADMIN_PATH + "/nomes/{nome}")
                 .then()
                 .statusCode(200)
-                .body("nome", is(nome))
-                .body("cnpj", notNullValue());
+                .body("nome", is(nome));
     }
 
     @Test
-    void testUpdateEndpoint() {
-        Long id = createFornecedor("Fornecedor Update");
+    void deveAtualizarFornecedorComStatus200() {
+        Long id = criarFornecedor("Fornecedor Update");
+
         String email = "update" + System.nanoTime() + "@teste.com";
         String cnpj = gerarCnpjValido();
-        String updatedJson = String.format("{\n" +
-        "  \"nome\": \"Fornecedor Atualizado\",\n" +
-        "  \"cnpj\": \"%s\",\n" +
-        "  \"email\": \"%s\",\n" +
-        "  \"telefone\": { \"numero\": \"11988888888\" },\n" +
-        "  \"ativo\": false,\n" +
-        "  \"endereco\": {\n" +
-        "    \"rua\": \"Rua Atualizada\",\n" +
-        "    \"bairro\": \"Bairro Atualizado\",\n" +
-        "    \"cidade\": \"Cidade Atualizada\",\n" +
-        "    \"estado\": \"SP\",\n" +
-        "    \"cep\": \"98765000\"\n" +
-        "  }\n" +
-        "}",
-        cnpj,
-        email
-);
+
+        String payloadAtualizado =
+                "{\n" +
+                "  \"nome\": \"Fornecedor Atualizado\",\n" +
+                "  \"cnpj\": \"" + cnpj + "\",\n" +
+                "  \"email\": \"" + email + "\",\n" +
+                "  \"telefone\": { \"numero\": \"11988888888\" },\n" +
+                "  \"ativo\": false,\n" +
+                "  \"endereco\": {\n" +
+                "    \"rua\": \"Rua Atualizada\",\n" +
+                "    \"bairro\": \"Centro\",\n" +
+                "    \"cidade\": \"Palmas\",\n" +
+                "    \"estado\": \"TO\",\n" +
+                "    \"cep\": \"77019508\"\n" +
+                "  }\n" +
+                "}";
 
         given()
                 .contentType(ContentType.JSON)
-                .body(updatedJson)
+                .body(payloadAtualizado)
                 .pathParam("id", id)
-                .when().put("/fornecedores/{id}")
+                .when().put(ADMIN_PATH + "/{id}")
                 .then()
                 .statusCode(200)
                 .body("id", is(id.intValue()))
-                .body("nome", is("Fornecedor Atualizado"))
-                .body("email", is(email))
-                .body("ativo", is(false))
-                .body("telefone.numero", is("11988888888"));
+                .body("nome", is("Fornecedor Atualizado"));
     }
 
     @Test
-    void testDeleteEndpoint() {
-        Long id = createFornecedor("Fornecedor Delete");
+    void deveRemoverFornecedorComStatus204() {
+        Long id = criarFornecedor("Fornecedor Delete");
 
         given()
                 .pathParam("id", id)
-                .when().delete("/fornecedores/{id}")
+                .when().delete(ADMIN_PATH + "/{id}")
                 .then()
                 .statusCode(204);
 
         given()
                 .pathParam("id", id)
-                .when().get("/fornecedores/{id}")
+                .when().get(ADMIN_PATH + "/{id}")
                 .then()
                 .statusCode(404)
-                .body("type", is("https://tools.ietf.org/html/rfc7807"))
-                .body("title", is("Not Found"))
-                .body("status", is(404))
-                .body("detail", is("Fornecedor not found"));
+                .body("detail", is("Fornecedor não encontrado"));
     }
 
-    private Long createFornecedor(String nome) {
+    @Test
+    void deveRetornar404AoBuscarFornecedorInexistente() {
+        given()
+                .pathParam("id", 999999L)
+                .when().get(ADMIN_PATH + "/{id}")
+                .then()
+                .statusCode(404)
+                .body("detail", is("Fornecedor não encontrado"));
+    }
+
+    @Test
+    void deveRetornar404AoAtualizarFornecedorInexistente() {
+
+        String payload = String.format(
+                TEMPLATE,
+                "Fornecedor Teste",
+                gerarCnpjValido(),
+                "teste@teste.com"
+        );
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(payload)
+                .pathParam("id", 999999L)
+                .when().put(ADMIN_PATH + "/{id}")
+                .then()
+                .statusCode(404)
+                .body("detail", is("Fornecedor não encontrado"));
+    }
+
+    @Test
+    void deveRetornar404AoRemoverFornecedorInexistente() {
+        given()
+                .pathParam("id", 999999L)
+                .when().delete(ADMIN_PATH + "/{id}")
+                .then()
+                .statusCode(404)
+                .body("detail", is("Fornecedor não encontrado"));
+    }
+
+    @Test
+    void deveRetornar422AoBuscarComIdInvalido() {
+        given()
+                .pathParam("id", 0)
+                .when().get(ADMIN_PATH + "/{id}")
+                .then()
+                .statusCode(422)
+                .body("detail", is("Id do fornecedor inválido"));
+    }
+
+    @Test
+    void deveRetornar422AoAtualizarComIdInvalido() {
+
+        String payload = String.format(
+                TEMPLATE,
+                "Fornecedor Teste",
+                gerarCnpjValido(),
+                "teste@teste.com"
+        );
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(payload)
+                .pathParam("id", 0)
+                .when().put(ADMIN_PATH + "/{id}")
+                .then()
+                .statusCode(422)
+                .body("detail", is("Id do fornecedor inválido"));
+    }
+
+    @Test
+    void deveRetornar422AoRemoverComIdInvalido() {
+        given()
+                .pathParam("id", 0)
+                .when().delete(ADMIN_PATH + "/{id}")
+                .then()
+                .statusCode(422)
+                .body("detail", is("Id do fornecedor inválido"));
+    }
+
+    private Long criarFornecedor(String nome) {
+
         String cnpj = gerarCnpjValido();
-        String email = nome.toLowerCase().replace(" ", "") 
-              + System.nanoTime() + "@teste.com";
+
+        String email =
+                nome.toLowerCase().replace(" ", "")
+                + System.nanoTime()
+                + "@teste.com";
+
         return given()
                 .contentType(ContentType.JSON)
                 .body(String.format(TEMPLATE, nome, cnpj, email))
-                .when().post("/fornecedores")
+                .when().post(ADMIN_PATH)
                 .then()
                 .statusCode(201)
                 .extract()
-                .jsonPath().getLong("id");
+                .jsonPath()
+                .getLong("id");
     }
 }

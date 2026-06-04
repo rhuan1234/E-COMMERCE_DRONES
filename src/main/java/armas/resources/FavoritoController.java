@@ -5,7 +5,7 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 import armas.exception.ValidationException;
 import armas.services.FavoritoServiceInterface;
 import armas.dto.armas.FuzilResponseEcommerceDTO;
-import armas.mapper.FuzilMapperEcommerce;
+import armas.mapper.FuzilMapper;
 import java.util.List;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Produces;
@@ -64,7 +64,7 @@ public class FavoritoController {
 
         List<armas.model.armas.Favorito> favoritos = favoritoService.listarFavoritos(loginAutenticado());
         List<FuzilResponseEcommerceDTO> fuzis = favoritos.stream()
-                .map(f -> FuzilMapperEcommerce.toResponseDTO(f.getFuzil()))
+                .map(f -> FuzilMapper.toResponseEcommerceDTO(f.getFuzil()))
                 .toList();
 
         return Response.ok(fuzis).build();

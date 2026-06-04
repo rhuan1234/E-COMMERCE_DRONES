@@ -21,9 +21,9 @@ import jakarta.ws.rs.core.Response;
 import armas.exception.ValidationException;
 import armas.dto.armas.CalibreRequestDTO;
 import armas.dto.armas.CalibreResponseDTO;
-import armas.dto.armas.CalibreResponseEcommerceDTO;
+
 import armas.mapper.CalibreMapper;
-import armas.mapper.CalibreMapperEcommerce;
+
 import armas.model.armas.Calibre;
 
 @ApplicationScoped
@@ -58,14 +58,7 @@ public class CalibreController {
         return Response.ok(calibres).build();
     }
 
-    // @GET
-    // public Response findAllEcommerce(){
-    //     List<CalibreResponseEcommerceDTO> calibres = calibreService.buscarTodos()
-    //     .stream()
-    //     .map(e -> CalibreMapperEcommerce.toResponseDTO(e))
-    //     .toList();
-    //     return Response.ok(calibres).build();
-    // }
+
     
     @GET
     @Path("/admin/{id}")
@@ -82,19 +75,7 @@ public class CalibreController {
         return Response.ok(calibreDTO).build();
     }
 
-    // @GET
-    // @Path("/{id}")
-    // public Response findByIdEcommerce(@PathParam("id") Long id){
-    //     if (id == null || id <= 0) {
-    //         throw new ValidationException("Id do calibre inválido", "id");
-    //     }
-    //     Calibre calibre = calibreService.buscarPorId(id);
-    //     if (calibre == null) {
-    //         throw new NotFoundException("Calibre não encontrado");
-    //     }
-    //     CalibreResponseEcommerceDTO calibreDTO = CalibreMapperEcommerce.toResponseDTO(calibre);
-    //     return Response.ok(calibreDTO).build();
-    // }
+
 
     @GET
     @Path("/nomes/admin/{nome}")
@@ -111,19 +92,6 @@ public class CalibreController {
         return Response.ok(calibreDTO).build();
     }
 
-    // @GET
-    // @Path("/nomes/{nome}")
-    // public Response findByNomeEcommerce(@PathParam("nome") String nome){
-    //     if (nome == null || nome.isBlank()) {
-    //         throw new ValidationException("Nome do calibre é obrigatório", "nome");
-    //     }
-    //     Calibre calibre = calibreService.buscarPorNome(nome);
-    //     if (calibre == null) {
-    //         throw new NotFoundException("Calibre não encontrado");
-    //     }
-    //     CalibreResponseEcommerceDTO calibreDTO = CalibreMapperEcommerce.toResponseDTO(calibre);
-    //     return Response.ok(calibreDTO).build();
-    // }
 
     @Transactional
     @DELETE

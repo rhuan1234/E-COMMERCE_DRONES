@@ -21,9 +21,7 @@ import jakarta.ws.rs.core.Response;
 import armas.exception.ValidationException;
 import armas.dto.armas.CarregadorRequestDTO;
 import armas.dto.armas.CarregadorResponseDTO;
-import armas.dto.armas.CarregadorResponseEcommerceDTO;
 import armas.mapper.CarregadorMapper;
-import armas.mapper.CarregadorMapperEcommerce;
 import armas.model.armas.Carregador;
 
 @ApplicationScoped
@@ -58,14 +56,6 @@ public class CarregadorController {
         return Response.ok(carregadores).build();
     }
 
-    // @GET
-    // public Response findAllEcommerce() {
-    //     List<CarregadorResponseEcommerceDTO> carregadores = carregadorService.buscarTodos()
-    //         .stream()
-    //         .map(e -> CarregadorMapperEcommerce.toResponseDTO(e))
-    //         .toList();
-    //     return Response.ok(carregadores).build();
-    // }
 
     @GET
     @RolesAllowed("ADMIN")
@@ -76,25 +66,12 @@ public class CarregadorController {
         }
         Carregador entity = carregadorService.buscarPorId(id);
         if (entity == null) {
-            throw new NotFoundException("Carregador not found");
+            throw new NotFoundException("Carregador não encontrado");
         }
         CarregadorResponseDTO carregador = CarregadorMapper.toResponseDTO(entity);
         return Response.ok(carregador).build();
     }
 
-    // @GET
-    // @Path("/{id}")
-    // public Response findByIdEcommerce(@PathParam("id") Long id) {
-    //     if (id == null || id <= 0) {
-    //         throw new ValidationException("Id do carregador inválido", "id");
-    //     }
-    //     Carregador entity = carregadorService.buscarPorId(id);
-    //     if (entity == null) {
-    //         throw new NotFoundException("Carregador not found");
-    //     }
-    //     CarregadorResponseEcommerceDTO carregador = CarregadorMapperEcommerce.toResponseDTO(entity);
-    //     return Response.ok(carregador).build();
-    // }
 
     @GET
     @RolesAllowed("ADMIN")
@@ -105,25 +82,12 @@ public class CarregadorController {
         }
         Carregador entity = carregadorService.buscarPorModelo(modelo);
         if (entity == null) {
-            throw new NotFoundException("Carregador not found");
+            throw new NotFoundException("Carregador não encontrado");
         }
         CarregadorResponseDTO carregador = CarregadorMapper.toResponseDTO(entity);
         return Response.ok(carregador).build();
     }
 
-    // @GET
-    // @Path("/modelos/{modelo}")
-    // public Response findByModeloEcommerce(@PathParam("modelo") String modelo) {
-    //     if (modelo == null || modelo.isBlank()) {
-    //         throw new ValidationException("Modelo do carregador é obrigatório", "modelo");
-    //     }
-    //     Carregador entity = carregadorService.buscarPorModelo(modelo);
-    //     if (entity == null) {
-    //         throw new NotFoundException("Carregador not found");
-    //     }
-    //     CarregadorResponseEcommerceDTO carregador = CarregadorMapperEcommerce.toResponseDTO(entity);
-    //     return Response.ok(carregador).build();
-    // }
 
 
     
@@ -139,7 +103,7 @@ public class CarregadorController {
         if (carregadorService.deletar(id)) {
             return Response.status(Response.Status.NO_CONTENT).build();
         }
-        throw new NotFoundException("Carregador not found");
+        throw new NotFoundException("Carregador não encontrado");
     }
 
     @Transactional
@@ -155,7 +119,7 @@ public class CarregadorController {
         }
         Carregador atualizado = carregadorService.atualizar(id, CarregadorMapper.toEntity(dados));
         if (atualizado == null) {
-            throw new NotFoundException("Carregador not found");
+            throw new NotFoundException("Carregador não encontrado");
         }
         CarregadorResponseDTO atualizadoDTO = CarregadorMapper.toResponseDTO(atualizado);
         return Response.ok(atualizadoDTO).build();

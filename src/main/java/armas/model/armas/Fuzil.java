@@ -20,6 +20,7 @@ import armas.model.registro.Registro;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.NotNull;
 
@@ -84,6 +85,7 @@ public class Fuzil {
     inverseJoinColumns = @JoinColumn(name = "mira_id"))
     private List<Mira> miras = new ArrayList<>();
 
+    @PositiveOrZero(message = "Quantidade disponível deve ser zero ou maior")
     private int quantidadeDisponivel;
     
 
@@ -218,9 +220,5 @@ public class Fuzil {
     public void setQuantidadeDisponivel(int quantidadeDisponivel) {
         this.quantidadeDisponivel = quantidadeDisponivel;
     }
-
-    
-
-
     
 }

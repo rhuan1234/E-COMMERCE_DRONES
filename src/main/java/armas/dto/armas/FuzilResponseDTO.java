@@ -20,7 +20,7 @@ public record FuzilResponseDTO(
     double alcanceEfetivo,
     boolean possuiTrilhoTatico,
     RegistroResponseDTO registro,
-    String carregadorId,
+    String carregadorModelo,
     List<Long> mirasIds
 ) {
 

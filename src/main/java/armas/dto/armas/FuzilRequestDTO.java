@@ -4,6 +4,7 @@ import java.util.List;
 import armas.dto.registro.RegistroRequestDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.PositiveOrZero;
 
 public record FuzilRequestDTO(
 
@@ -18,6 +19,7 @@ public record FuzilRequestDTO(
      @Pattern(regexp = "^[\\p{L}0-9\\s._-]{2,50}$", message = "Modelo deve conter apenas letras, números, espaços, pontos, underscores e hífens")
      String modelo,
      double preco,
+     @PositiveOrZero(message = "Quantidade disponível deve ser zero ou maior")
      int quantidadeDisponivel,
      boolean ativa,
      List<Long> calibres,
