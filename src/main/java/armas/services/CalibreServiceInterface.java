@@ -6,9 +6,10 @@ import armas.model.armas.Calibre;
 
 public interface CalibreServiceInterface {
 
-    List<Calibre> findAll();
-    Calibre findById(Long id);
-    Calibre create(Calibre calibre);
-    Calibre update(Long id, Calibre calibre);
-    boolean delete(Long id);
+    List<Calibre> buscarTodos();
+    Calibre buscarPorId(Long id);
+    Calibre criar(Calibre calibre);
+    Calibre atualizar(Long id, Calibre calibre);
+    boolean deletar(Long id);
+    Calibre buscarPorNome(String nome);
 }

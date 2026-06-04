@@ -6,9 +6,10 @@ import armas.model.fornecedor.Fornecedor;
 
 public interface FornecedorServiceInterface {
 
-    List<Fornecedor> findAll();
-    Fornecedor findById(Long id);
-    Fornecedor create(Fornecedor fornecedor);
-    Fornecedor update(Long id, Fornecedor fornecedor);
-    boolean delete(Long id);
+    List<Fornecedor> buscarTodos();
+    Fornecedor buscarPorId(Long id);
+    Fornecedor criar(Fornecedor fornecedor);
+    Fornecedor atualizar(Long id, Fornecedor fornecedor);
+    boolean deletar(Long id);
+    Fornecedor buscarPorNome(String nome);
 }

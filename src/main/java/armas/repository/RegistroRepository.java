@@ -13,4 +13,8 @@ public class RegistroRepository implements PanacheRepository<Registro> {
         persist(registro);
     }
 
+    public Registro findByNumero(String numero) {
+        return find("numero", numero).firstResult();
+    }
+
 }

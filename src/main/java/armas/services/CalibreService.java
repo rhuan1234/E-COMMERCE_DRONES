@@ -2,6 +2,7 @@ package armas.services;
 
 import java.util.List;
 
+import armas.exception.ValidationException;
 import armas.model.armas.Calibre;
 import armas.repository.CalibreRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -14,33 +15,60 @@ public class CalibreService implements CalibreServiceInterface{
     CalibreRepository calibreRepository;
 
     @Override
-    public Calibre create(Calibre calibre) {
+    @Transactional
+    public Calibre criar(Calibre calibre) {
+        if (calibre == null) {
+            throw new ValidationException("Dados do calibre são obrigatórios");
+        }
         calibreRepository.salvar(calibre);
         return calibre;
     }
 
     @Override
     @Transactional
-    public boolean delete(Long id) {
+    public boolean deletar(Long id) {
+        if (id == null) {
+            throw new ValidationException("Id do calibre é obrigatório", "id");
+        }
         return calibreRepository.deleteById(id);
     }
 
     @Override
-    public List<Calibre> findAll() {
+    public List<Calibre> buscarTodos() {
         return calibreRepository.findAll().list();
     }
 
     @Override
-    public Calibre findById(Long id) {
+    public Calibre buscarPorId(Long id) {
+        if (id == null) {
+            throw new ValidationException("Id do calibre é obrigatório", "id");
+        }
         return calibreRepository.findById(id);
     }
 
     @Override
     @Transactional
-    public Calibre update(Long id, Calibre dados) {
+    public Calibre atualizar(Long id, Calibre dados) {
+        if (id == null) {
+            throw new ValidationException("Id do calibre é obrigatório", "id");
+        }
+        if (dados == null) {
+            throw new ValidationException("Dados do calibre são obrigatórios");
+        }
         Calibre calibre = calibreRepository.findById(id);
+        if (calibre == null) {
+            return null;
+        }
         calibre.setNome(dados.getNome());
         calibre.setMarca(dados.getMarca());
         return calibre;
+    }
+
+    @Override
+    public Calibre buscarPorNome(String nome) {
+        if (nome == null || nome.isBlank()) {
+            throw new ValidationException("Nome do calibre é obrigatório", "nome");
+        }
+        return calibreRepository.findByNome(nome);
     }
 }

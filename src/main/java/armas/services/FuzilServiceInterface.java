@@ -6,9 +6,10 @@ import armas.model.armas.Fuzil;
 
 public interface FuzilServiceInterface {
 
-    List<Fuzil> findAll();
-    Fuzil findById(Long id);
-    Fuzil create(Fuzil fuzil);
-    Fuzil update(Long id, Fuzil fuzil);
-    boolean delete(Long id);
+    List<Fuzil> buscarTodos();
+    Fuzil buscarPorId(Long id);
+    Fuzil criar(Fuzil fuzil);
+    Fuzil atualizar(Long id, Fuzil fuzil);
+    boolean deletar(Long id);
+    Fuzil buscarPorNome(String nome);
 }

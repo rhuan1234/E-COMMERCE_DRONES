@@ -12,4 +12,8 @@ public class CalibreRepository implements PanacheRepository<Calibre> {
     public void salvar(Calibre calibre){
         persist(calibre);
     }
+
+    public Calibre findByNome(String nome) {
+        return find("nome", nome).firstResult();
+    }
 }

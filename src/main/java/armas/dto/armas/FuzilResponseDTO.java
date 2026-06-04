@@ -1,5 +1,7 @@
 package armas.dto.armas;
 import java.util.List;
+
+import armas.dto.registro.RegistroResponseDTO;
 public record FuzilResponseDTO(
 
     // 🔹 campos da Arma
@@ -8,17 +10,18 @@ public record FuzilResponseDTO(
     String marca,
     String modelo,
     double preco,
-    
+    int quantidadeDisponivel,
     boolean ativa,
     
     List<Long> calibres,
     Long fornecedorId,
-    Long registroId,
     // 🔹 campos da Fuzil
     String modoDisparo,
-    int capacidadeCarregador,
     double alcanceEfetivo,
-    boolean possuiTrilhoTatico
+    boolean possuiTrilhoTatico,
+    RegistroResponseDTO registro,
+    String carregadorId,
+    List<Long> mirasIds
 ) {
 
 }

@@ -6,7 +6,6 @@ public record EnderecoResponseDTO(
     String bairro,
     String cidade,
     String estado,
-    String cep,
-    Long fornecedorId
+    String cep
 ) {
 }

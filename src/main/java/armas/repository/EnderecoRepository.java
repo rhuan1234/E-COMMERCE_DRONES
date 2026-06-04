@@ -12,4 +12,8 @@ public class EnderecoRepository implements PanacheRepository<Endereco> {
     public void salvar(Endereco endereco) {
         persist(endereco);
     }
+
+    public Endereco findByCep(String cep) {
+        return find("cep", cep).firstResult();
+    }
 }

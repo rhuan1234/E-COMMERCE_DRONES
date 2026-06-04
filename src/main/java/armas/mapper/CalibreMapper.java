@@ -17,7 +17,7 @@ public class CalibreMapper {
             calibre.getId(),
             calibre.getNome(),
             calibre.getMarca(),
-            calibre.getArmas().stream().map(arma -> arma.getId()).toList()
+            calibre.getFuzis().stream().map(fuzil -> fuzil.getId()).toList()
         );
     }
 }

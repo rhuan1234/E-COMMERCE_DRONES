@@ -7,10 +7,10 @@ public record FornecedorResponseDTO(
     String nome,
     String cnpj,
     String email,
-    Long telefone,
-    Long enderecoId,
-    List<Long> armasIds,
-    boolean ativo
+    TelefoneResponseDTO telefone,
+    List<Long> fuzisIds,
+    boolean ativo,
+    EnderecoResponseDTO endereco
 ) {
 
 }

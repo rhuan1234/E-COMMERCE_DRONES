@@ -5,18 +5,25 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import armas.services.CalibreService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import armas.exception.ValidationException;
 import armas.dto.armas.CalibreRequestDTO;
 import armas.dto.armas.CalibreResponseDTO;
+import armas.dto.armas.CalibreResponseEcommerceDTO;
 import armas.mapper.CalibreMapper;
+import armas.mapper.CalibreMapperEcommerce;
 import armas.model.armas.Calibre;
 
 @ApplicationScoped
@@ -29,41 +36,124 @@ public class CalibreController {
     CalibreService calibreService;
 
     @POST
-    public Response salvar(CalibreRequestDTO calibre){
-        Calibre nova = calibreService.create(CalibreMapper.toEntity(calibre));
+    @Path("/admin")
+    @RolesAllowed("ADMIN")
+    public Response salvar(@Valid CalibreRequestDTO calibre){
+        if (calibre == null) {
+            throw new ValidationException("Dados do calibre são obrigatórios");
+        }
+        Calibre nova = calibreService.criar(CalibreMapper.toEntity(calibre));
         CalibreResponseDTO novaDTO = CalibreMapper.toResponseDTO(nova);
         return Response.status(Response.Status.CREATED).entity(novaDTO).build();
     }
 
     @GET
+    @Path("/admin")
+    @RolesAllowed("ADMIN")
     public Response findAll(){
-        List<CalibreResponseDTO> calibres = calibreService.findAll()
+        List<CalibreResponseDTO> calibres = calibreService.buscarTodos()
         .stream()
         .map(e -> CalibreMapper.toResponseDTO(e))
         .toList();
         return Response.ok(calibres).build();
     }
+
+    // @GET
+    // public Response findAllEcommerce(){
+    //     List<CalibreResponseEcommerceDTO> calibres = calibreService.buscarTodos()
+    //     .stream()
+    //     .map(e -> CalibreMapperEcommerce.toResponseDTO(e))
+    //     .toList();
+    //     return Response.ok(calibres).build();
+    // }
     
     @GET
-    @Path("/{id}")
+    @Path("/admin/{id}")
+    @RolesAllowed("ADMIN")
     public Response findById(@PathParam("id") Long id){
-        CalibreResponseDTO calibre = CalibreMapper.toResponseDTO(calibreService.findById(id));
-        return Response.ok(calibre).build();
+        if (id == null || id <= 0) {
+            throw new ValidationException("Id do calibre inválido", "id");
+        }
+        Calibre calibre = calibreService.buscarPorId(id);
+        if (calibre == null) {
+            throw new NotFoundException("Calibre não encontrado");
+        }
+        CalibreResponseDTO calibreDTO = CalibreMapper.toResponseDTO(calibre);
+        return Response.ok(calibreDTO).build();
     }
 
+    // @GET
+    // @Path("/{id}")
+    // public Response findByIdEcommerce(@PathParam("id") Long id){
+    //     if (id == null || id <= 0) {
+    //         throw new ValidationException("Id do calibre inválido", "id");
+    //     }
+    //     Calibre calibre = calibreService.buscarPorId(id);
+    //     if (calibre == null) {
+    //         throw new NotFoundException("Calibre não encontrado");
+    //     }
+    //     CalibreResponseEcommerceDTO calibreDTO = CalibreMapperEcommerce.toResponseDTO(calibre);
+    //     return Response.ok(calibreDTO).build();
+    // }
+
+    @GET
+    @Path("/nomes/admin/{nome}")
+    @RolesAllowed("ADMIN")
+    public Response findByNome(@PathParam("nome") String nome){
+        if (nome == null || nome.isBlank()) {
+            throw new ValidationException("Nome do calibre é obrigatório", "nome");
+        }
+        Calibre calibre = calibreService.buscarPorNome(nome);
+        if (calibre == null) {
+            throw new NotFoundException("Calibre não encontrado");
+        }
+        CalibreResponseDTO calibreDTO = CalibreMapper.toResponseDTO(calibre);
+        return Response.ok(calibreDTO).build();
+    }
+
+    // @GET
+    // @Path("/nomes/{nome}")
+    // public Response findByNomeEcommerce(@PathParam("nome") String nome){
+    //     if (nome == null || nome.isBlank()) {
+    //         throw new ValidationException("Nome do calibre é obrigatório", "nome");
+    //     }
+    //     Calibre calibre = calibreService.buscarPorNome(nome);
+    //     if (calibre == null) {
+    //         throw new NotFoundException("Calibre não encontrado");
+    //     }
+    //     CalibreResponseEcommerceDTO calibreDTO = CalibreMapperEcommerce.toResponseDTO(calibre);
+    //     return Response.ok(calibreDTO).build();
+    // }
+
+    @Transactional
     @DELETE
-    @Path("/{id}")
+    @Path("/admin/{id}")
+    @RolesAllowed("ADMIN")
     public Response deletar(@PathParam("id") Long id){
-        if (calibreService.delete(id)){
+        if (id == null || id <= 0) {
+            throw new ValidationException("Id do calibre inválido", "id");
+        }
+        if (calibreService.deletar(id)){
             return Response.status(Response.Status.NO_CONTENT).build();
         }
-    return Response.status(Response.Status.NOT_FOUND).build();
+        throw new NotFoundException("Calibre não encontrado");
     }
 
+    @Transactional
     @PUT
-    @Path("/{id}")
-    public Response alterar(@PathParam("id") Long id, CalibreRequestDTO dados){
-        Calibre atualizada = calibreService.update(id, CalibreMapper.toEntity(dados));
+    @Path("/admin/{id}")
+    @RolesAllowed("ADMIN")
+    public Response alterar(@PathParam("id") Long id, @Valid CalibreRequestDTO dados){
+        if (id == null || id <= 0) {
+            throw new ValidationException("Id do calibre inválido", "id");
+        }
+        if (dados == null) {
+            throw new ValidationException("Dados do calibre são obrigatórios");
+        }
+        Calibre atualizada = calibreService.atualizar(id, CalibreMapper.toEntity(dados));
+        if (atualizada == null) {
+            throw new NotFoundException("Calibre não encontrado");
+        }
         CalibreResponseDTO atualizadaDTO = CalibreMapper.toResponseDTO(atualizada);
         return Response.ok(atualizadaDTO).build();
     }
