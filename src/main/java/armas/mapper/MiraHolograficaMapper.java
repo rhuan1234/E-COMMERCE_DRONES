@@ -23,7 +23,8 @@ public class MiraHolograficaMapper {
             mira.getMarca(),
             mira.getAumentoMaximo(),
             mira.getAlcanceLaser(),
-            mira.isVisaoNoturna()
+            mira.isVisaoNoturna(),
+            mira.getFuzis().stream().map(fuzil -> fuzil.getId()).toList()
         );
     }
 }

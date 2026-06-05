@@ -161,7 +161,6 @@ public class PagamentoPixService implements PagamentoPixServiceInterface {
         
         pagamentoPix.setStatusPagamento(StatusPagamento.CANCELADO);
         pedidoService.cancelar(pagamentoPix.getPedido().getId(), login);
-        //pagamentoPix.getPedido().setStatusPedido(StatusPedido.CANCELADO);
         pagamentoPixRepository.persist(pagamentoPix);
     }
 }

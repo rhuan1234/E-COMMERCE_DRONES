@@ -1,0 +1,209 @@
+@startuml
+
+
+
+enum Role {
+  ADMIN
+  CLIENTE
+}
+
+enum ModoDisparo {
+  SEMI
+  RAJADA
+  AUTOMATICO
+}
+
+enum StatusPedido {
+  PENDENTE
+  PAGO
+  CANCELADO
+  APROVADO
+  REPROVADO
+}
+
+enum StatusPagamento{
+APROVADO
+PENDENTE
+CANCELADO
+}
+
+
+
+class Usuario {
+  - id: Long
+  - nomeCompleto: String
+  - login: String
+  - cpf: String
+  - email: String
+  - senha: String
+  - enderecoPrincipalId: Long
+}
+
+class TokenResetarSenha{
+- id: Long
+- token: String
+- expiracao: LocalDateTime
+- usado: boolean
+}
+
+
+
+
+class Fuzil {
+  - id: Long
+  - nome: String
+  - marca: String
+  - modelo: String
+  - preco: double
+  - quantidadeDisponivel: int
+  - ativa: boolean
+  - alcanceEfetivo: double
+  - possuiTrilhoTatico: boolean
+}
+
+class Registro {
+  - id: Long
+  - dataRegistro: Date
+  - numeroSerie: String
+}
+
+class Calibre {
+  - id: Long
+  - nome: String
+  - marca: String
+}
+
+class Fornecedor {
+  - id: Long
+  - nome: String
+  - cnpj: String
+  - email: String
+  - ativo: boolean
+}
+
+class Endereco {
+  - id: Long
+  - rua: String
+  - bairro: String
+  - cidade: String
+  - estado: String
+  - cep: String
+}
+
+class Telefone {
+  - id: Long
+  - numero: String
+}
+
+class Carregador {
+  - id: Long
+  - modelo: String
+  - qtdMunicao: int
+  - marca: String
+}
+
+abstract class Mira {
+ - id: Long
+  - modelo: String
+  - marca: String
+  - aumentoMaximo: int
+}
+
+class RedDot {
+  - niveisBrilho: int
+  - duracaoBateria: double
+}
+
+class MiraHolografica {
+  - alcanceLaser: String
+  - visaoNoturna: boolean
+}
+
+
+
+class Pedido {
+  - id: Long
+  - dataPedido: Date
+  - valorTotal: double
+  - ruaEntrega: String
+  - bairroEntrega: String
+  - cidadeEntrega: String
+  - estadoEntrega: String
+  - cepEntrega: String
+}
+
+class ItemPedido {
+- id: Long
+  - quantidade: int
+  - precoUnitario: double
+}
+
+
+class Favorito {
+  - id: Long
+}
+
+abstract Pagamento{
+- id: Long
+- valor: Double
+}
+
+class PagamentoCartao{
+    - numeroCartao: String
+    - nomeTitular: String
+    - dataValidade: String
+    - codigoSeguranca: String
+}
+
+class PagamentoPix{
+   - chavePix: String
+}
+
+
+RedDot --|> Mira
+MiraHolografica --|> Mira
+PagamentoCartao --|> Pagamento
+PagamentoPix --|> Pagamento
+
+
+
+Usuario "*" --> "1" Role
+Usuario "1" *--> "*" Endereco
+
+
+
+Fornecedor "1" <-- "*" Fuzil
+
+Fuzil "*" --> "*" Mira
+Fuzil "*" o--> "*" Calibre
+Fuzil "*" o--> "1" Carregador
+
+Fuzil "1" *--> "1" Registro
+
+Fornecedor "1" *--> "1" Telefone
+Fornecedor "1" *--> "1" Endereco
+
+Fuzil "*" --> "1" ModoDisparo
+
+
+
+Usuario "1" <-- "*" Pedido
+
+Pedido "1" *--> "*" ItemPedido
+ItemPedido "*" --> "1" Fuzil
+
+
+Pedido "*" --> "1" StatusPedido
+
+Usuario "1" --> "*" Favorito
+Favorito "*" --> "1" Fuzil
+
+Pedido "*" *--> "1" Pagamento
+Pagamento "*" --> "1" StatusPagamento
+
+TokenResetarSenha "*" --> "1" Usuario
+Usuario "1" *--> "1" Telefone
+
+
+
+@enduml

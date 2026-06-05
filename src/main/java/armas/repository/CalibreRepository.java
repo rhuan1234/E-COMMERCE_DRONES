@@ -14,6 +14,6 @@ public class CalibreRepository implements PanacheRepository<Calibre> {
     }
 
     public Calibre findByNome(String nome) {
-        return find("nome", nome).firstResult();
+        return find("lower(nome) = ?1", nome.toLowerCase()).firstResult();
     }
 }

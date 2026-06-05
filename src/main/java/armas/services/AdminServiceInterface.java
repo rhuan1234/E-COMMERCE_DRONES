@@ -10,7 +10,6 @@ public interface AdminServiceInterface {
     Usuario buscarPorId(Long id);
     Usuario buscarPorLogin(String login);
     Usuario criar(Usuario usuario);
-    void atualizar(Long id, Usuario usuario);
     void deletar(Long id);
     void alterarSenha(AlterarSenhaAdminDTO dto);
 }

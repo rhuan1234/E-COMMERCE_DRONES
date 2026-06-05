@@ -20,7 +20,6 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -193,40 +192,6 @@ public class PedidoController {
         return Response.ok(pedidos).build();
     }
 
-    @PUT
-    @Path("/{id}")
-    @RolesAllowed({"ADMIN", "CLIENTE"})
-    @Transactional
-    public Response atualizar(@PathParam("id") Long id, @Valid PedidoRequestDTO dto) {
-
-        if (id == null || id <= 0) {
-            throw new ValidationException("Id do pedido inválido","id");
-        }
-
-        if (dto == null) {
-            throw new ValidationException("Dados do pedido são obrigatórios","dto");
-        }
-
-        String login = jwt.getName();
-
-        if (login == null || login.isBlank()) {
-            throw new ValidationException("Usuário não autenticado","login");
-        }
-
-        Pedido pedidoAtualizado =
-            PedidoMapper.toEntity(dto);
-
-        Pedido pedido =
-            pedidoService.atualizar(id, login, pedidoAtualizado);
-
-        if (pedido == null) {
-            throw new NotFoundException(
-                "Pedido não encontrado"
-            );
-        }
-
-        return Response.ok(PedidoMapper.toResponseDTO(pedido)).build();
-    }
 
     @DELETE
     @Path("/admin/{id}")

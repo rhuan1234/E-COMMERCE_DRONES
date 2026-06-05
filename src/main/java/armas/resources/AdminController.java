@@ -7,6 +7,7 @@ import armas.dto.usuarios.UsuarioRequestDTO;
 import armas.dto.usuarios.UsuarioResponseDTO;
 import armas.exception.ValidationException;
 import armas.mapper.UsuarioMapper;
+import armas.model.usuario.Perfil;
 import armas.model.usuario.Usuario;
 import armas.services.AdminServiceInterface;
 import jakarta.annotation.security.RolesAllowed;
@@ -106,30 +107,6 @@ public class AdminController {
                 .build();
     }
 
-    @PUT
-    @Path("/admin/{id}")
-    @RolesAllowed("ADMIN")
-    public Response atualizar(@PathParam("id") Long id, @Valid UsuarioRequestDTO dto) {
-
-        if (id == null || id <= 0) {
-            throw new ValidationException(
-                "Id do usuário inválido",
-                "id"
-            );
-        }
-
-        if (dto == null) {
-            throw new ValidationException(
-                "Dados do usuário são obrigatórios"
-            );
-        }
-
-        Usuario usuario = UsuarioMapper.toEntity(dto);
-        usuarioService.atualizar(id, usuario);
-        Usuario usuarioAtualizado = usuarioService.buscarPorId(id);
-
-        return Response.ok(UsuarioMapper.toResponseDTO(usuarioAtualizado)).build();
-    }
 
     @DELETE
     @Path("/admin/{id}")

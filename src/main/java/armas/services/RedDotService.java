@@ -31,12 +31,25 @@ public class RedDotService implements RedDotServiceInterface {
         if (id == null) {
             throw new ValidationException("Id do red dot é obrigatório", "id");
         }
+        RedDot mira = miraRepository.findById(id);
+        if (mira == null) {
+            throw new ValidationException("Red dot não encontrado para o id: " + id);
+        }
+        if (!mira.getFuzis().isEmpty()) {
+            throw new ValidationException(
+            "Não é possível excluir uma mira RedDot que está associado a fuzis"
+        );
+        }
         return miraRepository.deleteById(id);
     }
 
     @Override
     public List<RedDot> buscarTodos() {
-        return miraRepository.findAll().list();
+        List<RedDot> miras = miraRepository.findAll().list();
+        if (miras.isEmpty()) {
+            throw new ValidationException("Nenhuma mira RedDot encontrada");
+        }
+        return miras;
     }
 
     @Override

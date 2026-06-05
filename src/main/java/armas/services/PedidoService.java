@@ -115,49 +115,13 @@ public class PedidoService implements PedidoServiceInterface {
     @Override
     public List<Pedido> buscarTodos() {
         List<Pedido> pedidos = pedidoRepository.listAll();
+        if (pedidos.isEmpty()) {
+            throw new ValidationException("Nenhum pedido encontrado");
+        }
         return pedidos;
     }
 
-    @Override
-    @Transactional
-    public Pedido atualizar(Long id, String login, Pedido pedidoAtualizado) {
-        Long userId = usuarioService.buscarPorLogin(login).getId();
-        List<Pedido> pedidos = pedidoRepository.findAllByUserId(userId);
-        //Pedido pedido = pedidoRepository.findById(id);
-        for(Pedido p : pedidos) {
-            if(p.getId().equals(id)) {
-                Pedido pedido = pedidoRepository.findById(id);
-                if (pedido == null) {
-                    return null;
-                }
-
-                if (pedidoAtualizado.getDataPedido() != null) {
-                    pedido.setDataPedido(pedidoAtualizado.getDataPedido());
-                }
-                if (pedidoAtualizado.getStatusPedido() != null) {
-                    pedido.setStatusPedido(pedidoAtualizado.getStatusPedido());
-                }
-
-                if (pedidoAtualizado.getItens() != null) {
-                    pedido.getItens().clear();
-                    pedidoAtualizado.getItens().forEach(item -> {
-                        item.setPedido(pedido);
-                        if (item.getFuzil() != null && item.getPrecoUnitario() == 0) {
-                            item.setPrecoUnitario(item.getFuzil().getPreco());
-                        }
-                        pedido.getItens().add(item);
-                    });
-                    pedido.calcularValorTotal();
-                } else if (pedidoAtualizado.getValorTotal() != 0) {
-                    pedido.setValorTotal(pedidoAtualizado.getValorTotal());
-                }
-
-                pedidoRepository.persist(pedido);
-                return pedido;
-            }
-        }
-        return null;
-    }
+   
 
     @Override
     @Transactional

@@ -50,7 +50,7 @@ public class CalibreController {
     @GET
     @Path("/admin")
     @RolesAllowed("ADMIN")
-    public Response findAll(){
+    public Response buscarPorTodos(){
         List<CalibreResponseDTO> calibres = calibreService.buscarTodos()
         .stream()
         .map(e -> CalibreMapper.toResponseDTO(e))
@@ -63,7 +63,7 @@ public class CalibreController {
     @GET
     @Path("/admin/{id}")
     @RolesAllowed("ADMIN")
-    public Response findById(@PathParam("id") Long id){
+    public Response buscarPorId(@PathParam("id") Long id){
         if (id == null || id <= 0) {
             throw new ValidationException("Id do calibre inválido", "id");
         }
@@ -80,7 +80,7 @@ public class CalibreController {
     @GET
     @Path("/nomes/admin/{nome}")
     @RolesAllowed("ADMIN")
-    public Response findByNome(@PathParam("nome") String nome){
+    public Response buscarPorNome(@PathParam("nome") String nome){
         if (nome == null || nome.isBlank()) {
             throw new ValidationException("Nome do calibre é obrigatório", "nome");
         }

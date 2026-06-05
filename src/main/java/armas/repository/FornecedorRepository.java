@@ -19,6 +19,6 @@ public class FornecedorRepository implements PanacheRepository<Fornecedor> {
     }
 
     public Fornecedor findByNome(String nome) {
-        return find("nome", nome).firstResult();
+        return find("lower(nome) = ?1", nome.toLowerCase()).firstResult();
     }
 }

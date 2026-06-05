@@ -36,7 +36,7 @@ public class FornecedorController {
     @GET
     @Path("/admin")
     @RolesAllowed("ADMIN")
-    public Response findAll(){
+    public Response buscarPorTodos(){
         List<FornecedorResponseDTO> fornecedores = fornecedorService.buscarTodos()
         .stream()
         .map(e -> FornecedorMapper.toResponseDTO(e))
@@ -59,7 +59,7 @@ public class FornecedorController {
     @GET
     @Path("/admin/{id}")
     @RolesAllowed("ADMIN")
-    public Response findById(@PathParam("id") Long id){
+    public Response buscarPorId(@PathParam("id") Long id){
         if (id == null || id <= 0) {
             throw new ValidationException("Id do fornecedor inválido", "id");
         }
@@ -74,7 +74,7 @@ public class FornecedorController {
     @GET
     @Path("/admin/nomes/{nome}")
     @RolesAllowed("ADMIN")
-    public Response findByNome(@PathParam("nome") String nome){
+    public Response buscarPorNome(@PathParam("nome") String nome){
         if (nome == null || nome.isBlank()) {
             throw new ValidationException("Nome do fornecedor é obrigatório", "nome");
         }

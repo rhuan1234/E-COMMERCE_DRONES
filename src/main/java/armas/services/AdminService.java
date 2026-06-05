@@ -51,25 +51,7 @@ public class AdminService implements AdminServiceInterface {
         return usuario;
     }
 
-    @Override
-    @Transactional
-    public void atualizar(Long id, Usuario usuario) {
-        Usuario u = buscarPorId(id);
-
-        // Se tentar mudar o login, verifica se o novo ja existe
-        if (!u.getLogin().equals(usuario.getLogin()) && 
-            repository.findByLogin(usuario.getLogin()).isPresent()) {
-            throw new WebApplicationException("Login ja existe", Status.BAD_REQUEST);
-        }
-
-        u.setLogin(usuario.getLogin());
-        u.setPerfil(usuario.getPerfil());
-
-        // Se a senha foi alterada, gera novo hash
-        if (usuario.getSenhaHash() != null && !usuario.getSenhaHash().isEmpty()) {
-            u.setSenhaHash(hashService.bcrypt(usuario.getSenhaHash()));
-        }
-    }
+  
 
     @Override
     @Transactional

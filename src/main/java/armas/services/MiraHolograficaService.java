@@ -33,18 +33,23 @@ public class MiraHolograficaService implements MiraHolograficaServiceInterface {
         }
         MiraHolografica mira = miraRepository.findById(id);
         if (mira == null) {
-            return false;
+            throw new ValidationException("Mira holográfica não encontrada para o id: " + id);
         }
         if (!mira.getFuzis().isEmpty()) {
-            // Não pode deletar se estiver associada a fuzis
-            return false;
+            throw new ValidationException(
+            "Não é possível excluir uma mira holográfica que está associada a fuzis"
+        );
         }
         return miraRepository.deleteById(id);
     }
 
     @Override
     public List<MiraHolografica> buscarTodos() {
-        return miraRepository.findAll().list();
+        List<MiraHolografica> miras = miraRepository.findAll().list();
+        if (miras.isEmpty()) {
+            throw new ValidationException("Nenhuma mira holográfica encontrada");
+        }
+        return miras;
     }
 
     @Override

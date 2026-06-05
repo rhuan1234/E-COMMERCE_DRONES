@@ -50,7 +50,7 @@ public class FuzilController {
     @GET
     @Path("/admin")
     @RolesAllowed("ADMIN")
-    public Response findAll(){
+    public Response buscarPorTodos(){
         List<FuzilResponseDTO> fuzis = fuzilService.buscarTodos()
         .stream()
         .map(e -> FuzilMapper.toResponseDTO(e))
@@ -59,7 +59,7 @@ public class FuzilController {
     }
 
     @GET
-    public Response findAllEcommerce(){
+    public Response buscarPorTodosEcommerce(){
         List<FuzilResponseEcommerceDTO> fuzis = fuzilService.buscarTodos()
         .stream()
         .map(e -> FuzilMapper.toResponseEcommerceDTO(e))
@@ -70,7 +70,7 @@ public class FuzilController {
     @GET
     @Path("/admin/{id}")
     @RolesAllowed("ADMIN")
-    public Response findById(@PathParam("id") Long id){
+    public Response buscarPorId(@PathParam("id") Long id){
         if (id == null || id <= 0) {
             throw new ValidationException("Id do fuzil é inválido", "id");
         }
@@ -84,7 +84,7 @@ public class FuzilController {
 
     @GET
     @Path("/{id}")
-    public Response findByIdEcommerce(@PathParam("id") Long id){
+    public Response buscarPorIdEcommerce(@PathParam("id") Long id){
         if (id == null || id <= 0) {
             throw new ValidationException("Id do fuzil é inválido", "id");
         }
@@ -99,7 +99,7 @@ public class FuzilController {
     @GET
     @Path("/admin/nomes/{nome}")
     @RolesAllowed("ADMIN")
-    public Response findByNome(@PathParam("nome") String nome){
+    public Response buscarPorNome(@PathParam("nome") String nome){
         if (nome == null || nome.isBlank()) {
             throw new ValidationException("Nome do fuzil é obrigatório", "nome");
         }
@@ -113,7 +113,7 @@ public class FuzilController {
 
     @GET
     @Path("/nome/{nome}")
-    public Response findByNomeEcommerce(@PathParam("nome") String nome){
+    public Response buscarPorNomeEcommerce(@PathParam("nome") String nome){
         if (nome == null || nome.isBlank()) {
             throw new ValidationException("Nome do fuzil é obrigatório", "nome");
         }
@@ -127,7 +127,7 @@ public class FuzilController {
 
     @GET
     @Path("/marcas/{marca}")
-    public Response findByMarcaEcommerce(@PathParam("marca") String marca){
+    public Response buscarPorMarcaEcommerce(@PathParam("marca") String marca){
         if (marca == null || marca.isBlank()) {
             throw new ValidationException("Marca do fuzil é obrigatória", "marca");
         }
@@ -140,7 +140,7 @@ public class FuzilController {
 
     @GET
     @Path("/modelos/{modelo}")
-    public Response findByModeloEcommerce(@PathParam("modelo") String modelo){
+    public Response buscarPorModeloEcommerce(@PathParam("modelo") String modelo){
         if (modelo == null || modelo.isBlank()) {
             throw new ValidationException("Modelo do fuzil é obrigatório", "modelo");
         }
@@ -153,7 +153,7 @@ public class FuzilController {
 
     @GET
     @Path("/preco/")
-    public Response findByPrecoEcommerce(@QueryParam("min") Double precoMin, @QueryParam("max") Double precoMax){
+    public Response buscarPorPrecoEcommerce(@QueryParam("min") Double precoMin, @QueryParam("max") Double precoMax){
         if (precoMin == null || precoMax == null) {
             throw new ValidationException("Preço mínimo e máximo são obrigatórios", "precoMin/precoMax");
         }

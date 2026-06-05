@@ -48,7 +48,7 @@ public class CarregadorController {
     @GET
     @Path("/admin")
     @RolesAllowed("ADMIN")
-    public Response findAll() {
+    public Response buscarPorTodos() {
         List<CarregadorResponseDTO> carregadores = carregadorService.buscarTodos()
             .stream()
             .map(e -> CarregadorMapper.toResponseDTO(e))
@@ -60,7 +60,7 @@ public class CarregadorController {
     @GET
     @RolesAllowed("ADMIN")
     @Path("/admin/{id}")
-    public Response findById(@PathParam("id") Long id) {
+    public Response buscarPorId(@PathParam("id") Long id) {
         if (id == null || id <= 0) {
             throw new ValidationException("Id do carregador inválido", "id");
         }
@@ -76,7 +76,7 @@ public class CarregadorController {
     @GET
     @RolesAllowed("ADMIN")
     @Path("/modelos/admin/{modelo}")
-    public Response findByModelo(@PathParam("modelo") String modelo) {
+    public Response buscarPorModelo(@PathParam("modelo") String modelo) {
         if (modelo == null || modelo.isBlank()) {
             throw new ValidationException("Modelo do carregador é obrigatório", "modelo");
         }

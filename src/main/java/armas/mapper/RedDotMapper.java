@@ -23,7 +23,8 @@ public class RedDotMapper {
             mira.getMarca(),
             mira.getAumentoMaximo(),
             mira.getNiveisBrilho(),
-            mira.getDuracaoBateria()
+            mira.getDuracaoBateria(),
+            mira.getFuzis().stream().map(fuzil -> fuzil.getId()).toList()
         );
     }
 }

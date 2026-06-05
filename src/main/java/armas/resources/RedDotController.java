@@ -52,7 +52,7 @@ public class RedDotController {
     @GET
     @Path("/admin")
     @RolesAllowed("ADMIN")
-    public Response findAll() {
+    public Response buscarPorTodos() {
         List<RedDotResponseDTO> miras = miraService.buscarTodos()
             .stream()
             .map(e -> RedDotMapper.toResponseDTO(e))
@@ -63,7 +63,7 @@ public class RedDotController {
     @GET
     @Path("/admin/{id}")
     @RolesAllowed("ADMIN")
-    public Response findById(@PathParam("id") Long id) {
+    public Response buscarPorId(@PathParam("id") Long id) {
 
         if (id == null || id <= 0) {
             throw new ValidationException(
@@ -72,9 +72,9 @@ public class RedDotController {
             );
         }
 
-        var entity = miraService.buscarPorId(id);
+        RedDot entity = miraService.buscarPorId(id);
         if (entity == null) {
-            throw new NotFoundException("Red dot not found");
+            throw new NotFoundException("Red dot não encontrado");
         }
         RedDotResponseDTO mira = RedDotMapper.toResponseDTO(entity);
         return Response.ok(mira).build();
@@ -83,7 +83,7 @@ public class RedDotController {
     @GET
     @Path("/admin/modelos/{modelo}")
     @RolesAllowed("ADMIN")
-    public Response findByModelo(@PathParam("modelo") String modelo) {
+    public Response buscarPorModelo(@PathParam("modelo") String modelo) {
 
         if (modelo == null || modelo.isBlank()) {
             throw new ValidationException(
@@ -92,9 +92,9 @@ public class RedDotController {
             );
         }
 
-        var entity = miraService.buscarPorModelo(modelo);
+        RedDot entity = miraService.buscarPorModelo(modelo);
         if (entity == null) {
-            throw new NotFoundException("Red dot not found");
+            throw new NotFoundException("Red dot não encontrado");
         }
         RedDotResponseDTO mira = RedDotMapper.toResponseDTO(entity);
         return Response.ok(mira).build();
@@ -116,7 +116,7 @@ public class RedDotController {
         if (miraService.deletar(id)) {
             return Response.status(Response.Status.NO_CONTENT).build();
         }
-        throw new NotFoundException("Red dot not found");
+        throw new NotFoundException("Red dot não encontrado");
     }
 
     @Transactional
@@ -140,7 +140,7 @@ public class RedDotController {
 
         RedDot atualizada = miraService.atualizar(id, RedDotMapper.toEntity(dados));
         if (atualizada == null) {
-            throw new NotFoundException("Red dot not found");
+            throw new NotFoundException("Red dot não encontrado");
         }
         RedDotResponseDTO atualizadaDTO = RedDotMapper.toResponseDTO(atualizada);
         return Response.ok(atualizadaDTO).build();

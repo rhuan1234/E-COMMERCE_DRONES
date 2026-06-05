@@ -59,6 +59,7 @@ public class FavoritoController {
     }
 
     @GET
+    @Path("/listar")
     @RolesAllowed({"CLIENTE", "ADMIN"})
     public Response listarFavoritos() {
 

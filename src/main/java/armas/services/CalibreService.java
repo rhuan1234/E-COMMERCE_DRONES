@@ -30,6 +30,15 @@ public class CalibreService implements CalibreServiceInterface{
         if (id == null) {
             throw new ValidationException("Id do calibre é obrigatório", "id");
         }
+        Calibre calibre = calibreRepository.findById(id);
+        if (calibre == null) {
+            return false;
+        }
+        if (!calibre.getFuzis().isEmpty()) {
+            throw new ValidationException(
+            "Não é possível excluir um calibre que está associado a fuzis"
+        );
+        }
         return calibreRepository.deleteById(id);
     }
 

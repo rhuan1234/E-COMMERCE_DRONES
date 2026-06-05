@@ -14,6 +14,6 @@ public class RedDotRepository implements PanacheRepository<RedDot> {
     }
 
     public RedDot findByModelo(String modelo) {
-        return find("modelo", modelo).firstResult();
+        return find("lower(modelo) = ?1", modelo.toLowerCase()).firstResult();
     }
 }

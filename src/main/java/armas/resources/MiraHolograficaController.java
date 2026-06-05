@@ -48,7 +48,7 @@ public class MiraHolograficaController {
     @GET
     @Path("/admin")
     @RolesAllowed("ADMIN")
-    public Response findAll() {
+    public Response buscarPorTodos() {
         List<MiraHolograficaResponseDTO> miras = miraService.buscarTodos()
             .stream()
             .map(e -> MiraHolograficaMapper.toResponseDTO(e))
@@ -59,7 +59,7 @@ public class MiraHolograficaController {
     @GET
     @Path("/admin/{id}")
     @RolesAllowed("ADMIN")
-    public Response findById(@PathParam("id") Long id) {
+    public Response buscarPorId(@PathParam("id") Long id) {
         if (id == null) {
             throw new ValidationException("Id da mira holográfica é obrigatório", "id");
         }
@@ -74,7 +74,7 @@ public class MiraHolograficaController {
     @GET
     @Path("/modelos/{modelo}")
     @RolesAllowed("ADMIN")
-    public Response findByModelo(@PathParam("modelo") String modelo) {
+    public Response buscarPorModelo(@PathParam("modelo") String modelo) {
         if (modelo == null || modelo.isBlank()) {
             throw new ValidationException("Modelo da mira holográfica é obrigatório", "modelo");
         }
