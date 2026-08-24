@@ -59,17 +59,11 @@ public class PagamentoCartaoService implements PagamentoCartaoServiceInterface {
         if (!pedido.getUsuario().getId().equals(cliente.getId())) {
             throw new ValidationException("Pedido não pertence ao usuário ou não existe", "pedidoId");
         }
-         if(pedido.getStatusPedido() == StatusPedido.PENDENTE) {
-            throw new ValidationException("Pedido precisa estar aprovado para criar o pagamento", "pedidoId");
-        }
         if(pedido.getStatusPedido() == StatusPedido.CANCELADO) {
             throw new ValidationException("Pedido foi cancelado e não pode ser pago", "pedidoId");
         }
         if(pedido.getStatusPedido() == StatusPedido.PAGO) {
             throw new ValidationException("Pedido já foi pago", "pedidoId");
-        }
-        if(pedido.getStatusPedido() == StatusPedido.REPROVADO) {
-            throw new ValidationException("Pedido foi reprovado e não pode ser pago", "pedidoId");
         }
         PagamentoPix pagamentoPixExistente = pagamentoPixRepository.findByPedidoIdPix(pedidoId);
         if (pagamentoPixExistente != null) {
@@ -97,14 +91,8 @@ public class PagamentoCartaoService implements PagamentoCartaoServiceInterface {
         if (pagamentoCartao.getStatusPagamento() != StatusPagamento.PENDENTE) {
             throw new ValidationException("Pagamento já foi processado", "id");
         }
-        if(pagamentoCartao.getPedido().getStatusPedido() == StatusPedido.PENDENTE) {
-            throw new ValidationException("O pedido precisa ser aprovado antes de ser pago", "id");
-        }
         if(pagamentoCartao.getPedido().getStatusPedido() == StatusPedido.CANCELADO) {
             throw new ValidationException("O pedido foi cancelado e não pode ser pago", "id");
-        }
-        if(pagamentoCartao.getPedido().getStatusPedido() == StatusPedido.REPROVADO) {
-            throw new ValidationException("O pedido foi reprovado e não pode ser pago", "id");
         }
         if(pagamentoCartao.getValor() == null || pagamentoCartao.getValor().compareTo(pagamentoCartao.getPedido().getValorTotal()) != 0) {
             throw new ValidationException("Valor do pagamento deve ser igual ao valor total do pedido", "valor");

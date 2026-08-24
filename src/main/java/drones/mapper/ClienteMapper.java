@@ -28,7 +28,6 @@ public class ClienteMapper {
         usuario.getTelefone().setNumero(TelefoneMapper.toEntity(dto.numero()).getNumero());
     }
     usuario.setTelefone(TelefoneMapper.toEntity(dto.numero()));
-    usuario.setRegistroAtirador(dto.registroAtirador());
 
     return usuario;
 }
@@ -47,8 +46,7 @@ public class ClienteMapper {
                 usuario.getEmail(),
                 usuario.getCpf(),
                 usuario.getTelefone() != null ? usuario.getTelefone().getNumero() : null,
-                enderecos,
-                usuario.getRegistroAtirador()
+                enderecos
         );
     }
 }

@@ -1,37 +1,63 @@
 package drones.dto.drones;
-import java.util.List;
 
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 
 public record DroneRequestDTO(
 
-    // 🔹 campos da Arma
      @NotBlank(message = "Nome é obrigatório")
-     @Pattern(regexp = "^[\\p{L}0-9\\s._-]{3,100}$", message = "Nome deve conter apenas letras, números, espaços, pontos, underscores e hífens")
+     @Pattern(regexp = "^[\\p{L}\\p{N}\\s._-]{3,100}$", message = "Nome deve conter apenas letras, números, espaços, pontos, underscores e hífens")
      String nome,
+
      @NotBlank(message = "Marca é obrigatória")
-     @Pattern(regexp = "^[\\p{L}0-9\\s._-]{2,50}$", message = "Marca deve conter apenas letras, números, espaços, pontos, underscores e hífens")
+     @Pattern(regexp = "^[\\p{L}\\p{N}\\s._-]{2,50}$", message = "Marca deve conter apenas letras, números, espaços, pontos, underscores e hífens")
      String marca,
+
      @NotBlank(message = "Modelo é obrigatório")
-     @Pattern(regexp = "^[\\p{L}0-9\\s._-]{2,50}$", message = "Modelo deve conter apenas letras, números, espaços, pontos, underscores e hífens")
+     @Pattern(regexp = "^[\\p{L}\\p{N}\\s._-]{2,50}$", message = "Modelo deve conter apenas letras, números, espaços, pontos, underscores e hífens")
      String modelo,
+
+     @NotNull(message = "O preço é obrigatório")
      @Positive(message = "O preço deve ser um número positivo")
-     double preco,
+     Double preco,
+
+     @NotNull(message = "A quantidade disponível é obrigatória")
      @PositiveOrZero(message = "Quantidade disponível deve ser zero ou maior")
-     int quantidadeDisponivel,
-     boolean ativa,
-    int tempoVooPratico,
-    double pesoDecolagem,
-    int altitudeMaxima,
-    int velocidadeMaxima,
-    int alcanceTransmissao,
-    boolean possuiCamera,
+     Integer quantidadeDisponivel,
+
+     @NotNull(message = "O status da drone é obrigatório")
+     Boolean ativa,
+
+     @NotNull(message = "O tempo de voo prático é obrigatório")
+     @PositiveOrZero(message = "O tempo de voo prático deve ser zero ou maior")
+     Integer tempoVooPratico,
+
+     @NotNull(message = "O peso de decolagem é obrigatório")
+     @Positive(message = "O peso de decolagem deve ser um número positivo")
+     Double pesoDecolagem,
+
+     @NotNull(message = "A altitude máxima é obrigatória")
+     @Positive(message = "A altitude máxima deve ser um número positivo")
+     Integer altitudeMaxima,
+
+     @NotNull(message = "A velocidade máxima é obrigatória")
+     @Positive(message = "A velocidade máxima deve ser um número positivo")
+     Integer velocidadeMaxima,
+
+     @NotNull(message = "O alcance de transmissão é obrigatório")
+     @Positive(message = "O alcance de transmissão deve ser um número positivo")
+     Integer alcanceTransmissao,
+
+     @NotNull(message = "O campo possui câmera é obrigatório")
+     Boolean possuiCamera,
+
+     @NotNull(message = "O id do fornecedor é obrigatório")
      @Positive(message = "O id do fornecedor deve ser um número positivo")
-    Long fornecedorId
+     Long fornecedorId
 ) {
-    
+
 }

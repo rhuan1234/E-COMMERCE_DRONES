@@ -11,8 +11,7 @@ public record ClienteResponseCompletoDTO(
     String email,
     String cpf,
     String telefone,
-    List<EnderecoResponseClienteDTO> enderecos,
-    String registroAtirador
+    List<EnderecoResponseClienteDTO> enderecos
 ) {
     
 }

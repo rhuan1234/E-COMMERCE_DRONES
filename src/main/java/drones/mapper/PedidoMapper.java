@@ -88,8 +88,7 @@ public class PedidoMapper {
             pedido.getCepEntrega(),
             pedido.getUsuario() != null ? pedido.getUsuario().getId() : null,
             pedido.getUsuario() != null ? pedido.getUsuario().getCpf() : null,
-            pedido.getUsuario() != null ? pedido.getUsuario().getNomeCompleto() : null,
-            pedido.getUsuario() != null ? pedido.getUsuario().getRegistroAtirador() : null
+            pedido.getUsuario() != null ? pedido.getUsuario().getNomeCompleto() : null
         );
 }
 }

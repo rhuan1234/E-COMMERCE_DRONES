@@ -63,8 +63,6 @@ public class Usuario {
     @JoinColumn(name = "telefone_id")
     private Telefone telefone;
 
-    private String registroAtirador;
-
     public Usuario() {
         
     }
@@ -145,17 +143,4 @@ public class Usuario {
     public void setTelefone(Telefone telefone) {
         this.telefone = telefone;
     }
-
-
-    public String getRegistroAtirador() {
-        return registroAtirador;
-    }
-
-
-    public void setRegistroAtirador(String registroAtirador) {
-        this.registroAtirador = registroAtirador;
-    }
-    
-    
-
 }

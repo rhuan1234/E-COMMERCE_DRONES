@@ -60,17 +60,11 @@ public class PagamentoPixService implements PagamentoPixServiceInterface {
         if(pagamentoPix.getValor() == null || pagamentoPix.getValor().compareTo(pedido.getValorTotal()) != 0) {
             throw new ValidationException("Valor do pagamento deve ser igual ao valor total do pedido", "valor");
         }
-        if(pedido.getStatusPedido() == StatusPedido.PENDENTE) {
-            throw new ValidationException("Pedido precisa estar aprovado para criar o pagamento", "pedidoId");
-        }
         if(pedido.getStatusPedido() == StatusPedido.CANCELADO) {
             throw new ValidationException("Pedido foi cancelado e não pode ser pago", "pedidoId");
         }
         if(pedido.getStatusPedido() == StatusPedido.PAGO) {
             throw new ValidationException("Pedido já foi pago", "pedidoId");
-        }
-        if(pedido.getStatusPedido() == StatusPedido.REPROVADO) {
-            throw new ValidationException("Pedido foi reprovado e não pode ser pago", "pedidoId");
         }
 
         PagamentoPix pagamentoPixExistente = pagamentoPixRepository.findByPedidoIdPix(pedidoId);
@@ -128,14 +122,8 @@ public class PagamentoPixService implements PagamentoPixServiceInterface {
         if (pagamentoPix.getStatusPagamento() != StatusPagamento.PENDENTE) {
             throw new ValidationException("Pagamento ou Pedido já foi processado", "id");
         }
-        if(pagamentoPix.getPedido().getStatusPedido() == StatusPedido.PENDENTE) {
-            throw new ValidationException("O pedido precisa ser aprovado antes de ser pago", "id");
-        }
         if(pagamentoPix.getPedido().getStatusPedido() == StatusPedido.CANCELADO) {
             throw new ValidationException("O pedido foi cancelado e não pode ser pago", "id");
-        }
-        if(pagamentoPix.getPedido().getStatusPedido() == StatusPedido.REPROVADO) {
-            throw new ValidationException("O pedido foi reprovado e não pode ser pago", "id");
         }
         if(pagamentoPix.getValor() == null || pagamentoPix.getValor().compareTo(pagamentoPix.getPedido().getValorTotal()) != 0) {
             throw new ValidationException("Valor do pagamento deve ser igual ao valor total do pedido", "valor");

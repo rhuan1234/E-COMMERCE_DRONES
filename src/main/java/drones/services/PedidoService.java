@@ -178,10 +178,8 @@ public class PedidoService implements PedidoServiceInterface {
         }
         if(!status.equalsIgnoreCase("PENDENTE") &&
            !status.equalsIgnoreCase("CANCELADO") &&
-           !status.equalsIgnoreCase("APROVADO") &&
-           !status.equalsIgnoreCase("REPROVADO") &&
            !status.equalsIgnoreCase("PAGO")) {
-            throw new ValidationException("Status inválido. Valores permitidos: PENDENTE, CANCELADO, APROVADO, REPROVADO, PAGO");
+            throw new ValidationException("Status inválido. Valores permitidos: PENDENTE, CANCELADO, PAGO");
         }
         List<Pedido> pedidos = pedidoRepository.findAllByUserId(userId);
         return pedidos.stream()
@@ -189,49 +187,12 @@ public class PedidoService implements PedidoServiceInterface {
                 .toList();
     }
 
-    public Pedido aprovarPedido(Long id) {
-        Pedido pedido = pedidoRepository.findById(id);
-        if(pedido == null) {
-            throw new ValidationException("Pedido não encontrado para o id informado");
-        }
-        if(pedido.getStatusPedido() == StatusPedido.CANCELADO) {
-            throw new ValidationException("Pedido já está cancelado");
-        }
-        if(pedido.getStatusPedido() == StatusPedido.PAGO) {
-            throw new ValidationException("O pedido já foi pago e não pode ser aprovado");
-        }
-        if(pedido.getStatusPedido() == StatusPedido.REPROVADO) {
-            throw new ValidationException("O pedido já foi reprovado e não pode ser aprovado");
-        }
-        pedido.setStatusPedido(StatusPedido.APROVADO);
-        pedidoRepository.persist(pedido);
-        return pedido;
-    }
+    
 
     public List<Pedido> listarPedidosPendentes() {
         List<Pedido> pedidos = pedidoRepository.listarPedidosPendentes();
         return pedidos;
     }
 
-    public Pedido reprovarPedido(Long id) {
-        Pedido pedido = pedidoRepository.findById(id);
-        if(pedido == null) {
-            throw new ValidationException("Pedido não encontrado para o id informado");
-        }
-        if(pedido.getStatusPedido() == StatusPedido.CANCELADO) {
-            throw new ValidationException("Pedido já está cancelado");
-        }
-        if(pedido.getStatusPedido() == StatusPedido.PAGO) {
-            throw new ValidationException("O pedido já foi pago e não pode ser reprovado");
-        }
-        if(pedido.getStatusPedido() == StatusPedido.REPROVADO) {
-            throw new ValidationException("O pedido já foi reprovado e não pode ser reprovado novamente");
-        }
-        pedido.setStatusPedido(StatusPedido.REPROVADO);
-        for(ItemPedido item : pedido.getItens()) {
-            item.getDrone().setQuantidadeDisponivel(item.getDrone().getQuantidadeDisponivel() + item.getQuantidade());
-        }
-        pedidoRepository.persist(pedido);
-        return pedido;
-    }
+
 }

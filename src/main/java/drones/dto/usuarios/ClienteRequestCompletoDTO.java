@@ -21,10 +21,7 @@ public record ClienteRequestCompletoDTO(
 
     @Valid
     @NotNull
-    TelefoneRequestDTO numero,
-
-    @NotBlank(message = "O registro de atirador é obrigatório")
-    String registroAtirador
+    TelefoneRequestDTO numero
 ) {
 
 }

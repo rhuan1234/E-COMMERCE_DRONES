@@ -281,45 +281,6 @@ public class PedidoController {
         return Response.ok(pedidos).build();
     }
 
-    @PATCH
-    @Path("/admin/aprovar-pedido/{id}")
-    @RolesAllowed("ADMIN")
-    @Transactional
-    public Response aprovarPedido(@PathParam("id") Long id) {
-        if (id == null || id <= 0) {
-            throw new ValidationException(
-                "Id do pedido inválido",
-                "id"
-            );
-        }
-
-        Pedido pedido = pedidoService.aprovarPedido(id);
-
-        if (pedido == null) {
-            throw new NotFoundException(
-                "Pedido não encontrado"
-            );
-        }
-
-        return Response.ok(PedidoMapper.toResponseDTO(pedido)).build();
-    }
-    
-    @PATCH
-    @Path("/admin/reprovar-pedido/{id}")
-    @RolesAllowed("ADMIN")
-    @Transactional
-    public Response reprovarPedido(@PathParam("id") Long id) {
-        if (id == null || id <= 0) {
-            throw new ValidationException( "Id do pedido inválido","id"
-            );
-        }
-        Pedido pedido = pedidoService.reprovarPedido(id);
-        if (pedido == null) {
-            throw new NotFoundException("Pedido não encontrado");
-        }
-        return Response.ok(PedidoMapper.toResponseDTO(pedido)).build();
-    }
-
     @GET
     @Path("/admin/pendentes")
     @RolesAllowed("ADMIN")

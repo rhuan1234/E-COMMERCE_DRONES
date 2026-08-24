@@ -16,8 +16,7 @@ public record PedidoResponseAnaliseAdminDTO(
     String cep,
     Long usuarioId,
     String cpfCliente,
-    String nomeCompletoCliente,
-    String registroAtiradorCliente
+    String nomeCompletoCliente
 ) {
 
 }
