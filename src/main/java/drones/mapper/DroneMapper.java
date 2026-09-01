@@ -18,21 +18,27 @@ public class DroneMapper {
         drone.setPreco(dto.preco());
         drone.setQuantidadeDisponivel(dto.quantidadeDisponivel());
         drone.setAtiva(dto.ativa());
-            if(dto.fornecedorId() != null){
-                FornecedorRepository fornecedorRepository = new FornecedorRepository();
-                if (fornecedorRepository.findById(dto.fornecedorId()) != null) {
-                    drone.setFornecedor(fornecedorRepository.findById(dto.fornecedorId()));
-                } 
-    
+        if(dto.fornecedorId() != null){
+            FornecedorRepository fornecedorRepository = new FornecedorRepository();
+            if (fornecedorRepository.findById(dto.fornecedorId()) != null) {
+                drone.setFornecedor(fornecedorRepository.findById(dto.fornecedorId()));
             }
+        }
         drone.setTempoVooPratico(dto.tempoVooPratico());
         drone.setPesoDecolagem(dto.pesoDecolagem());
         drone.setAltitudeMaxima(dto.altitudeMaxima());
         drone.setVelocidadeMaxima(dto.velocidadeMaxima());
         drone.setAlcanceTransmissao(dto.alcanceTransmissao());
         drone.setPossuiCamera(dto.possuiCamera());
+        drone.setQuantidadeMotores(dto.quantidadeMotores());
+        drone.setComControleRemoto(dto.comControleRemoto());
+        drone.setControladoPorAplicativo(dto.controladoPorAplicativo());
+        drone.setQuantidadeBaterias(dto.quantidadeBaterias());
+        drone.setDuracaoBateria(dto.duracaoBateria());
+        drone.setFrequenciaWifi(dto.frequenciaWifi());
+        drone.setPossuiGPS(dto.possuiGPS());
 
-    return drone;
+        return drone;
     }
 
     public static DroneResponseDTO toResponseDTO(Drone drone){
@@ -51,8 +57,15 @@ public class DroneMapper {
         drone.getVelocidadeMaxima(),
         drone.getAlcanceTransmissao(),
         drone.isPossuiCamera(),
+        drone.getQuantidadeMotores(),
+        drone.isComControleRemoto(),
+        drone.isControladoPorAplicativo(),
+        drone.getQuantidadeBaterias(),
+        drone.getDuracaoBateria(),
+        drone.getFrequenciaWifi(),
+        drone.isPossuiGPS(),
         drone.getFornecedor() != null ? drone.getFornecedor().getId() : null
-);
+    );
     }
     public static DroneResponseEcommerceDTO toResponseEcommerceDTO(Drone drone){
         
@@ -69,8 +82,14 @@ public class DroneMapper {
         drone.getAltitudeMaxima(),
         drone.getVelocidadeMaxima(),
         drone.getAlcanceTransmissao(),
-        drone.isPossuiCamera()
-
+        drone.isPossuiCamera(),
+        drone.getQuantidadeMotores(),
+        drone.isComControleRemoto(),
+        drone.isControladoPorAplicativo(),
+        drone.getQuantidadeBaterias(),
+        drone.getDuracaoBateria(),
+        drone.getFrequenciaWifi(),
+        drone.isPossuiGPS()
     );
     }
 }

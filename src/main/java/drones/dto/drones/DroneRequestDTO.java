@@ -55,6 +55,31 @@ public record DroneRequestDTO(
      @NotNull(message = "O campo possui câmera é obrigatório")
      Boolean possuiCamera,
 
+     @NotNull(message = "A quantidade de motores é obrigatória")
+     @PositiveOrZero(message = "Quantidade de motores deve ser zero ou maior")
+     Integer quantidadeMotores,
+
+     @NotNull(message = "O campo com controle remoto é obrigatório")
+     Boolean comControleRemoto,
+
+     @NotNull(message = "O campo controlado por aplicativo é obrigatório")
+     Boolean controladoPorAplicativo,
+
+     @NotNull(message = "A quantidade de baterias é obrigatória")
+     @PositiveOrZero(message = "Quantidade de baterias deve ser zero ou maior")
+     Integer quantidadeBaterias,
+
+     @NotBlank(message = "A duração da bateria é obrigatória")
+     @Pattern(regexp = "^[\\p{L}\\p{N}\\s._-]{2,50}$", message = "Duração da bateria deve conter apenas letras, números, espaços, pontos, underscores e hífens")
+     String duracaoBateria,
+
+     @NotBlank(message = "A frequência do Wi-Fi é obrigatória")
+     @Pattern(regexp = "^[\\p{L}\\p{N}\\s._-]{2,50}$", message = "Frequência do Wi-Fi deve conter apenas letras, números, espaços, pontos, underscores e hífens")
+     String frequenciaWifi,
+
+     @NotNull(message = "O campo possui GPS é obrigatório")
+     Boolean possuiGPS,
+
      @NotNull(message = "O id do fornecedor é obrigatório")
      @Positive(message = "O id do fornecedor deve ser um número positivo")
      Long fornecedorId

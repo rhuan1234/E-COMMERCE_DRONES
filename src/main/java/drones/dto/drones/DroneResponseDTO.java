@@ -14,6 +14,13 @@ public record DroneResponseDTO(
     int velocidadeMaxima,
     int alcanceTransmissao,
     boolean possuiCamera,
+    int quantidadeMotores,
+    boolean comControleRemoto,
+    boolean controladoPorAplicativo,
+    int quantidadeBaterias,
+    String duracaoBateria,
+    String frequenciaWifi,
+    boolean possuiGPS,
     Long fornecedorId
 
 ) {

@@ -13,7 +13,14 @@ public record DroneResponseEcommerceDTO(
     int altitudeMaxima,
     int velocidadeMaxima,
     int alcanceTransmissao,
-    boolean possuiCamera
+    boolean possuiCamera,
+    int quantidadeMotores,
+    boolean comControleRemoto,
+    boolean controladoPorAplicativo,
+    int quantidadeBaterias,
+    String duracaoBateria,
+    String frequenciaWifi,
+    boolean possuiGPS
 
 ) {
 
