@@ -21,7 +21,8 @@ public record DroneResponseDTO(
     String duracaoBateria,
     String frequenciaWifi,
     boolean possuiGPS,
-    Long fornecedorId
+    Long fornecedorId,
+    CameraResponseDTO camera
 
 ) {
 

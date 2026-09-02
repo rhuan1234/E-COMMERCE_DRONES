@@ -1,0 +1,166 @@
+@startuml
+title E-commerce de Drones - Diagrama de Classes
+
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam linetype ortho
+hide empty methods
+
+package "drones.model.drones" {
+	class Drone {
+		- id: Long
+		- nome: String
+		- marca: String
+		- modelo: String
+		- preco: double
+		- ativa: boolean
+		- quantidadeDisponivel: int
+		- possuiCamera: boolean
+		- quantidadeMotores: int
+		- quantidadeBaterias: int
+		- duracaoBateria: String
+		- frequenciaWifi: String
+		- possuiGPS: boolean
+		- tempoVooPratico: int
+		- pesoDecolagem: double
+		- altitudeMaxima: int
+		- velocidadeMaxima: int
+		- alcanceTransmissao: int
+		- comControleRemoto: boolean
+		- controladoPorAplicativo: boolean
+	}
+
+	class Camera {
+		- id: Long
+		- modelo: String
+		- marca: String
+		- resolucao: String
+		- zoom: int
+		- estabilizacao: boolean
+		- fps: String
+	}
+
+	class Avaliacao {
+		- id: Long
+		- nota: Integer
+		- comentario: String
+		- dataAvaliacao: LocalDateTime
+	}
+
+	class Favorito {
+		- id: Long
+	}
+}
+
+package "drones.model.fornecedor" {
+	class Fornecedor {
+		- id: Long
+		- nome: String
+		- cnpj: String
+		- email: String
+		- ativo: boolean
+	}
+
+	class Endereco {
+		- id: Long
+		- rua: String
+		- bairro: String
+		- cidade: String
+		- estado: String
+		- cep: String
+		- isPrincipal: boolean
+	}
+
+	class Telefone {
+		- id: Long
+		- numero: String
+	}
+}
+
+package "drones.model.pedido" {
+	class Pedido {
+		- id: Long
+		- dataPedido: LocalDateTime
+		- valorTotal: double
+		- statusPedido: StatusPedido
+		- ruaEntrega: String
+		- bairroEntrega: String
+		- cidadeEntrega: String
+		- estadoEntrega: String
+		- cepEntrega: String
+	}
+
+	class ItemPedido {
+		- id: Long
+		- quantidade: int
+		- precoUnitario: double
+		+ getSubtotal(): double
+	}
+
+	abstract class Pagamento {
+		- id: Long
+		- valor: Double
+		- statusPagamento: StatusPagamento
+	}
+
+	class PagamentoCartao {
+		- numeroCartao: String
+		- nomeTitular: String
+		- dataValidade: String
+		- codigoSeguranca: String
+	}
+
+	class PagamentoPix {
+		- chavePix: String
+	}
+
+	enum StatusPedido
+	enum StatusPagamento
+}
+
+package "drones.model.usuario" {
+	class Usuario {
+		- id: Long
+		- login: String
+		- senhaHash: String
+		- perfil: Perfil
+		- email: String
+		- nomeCompleto: String
+		- cpf: String
+		- enderecoPrincipalId: Long
+	}
+
+	class TokenResetarSenha {
+		- id: Long
+		- token: String
+		- expiracao: LocalDateTime
+		- usado: boolean
+	}
+
+	enum Perfil
+}
+
+' Relacionamentos das entidades
+Fornecedor "1" *-- "1" Endereco
+Fornecedor "1" *-- "1" Telefone
+Fornecedor "1" o-- "0..*" Drone
+Drone "0..*" --> "1" Fornecedor
+Drone "0..*" --> "0..1" Camera
+Usuario "1" o-- "0..*" Endereco
+Usuario "1" *-- "1" Telefone
+Usuario "1" --> "0..*" Pedido
+Usuario "1" --> "0..*" Favorito
+Usuario "1" --> "0..*" Avaliacao
+Usuario "1" --> "0..*" TokenResetarSenha
+Drone "1" --> "0..*" ItemPedido
+Drone "1" --> "0..*" Favorito
+Drone "1" --> "0..*" Avaliacao
+Pedido "1" *-- "1..*" ItemPedido
+Pedido "1" o-- "0..1" Pagamento
+Pagamento <|-- PagamentoCartao
+Pagamento <|-- PagamentoPix
+Pedido --> StatusPedido
+Pagamento --> StatusPagamento
+Usuario --> Perfil
+
+@enduml

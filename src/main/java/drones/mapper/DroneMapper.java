@@ -4,6 +4,7 @@ import drones.dto.drones.DroneRequestDTO;
 import drones.dto.drones.DroneResponseDTO;
 import drones.dto.drones.DroneResponseEcommerceDTO;
 import drones.model.drones.Drone;
+import drones.repository.CameraRepository;
 import drones.repository.FornecedorRepository;
 
 
@@ -18,6 +19,12 @@ public class DroneMapper {
         drone.setPreco(dto.preco());
         drone.setQuantidadeDisponivel(dto.quantidadeDisponivel());
         drone.setAtiva(dto.ativa());
+        if(dto.cameraId() != null){
+            CameraRepository cameraRepository = new CameraRepository();
+            if (cameraRepository.findById(dto.cameraId()) != null) {
+                drone.setCamera(cameraRepository.findById(dto.cameraId()));
+            }
+        }
         if(dto.fornecedorId() != null){
             FornecedorRepository fornecedorRepository = new FornecedorRepository();
             if (fornecedorRepository.findById(dto.fornecedorId()) != null) {
@@ -64,7 +71,8 @@ public class DroneMapper {
         drone.getDuracaoBateria(),
         drone.getFrequenciaWifi(),
         drone.isPossuiGPS(),
-        drone.getFornecedor() != null ? drone.getFornecedor().getId() : null
+        drone.getFornecedor() != null ? drone.getFornecedor().getId() : null,
+        CameraMapper.toResponseDTO(drone.getCamera())
     );
     }
     public static DroneResponseEcommerceDTO toResponseEcommerceDTO(Drone drone){
@@ -89,7 +97,8 @@ public class DroneMapper {
         drone.getQuantidadeBaterias(),
         drone.getDuracaoBateria(),
         drone.getFrequenciaWifi(),
-        drone.isPossuiGPS()
+        drone.isPossuiGPS(),
+        CameraMapper.toResponseDTO(drone.getCamera())
     );
     }
 }

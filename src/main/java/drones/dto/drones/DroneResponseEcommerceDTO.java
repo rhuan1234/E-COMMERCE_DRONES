@@ -20,7 +20,8 @@ public record DroneResponseEcommerceDTO(
     int quantidadeBaterias,
     String duracaoBateria,
     String frequenciaWifi,
-    boolean possuiGPS
+    boolean possuiGPS,
+    CameraResponseDTO camera
 
 ) {
 

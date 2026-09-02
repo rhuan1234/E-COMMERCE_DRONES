@@ -38,9 +38,20 @@ public class Drone {
     public Fornecedor fornecedor;
 
     private int quantidadeDisponivel;
-    
+
+    @ManyToOne
+    @JoinColumn(name = "camera_id")
+    private Camera camera;
 
     public Drone() {
+    }
+
+    public Camera getCamera() {
+        return camera;
+    }
+
+    public void setCamera(Camera camera) {
+        this.camera = camera;
     }
 
     public int getQuantidadeMotores() {

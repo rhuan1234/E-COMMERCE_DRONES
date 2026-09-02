@@ -80,6 +80,10 @@ public record DroneRequestDTO(
      @NotNull(message = "O campo possui GPS é obrigatório")
      Boolean possuiGPS,
 
+     @NotNull(message = "O id da câmera é obrigatório")
+     @Positive(message = "O id da câmera deve ser um número positivo")
+     Long cameraId,
+
      @NotNull(message = "O id do fornecedor é obrigatório")
      @Positive(message = "O id do fornecedor deve ser um número positivo")
      Long fornecedorId

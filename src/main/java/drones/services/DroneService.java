@@ -13,11 +13,21 @@ import jakarta.transaction.Transactional;
 public class DroneService implements DroneServiceInterface {
     @Inject
     DroneRepository droneRepository;
+    @Inject
+    FornecedorService fornecedorService;
 
     @Override
     public Drone criar(Drone drone) {
         if (drone == null) {
             throw new ValidationException("Dados do drone são obrigatórios");
+        }
+        if (drone.getFornecedor() != null) {
+            if(fornecedorService.buscarPorId(drone.getFornecedor().getId()) == null) {
+                throw new ValidationException("Fornecedor do drone é inválido", "fornecedor");
+            }
+        }
+        else {
+            throw new ValidationException("Fornecedor do drone é obrigatório", "fornecedor");
         }
 
         droneRepository.salvar(drone);
@@ -68,7 +78,7 @@ public class DroneService implements DroneServiceInterface {
         if (drone == null) {
             throw new ValidationException("Drone com id '" + id + "' não encontrado", "id");
         }
-        FornecedorService fornecedorService = new FornecedorService();
+
         if (dados.getFornecedor() != null) {
             if(fornecedorService.buscarPorId(dados.getFornecedor().getId()) == null) {
                 throw new ValidationException("Fornecedor do drone é inválido", "fornecedor");

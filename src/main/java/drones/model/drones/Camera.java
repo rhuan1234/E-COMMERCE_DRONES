@@ -17,6 +17,7 @@ public class Camera {
     private boolean estabilizacao;
     private String fps;
     
+    
     public Camera() {
     }
     public String getModelo() {
