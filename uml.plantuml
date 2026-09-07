@@ -113,6 +113,15 @@ package "drones.model.pedido" {
 	class PagamentoPix {
 		- chavePix: String
 	}
+	
+	class Promocao{
+	-id: Long
+	-nome: String
+	-percentualDesconto: BigDecimal
+	-dataInicio: LocalDateTime
+	-dataFim: LocalDateTime
+	
+	}
 
 	enum StatusPedido
 	enum StatusPagamento
@@ -162,5 +171,6 @@ Pagamento <|-- PagamentoPix
 Pedido --> StatusPedido
 Pagamento --> StatusPagamento
 Usuario --> Perfil
+Promocao "0..1" --> "*" Drone
 
 @enduml

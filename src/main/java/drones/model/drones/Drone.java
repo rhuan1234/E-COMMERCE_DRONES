@@ -1,6 +1,7 @@
 package drones.model.drones;
 
 import drones.model.fornecedor.Fornecedor;
+import drones.model.promocao.Promocao;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -43,6 +44,10 @@ public class Drone {
     @JoinColumn(name = "camera_id")
     private Camera camera;
 
+    @ManyToOne
+    @JoinColumn(name = "promocao_id")
+    private Promocao promocao;
+
     public Drone() {
     }
 
@@ -52,6 +57,14 @@ public class Drone {
 
     public void setCamera(Camera camera) {
         this.camera = camera;
+    }
+
+    public Promocao getPromocao() {
+        return promocao;
+    }
+
+    public void setPromocao(Promocao promocao) {
+        this.promocao = promocao;
     }
 
     public int getQuantidadeMotores() {

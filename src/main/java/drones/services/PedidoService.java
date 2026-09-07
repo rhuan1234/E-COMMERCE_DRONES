@@ -81,7 +81,8 @@ public class PedidoService implements PedidoServiceInterface {
         }
 
         pedido.setUsuario(usuario);
-        pedido.getItens().forEach(item -> item.setPrecoUnitario(item.getDrone().getPreco()));
+        LocalDateTime agora = LocalDateTime.now();
+        pedido.getItens().forEach(item -> aplicarPromocao(item, agora));
         pedido.calcularValorTotal();
         pedido.getItens().forEach(item -> item.setPedido(pedido));
         pedido.setStatusPedido(StatusPedido.PENDENTE);
@@ -99,6 +100,26 @@ public class PedidoService implements PedidoServiceInterface {
         pedidoRepository.persist(pedido);
 
         return pedido;
+    }
+
+    private void aplicarPromocao(ItemPedido item, LocalDateTime agora) {
+        double precoOriginal = item.getDrone().getPreco();
+        item.setPrecoUnitario(precoOriginal);
+
+        if (item.getDrone().getPromocao() == null) {
+            return;
+        }
+
+        var promocao = item.getDrone().getPromocao();
+        if (promocao.getDataInicio() == null || promocao.getDataFim() == null
+                || agora.isBefore(promocao.getDataInicio())
+                || agora.isAfter(promocao.getDataFim())
+                || promocao.getPercentualDesconto() == null) {
+            return;
+        }
+
+        double percentual = promocao.getPercentualDesconto().doubleValue();
+        item.setPrecoUnitario(precoOriginal * (1 - percentual / 100));
     }
 
     @Override

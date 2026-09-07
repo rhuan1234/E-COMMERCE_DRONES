@@ -2,11 +2,15 @@ package drones.model.promocao;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import drones.model.drones.Drone;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Promocao {
@@ -21,6 +25,9 @@ public class Promocao {
     private LocalDateTime dataInicio;
 
     private LocalDateTime dataFim;
+
+    @OneToMany(mappedBy = "promocao")
+    private List<Drone> drones = new ArrayList<>();
 
     public Promocao() {
     }
@@ -60,5 +67,12 @@ public class Promocao {
     public Long getId() {
         return id;
     }
-    
+
+    public List<Drone> getDrones() {
+        return drones;
+    }
+
+    public void setDrones(List<Drone> drones) {
+        this.drones = drones;
+    }
 }
