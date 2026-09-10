@@ -1,0 +1,73 @@
+<mat-toolbar class="toolbar-title" color="primary">
+    Controle de Câmeras
+</mat-toolbar>
+
+<mat-card>
+    <mat-card-content>
+        <form class="form" [formGroup]="form">
+            <div class="grid">
+
+                <!-- Modelo -->
+                <mat-form-field appearance="outline" class="full-width-input">
+                    <mat-label>Modelo</mat-label>
+                    <input matInput formControlName="modelo" placeholder="Modelo da câmera">
+                </mat-form-field>
+
+                <!-- Marca -->
+                <mat-form-field appearance="outline" class="full-width-input">
+                    <mat-label>Marca</mat-label>
+                    <input matInput formControlName="marca" placeholder="Marca da câmera">
+                </mat-form-field>
+
+                <!-- Resolução -->
+                <mat-form-field appearance="outline" class="full-width-input">
+                    <mat-label>Resolução</mat-label>
+                    <input matInput formControlName="resolucao" placeholder="Resolução da câmera">
+                </mat-form-field>
+
+                <!-- Zoom -->
+                <mat-form-field appearance="outline" class="full-width-input">
+                    <mat-label>Zoom</mat-label>
+                    <input matInput type="number" formControlName="zoom" placeholder="Zoom da câmera">
+                </mat-form-field>
+
+                <!-- Estabilização
+                <mat-form-field appearance="outline" class="full-width-input">
+                    <mat-label>Estabilização</mat-label>
+                    <mat-checkbox formControlName="estabilizacao">contém</mat-checkbox>
+                    <mat-checkbox >não contém</mat-checkbox>
+                </mat-form-field> -->
+
+                <!-- FPS -->
+                <mat-form-field appearance="outline" class="full-width-input">
+                    <mat-label>FPS</mat-label>
+                    <input matInput formControlName="fps" placeholder="FPS da câmera">
+                </mat-form-field>
+
+            </div>
+
+            <div class="actions">
+                <button mat-raised-button 
+                    color="warn" 
+                    (click)="excluir()" 
+                    [disabled]="!form.value.id">
+                    <mat-icon>delete</mat-icon>
+                    Excluir
+                </button>
+
+                <button mat-raised-button (click)="voltar()">
+                    <mat-icon>arrow_back</mat-icon>
+                    Cancelar
+                </button>
+
+                <button mat-raised-button 
+                    color="primary" 
+                    (click)="salvar()" 
+                    [disabled]="form.invalid">
+                    <mat-icon>save</mat-icon>
+                    Salvar
+                </button>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>
