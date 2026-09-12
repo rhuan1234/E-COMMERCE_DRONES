@@ -8,10 +8,13 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
 import { Camera } from '../../../../core/models/Camera';
 import { CameraService } from '../../../../core/services/CameraService';
+import { MatDialog } from '@angular/material/dialog';
+import { CameraForm } from '../camera-form/camera-form';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 
 @Component({
   imports: [MatTableModule, MatInputModule, MatFormFieldModule, 
-            MatToolbarModule, MatButtonModule, MatIconModule, RouterLink
+            MatToolbarModule, MatButtonModule, MatIconModule
             ],
   selector: 'app-camera-list',
   styleUrl: './camera-list.css',
@@ -22,11 +25,47 @@ export class CameraList {
   displayedColumns: string[] = ['id', 'modelo', 'marca', 'resolucao', 'zoom', 'estabilizacao', 'fps', 'acao'];
   dataSource = new MatTableDataSource<Camera>();
 
-  constructor (private cameraService: CameraService) {}
+  constructor (
+    private cameraService: CameraService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
+    this.carregarCameras();
+  }
+
+  carregarCameras(): void {
     this.cameraService.findAll().subscribe((cameras) => {
       this.dataSource.data = cameras;
+    });
+  }
+
+  openFormDialog(camera?: Camera): void {
+    const dialogRef = this.dialog.open(CameraForm, {
+      width: '600px',
+      data: { camera }
+    });
+    dialogRef.afterClosed().subscribe((resultado) => {
+      if (resultado) {
+        this.carregarCameras();
+      }
+    });
+  }
+
+  excluirCamera(camera: Camera): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        titulo: 'Excluir Câmera',
+        mensagem: `Tem certeza que deseja excluir a câmera "${camera.modelo}"?`
+      }
+    });
+    dialogRef.afterClosed().subscribe((confirmado) => {
+      if (confirmado) {
+        this.cameraService.delete(camera.id!).subscribe({
+          next: () => this.carregarCameras(),
+          error: (err) => console.error('Erro ao excluir', err)
+        });
+      }
     });
   }
 
