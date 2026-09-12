@@ -8,14 +8,13 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
 import { Camera } from '../../../../core/models/Camera';
 import { CameraService } from '../../../../core/services/CameraService';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CameraForm } from '../camera-form/camera-form';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 
 @Component({
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule, 
-            MatToolbarModule, MatButtonModule, MatIconModule
-            ],
+  imports: [MatTableModule, MatInputModule, MatFormFieldModule,
+    MatToolbarModule, MatButtonModule, MatIconModule, MatDialogModule],
   selector: 'app-camera-list',
   styleUrl: './camera-list.css',
   templateUrl: './camera-list.html',
@@ -45,6 +44,7 @@ export class CameraList {
       width: '600px',
       data: { camera }
     });
+
     dialogRef.afterClosed().subscribe((resultado) => {
       if (resultado) {
         this.carregarCameras();
@@ -59,13 +59,16 @@ export class CameraList {
         mensagem: `Tem certeza que deseja excluir a câmera "${camera.modelo}"?`
       }
     });
+
     dialogRef.afterClosed().subscribe((confirmado) => {
-      if (confirmado) {
-        this.cameraService.delete(camera.id!).subscribe({
-          next: () => this.carregarCameras(),
-          error: (err) => console.error('Erro ao excluir', err)
-        });
+      if (!confirmado) {
+        return;
       }
+
+      this.cameraService.delete(camera.id!).subscribe({
+        next: () => this.carregarCameras(),
+        error: (err) => console.error('Erro ao excluir', err)
+      });
     });
   }
 

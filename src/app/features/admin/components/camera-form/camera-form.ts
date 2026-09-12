@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, Inject, inject, OnInit } from "@angular/core";
+import { Component, Inject, inject, OnInit, Optional } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CameraService } from "../../../../core/services/CameraService";
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -33,8 +33,9 @@ export class CameraForm implements OnInit {
     private cameraService: CameraService,
     private snack: MatSnackBar,
     private dialog: MatDialog,
-    public dialogRef: MatDialogRef<CameraForm>,
-    @Inject(MAT_DIALOG_DATA) public data: { camera?: Camera }
+    private router: Router,
+    @Optional() public dialogRef?: MatDialogRef<CameraForm>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data?: { camera?: Camera }
   ) {
     this.form = this.fb.group({
       id: [null],
@@ -48,7 +49,6 @@ export class CameraForm implements OnInit {
   }
 
   ngOnInit(): void {
-
     if (this.data?.camera) {
       this.form.patchValue(this.data.camera);
     }
@@ -64,7 +64,11 @@ export class CameraForm implements OnInit {
     resultado.subscribe({
       next: () => {
         this.exibirMensagem('Câmera salva com sucesso!');
-        this.dialogRef.close(true);
+        if (this.dialogRef) {
+          this.dialogRef.close(true);
+        } else {
+          this.router.navigate(['/cameras']);
+        }
       }
     });
   }
@@ -72,8 +76,9 @@ export class CameraForm implements OnInit {
   excluir() {
     const camera = this.form.value;
 
-    if(!camera.id)
+    if (!camera.id) {
       return;
+    }
 
     const confirmRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
@@ -83,18 +88,24 @@ export class CameraForm implements OnInit {
     });
 
     confirmRef.afterClosed().subscribe((confirmado) => {
-      if (confirmado) {
-        this.cameraService.delete(camera.id).subscribe({
-          next: () => {
-            this.exibirMensagem('Câmera excluída com sucesso!');
-            this.dialogRef.close(true);
-          },
-          error: (error) => {
-            this.exibirMensagem('Erro ao excluir a câmera: ');
-            console.log('Erro ao excluir a câmera: ', error);
-          }
-        });
+      if (!confirmado) {
+        return;
       }
+
+      this.cameraService.delete(camera.id).subscribe({
+        next: () => {
+          this.exibirMensagem('Câmera excluída com sucesso!');
+          if (this.dialogRef) {
+            this.dialogRef.close(true);
+          } else {
+            this.router.navigate(['/cameras']);
+          }
+        },
+        error: (error) => {
+          this.exibirMensagem('Erro ao excluir a câmera: ');
+          console.log('Erro ao excluir a câmera: ', error);
+        }
+      });
     });
   }
 
