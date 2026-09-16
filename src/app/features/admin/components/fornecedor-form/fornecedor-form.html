@@ -30,6 +30,44 @@
                     <mat-label>Telefone</mat-label>
                     <input matInput formControlName="telefone" placeholder="Telefone do fornecedor">
                 </mat-form-field>
+                <div>
+                    Endereço
+                </div>
+                <div formGroupName="endereco">
+                    <!-- cep -->
+                    <mat-form-field appearance="outline" class="full-width-input">
+                        <mat-label>Cep</mat-label>
+                        <input matInput formControlName="cep" placeholder="cep">
+                    </mat-form-field>
+
+                    <!-- rua -->
+                    <mat-form-field appearance="outline" class="full-width-input">
+                        <mat-label>Rua</mat-label>
+                        <input matInput formControlName="rua" placeholder="rua">
+                    </mat-form-field>
+
+                    <!-- bairro -->
+                    <mat-form-field appearance="outline" class="full-width-input">
+                        <mat-label>Bairro</mat-label>
+                        <input matInput formControlName="bairro" placeholder="bairro">
+                    </mat-form-field>
+                    
+                    <div formGroupName="cidade">
+                        <!-- cidade -->
+                        <mat-form-field appearance="outline" class="full-width-input">
+                            <mat-label>Cidade</mat-label>
+                            <input matInput formControlName="nome" placeholder="cidade">
+                        </mat-form-field>
+
+                        <!-- estado -->
+                        <div formGroupName="estado">
+                            <mat-form-field appearance="outline" class="full-width-input">
+                                <mat-label>Estado</mat-label>
+                                <input matInput formControlName="nome" placeholder="estado">
+                            </mat-form-field>
+                        </div>
+                        </div>
+                </div>
 
                 <!-- Ativo -->
                 <mat-checkbox formControlName="ativo">Ativo</mat-checkbox>

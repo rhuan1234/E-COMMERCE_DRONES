@@ -41,7 +41,19 @@ export class FornecedorForm implements OnInit {
       cnpj: [''],
       email: [''],
       ativo: [true],
-      telefone: ['']
+      telefone: [''],
+      endereco: this.fb.group({
+        cep: [''],
+        rua: [''],
+        bairro: [''],
+        cidade: this.fb.group({
+          nome: [''],
+          estado: this.fb.group({
+            nome: ['']
+          })
+        })
+      })
+      
     })
   }
 
