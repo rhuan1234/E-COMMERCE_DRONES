@@ -51,9 +51,7 @@ public class Fornecedor {
     @OneToMany(mappedBy = "fornecedor")
     public List<Drone> drones = new ArrayList<>();
 
-    @OneToOne(cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "telefone_id", unique = true, nullable = false)
-    private Telefone telefone;
+    private String telefone;
 
     // 🔹 Construtor padrão (OBRIGATÓRIO pro JPA)
     public Fornecedor() {
@@ -61,7 +59,7 @@ public class Fornecedor {
     }
 
     // 🔹 Construtor com parâmetros
-    public Fornecedor(String nome, String cnpj, String email, Telefone telefone, Endereco endereco) {
+    public Fornecedor(String nome, String cnpj, String email, String telefone, Endereco endereco) {
         this.nome = nome;
         this.cnpj = cnpj;
         this.email = email;
@@ -114,11 +112,11 @@ public class Fornecedor {
         this.email = email;
     }
 
-    public Telefone getTelefone() {
+    public String getTelefone() {
         return telefone;
     }
 
-    public void setTelefone(Telefone telefone) {
+    public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
 

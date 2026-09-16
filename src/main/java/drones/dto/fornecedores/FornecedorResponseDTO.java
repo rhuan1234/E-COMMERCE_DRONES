@@ -7,7 +7,7 @@ public record FornecedorResponseDTO(
     String nome,
     String cnpj,
     String email,
-    TelefoneResponseDTO telefone,
+    String telefone,
     List<Long> droneIds,
     boolean ativo,
     EnderecoResponseDTO endereco

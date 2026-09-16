@@ -19,13 +19,9 @@ public class Endereco {
     @Size(min = 2, max = 50, message = "Bairro deve ter entre 2 e 50 caracteres")
     private String bairro;
 
-    @NotBlank(message = "Cidade é obrigatória")
-    @Size(min = 2, max = 50, message = "Cidade deve ter entre 2 e 50 caracteres")
-    private String cidade;
-
-    @NotBlank(message = "Estado é obrigatório")
-    
-    private String estado;
+    @ManyToOne
+    @JoinColumn(name = "cidade_id")
+    private Cidade cidade;
 
     @NotBlank(message = "CEP é obrigatório")
     @Pattern(
@@ -61,21 +57,15 @@ public class Endereco {
         this.bairro = bairro;
     }
 
-    public String getCidade() {
+    public Cidade getCidade() {
         return cidade;
     }
 
-    public void setCidade(String cidade) {
+    public void setCidade(Cidade cidade) {
         this.cidade = cidade;
     }
 
-    public String getEstado() {
-        return estado;
-    }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
 
     public String getCep() {
         return cep;

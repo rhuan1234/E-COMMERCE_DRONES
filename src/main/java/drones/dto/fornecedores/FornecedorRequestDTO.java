@@ -19,9 +19,9 @@ public record FornecedorRequestDTO(
      @Pattern(regexp = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", message = "Email inválido")
      String email,
 
-     @Valid
-     @NotNull(message = "O telefone é obrigatório")
-     TelefoneRequestDTO telefone,
+     @NotBlank(message = "O telefone é obrigatório")
+     @Pattern(regexp = "^\\(?\\d{2}\\)?\\s?9?\\d{4}-?\\d{4}$", message = "Número de telefone inválido")
+     String telefone,
 
      boolean ativo,
 

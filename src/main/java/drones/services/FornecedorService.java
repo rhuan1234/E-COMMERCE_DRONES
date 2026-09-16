@@ -1,13 +1,15 @@
 package drones.services;
 
 import java.util.List;
-
 import drones.exception.ValidationException;
+import drones.model.fornecedor.Cidade;
+import drones.model.fornecedor.Endereco;
+import drones.model.fornecedor.Estado;
 import drones.model.fornecedor.Fornecedor;
 import drones.repository.DroneRepository;
-import drones.repository.EnderecoRepository;
+import drones.repository.CidadeRepository;
+import drones.repository.EstadoRepository;
 import drones.repository.FornecedorRepository;
-import drones.repository.TelefoneRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -17,9 +19,11 @@ public class FornecedorService implements FornecedorServiceInterface{
     @Inject
     FornecedorRepository fornecedorRepository;
 
-    @Inject EnderecoRepository enderecoRepository;
-    @Inject TelefoneRepository telefoneRepository;
     @Inject DroneRepository droneRepository;
+
+    @Inject CidadeRepository cidadeRepository;
+
+    @Inject EstadoRepository estadoRepository;
 
     @Override
     @Transactional
@@ -27,6 +31,8 @@ public class FornecedorService implements FornecedorServiceInterface{
         if (fornecedor == null) {
             throw new ValidationException("Dados do fornecedor são obrigatórios");
         }
+
+        resolverCidade(fornecedor.getEndereco());
         fornecedorRepository.salvar(fornecedor);
         return fornecedor;
     }
@@ -77,18 +83,11 @@ public class FornecedorService implements FornecedorServiceInterface{
         fornecedor.setEmail(dados.getEmail());
         fornecedor.setAtivo(dados.isAtivo());
         
-        // Atualizar telefone: se o novo telefone foi fornecido, atualizar os campos do telefone existente
-        if (dados.getTelefone() != null) {
-            if (fornecedor.getTelefone() == null) {
-                fornecedor.setTelefone(dados.getTelefone());
-            } else {
-                // Atualizar os campos do telefone existente em vez de trocar o objeto
-                fornecedor.getTelefone().setNumero(dados.getTelefone().getNumero());
-            }
-        }
+        fornecedor.setTelefone(dados.getTelefone());
         
         // Atualizar endereço: se o novo endereço foi fornecido, atualizar os campos do endereço existente
         if (dados.getEndereco() != null) {
+            resolverCidade(dados.getEndereco());
             if (fornecedor.getEndereco() == null) {
                 fornecedor.setEndereco(dados.getEndereco());
             } else {
@@ -96,12 +95,34 @@ public class FornecedorService implements FornecedorServiceInterface{
                 fornecedor.getEndereco().setRua(dados.getEndereco().getRua());
                 fornecedor.getEndereco().setBairro(dados.getEndereco().getBairro());
                 fornecedor.getEndereco().setCidade(dados.getEndereco().getCidade());
-                fornecedor.getEndereco().setEstado(dados.getEndereco().getEstado());
                 fornecedor.getEndereco().setCep(dados.getEndereco().getCep());
             }
         }
 
         return fornecedor;
+    }
+
+    private void resolverCidade(Endereco endereco) {
+        if (endereco == null || endereco.getCidade() == null
+                || endereco.getCidade().getEstado() == null) {
+            return;
+        }
+
+        Cidade cidadeInformada = endereco.getCidade();
+        Estado estado = estadoRepository.findByNome(cidadeInformada.getEstado().getNome());
+        if (estado == null) {
+            estado = cidadeInformada.getEstado();
+            estadoRepository.salvar(estado);
+        }
+
+        Cidade cidade = cidadeRepository.findByNomeAndEstado(cidadeInformada.getNome(), estado.getId());
+        if (cidade == null) {
+            cidadeInformada.setEstado(estado);
+            cidadeRepository.salvar(cidadeInformada);
+            cidade = cidadeInformada;
+        }
+
+        endereco.setCidade(cidade);
     }
 
     @Override

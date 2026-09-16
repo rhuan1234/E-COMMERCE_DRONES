@@ -2,9 +2,7 @@ package drones.dto.usuarios;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import drones.dto.fornecedores.TelefoneRequestDTO;
-import io.smallrye.common.constraint.NotNull;
-import jakarta.validation.Valid;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
@@ -19,9 +17,9 @@ public record ClienteRequestCompletoDTO(
     @Pattern(regexp = "^\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2}$", message = "CPF inválido")
     String cpf,
 
-    @Valid
-    @NotNull
-    TelefoneRequestDTO numero
+    @NotBlank(message = "O telefone é obrigatório")
+    @Pattern(regexp = "^\\(?\\d{2}\\)?\\s?9?\\d{4}-?\\d{4}$", message = "Número de telefone inválido")
+    String telefone
 ) {
 
 }

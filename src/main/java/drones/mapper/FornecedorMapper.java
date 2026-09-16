@@ -16,10 +16,7 @@ public class FornecedorMapper {
             fornecedor.setEndereco(EnderecoMapper.toEntity(dto.endereco()));
         }
         
-        // Se um TelefoneRequestDTO foi fornecido, usar o TelefoneMapper
-        if (dto.telefone() != null) {
-            fornecedor.setTelefone(TelefoneMapper.toEntity(dto.telefone()));
-        }
+        fornecedor.setTelefone(dto.telefone());
         
         fornecedor.setCnpj(dto.cnpj());
         fornecedor.setAtivo(dto.ativo());
@@ -33,7 +30,7 @@ public class FornecedorMapper {
                 fornecedor.getNome(),
                 fornecedor.getCnpj(),
                 fornecedor.getEmail(),
-                fornecedor.getTelefone() != null ? TelefoneMapper.toResponseDTO(fornecedor.getTelefone()) : null,
+                fornecedor.getTelefone(),
                 fornecedor.getDrones() != null ? fornecedor.getDrones().stream().map(drone -> drone.getId()).toList() : null,
                 fornecedor.isAtivo(),
                 fornecedor.getEndereco() != null ? EnderecoMapper.toResponseDTO(fornecedor.getEndereco()) : null

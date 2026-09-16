@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import drones.model.fornecedor.Endereco;
-import drones.model.fornecedor.Telefone;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,7 +14,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -59,9 +57,7 @@ public class Usuario {
 
     private Long enderecoPrincipalId;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "telefone_id")
-    private Telefone telefone;
+    private String telefone;
 
     public Usuario() {
         
@@ -135,12 +131,12 @@ public class Usuario {
     }
 
 
-    public Telefone getTelefone() {
+    public String getTelefone() {
         return telefone;
     }
 
 
-    public void setTelefone(Telefone telefone) {
+    public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
 }

@@ -17,10 +17,14 @@ import drones.exception.ValidationException;
 import drones.mapper.ClienteMapper;
 import drones.mapper.EnderecoMapper;
 import drones.model.fornecedor.Endereco;
+import drones.model.fornecedor.Cidade;
+import drones.model.fornecedor.Estado;
 import drones.model.usuario.Perfil;
 import drones.model.usuario.TokenResetarSenha;
 import drones.model.usuario.Usuario;
 import drones.repository.EnderecoRepository;
+import drones.repository.CidadeRepository;
+import drones.repository.EstadoRepository;
 import drones.repository.UsuarioRepository;
 import drones.repository.tokenRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -50,6 +54,12 @@ public class ClienteService implements ClienteServiceInterface {
 
     @Inject
     EnderecoRepository enderecoRepository;
+
+    @Inject
+    CidadeRepository cidadeRepository;
+
+    @Inject
+    EstadoRepository estadoRepository;
 
     @Override
     @Transactional
@@ -218,10 +228,12 @@ public class ClienteService implements ClienteServiceInterface {
         if(dto.principal() == true) {
             enderecos.forEach(endereco -> endereco.setPrincipal(false));
         }
-        enderecos.add(EnderecoMapper.toEntityEnderecoCliente(dto));
+        Endereco endereco = EnderecoMapper.toEntityEnderecoCliente(dto);
+        resolverCidade(endereco);
+        enderecos.add(endereco);
         cliente.setEnderecos(enderecos);
         usuarioRepository.flush();
-        Endereco endereco = cliente.getEnderecos().get(cliente.getEnderecos().size() - 1);
+        endereco = cliente.getEnderecos().get(cliente.getEnderecos().size() - 1);
         return EnderecoMapper.toResponseEnderecoClienteDTO(endereco);
         }
     
@@ -263,9 +275,10 @@ public class ClienteService implements ClienteServiceInterface {
                 .findFirst()
                 .orElseThrow(() -> new ValidationException("Endereço não encontrado"));
         endereco.setRua(dto.rua());
-        endereco.setCidade(dto.cidade());
+        Endereco enderecoAtualizado = EnderecoMapper.toEntityEnderecoCliente(dto);
+        resolverCidade(enderecoAtualizado);
+        endereco.setCidade(enderecoAtualizado.getCidade());
         endereco.setBairro(dto.bairro());
-        endereco.setEstado(dto.estado());
         endereco.setCep(dto.cep());
         endereco.setPrincipal(dto.principal());
         endereco.setRua(dto.rua());
@@ -277,6 +290,29 @@ public class ClienteService implements ClienteServiceInterface {
             });
         }
         return EnderecoMapper.toResponseEnderecoClienteDTO(endereco);
+    }
+
+    private void resolverCidade(Endereco endereco) {
+        if (endereco == null || endereco.getCidade() == null
+                || endereco.getCidade().getEstado() == null) {
+            return;
+        }
+
+        Cidade cidadeInformada = endereco.getCidade();
+        Estado estado = estadoRepository.findByNome(cidadeInformada.getEstado().getNome());
+        if (estado == null) {
+            estado = cidadeInformada.getEstado();
+            estadoRepository.salvar(estado);
+        }
+
+        Cidade cidade = cidadeRepository.findByNomeAndEstado(cidadeInformada.getNome(), estado.getId());
+        if (cidade == null) {
+            cidadeInformada.setEstado(estado);
+            cidadeRepository.salvar(cidadeInformada);
+            cidade = cidadeInformada;
+        }
+
+        endereco.setCidade(cidade);
     }
 
     @Override

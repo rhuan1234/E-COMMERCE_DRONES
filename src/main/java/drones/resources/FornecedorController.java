@@ -52,7 +52,9 @@ public class FornecedorController {
         if (fornecedor == null) {
             throw new ValidationException("Dados do fornecedor são obrigatórios");
         }
+
         Fornecedor novo = fornecedorService.criar(FornecedorMapper.toEntity(fornecedor));
+
         FornecedorResponseDTO dto = FornecedorMapper.toResponseDTO(novo);
         return Response.status(Response.Status.CREATED).entity(dto).build();
     }

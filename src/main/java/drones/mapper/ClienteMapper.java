@@ -22,12 +22,7 @@ public class ClienteMapper {
 
     usuario.setNomeCompleto(dto.nomeCompleto());
     usuario.setCpf(dto.cpf());
-    if(usuario.getTelefone() == null) {
-        usuario.setTelefone(TelefoneMapper.toEntity(dto.numero()));
-    } else {
-        usuario.getTelefone().setNumero(TelefoneMapper.toEntity(dto.numero()).getNumero());
-    }
-    usuario.setTelefone(TelefoneMapper.toEntity(dto.numero()));
+    usuario.setTelefone(dto.telefone());
 
     return usuario;
 }
@@ -45,7 +40,7 @@ public class ClienteMapper {
                 usuario.getNomeCompleto(),
                 usuario.getEmail(),
                 usuario.getCpf(),
-                usuario.getTelefone() != null ? usuario.getTelefone().getNumero() : null,
+                usuario.getTelefone(),
                 enderecos
         );
     }

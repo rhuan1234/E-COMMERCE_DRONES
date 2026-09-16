@@ -91,8 +91,8 @@ public class PedidoService implements PedidoServiceInterface {
             if(endereco.isPrincipal()) {
                 pedido.setRuaEntrega(endereco.getRua());
                 pedido.setBairroEntrega(endereco.getBairro());
-                pedido.setCidadeEntrega(endereco.getCidade());
-                pedido.setEstadoEntrega(endereco.getEstado());
+                pedido.setCidadeEntrega(endereco.getCidade().getNome());
+                pedido.setEstadoEntrega(endereco.getCidade().getEstado().getNome());
                 pedido.setCepEntrega(endereco.getCep());
                 break;
             }

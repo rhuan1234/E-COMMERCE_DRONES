@@ -4,8 +4,7 @@ public record EnderecoResponseDTO(
     Long id,
     String rua,
     String bairro,
-    String cidade,
-    String estado,
+    CidadeResponseDTO cidade,
     String cep
 ) {
 }
