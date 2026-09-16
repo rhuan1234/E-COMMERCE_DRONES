@@ -5,6 +5,7 @@ import { FornecedorForm } from './features/admin/components/fornecedor-form/forn
 import { fornecedorResolver } from './core/resolvers/FornecedorResolver';
 import { authGuard } from './core/services/auth/AuthGuard';
 import { Login } from './features/auth/login/login';
+import { Register } from './features/auth/register/register';
 
 export const routes: Routes = [
     {path: 'cameras', 
@@ -14,8 +15,7 @@ export const routes: Routes = [
 
     {path: 'fornecedores', 
         component: FornecedorList, 
-        title: 'Lista de Fornecedores',
-        canActivate: [authGuard]},
+        title: 'Lista de Fornecedores'},
 
     {path: 'fornecedores/new', 
         component: FornecedorForm, 
@@ -33,6 +33,11 @@ export const routes: Routes = [
     path: 'login',
     component: Login,
     title: 'Login'
-    
+   },
+   
+   {
+    path: 'register',
+    component: Register,
+    title: 'cadastro'
    }
 ];

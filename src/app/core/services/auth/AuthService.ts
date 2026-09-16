@@ -1,24 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import { Observable, tap } from 'rxjs';
-
-interface LoginRequest{
-    login: string;
-    senha: string;
-}
-
-interface LoginResponse{
-    token: string;
-}
+import { LoginRequest } from '../../models/LoginRequest';
+import { LoginResponse } from '../../models/LoginResponse';
+import { RegisterRequest } from '../../models/RegisterRequest';
 
 @Injectable({providedIn: 'root'})
 export class AuthService{
- private readonly apiUrl = 'http://localhost:8080/auth/login';
+ private readonly apiUrl = 'http://localhost:8080';
 
  constructor(private http: HttpClient){}
 
  login(dados: LoginRequest): Observable<LoginResponse>{
-    return this.http.post<LoginResponse>(this.apiUrl, dados)
+    return this.http.post<LoginResponse>(this.apiUrl + '/auth/login', dados)
     .pipe(
         tap(response =>{
         localStorage.setItem('token', response.token);
@@ -26,6 +20,11 @@ export class AuthService{
     )
     );
  }
+
+ register(dados: RegisterRequest): Observable<RegisterRequest>{
+   return this.http.post<RegisterRequest>(this.apiUrl + '/clientes', dados);
+ }
+
 
  logout(): void{
     localStorage.removeItem('token');
@@ -36,7 +35,10 @@ export class AuthService{
  }
 
  isAuthenticated(): boolean{
-    const token = localStorage.getItem('token');
-    return !!token;
+   if(localStorage.getItem('token')){
+      return true
+   }
+    
+    return false
  }
 }

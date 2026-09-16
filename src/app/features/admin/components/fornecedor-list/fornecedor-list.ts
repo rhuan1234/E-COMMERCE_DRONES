@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Fornecedor } from '../../../../core/models/Fornecedor';
+import { Fornecedor } from '../../../../core/models/fornecedor/FornecedorRequest';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { FornecedorService } from '../../../../core/services/FornecedorService';
 import { MatToolbarModule } from '@angular/material/toolbar';

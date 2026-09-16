@@ -31,7 +31,7 @@ export class Login {
     })
     .subscribe({
       next: () =>{
-        this.router.navigate(['/cameras']);
+        this.router.navigate(['/fornecedores']);
       },
 
       error: (err) =>{
@@ -40,5 +40,6 @@ export class Login {
 
     })
   }
+  
 
 }
