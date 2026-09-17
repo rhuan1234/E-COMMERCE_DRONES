@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { LoginRequest } from '../../models/LoginRequest';
-import { LoginResponse } from '../../models/LoginResponse';
-import { RegisterRequest } from '../../models/RegisterRequest';
+import { LoginRequest } from '../../models/auth/LoginRequest';
+import { LoginResponse } from '../../models/auth/LoginResponse';
+import { RegisterRequest } from '../../models/auth/RegisterRequest';
 
 @Injectable({providedIn: 'root'})
 export class AuthService{

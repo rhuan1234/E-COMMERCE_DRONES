@@ -6,6 +6,9 @@ import { fornecedorResolver } from './core/resolvers/FornecedorResolver';
 import { authGuard } from './core/services/auth/AuthGuard';
 import { Login } from './features/auth/login/login';
 import { Register } from './features/auth/register/register';
+import { DroneForm } from './features/admin/components/drone-form/drone-form';
+import { DroneList } from './features/admin/components/drone-list/drone-list';
+import { droneResolver } from './core/resolvers/DroneResolver';
 
 export const routes: Routes = [
     {path: 'cameras', 
@@ -15,7 +18,8 @@ export const routes: Routes = [
 
     {path: 'fornecedores', 
         component: FornecedorList, 
-        title: 'Lista de Fornecedores'},
+        title: 'Lista de Fornecedores',
+        canActivate: [authGuard]},
 
     {path: 'fornecedores/new', 
         component: FornecedorForm, 
@@ -39,5 +43,26 @@ export const routes: Routes = [
     path: 'register',
     component: Register,
     title: 'cadastro'
+   },
+
+   {
+    path: 'drones',
+    component: DroneList,
+    title: "Drones",
+    canActivate: [authGuard]
+   },
+
+   {
+    path: 'drones/new',
+    component: DroneForm,
+    title: 'Novo Drone',
+    canActivate: [authGuard]
+   },
+   {
+    path: 'drones/:id/edit',
+    component: DroneForm,
+    title: 'Editar Drone',
+    resolve: {drone: droneResolver},
+    canActivate: [authGuard]
    }
 ];
