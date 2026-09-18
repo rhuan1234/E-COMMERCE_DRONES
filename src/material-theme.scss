@@ -4,35 +4,43 @@
 // Learn more about theming and how to use it for your application's
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
+@use './theme-colors' as theme;
 
 html {
   height: 100%;
   @include mat.theme(
     (
       color: (
-        primary: mat.$cyan-palette,
-        tertiary: mat.$orange-palette,
+        theme-type: dark,
+        primary: theme.$primary-palette,
+        tertiary: theme.$tertiary-palette,
       ),
       typography: Roboto,
       density: 0,
     )
   );
+
+  // Superfícies escuras refinadas e suaves (dark mode confortável aos olhos)
+  --mat-sys-surface: #0d0f11;
+  --mat-sys-surface-dim: #090b0d;
+  --mat-sys-surface-container: #121417;
+  --mat-sys-surface-container-low: #0f1114;
+  --mat-sys-surface-container-high: #16191d;
+  --mat-sys-surface-container-highest: #1e2227;
+  --mat-sys-outline: #2d333b;
+  --mat-sys-outline-variant: #1f2429;
+  --mat-sys-on-surface: #e5e7eb;
+  --mat-sys-on-surface-variant: #9ca3af;
 }
 
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
+  // Configura o navegador para modo escuro
+  color-scheme: dark;
 
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
+  background-color: var(--mat-sys-surface, #0d0f11);
+  color: var(--mat-sys-on-surface, #e5e7eb);
   font: var(--mat-sys-body-medium);
 
-  // Reset the user agent margin.
   margin: 0;
   height: 100%;
 }

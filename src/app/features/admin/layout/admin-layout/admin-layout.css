@@ -1,0 +1,128 @@
+.admin-container {
+  height: 100vh;
+  width: 100%;
+  background-color: var(--mat-sys-surface, #0d0f11);
+  color: var(--mat-sys-on-surface, #e5e7eb);
+}
+
+.admin-sidenav {
+  width: 260px;
+  background-color: var(--mat-sys-surface-container, #121417) !important;
+  border-right: 1px solid var(--mat-sys-outline-variant, #1f2429) !important;
+}
+
+/* Força o drawer interno a ocupar 100% da altura para empurrar o rodapé para baixo */
+:host ::ng-deep .admin-sidenav .mat-drawer-inner-container {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  overflow-x: hidden;
+}
+
+/* Cabeçalho da marca */
+.sidenav-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 20px;
+}
+
+.brand-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background-color: var(--mat-sys-primary, #84cc16);
+  color: var(--mat-sys-on-primary, #000000);
+  font-weight: 800;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--mat-sys-primary, #84cc16) 30%, transparent);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--mat-sys-on-surface, #ffffff);
+}
+
+.brand-subtitle {
+  font-size: 0.75rem;
+  color: var(--mat-sys-on-surface-variant, #9ca3af);
+}
+
+/* Lista de navegação */
+.nav-list {
+  padding: 16px 12px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-list a.mat-mdc-list-item {
+  border-radius: 10px;
+  margin-bottom: 2px;
+  color: var(--mat-sys-on-surface-variant, #9ca3af);
+  transition: all 0.2s ease-in-out;
+}
+
+.nav-list a.mat-mdc-list-item:hover {
+  background-color: var(--mat-sys-surface-container-high, #16191d);
+  color: var(--mat-sys-on-surface, #ffffff);
+}
+
+/* Item de navegação ativo com verde-limão e fundo sutil */
+.nav-list a.active-nav-item {
+  background-color: color-mix(in srgb, var(--mat-sys-primary, #84cc16) 14%, transparent) !important;
+  color: var(--mat-sys-primary, #84cc16) !important;
+  font-weight: 600;
+}
+
+.nav-list a.active-nav-item mat-icon {
+  color: var(--mat-sys-primary, #84cc16) !important;
+}
+
+/* Espaçador flexível para empurrar o logout para o rodapé */
+.sidenav-spacer {
+  flex: 1 1 auto;
+}
+
+/* Rodapé */
+.sidenav-footer {
+  padding: 16px;
+}
+
+.logout-btn {
+  width: 100%;
+  justify-content: flex-start !important;
+  color: var(--mat-sys-on-surface-variant, #9ca3af) !important;
+  border-radius: 10px !important;
+  padding: 10px 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px;
+}
+
+.logout-btn:hover {
+  background-color: var(--mat-sys-surface-container-high, #16191d) !important;
+  color: var(--mat-sys-error, #ef4444) !important;
+}
+
+/* Área de conteúdo */
+.admin-content {
+  background-color: var(--mat-sys-surface, #0d0f11) !important;
+  overflow-y: auto;
+  padding: 32px;
+}
+
+.content-wrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+}

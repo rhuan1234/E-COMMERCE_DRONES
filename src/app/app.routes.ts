@@ -1,68 +1,44 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/services/auth/AuthGuard';
+import { Login } from './features/auth/login/login';
+import { Register } from './features/auth/register/register';
 import { CameraList } from './features/admin/components/camera-list/camera-list';
 import { FornecedorList } from './features/admin/components/fornecedor-list/fornecedor-list';
 import { FornecedorForm } from './features/admin/components/fornecedor-form/fornecedor-form';
 import { fornecedorResolver } from './core/resolvers/FornecedorResolver';
-import { authGuard } from './core/services/auth/AuthGuard';
-import { Login } from './features/auth/login/login';
-import { Register } from './features/auth/register/register';
 import { DroneForm } from './features/admin/components/drone-form/drone-form';
 import { DroneList } from './features/admin/components/drone-list/drone-list';
 import { droneResolver } from './core/resolvers/DroneResolver';
+import { AdminLayoutComponent } from './features/admin/layout/admin-layout/admin-layout';
 
 export const routes: Routes = [
-    {path: 'cameras', 
-        component: CameraList, 
-        title: 'Lista de Câmeras',
-        canActivate: [authGuard]},
+  // Rotas auth
+  { path: 'login', component: Login, title: 'Login' },
+  { path: 'register', component: Register, title: 'Cadastro' },
 
-    {path: 'fornecedores', 
-        component: FornecedorList, 
-        title: 'Lista de Fornecedores',
-        canActivate: [authGuard]},
+  // Rotas administrativas 
+  {
+    path: '',
+    component: AdminLayoutComponent,
+    canActivate: [authGuard],
+    children: [
+      { path: '', redirectTo: 'drones', pathMatch: 'full' },
 
-    {path: 'fornecedores/new', 
-        component: FornecedorForm, 
-        title: 'Novo Fornecedor',
-        canActivate: [authGuard]},
+      // Drones
+      { path: 'drones', component: DroneList, title: 'Drones' },
+      { path: 'drones/new', component: DroneForm, title: 'Novo Drone' },
+      { path: 'drones/:id/edit', component: DroneForm, title: 'Editar Drone', resolve: { drone: droneResolver } },
 
-    {path: 'fornecedores/:id/edit', 
-        component: FornecedorForm, 
-        title: 'Editar Fornecedor',
-        resolve: { fornecedor: fornecedorResolver },
-        canActivate: [authGuard]
-    },
+      // Câmeras
+      { path: 'cameras', component: CameraList, title: 'Lista de Câmeras' },
 
-   {
-    path: 'login',
-    component: Login,
-    title: 'Login'
-   },
-   
-   {
-    path: 'register',
-    component: Register,
-    title: 'cadastro'
-   },
+      // Fornecedores
+      { path: 'fornecedores', component: FornecedorList, title: 'Lista de Fornecedores' },
+      { path: 'fornecedores/new', component: FornecedorForm, title: 'Novo Fornecedor' },
+      { path: 'fornecedores/:id/edit', component: FornecedorForm, title: 'Editar Fornecedor', resolve: { fornecedor: fornecedorResolver } },
+    ]
+  },
 
-   {
-    path: 'drones',
-    component: DroneList,
-    title: "Drones",
-    canActivate: [authGuard]
-   },
-
-   {
-    path: 'drones/new',
-    component: DroneForm,
-    title: 'Novo Drone',
-    canActivate: [authGuard]
-   },
-   {
-    path: 'drones/:id/edit',
-    component: DroneForm,
-    title: 'Editar Drone',
-    resolve: {drone: droneResolver},
-    canActivate: [authGuard]
-   }
+  // Fallback
+  { path: '**', redirectTo: 'drones' }
 ];
