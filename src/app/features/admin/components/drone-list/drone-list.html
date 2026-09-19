@@ -10,12 +10,22 @@
 <!-- Área do filtro -->
 <div class="filter-container">
   <mat-form-field appearance="outline">
-    <mat-label>Filtro</mat-label>
+    <mat-label>Filtro por Modelo</mat-label>
 
-    <input matInput (keyup.enter)="carregarDronePorModelo(input.value)" placeholder="Ex: DJI" #input />
+    <input 
+      matInput 
+      [value]="filtroModelo"
+      (keyup.enter)="filtrarPorModelo(input.value)" 
+      placeholder="Ex: DJI" 
+      #input 
+    />
   </mat-form-field>
 
-  <button mat-button color="primary" (click)="carregarDrones()">
+  <button mat-raised-button color="primary" (click)="filtrarPorModelo(input.value)">
+    Buscar
+  </button>
+
+  <button mat-button color="warn" (click)="limparFiltro(input)">
     Limpar Filtro
   </button>
 </div>

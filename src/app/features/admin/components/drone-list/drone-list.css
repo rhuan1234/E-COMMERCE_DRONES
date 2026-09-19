@@ -23,6 +23,7 @@
 .filter-container {
     display: flex;
     align-items: center;
+    gap: 12px;
     padding: 0 24px;
     margin-bottom: 8px;
 }
