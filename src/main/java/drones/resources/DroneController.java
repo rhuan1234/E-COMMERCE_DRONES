@@ -2,6 +2,7 @@ package drones.resources;
 
 import java.util.List;
 
+import drones.dto.PageResponse;
 import drones.dto.drones.DroneRequestDTO;
 import drones.dto.drones.DroneResponseDTO;
 import drones.dto.drones.DroneResponseEcommerceDTO;
@@ -20,6 +21,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
@@ -51,23 +53,21 @@ public class DroneController {
     @GET
     @Path("/admin")
     @RolesAllowed("ADMIN")
-    public Response buscarPorTodos(){
-        List<DroneResponseDTO> drones = droneService.buscarTodos()
-        .stream()
-        .map(e -> DroneMapper.toResponseDTO(e))
-        .toList();
-        return Response.ok(drones).build();
+    public PageResponse<DroneResponseDTO> buscarPorTodos(@QueryParam("page") @DefaultValue("0") int page,
+                                    @QueryParam("pageSize") @DefaultValue("10") int pageSize){
+        List<Drone> drones = droneService.buscarTodos(page, pageSize);
+        long totalItems = droneService.count();
+        return PageResponse.of(drones, page, pageSize, totalItems, DroneMapper::toResponseDTO);
     }
 
     @GET
-    public Response buscarPorTodosEcommerce(){
-        List<DroneResponseEcommerceDTO> drones = droneService.buscarTodos()
-        .stream()
-        .map(e -> DroneMapper.toResponseEcommerceDTO(e))
-        .toList();
-        return Response.ok(drones).build();
+    public PageResponse<DroneResponseEcommerceDTO> buscarPorTodosEcommerce(@QueryParam("page") @DefaultValue("0") int page,
+                                    @QueryParam("pageSize") @DefaultValue("10") int pageSize){
+        List<Drone> drones = droneService.buscarTodos(page, pageSize);
+        long totalItems = droneService.count();
+        return PageResponse.of(drones, page, pageSize, totalItems, DroneMapper::toResponseEcommerceDTO);
     }
-    
+
     @GET
     @Path("/admin/{id}")
     @RolesAllowed("ADMIN")
@@ -141,15 +141,14 @@ public class DroneController {
 
     @GET
     @Path("/modelos/{modelo}")
-    public Response buscarPorModeloEcommerce(@PathParam("modelo") String modelo){
+    public PageResponse<DroneResponseEcommerceDTO> buscarPorModeloEcommerce(@QueryParam("page") @DefaultValue("0") int page,
+                                    @QueryParam("pageSize") @DefaultValue("10") int pageSize,@PathParam("modelo") String modelo){
         if (modelo == null || modelo.isBlank()) {
             throw new ValidationException("Modelo do drone é obrigatório", "modelo");
         }
-        List<Drone> drones = droneService.buscarPorModelo(modelo);
-        List<DroneResponseEcommerceDTO> dronesDTO = drones.stream()
-            .map(DroneMapper::toResponseEcommerceDTO)
-            .toList();
-        return Response.ok(dronesDTO).build();
+        List<Drone> drones = droneService.buscarPorModelo(page, pageSize, modelo);
+        long totalItems = droneService.countModelos(modelo);
+        return PageResponse.of(drones, page, pageSize, totalItems, DroneMapper::toResponseEcommerceDTO);
     }
 
     @GET

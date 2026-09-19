@@ -44,8 +44,8 @@ public class DroneService implements DroneServiceInterface {
     }
 
     @Override
-    public List<Drone> buscarTodos() {
-        List<Drone> drones = droneRepository.findAll().list();
+    public List<Drone> buscarTodos(int page, int pageSize) {
+        List<Drone> drones = droneRepository.findAll().page(page, pageSize).list();
         if (drones.isEmpty()) {
             throw new ValidationException("Nenhum drone encontrado");
         }
@@ -129,11 +129,11 @@ public class DroneService implements DroneServiceInterface {
         return drones;
     }
 
-    public List<Drone> buscarPorModelo(String modelo) {
+    public List<Drone> buscarPorModelo(int page, int pageSize, String modelo) {
         if (modelo == null || modelo.isBlank()) {
             throw new ValidationException("Modelo do drone é obrigatório", "modelo");
         }
-        List<Drone> drones = droneRepository.findByModelo(modelo);
+        List<Drone> drones = droneRepository.findByModelo(modelo).page(page, pageSize).list();
         if (drones.isEmpty()) {
             throw new ValidationException("Nenhum drone encontrado para o modelo '" + modelo + "'", "modelo");
         }
@@ -154,5 +154,11 @@ public class DroneService implements DroneServiceInterface {
         return drones;
     }
    
-    
+    public Long count() {
+        return droneRepository.findAll().count();
+    }
+
+    public Long countModelos(String modelo) {
+        return droneRepository.findByModelo(modelo).count();
+    }
 }

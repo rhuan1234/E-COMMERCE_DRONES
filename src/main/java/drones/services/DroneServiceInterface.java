@@ -6,7 +6,7 @@ import drones.model.drones.Drone;
 
 public interface DroneServiceInterface {
 
-    List<Drone> buscarTodos();
+    List<Drone> buscarTodos(int page, int pageSize);
     Drone buscarPorId(Long id);
     Drone criar(Drone drone);
     Drone atualizar(Long id, Drone drone);

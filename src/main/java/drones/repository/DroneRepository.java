@@ -3,6 +3,7 @@ package drones.repository;
 import java.util.List;
 
 import drones.model.drones.Drone;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
@@ -23,8 +24,8 @@ public class DroneRepository implements PanacheRepository<Drone> {
         return find("nome ILIKE ?1", "%" + nome + "%").firstResult();
     }
 
-    public final List<Drone> findByModelo(String modelo) {
-        return find("modelo ILIKE ?1", "%" + modelo + "%").list();
+    public final PanacheQuery<Drone> findByModelo(String modelo) {
+        return find("modelo ILIKE ?1", "%" + modelo + "%");
     }
 
     public final List<Drone> findByPrecoRange(double precoMin, double precoMax) {
