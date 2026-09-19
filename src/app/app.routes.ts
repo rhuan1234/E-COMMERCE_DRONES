@@ -28,6 +28,7 @@ export const routes: Routes = [
       { path: 'drones', component: DroneList, title: 'Drones' },
       { path: 'drones/new', component: DroneForm, title: 'Novo Drone' },
       { path: 'drones/:id/edit', component: DroneForm, title: 'Editar Drone', resolve: { drone: droneResolver } },
+      {path: 'drones/filtro/modelo/:modelo', component:DroneList, title:"Drones por modelo"},
 
       // Câmeras
       { path: 'cameras', component: CameraList, title: 'Lista de Câmeras' },
