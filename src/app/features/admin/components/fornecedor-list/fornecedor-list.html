@@ -9,10 +9,10 @@
 
 <mat-form-field appearance="outline" class="flex-container">
     <mat-label>Filtro</mat-label>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Ex: Go PRO" #input>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex: Fly Tech" #input>
 </mat-form-field>
 
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+<table mat-table [dataSource]="dataSource" class="fornecedor-table mat-elevation-z8">
 
     <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef> ID </th>

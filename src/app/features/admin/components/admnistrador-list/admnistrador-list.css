@@ -15,3 +15,7 @@
     padding-right: 24px;
     text-align: center;
 }
+
+.administrador-table tr.mat-mdc-row:hover {
+    background-color: rgb(32, 30, 30);
+}
