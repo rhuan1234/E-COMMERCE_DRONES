@@ -1,0 +1,101 @@
+<mat-toolbar class="toolbar-title" color="primary">
+    Controle de Fornecedores
+</mat-toolbar>
+
+<mat-card>
+    <mat-card-content>
+        <form class="form" [formGroup]="form">
+            <div class="grid">
+
+                <!-- Nome -->
+                <mat-form-field appearance="outline" class="full-width-input">
+                    <mat-label>Nome</mat-label>
+                    <input matInput formControlName="nome" placeholder="Nome do fornecedor">
+                </mat-form-field>
+
+                <!-- CNPJ -->
+                <mat-form-field appearance="outline" class="full-width-input">
+                    <mat-label>CNPJ</mat-label>
+                    <input matInput formControlName="cnpj" placeholder="CNPJ do fornecedor">
+                </mat-form-field>
+
+                <!-- Email -->
+                <mat-form-field appearance="outline" class="full-width-input">
+                    <mat-label>Email</mat-label>
+                    <input matInput formControlName="email" placeholder="Email do fornecedor">
+                </mat-form-field>
+
+                <!-- Telefone -->
+                <mat-form-field appearance="outline" class="full-width-input">
+                    <mat-label>Telefone</mat-label>
+                    <input matInput formControlName="telefone" placeholder="Telefone do fornecedor">
+                </mat-form-field>
+                <div>
+                    Endereço
+                </div>
+                <div formGroupName="endereco">
+                    <!-- cep -->
+                    <mat-form-field appearance="outline" class="full-width-input">
+                        <mat-label>Cep</mat-label>
+                        <input matInput formControlName="cep" placeholder="cep">
+                    </mat-form-field>
+
+                    <!-- rua -->
+                    <mat-form-field appearance="outline" class="full-width-input">
+                        <mat-label>Rua</mat-label>
+                        <input matInput formControlName="rua" placeholder="rua">
+                    </mat-form-field>
+
+                    <!-- bairro -->
+                    <mat-form-field appearance="outline" class="full-width-input">
+                        <mat-label>Bairro</mat-label>
+                        <input matInput formControlName="bairro" placeholder="bairro">
+                    </mat-form-field>
+                    
+                    <div formGroupName="cidade">
+                        <!-- cidade -->
+                        <mat-form-field appearance="outline" class="full-width-input">
+                            <mat-label>Cidade</mat-label>
+                            <input matInput formControlName="nome" placeholder="cidade">
+                        </mat-form-field>
+
+                        <!-- estado -->
+                        <div formGroupName="estado">
+                            <mat-form-field appearance="outline" class="full-width-input">
+                                <mat-label>Estado</mat-label>
+                                <input matInput formControlName="nome" placeholder="estado">
+                            </mat-form-field>
+                        </div>
+                        </div>
+                </div>
+
+                <!-- Ativo -->
+                <mat-checkbox formControlName="ativo">Ativo</mat-checkbox>
+
+            </div>
+
+            <div class="actions">
+                <button mat-raised-button 
+                    color="warn" 
+                    (click)="excluir()" 
+                    [disabled]="!form.value.id">
+                    <mat-icon>delete</mat-icon>
+                    Excluir
+                </button>
+
+                <button mat-raised-button (click)="voltar()">
+                    <mat-icon>arrow_back</mat-icon>
+                    Cancelar
+                </button>
+
+                <button mat-raised-button 
+                    color="primary" 
+                    (click)="salvar()" 
+                    [disabled]="form.invalid">
+                    <mat-icon>save</mat-icon>
+                    Salvar
+                </button>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>

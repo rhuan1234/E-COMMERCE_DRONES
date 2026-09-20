@@ -1,0 +1,54 @@
+<mat-sidenav-container class="admin-container">
+  
+  <!-- Sidebar Administrativa -->
+  <mat-sidenav mode="side" opened class="admin-sidenav">
+    
+    <!-- Topo da Sidebar: Logo / Brand -->
+    <div class="sidenav-header">
+      <div class="brand-badge">S</div>
+      <div class="brand-text">
+        <span class="brand-title">SKYLINE ADMIN</span>
+        <span class="brand-subtitle">Gestão da Loja</span>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Lista de Navegação (Angular Material Nav List) -->
+    <mat-nav-list class="nav-list">
+      @for (item of navItems; track item.route) {
+        <a
+          mat-list-item
+          [routerLink]="item.route"
+          routerLinkActive="active-nav-item"
+          #rla="routerLinkActive"
+          [activated]="rla.isActive"
+        >
+          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+          <span matListItemTitle>{{ item.label }}</span>
+        </a>
+      }
+    </mat-nav-list>
+
+    <div class="sidenav-spacer"></div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Rodapé da Sidebar: Logout / Sair -->
+    <div class="sidenav-footer">
+      <button mat-button class="logout-btn" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Sair do sistema</span>
+      </button>
+    </div>
+
+  </mat-sidenav>
+
+  <!-- Área Principal de Conteúdo -->
+  <mat-sidenav-content class="admin-content">
+    <div class="content-wrapper">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

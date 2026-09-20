@@ -1,0 +1,74 @@
+<mat-toolbar class="mat-toolbar">
+    <div class="flex-container" color="primary">
+        <span class="toolbar-title">Controle de Câmeras</span>
+        <button mat-fab class="accent" (click)="openFormDialog()">
+            <mat-icon>add</mat-icon>
+        </button>
+    </div>
+</mat-toolbar>
+
+<mat-form-field appearance="outline" class="flex-container">
+    <mat-label>Filtro</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex: Go PRO" #input>
+</mat-form-field>
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+    <!-- ID Column -->
+    <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> ID </th>
+        <td mat-cell *matCellDef="let camera"> {{camera.id}} </td>
+    </ng-container>
+
+    <!-- Modelo Column -->
+    <ng-container matColumnDef="modelo">
+        <th mat-header-cell *matHeaderCellDef> Modelo </th>
+        <td mat-cell *matCellDef="let camera"> {{camera.modelo}} </td>
+    </ng-container>
+
+    <!-- Marca Column -->
+    <ng-container matColumnDef="marca">
+        <th mat-header-cell *matHeaderCellDef> Marca </th>
+        <td mat-cell *matCellDef="let camera"> {{camera.marca}} </td>
+    </ng-container>
+
+    <!-- Resolução Column -->
+    <ng-container matColumnDef="resolucao">
+        <th mat-header-cell *matHeaderCellDef> Resolução </th>
+        <td mat-cell *matCellDef="let camera"> {{camera.resolucao}} </td>
+    </ng-container>
+
+    <!-- Zoom Column -->
+    <ng-container matColumnDef="zoom">
+        <th mat-header-cell *matHeaderCellDef> Zoom </th>
+        <td mat-cell *matCellDef="let camera"> {{camera.zoom}} </td>
+    </ng-container>
+
+    <!-- Estabilização Column -->
+    <ng-container matColumnDef="estabilizacao">
+        <th mat-header-cell *matHeaderCellDef> Estabilização </th>
+        <td mat-cell *matCellDef="let camera"> {{camera.estabilizacao ? 'Sim' : 'Não'}} </td>
+    </ng-container>
+
+    <!-- FPS Column -->
+    <ng-container matColumnDef="fps">
+        <th mat-header-cell *matHeaderCellDef> FPS </th>
+        <td mat-cell *matCellDef="let camera"> {{camera.fps}} </td>
+    </ng-container>
+
+    <!-- Acao Column -->
+    <ng-container matColumnDef="acao">
+        <th mat-header-cell *matHeaderCellDef> Ação </th>
+        <td mat-cell *matCellDef="let obj">
+            <button mat-icon-button color="primary" (click)="openFormDialog(obj)">
+                <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="excluirCamera(obj)">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </td>
+    </ng-container>
+    
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

@@ -1,0 +1,13 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.full-width-input {
+  width: 100%;
+}
+
+.cabecalho{
+    margin-bottom: 10px;
+}
