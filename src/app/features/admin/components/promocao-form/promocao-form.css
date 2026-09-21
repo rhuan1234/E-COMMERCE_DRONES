@@ -1,0 +1,119 @@
+/* Formulário principal */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 8px;
+}
+
+/* Campos da promoção */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.grid mat-form-field {
+  width: 100%;
+}
+
+/* Campo de pesquisa */
+.full-width-input {
+  width: 100%;
+}
+
+/* Títulos das seções */
+h3 {
+  margin: 8px 0 0;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* Área dos resultados */
+.drone-results,
+.selected-drones {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Cada drone encontrado */
+.drone-item,
+.selected-drone {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 12px 16px;
+
+  border: 1px solid #ddd;
+  border-radius: 8px;
+
+  background-color: #fafafa;
+}
+
+/* Informações do drone */
+.drone-item > div,
+.selected-drone > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Nome */
+.drone-item strong,
+.selected-drone strong {
+  font-size: 15px;
+}
+
+/* Marca e modelo */
+.drone-item span,
+.selected-drone span {
+  font-size: 13px;
+  color: #666;
+}
+
+/* Efeito ao passar o mouse */
+.drone-item:hover {
+  background-color: #f1f1f1;
+}
+
+/* Área dos botões */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+
+  margin-top: 8px;
+}
+
+/* Mensagem quando não há drones */
+.selected-drones p {
+  margin: 0;
+  padding: 16px;
+
+  text-align: center;
+
+  color: #777;
+
+  border: 1px dashed #ccc;
+  border-radius: 8px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .actions button {
+    width: 100%;
+  }
+}
