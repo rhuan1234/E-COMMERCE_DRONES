@@ -12,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FornecedorService } from '../../../../core/services/FornecedorService';
+import { EnderecoService } from '../../../../core/services/EnderecoService';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 
@@ -26,10 +27,12 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
 export class FornecedorForm implements OnInit {
   readonly form: FormGroup;
   private readonly location = inject(Location);
+  carregandoCep = false;
 
   constructor(
     private fb: FormBuilder,
     private fornecedorService: FornecedorService,
+    private enderecoService: EnderecoService,
     private activatedRoute: ActivatedRoute,
     private snack: MatSnackBar,
     private router: Router,
@@ -63,6 +66,60 @@ export class FornecedorForm implements OnInit {
     if (fornecedor) {
       this.form.patchValue(fornecedor);
     }
+  }
+
+  buscarCep(mostrarAlertaSeVazio: boolean = true): void {
+    const cepControl = this.form.get('endereco.cep');
+    const cep = cepControl?.value;
+
+    if (!cep || !cep.toString().trim()) {
+      if (mostrarAlertaSeVazio) {
+        this.exibirMensagem('Informe o CEP para consulta.');
+      }
+      return;
+    }
+
+    const cleanCep = cep.toString().replace(/\D/g, '');
+    if (cleanCep.length !== 8) {
+      if (mostrarAlertaSeVazio) {
+        this.exibirMensagem('CEP inválido! O CEP deve conter 8 dígitos.');
+      }
+      return;
+    }
+
+    this.carregandoCep = true;
+    this.enderecoService.buscarCep(cleanCep).subscribe({
+      next: (dados) => {
+        this.carregandoCep = false;
+        if (dados.erro === true || dados.erro === 'true') {
+          this.exibirMensagem('CEP não encontrado!');
+          return;
+        }
+
+        this.form.patchValue({
+          endereco: {
+            cep: dados.cep || cleanCep,
+            rua: dados.logradouro || '',
+            bairro: dados.bairro || '',
+            cidade: {
+              nome: dados.localidade || '',
+              estado: {
+                nome: dados.uf || ''
+              }
+            }
+          }
+        });
+      },
+      error: (error) => {
+        this.carregandoCep = false;
+        this.exibirMensagem('Erro ao consultar o CEP no ViaCEP.');
+        console.error('Erro ao consultar o CEP: ', error);
+      }
+    });
+  }
+
+  consultarCep(mostrarAlertaSeVazio: boolean = true): void {
+    this.buscarCep(mostrarAlertaSeVazio);
   }
 
   salvar() {

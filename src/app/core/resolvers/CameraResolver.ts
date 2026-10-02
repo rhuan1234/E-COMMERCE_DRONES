@@ -1,6 +1,6 @@
 import { inject } from "@angular/core";
 import { ResolveFn } from '@angular/router';
-import { Camera } from "../models/Camera";
+import { Camera } from "../models/camera/Camera";
 import { CameraService } from "../services/CameraService";
 
 export const cameraResolver: ResolveFn<Camera> = (route, state) => {

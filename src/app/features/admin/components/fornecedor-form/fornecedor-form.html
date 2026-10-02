@@ -36,8 +36,11 @@
                 <div formGroupName="endereco">
                     <!-- cep -->
                     <mat-form-field appearance="outline" class="full-width-input">
-                        <mat-label>Cep</mat-label>
-                        <input matInput formControlName="cep" placeholder="cep">
+                        <mat-label>CEP</mat-label>
+                        <input matInput formControlName="cep" placeholder="00000-000" (blur)="buscarCep(false)" (keydown.enter)="$event.preventDefault(); buscarCep(true)">
+                        <button mat-icon-button matSuffix type="button" (click)="buscarCep(true)" [disabled]="carregandoCep" aria-label="Consultar CEP" title="Consultar CEP">
+                            <mat-icon>{{ carregandoCep ? 'hourglass_empty' : 'search' }}</mat-icon>
+                        </button>
                     </mat-form-field>
 
                     <!-- rua -->

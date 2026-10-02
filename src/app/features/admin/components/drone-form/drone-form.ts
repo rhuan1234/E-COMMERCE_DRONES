@@ -18,7 +18,7 @@ import { FornecedorService } from '../../../../core/services/FornecedorService';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 
 
-import { Camera } from '../../../../core/models/Camera';
+import { Camera } from '../../../../core/models/camera/Camera';
 import { Fornecedor } from '../../../../core/models/fornecedor/FornecedorRequest';
 
 

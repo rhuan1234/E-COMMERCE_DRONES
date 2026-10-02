@@ -3,8 +3,8 @@ import { HttpHandlerFn, HttpInterceptorFn, HttpRequest } from "@angular/common/h
 export const authInterceptor: HttpInterceptorFn = 
     (req: HttpRequest<any>, next: HttpHandlerFn)=> {
 
-        if (req.url.includes('/auth/login')) {
-        return next(req);
+        if (req.url.includes('/auth/login') || req.url.includes('viacep.com.br')) {
+            return next(req);
         }
         
         const token = localStorage.getItem('token');
