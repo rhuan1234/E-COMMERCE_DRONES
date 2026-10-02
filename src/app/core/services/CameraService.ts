@@ -1,8 +1,8 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Camera } from "../models/Camera";
 import { Observable } from "rxjs";
 import { PagedResponse } from "../models/PagedResponse";
+import { Camera } from "../models/camera/Camera";
 
 @Injectable({providedIn: 'root'})
 export class CameraService {

@@ -12,8 +12,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSelectModule } from '@angular/material/select';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Camera } from '../../../../core/models/Camera';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
+import { Camera } from '../../../../core/models/camera/Camera';
 
 @Component({
   imports: [ReactiveFormsModule, MatCardModule, MatFormFieldModule,

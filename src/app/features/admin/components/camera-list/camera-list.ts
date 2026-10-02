@@ -6,12 +6,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
-import { Camera } from '../../../../core/models/Camera';
 import { CameraService } from '../../../../core/services/CameraService';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CameraForm } from '../camera-form/camera-form';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { Camera } from '../../../../core/models/camera/Camera';
 
 @Component({
   imports: [
