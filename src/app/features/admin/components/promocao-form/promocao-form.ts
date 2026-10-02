@@ -17,15 +17,15 @@ import {
   Validators
 } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
-import { PromocaoService } from '../../../../core/services/PromocaoService';
 import { Drone } from '../../../../core/models/drone/Drone';
 import { DroneService } from '../../../../core/services/DroneService';
 import { PromocaoRequest } from '../../../../core/models/promocao/PromocaoRequest';
+import { PromocaoService } from '../../../../core/services/PromocaoService';
 
 @Component({
   imports: [ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule,
     MatButtonModule, MatToolbarModule, MatSelectModule, MatIconModule, MatSnackBarModule,
-    MatCheckboxModule,MatDialogModule
+    MatCheckboxModule, MatDialogModule
   ],
   selector: 'app-promocao-form',
   styleUrl: './promocao-form.css',
@@ -59,10 +59,10 @@ export class PromocaoForm implements OnInit {
         [Validators.required, Validators.min(0), Validators.max(100)]
       ],
 
-      dataInicio: ['',Validators.required
+      dataInicio: ['', Validators.required
       ],
 
-      dataFim: ['',Validators.required
+      dataFim: ['', Validators.required
       ]
     });
   }
@@ -342,7 +342,7 @@ export class PromocaoForm implements OnInit {
       return '';
     }
 
-    return valor.length === 16? `${valor}:00`: valor;
+    return valor.length === 16 ? `${valor}:00` : valor;
   }
 
   voltar(): void {

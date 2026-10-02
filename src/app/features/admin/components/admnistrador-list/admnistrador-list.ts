@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -10,30 +10,49 @@ import { RouterLink } from '@angular/router';
 import { Administrador } from '../../../../core/models/administrador/Administrado';
 import { AdministradorService } from '../../../../core/services/AdministradorService';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule,
-    MatToolbarModule, MatButtonModule, MatIconModule, RouterLink, MatDialogModule],
+  imports: [
+    MatTableModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatPaginatorModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    RouterLink,
+    MatDialogModule,
+  ],
   selector: 'app-admnistrador-list',
   styleUrl: './admnistrador-list.css',
   templateUrl: './admnistrador-list.html',
 })
-export class AdmnistradorList {
-  displayedColumns: string[] = ['id', 'login', "email", 'acao' ];
+export class AdmnistradorList implements OnInit {
+  displayedColumns: string[] = ['id', 'login', 'email', 'acao'];
   dataSource = new MatTableDataSource<Administrador>();
+  pageIndex = 0;
+  pageSize = 10;
+  totalItems = 0;
 
   constructor(
     private administradorService: AdministradorService,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.carregarAdministradores();
   }
 
   carregarAdministradores(): void {
-    this.administradorService.findAll().subscribe((administradores) => {
-      this.dataSource.data = administradores;
+    this.administradorService.findAll(this.pageIndex, this.pageSize).subscribe({
+      next: (response) => {
+        this.dataSource.data = response.items;
+        this.pageIndex = response.page;
+        this.pageSize = response.pageSize;
+        this.totalItems = response.totalItems;
+      },
+      error: (err) => console.error('Erro ao carregar administradores', err),
     });
   }
 
@@ -55,6 +74,12 @@ export class AdmnistradorList {
         error: (err) => console.error('Erro ao excluir administrador', err)
       });
     });
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.carregarAdministradores();
   }
 
   applyFilter(event: Event) {

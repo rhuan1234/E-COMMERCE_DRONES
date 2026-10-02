@@ -44,7 +44,7 @@ export class DroneList implements OnInit {
   ];
   dataSource = new MatTableDataSource<Drone>();
   pageIndex = 0;
-  pageSize = 2;
+  pageSize = 10;
   totalItems = 0;
   filtroModelo = '';
 

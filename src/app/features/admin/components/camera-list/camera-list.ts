@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,31 +11,49 @@ import { CameraService } from '../../../../core/services/CameraService';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CameraForm } from '../camera-form/camera-form';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule,
-    MatToolbarModule, MatButtonModule, MatIconModule, MatDialogModule],
+  imports: [
+    MatTableModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatPaginatorModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDialogModule,
+  ],
   selector: 'app-camera-list',
   styleUrl: './camera-list.css',
   templateUrl: './camera-list.html',
 })
-export class CameraList {
+export class CameraList implements OnInit {
 
   displayedColumns: string[] = ['id', 'modelo', 'marca', 'resolucao', 'zoom', 'estabilizacao', 'fps', 'acao'];
   dataSource = new MatTableDataSource<Camera>();
+  pageIndex = 0;
+  pageSize = 10;
+  totalItems = 0;
 
-  constructor (
+  constructor(
     private cameraService: CameraService,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.carregarCameras();
   }
 
   carregarCameras(): void {
-    this.cameraService.findAll().subscribe((cameras) => {
-      this.dataSource.data = cameras;
+    this.cameraService.findAll(this.pageIndex, this.pageSize).subscribe({
+      next: (response) => {
+        this.dataSource.data = response.items;
+        this.pageIndex = response.page;
+        this.pageSize = response.pageSize;
+        this.totalItems = response.totalItems;
+      },
+      error: (err) => console.error('Erro ao carregar câmeras', err),
     });
   }
 
@@ -70,6 +88,12 @@ export class CameraList {
         error: (err) => console.error('Erro ao excluir', err)
       });
     });
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.carregarCameras();
   }
 
   applyFilter(event: Event) {

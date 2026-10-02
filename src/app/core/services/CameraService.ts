@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Camera } from "../models/Camera";
 import { Observable } from "rxjs";
+import { PagedResponse } from "../models/PagedResponse";
 
 @Injectable({providedIn: 'root'})
 export class CameraService {
@@ -9,8 +10,8 @@ export class CameraService {
 
     constructor(private http: HttpClient) { }
     
-    findAll(): Observable<Camera[]> {
-        return this.http.get<Camera[]>(this.apiUrl);
+    findAll(page: number = 0, pageSize: number = 10): Observable<PagedResponse<Camera>> {
+        return this.http.get<PagedResponse<Camera>>(`${this.apiUrl}?page=${page}&pageSize=${pageSize}`);
     }
     
     findById(id: any): Observable<Camera> {

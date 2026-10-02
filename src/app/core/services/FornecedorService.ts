@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Fornecedor } from "../models/fornecedor/FornecedorRequest";
 import { Observable } from "rxjs";
+import { PagedResponse } from "../models/PagedResponse";
 
 @Injectable({providedIn: 'root'})
 export class FornecedorService{
@@ -9,8 +10,8 @@ export class FornecedorService{
 
     constructor(private http: HttpClient){}
 
-    findAll(): Observable<Fornecedor[]>{
-        return this.http.get<Fornecedor[]>(this.apiUrl);
+    findAll(page: number = 0, pageSize: number = 10): Observable<PagedResponse<Fornecedor>>{
+        return this.http.get<PagedResponse<Fornecedor>>(`${this.apiUrl}?page=${page}&pageSize=${pageSize}`);
     }
 
     findById(id: string | null): Observable<Fornecedor>{

@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Administrador } from "../models/administrador/Administrado";
 import { Observable } from "rxjs";
+import { PagedResponse } from "../models/PagedResponse";
 
 @Injectable({providedIn: 'root'})
 export class AdministradorService{
@@ -9,8 +10,8 @@ export class AdministradorService{
 
     constructor(private http: HttpClient){}
 
-    findAll(): Observable<Administrador[]>{
-        return this.http.get<Administrador[]>(this.apiUrl);
+    findAll(page: number = 0, pageSize: number = 10): Observable<PagedResponse<Administrador>>{
+        return this.http.get<PagedResponse<Administrador>>(`${this.apiUrl}?page=${page}&pageSize=${pageSize}`);
     }
 
     findById(id: string | null): Observable<Administrador>{

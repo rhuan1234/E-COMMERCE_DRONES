@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Fornecedor } from '../../../../core/models/fornecedor/FornecedorRequest';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { FornecedorService } from '../../../../core/services/FornecedorService';
@@ -10,17 +10,30 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule,
-    MatToolbarModule, MatButtonModule, MatIconModule, RouterLink, MatDialogModule],
+  imports: [
+    MatTableModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatPaginatorModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    RouterLink,
+    MatDialogModule,
+  ],
   selector: 'app-fornecedor-list',
   styleUrl: './fornecedor-list.css',
   templateUrl: './fornecedor-list.html',
 })
-export class FornecedorList {
+export class FornecedorList implements OnInit {
   displayedColumns: string[] = ['id', 'nome', 'cnpj', 'telefone', 'email', 'ativo', 'acao'];
   dataSource = new MatTableDataSource<Fornecedor>();
+  pageIndex = 0;
+  pageSize = 10;
+  totalItems = 0;
 
   constructor(
     private fornecedorService: FornecedorService,
@@ -32,8 +45,14 @@ export class FornecedorList {
   }
 
   carregarFornecedores(): void {
-    this.fornecedorService.findAll().subscribe((fornecedores) => {
-      this.dataSource.data = fornecedores;
+    this.fornecedorService.findAll(this.pageIndex, this.pageSize).subscribe({
+      next: (response) => {
+        this.dataSource.data = response.items;
+        this.pageIndex = response.page;
+        this.pageSize = response.pageSize;
+        this.totalItems = response.totalItems;
+      },
+      error: (err) => console.error('Erro ao carregar fornecedores', err),
     });
   }
 
@@ -55,6 +74,12 @@ export class FornecedorList {
         error: (err) => console.error('Erro ao excluir fornecedor', err)
       });
     });
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.carregarFornecedores();
   }
 
   applyFilter(event: Event) {

@@ -102,11 +102,9 @@ export class DroneForm implements OnInit {
 
 
   carregarCameras(): void {
-    this.cameraService.findAll().subscribe({
-      next: (cameras) => {
-
-        this.cameras = cameras;
-
+    this.cameraService.findAll(0, 100).subscribe({
+      next: (response) => {
+        this.cameras = response.items;
       },
       error: (error) => {
         console.error('Erro ao carregar câmeras:', error);
@@ -116,9 +114,9 @@ export class DroneForm implements OnInit {
   }
 
   carregarFornecedores(): void {
-    this.fornecedorService.findAll().subscribe({
-      next: (fornecedores) => {
-        this.fornecedores = fornecedores;
+    this.fornecedorService.findAll(0, 100).subscribe({
+      next: (response) => {
+        this.fornecedores = response.items;
       },
 
       error: (error) => {
@@ -126,7 +124,6 @@ export class DroneForm implements OnInit {
         this.exibirMensagem('Erro ao carregar os fornecedores.');
       }
     });
-
   }
 
    salvar(): void {
