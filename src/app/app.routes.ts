@@ -12,6 +12,8 @@ import { droneResolver } from './core/resolvers/DroneResolver';
 import { AdminLayoutComponent } from './features/admin/layout/admin-layout/admin-layout';
 import { AdmnistradorList } from './features/admin/components/admnistrador-list/admnistrador-list';
 import { AdministradorForm } from './features/admin/components/administrador-form/administrador-form';
+import { PromocaoList } from './features/admin/components/promocao-list/promocao-list';
+import { PromocaoForm } from './features/admin/components/promocao-form/promocao-form';
 
 export const routes: Routes = [
   // Rotas auth
@@ -41,7 +43,12 @@ export const routes: Routes = [
       { path: 'fornecedores/:id/edit', component: FornecedorForm, title: 'Editar Fornecedor', resolve: { fornecedor: fornecedorResolver } },
 
       {path: 'administradores', component: AdmnistradorList, title: 'Lista de Administradores'},
-      {path: 'administradores/new', component: AdministradorForm, title: 'Novo Administrador'}
+      {path: 'administradores/new', component: AdministradorForm, title: 'Novo Administrador'},
+
+      // Promoções
+      { path: 'promocoes', component: PromocaoList, title: 'Lista de Promoções' },
+      { path: 'promocoes/new', component: PromocaoForm, title: 'Nova Promoção' },
+      { path: 'promocoes/:id/edit', component: PromocaoForm, title: 'Editar Promoção' }
     ]
   },
 

@@ -40,6 +40,7 @@ export class AdminLayoutComponent {
     { label: 'Câmeras', route: '/cameras', icon: 'videocam' },
     { label: 'Fornecedores', route: '/fornecedores', icon: 'business' },
     { label: 'Administradores', route: '/administradores', icon: 'admin_panel_settings' },
+    { label: 'Promoções', route: '/promocoes', icon: 'local_offer' },
   ];
 
   logout() {
