@@ -27,6 +27,16 @@ public class AdminService implements AdminServiceInterface {
     }
 
     @Override
+    public List<Usuario> buscarTodos(int page, int pageSize) {
+        return repository.findAll().page(page, pageSize).list();
+    }
+
+    @Override
+    public long count() {
+        return repository.count();
+    }
+
+    @Override
     public Usuario buscarPorId(Long id) {
         return repository.findById(id);
     }

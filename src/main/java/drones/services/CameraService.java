@@ -35,6 +35,16 @@ public class CameraService implements CameraServiceInterface {
     }
 
     @Override
+    public List<Camera> buscarTodos(int page, int pageSize) {
+        return cameraRepository.findAll().page(page, pageSize).list();
+    }
+
+    @Override
+    public long count() {
+        return cameraRepository.count();
+    }
+
+    @Override
     public Camera buscarPorId(Long id) {
         validarId(id);
         return cameraRepository.findById(id);

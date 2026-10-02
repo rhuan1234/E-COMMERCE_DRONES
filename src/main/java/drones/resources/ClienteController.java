@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
+import drones.dto.PageResponse;
 import drones.dto.fornecedores.EnderecoRequestClienteDTO;
 import drones.dto.fornecedores.EnderecoResponseClienteDTO;
 import drones.dto.usuarios.AlterarSenhaClienteDTO;
@@ -26,6 +27,7 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
@@ -33,6 +35,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 
@@ -170,7 +173,9 @@ public class ClienteController {
     @GET
     @Path("/enderecos")
     @RolesAllowed({"CLIENTE", "ADMIN"})
-    public Response listarEnderecos() {
+    public PageResponse<EnderecoResponseClienteDTO> listarEnderecos(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("pageSize") @DefaultValue("10") int pageSize) {
 
         String login = jwt.getName();
 
@@ -180,9 +185,10 @@ public class ClienteController {
             );
         }
 
-        List<EnderecoResponseClienteDTO> enderecos = clienteService.listarEnderecos(login);
+        List<EnderecoResponseClienteDTO> enderecos = clienteService.listarEnderecos(login, page, pageSize);
+        long totalItems = clienteService.countEnderecos(login);
 
-        return Response.ok(enderecos).build();
+        return PageResponse.of(enderecos, page, pageSize, totalItems);
     }
 
     @PUT

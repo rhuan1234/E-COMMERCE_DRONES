@@ -2,6 +2,7 @@ package drones.resources;
 
 import java.util.List;
 
+import drones.dto.PageResponse;
 import drones.dto.usuarios.AlterarSenhaAdminDTO;
 import drones.dto.usuarios.UsuarioRequestDTO;
 import drones.dto.usuarios.UsuarioResponseDTO;
@@ -14,6 +15,7 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -21,6 +23,7 @@ import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
@@ -36,14 +39,14 @@ public class AdminController {
     @GET
     @Path("/admin")
     @RolesAllowed("ADMIN")
-    public Response buscarTodos() {
+    public PageResponse<UsuarioResponseDTO> buscarTodos(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("pageSize") @DefaultValue("10") int pageSize) {
 
-        List<UsuarioResponseDTO> lista = usuarioService.buscarTodos()
-                .stream()
-                .map(UsuarioMapper::toResponseDTO)
-                .toList();
+        List<Usuario> lista = usuarioService.buscarTodos(page, pageSize);
+        long totalItems = usuarioService.count();
 
-        return Response.ok(lista).build();
+        return PageResponse.of(lista, page, pageSize, totalItems, UsuarioMapper::toResponseDTO);
     }
 
     @GET

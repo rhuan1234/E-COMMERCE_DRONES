@@ -2,6 +2,7 @@ package drones.resources;
 
 import java.util.List;
 
+import drones.dto.PageResponse;
 import drones.dto.promocao.PromocaoRequestDTO;
 import drones.dto.promocao.PromocaoResponseDTO;
 import drones.exception.ValidationException;
@@ -15,12 +16,14 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -46,11 +49,12 @@ public class PromocaoController {
     @GET
     @Path("/admin")
     @RolesAllowed("ADMIN")
-    public Response buscarTodos() {
-        List<PromocaoResponseDTO> promocoes = promocaoService.buscarTodos().stream()
-                .map(PromocaoMapper::toResponseDTO)
-                .toList();
-        return Response.ok(promocoes).build();
+    public PageResponse<PromocaoResponseDTO> buscarTodos(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("pageSize") @DefaultValue("10") int pageSize) {
+        List<Promocao> promocoes = promocaoService.buscarTodos(page, pageSize);
+        long totalItems = promocaoService.count();
+        return PageResponse.of(promocoes, page, pageSize, totalItems, PromocaoMapper::toResponseDTO);
     }
 
     @GET

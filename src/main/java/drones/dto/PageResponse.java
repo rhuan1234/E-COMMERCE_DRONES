@@ -11,6 +11,17 @@ public record PageResponse<T>(
     int totalPages
 ) {
 
+    public static <T> PageResponse<T> of(List<T> items, int page, int pageSize, long totalItems) {
+        int totalPages = pageSize <= 0 ? 0 : (int) Math.ceil((double) totalItems / pageSize);
+
+        return new PageResponse<>(
+                items,
+                page,
+                pageSize,
+                totalItems,
+                totalPages);
+    }
+
     public static <T, R> PageResponse<R> of(List<T> items, int page, int pageSize, long totalItems,
             Function<T, R> mapper) {
         int totalPages = pageSize <= 0 ? 0 : (int) Math.ceil((double) totalItems / pageSize);

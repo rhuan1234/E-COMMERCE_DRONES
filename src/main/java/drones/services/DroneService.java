@@ -119,10 +119,14 @@ public class DroneService implements DroneServiceInterface {
     }
 
     public List<Drone> buscarPorMarca(String marca) {
+        return buscarPorMarca(0, 10, marca);
+    }
+
+    public List<Drone> buscarPorMarca(int page, int pageSize, String marca) {
         if (marca == null || marca.isBlank()) {
             throw new ValidationException("Marca do drone é obrigatória", "marca");
         }
-        List<Drone> drones = droneRepository.findByMarca(marca);
+        List<Drone> drones = droneRepository.findByMarca(marca).page(page, pageSize).list();
         if (drones.isEmpty()) {
             throw new ValidationException("Nenhum drone encontrado para a marca '" + marca + "'", "marca");
         }
@@ -141,13 +145,17 @@ public class DroneService implements DroneServiceInterface {
     }
 
     public List<Drone> buscarPorPreco(double precoMin, double precoMax) {
+        return buscarPorPreco(0, 10, precoMin, precoMax);
+    }
+
+    public List<Drone> buscarPorPreco(int page, int pageSize, double precoMin, double precoMax) {
         if (precoMin < 0 || precoMax < 0) {
             throw new ValidationException("Preço mínimo e máximo devem ser positivos", "precoMin/precoMax");
         }
         if (precoMin > precoMax) {
             throw new ValidationException("Preço mínimo não pode ser maior que o preço máximo", "precoMin/precoMax");
         }
-        List<Drone> drones = droneRepository.findByPrecoRange(precoMin, precoMax);
+        List<Drone> drones = droneRepository.findByPrecoRange(precoMin, precoMax).page(page, pageSize).list();
         if (drones.isEmpty()) {
             throw new ValidationException("Nenhum drone encontrado para a faixa de preço especificada", "precoMin/precoMax");
         }
@@ -160,5 +168,13 @@ public class DroneService implements DroneServiceInterface {
 
     public Long countModelos(String modelo) {
         return droneRepository.findByModelo(modelo).count();
+    }
+
+    public Long countMarcas(String marca) {
+        return droneRepository.findByMarca(marca).count();
+    }
+
+    public Long countPreco(double precoMin, double precoMax) {
+        return droneRepository.findByPrecoRange(precoMin, precoMax).count();
     }
 }

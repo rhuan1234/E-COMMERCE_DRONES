@@ -9,6 +9,8 @@ public interface PagamentoCartaoServiceInterface {
     PagamentoCartao buscarPorId(Long id, String login);
     List<PagamentoCartao> buscarTodos(String login);
     List<PagamentoCartao> buscarPorPedidoId(Long pedidoId, String login);
+    List<PagamentoCartao> buscarPorPedidoId(Long pedidoId, String login, int page, int pageSize);
+    long countPorPedidoId(Long pedidoId, String login);
     void pagarCartao(Long id, String login);
     void cancelarCartao(Long id, String login);
 }

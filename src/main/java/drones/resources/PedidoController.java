@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.PATCH;
@@ -14,6 +15,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -21,6 +23,7 @@ import java.util.List;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
+import drones.dto.PageResponse;
 import drones.dto.pedidos.PedidoRequestDTO;
 import drones.dto.pedidos.PedidoResponseAnaliseAdminDTO;
 import drones.dto.pedidos.PedidoResponseDTO;
@@ -81,20 +84,21 @@ public class PedidoController {
     @GET
     @Path("/admin")
     @RolesAllowed("ADMIN")
-    public Response listarTodos() {
+    public PageResponse<PedidoResponseDTO> listarTodos(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("pageSize") @DefaultValue("10") int pageSize) {
 
-        List<PedidoResponseDTO> pedidos =
-            pedidoService.buscarTodos()
-                .stream()
-                .map(PedidoMapper::toResponseDTO)
-                .toList();
+        List<Pedido> pedidos = pedidoService.buscarTodos(page, pageSize);
+        long totalItems = pedidoService.count();
 
-        return Response.ok(pedidos).build();
+        return PageResponse.of(pedidos, page, pageSize, totalItems, PedidoMapper::toResponseDTO);
     }
 
     @GET
     @RolesAllowed({"ADMIN", "CLIENTE"})
-    public Response listarTodosEcommerce() {
+    public PageResponse<PedidoResponseDTO> listarTodosEcommerce(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("pageSize") @DefaultValue("10") int pageSize) {
 
         String login = jwt.getName();
 
@@ -109,13 +113,11 @@ public class PedidoController {
             throw new NotFoundException("Usuário não encontrado");
         }
 
-        List<PedidoResponseDTO> pedidos =
-            pedidoService.buscarPorUsuarioId(usuario.getId())
-            .stream()
-            .map(PedidoMapper::toResponseDTO)
-            .toList();
+        List<Pedido> pedidos =
+            pedidoService.buscarPorUsuarioId(usuario.getId(), page, pageSize);
+        long totalItems = pedidoService.countPorUsuarioId(usuario.getId());
 
-        return Response.ok(pedidos).build();
+        return PageResponse.of(pedidos, page, pageSize, totalItems, PedidoMapper::toResponseDTO);
     }
 
     @GET
@@ -178,19 +180,20 @@ public class PedidoController {
     @GET
     @Path("/admin/usuario/{usuarioId}")
     @RolesAllowed("ADMIN")
-    public Response listarPedidosPorUsuario(@PathParam("usuarioId") Long usuarioId) {
+    public PageResponse<PedidoResponseDTO> listarPedidosPorUsuario(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("pageSize") @DefaultValue("10") int pageSize,
+            @PathParam("usuarioId") Long usuarioId) {
 
         if (usuarioId == null || usuarioId <= 0) {
             throw new ValidationException("Id do usuário inválido","usuarioId");
         }
 
-        List<PedidoResponseDTO> pedidos =
-            pedidoService.buscarPorUsuarioId(usuarioId)
-                .stream()
-                .map(PedidoMapper::toResponseDTO)
-                .toList();
+        List<Pedido> pedidos =
+            pedidoService.buscarPorUsuarioId(usuarioId, page, pageSize);
+        long totalItems = pedidoService.countPorUsuarioId(usuarioId);
 
-        return Response.ok(pedidos).build();
+        return PageResponse.of(pedidos, page, pageSize, totalItems, PedidoMapper::toResponseDTO);
     }
 
 
@@ -255,7 +258,10 @@ public class PedidoController {
     @GET
     @Path("/status/{status}")
     @RolesAllowed({"ADMIN", "CLIENTE"})
-    public Response listarPedidosPorStatus(@PathParam("status") String status) {
+    public PageResponse<PedidoResponseDTO> listarPedidosPorStatus(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("pageSize") @DefaultValue("10") int pageSize,
+            @PathParam("status") String status) {
 
         if (status == null || status.isBlank()) {
             throw new ValidationException(
@@ -272,23 +278,21 @@ public class PedidoController {
             );
         }
 
-        List<PedidoResponseDTO> pedidos =
-            pedidoService.findByStatus(status, login)
-                .stream()
-                .map(PedidoMapper::toResponseDTO)
-                .toList();
+        List<Pedido> pedidos =
+            pedidoService.findByStatus(status, login, page, pageSize);
+        long totalItems = pedidoService.countByStatus(status, login);
 
-        return Response.ok(pedidos).build();
+        return PageResponse.of(pedidos, page, pageSize, totalItems, PedidoMapper::toResponseDTO);
     }
 
     @GET
     @Path("/admin/pendentes")
     @RolesAllowed("ADMIN")
-    public Response listarPedidosPendentes() {
-        List<Pedido> pedidos = pedidoService.listarPedidosPendentes();
-        List<PedidoResponseAnaliseAdminDTO> dtos = pedidos.stream()
-                .map(PedidoMapper::toResponseAnaliseAdminDTO)
-                .toList();
-        return Response.ok(dtos).build();
+    public PageResponse<PedidoResponseAnaliseAdminDTO> listarPedidosPendentes(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("pageSize") @DefaultValue("10") int pageSize) {
+        List<Pedido> pedidos = pedidoService.listarPedidosPendentes(page, pageSize);
+        long totalItems = pedidoService.countPedidosPendentes();
+        return PageResponse.of(pedidos, page, pageSize, totalItems, PedidoMapper::toResponseAnaliseAdminDTO);
     }
 }

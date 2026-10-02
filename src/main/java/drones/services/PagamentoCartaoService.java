@@ -143,11 +143,26 @@ public class PagamentoCartaoService implements PagamentoCartaoServiceInterface {
 
     @Override
     public List<PagamentoCartao> buscarPorPedidoId(Long pedidoId, String login) {
+        return buscarPorPedidoId(pedidoId, login, 0, 10);
+    }
+
+    @Override
+    public List<PagamentoCartao> buscarPorPedidoId(Long pedidoId, String login, int page, int pageSize) {
+        validarPedidoELogin(pedidoId, login);
+        return pagamentoCartaoRepository.findQueryByPedidoId(pedidoId).page(page, pageSize).list();
+    }
+
+    @Override
+    public long countPorPedidoId(Long pedidoId, String login) {
+        validarPedidoELogin(pedidoId, login);
+        return pagamentoCartaoRepository.findQueryByPedidoId(pedidoId).count();
+    }
+
+    private void validarPedidoELogin(Long pedidoId, String login) {
         Usuario cliente = usuarioRepository.findByLogin(login).orElseThrow(() -> new ValidationException("Cliente não encontrado", "login"));
         Pedido pedido = pedidoRepository.findById(pedidoId);
         if (pedido == null || !pedido.getUsuario().getId().equals(cliente.getId())) {
             throw new ValidationException("Pedido não encontrado ou não pertence ao usuário", "pedidoId");
         }
-        return pagamentoCartaoRepository.findByPedidoId(pedidoId);
     }
 }

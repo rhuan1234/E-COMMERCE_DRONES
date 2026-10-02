@@ -2,6 +2,7 @@ package drones.resources;
 
 import java.util.List;
 
+import drones.dto.PageResponse;
 import drones.dto.drones.CameraRequestDTO;
 import drones.dto.drones.CameraResponseDTO;
 import drones.exception.ValidationException;
@@ -15,6 +16,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
@@ -22,6 +24,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -50,11 +53,12 @@ public class CameraController {
     @GET
     @Path("/admin")
     @RolesAllowed("ADMIN")
-    public Response buscarTodos() {
-        List<CameraResponseDTO> cameras = cameraService.buscarTodos().stream()
-            .map(CameraMapper::toResponseDTO)
-            .toList();
-        return Response.ok(cameras).build();
+    public PageResponse<CameraResponseDTO> buscarTodos(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("pageSize") @DefaultValue("10") int pageSize) {
+        List<Camera> cameras = cameraService.buscarTodos(page, pageSize);
+        long totalItems = cameraService.count();
+        return PageResponse.of(cameras, page, pageSize, totalItems, CameraMapper::toResponseDTO);
     }
 
     @GET

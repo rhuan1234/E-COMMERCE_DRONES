@@ -1,8 +1,13 @@
 package drones.resources;
 
+import java.util.List;
+
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
+import drones.dto.PageResponse;
 import drones.dto.pedidos.PagamentoCartaoRequestDTO;
+import drones.dto.pedidos.PagamentoCartaoResponseDTO;
+import drones.dto.pedidos.PagamentoPixResponseDTO;
 import drones.exception.ValidationException;
 import drones.mapper.PagamentoCartaoMapper;
 import drones.mapper.PagamentoPixMapper;
@@ -16,6 +21,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.PATCH;
@@ -23,6 +29,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -195,7 +202,10 @@ public class PagamentoController {
     @GET
     @Path("/{pedidoId}/pagamentos/pix")
     @RolesAllowed({"CLIENTE", "ADMIN"})
-    public Response obterPagamentosPixPorPedido(@PathParam("pedidoId") Long pedidoId) {
+    public PageResponse<PagamentoPixResponseDTO> obterPagamentosPixPorPedido(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("pageSize") @DefaultValue("10") int pageSize,
+            @PathParam("pedidoId") Long pedidoId) {
 
         if (pedidoId == null || pedidoId <= 0) {
             throw new ValidationException(
@@ -212,19 +222,19 @@ public class PagamentoController {
             );
         }
 
-        return Response.ok(
-                pagamentoPixService
-                    .buscarPorPedidoId(pedidoId, login)
-                    .stream()
-                    .map(PagamentoPixMapper::toResponseDTO)
-                    .toList()
-        ).build();
+        List<PagamentoPix> pagamentos = pagamentoPixService.buscarPorPedidoId(pedidoId, login, page, pageSize);
+        long totalItems = pagamentoPixService.countPorPedidoId(pedidoId, login);
+
+        return PageResponse.of(pagamentos, page, pageSize, totalItems, PagamentoPixMapper::toResponseDTO);
     }
 
     @GET
     @Path("/{pedidoId}/pagamentos/cartao")
     @RolesAllowed({"CLIENTE", "ADMIN"})
-    public Response obterPagamentosCartaoPorPedido(@PathParam("pedidoId") Long pedidoId) {
+    public PageResponse<PagamentoCartaoResponseDTO> obterPagamentosCartaoPorPedido(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("pageSize") @DefaultValue("10") int pageSize,
+            @PathParam("pedidoId") Long pedidoId) {
 
         if (pedidoId == null || pedidoId <= 0) {
             throw new ValidationException(
@@ -241,13 +251,10 @@ public class PagamentoController {
             );
         }
 
-        return Response.ok(
-                pagamentoCartaoService
-                    .buscarPorPedidoId(pedidoId, login)
-                    .stream()
-                    .map(PagamentoCartaoMapper::toResponseDTO)
-                    .toList()
-        ).build();
+        List<PagamentoCartao> pagamentos = pagamentoCartaoService.buscarPorPedidoId(pedidoId, login, page, pageSize);
+        long totalItems = pagamentoCartaoService.countPorPedidoId(pedidoId, login);
+
+        return PageResponse.of(pagamentos, page, pageSize, totalItems, PagamentoCartaoMapper::toResponseDTO);
     }
 
     @PATCH

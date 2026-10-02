@@ -136,14 +136,22 @@ public class PedidoService implements PedidoServiceInterface {
 
     @Override
     public List<Pedido> buscarTodos() {
-        List<Pedido> pedidos = pedidoRepository.listAll();
+        return buscarTodos(0, 10);
+    }
+
+    @Override
+    public List<Pedido> buscarTodos(int page, int pageSize) {
+        List<Pedido> pedidos = pedidoRepository.findAll().page(page, pageSize).list();
         if (pedidos.isEmpty()) {
             throw new ValidationException("Nenhum pedido encontrado");
         }
         return pedidos;
     }
 
-   
+    @Override
+    public long count() {
+        return pedidoRepository.count();
+    }
 
     @Override
     @Transactional
@@ -161,7 +169,17 @@ public class PedidoService implements PedidoServiceInterface {
 
     @Override
     public List<Pedido> buscarPorUsuarioId(Long usuarioId) {
-        return pedidoRepository.find("usuario.id", usuarioId).list();
+        return buscarPorUsuarioId(usuarioId, 0, 10);
+    }
+
+    @Override
+    public List<Pedido> buscarPorUsuarioId(Long usuarioId, int page, int pageSize) {
+        return pedidoRepository.findByUsuarioId(usuarioId).page(page, pageSize).list();
+    }
+
+    @Override
+    public long countPorUsuarioId(Long usuarioId) {
+        return pedidoRepository.findByUsuarioId(usuarioId).count();
     }
 
     @Override
@@ -193,27 +211,46 @@ public class PedidoService implements PedidoServiceInterface {
 
     @Override
     public List<Pedido> findByStatus(String status, String login) {
+        return findByStatus(status, login, 0, 10);
+    }
+
+    @Override
+    public List<Pedido> findByStatus(String status, String login, int page, int pageSize) {
         Long userId = usuarioService.buscarPorLogin(login).getId();
+        StatusPedido statusPedido = validarStatus(status);
+        return pedidoRepository.findByStatusAndUserId(statusPedido, userId).page(page, pageSize).list();
+    }
+
+    @Override
+    public long countByStatus(String status, String login) {
+        Long userId = usuarioService.buscarPorLogin(login).getId();
+        StatusPedido statusPedido = validarStatus(status);
+        return pedidoRepository.findByStatusAndUserId(statusPedido, userId).count();
+    }
+
+    private StatusPedido validarStatus(String status) {
         if(status == null || status.isBlank()) {
             throw new ValidationException("Status é obrigatório");
         }
-        if(!status.equalsIgnoreCase("PENDENTE") &&
-           !status.equalsIgnoreCase("CANCELADO") &&
-           !status.equalsIgnoreCase("PAGO")) {
+        try {
+            return StatusPedido.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
             throw new ValidationException("Status inválido. Valores permitidos: PENDENTE, CANCELADO, PAGO");
         }
-        List<Pedido> pedidos = pedidoRepository.findAllByUserId(userId);
-        return pedidos.stream()
-                .filter(p -> p.getStatusPedido().name().equalsIgnoreCase(status))
-                .toList();
     }
 
-    
-
+    @Override
     public List<Pedido> listarPedidosPendentes() {
-        List<Pedido> pedidos = pedidoRepository.listarPedidosPendentes();
-        return pedidos;
+        return listarPedidosPendentes(0, 10);
     }
 
+    @Override
+    public List<Pedido> listarPedidosPendentes(int page, int pageSize) {
+        return pedidoRepository.findPedidosPendentes().page(page, pageSize).list();
+    }
 
+    @Override
+    public long countPedidosPendentes() {
+        return pedidoRepository.findPedidosPendentes().count();
+    }
 }

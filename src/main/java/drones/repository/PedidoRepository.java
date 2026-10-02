@@ -27,4 +27,15 @@ public class PedidoRepository implements PanacheRepository<Pedido> {
         return find("statusPedido", StatusPedido.PENDENTE).list();
     }
 
+    public io.quarkus.hibernate.orm.panache.PanacheQuery<Pedido> findByUsuarioId(Long usuarioId) {
+        return find("usuario.id", usuarioId);
+    }
+
+    public io.quarkus.hibernate.orm.panache.PanacheQuery<Pedido> findByStatusAndUserId(StatusPedido status, Long usuarioId) {
+        return find("statusPedido = ?1 and usuario.id = ?2", status, usuarioId);
+    }
+
+    public io.quarkus.hibernate.orm.panache.PanacheQuery<Pedido> findPedidosPendentes() {
+        return find("statusPedido", StatusPedido.PENDENTE);
+    }
 }

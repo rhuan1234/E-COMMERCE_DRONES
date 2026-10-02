@@ -16,8 +16,8 @@ public class DroneRepository implements PanacheRepository<Drone> {
         persist(drone);
     }
 
-    public final List<Drone> findByMarca(String marca) {
-        return find("marca ILIKE ?1", "%" + marca + "%").list();
+    public final PanacheQuery<Drone> findByMarca(String marca) {
+        return find("marca ILIKE ?1", "%" + marca + "%");
     }
 
     public final Drone findByNome(String nome) {
@@ -28,7 +28,7 @@ public class DroneRepository implements PanacheRepository<Drone> {
         return find("modelo ILIKE ?1", "%" + modelo + "%");
     }
 
-    public final List<Drone> findByPrecoRange(double precoMin, double precoMax) {
-        return find("preco >= ?1 AND preco <= ?2", precoMin, precoMax).list();
+    public final PanacheQuery<Drone> findByPrecoRange(double precoMin, double precoMax) {
+        return find("preco >= ?1 AND preco <= ?2", precoMin, precoMax);
     }
 }

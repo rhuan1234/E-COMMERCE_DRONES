@@ -128,15 +128,14 @@ public class DroneController {
 
     @GET
     @Path("/marcas/{marca}")
-    public Response buscarPorMarcaEcommerce(@PathParam("marca") String marca){
+    public PageResponse<DroneResponseEcommerceDTO> buscarPorMarcaEcommerce(@QueryParam("page") @DefaultValue("0") int page,
+                                    @QueryParam("pageSize") @DefaultValue("10") int pageSize, @PathParam("marca") String marca){
         if (marca == null || marca.isBlank()) {
             throw new ValidationException("Marca do drone é obrigatória", "marca");
         }
-        List<Drone> drones = droneService.buscarPorMarca(marca);
-        List<DroneResponseEcommerceDTO> dronesDTO = drones.stream()
-            .map(DroneMapper::toResponseEcommerceDTO)
-            .toList();
-        return Response.ok(dronesDTO).build();
+        List<Drone> drones = droneService.buscarPorMarca(page, pageSize, marca);
+        long totalItems = droneService.countMarcas(marca);
+        return PageResponse.of(drones, page, pageSize, totalItems, DroneMapper::toResponseEcommerceDTO);
     }
 
     @GET
@@ -153,15 +152,14 @@ public class DroneController {
 
     @GET
     @Path("/preco/")
-    public Response buscarPorPrecoEcommerce(@QueryParam("min") Double precoMin, @QueryParam("max") Double precoMax){
+    public PageResponse<DroneResponseEcommerceDTO> buscarPorPrecoEcommerce(@QueryParam("page") @DefaultValue("0") int page,
+                                    @QueryParam("pageSize") @DefaultValue("10") int pageSize, @QueryParam("min") Double precoMin, @QueryParam("max") Double precoMax){
         if (precoMin == null || precoMax == null) {
             throw new ValidationException("Preço mínimo e máximo são obrigatórios", "precoMin/precoMax");
         }
-        List<Drone> drones = droneService.buscarPorPreco(precoMin, precoMax);
-        List<DroneResponseEcommerceDTO> dronesDTO = drones.stream()
-            .map(DroneMapper::toResponseEcommerceDTO)
-            .toList();
-        return Response.ok(dronesDTO).build();
+        List<Drone> drones = droneService.buscarPorPreco(page, pageSize, precoMin, precoMax);
+        long totalItems = droneService.countPreco(precoMin, precoMax);
+        return PageResponse.of(drones, page, pageSize, totalItems, DroneMapper::toResponseEcommerceDTO);
     }
 
     @Transactional

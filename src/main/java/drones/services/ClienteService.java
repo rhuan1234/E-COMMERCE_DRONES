@@ -192,6 +192,11 @@ public class ClienteService implements ClienteServiceInterface {
 
     @Override
     public List<EnderecoResponseClienteDTO> listarEnderecos(String login) {
+        return listarEnderecos(login, 0, 10);
+    }
+
+    @Override
+    public List<EnderecoResponseClienteDTO> listarEnderecos(String login, int page, int pageSize) {
         if (login == null || login.isBlank()) {
             throw new ValidationException("Usuário não autenticado");
         }
@@ -200,8 +205,22 @@ public class ClienteService implements ClienteServiceInterface {
             throw new ValidationException("Usuário não encontrado");
         }
         return cliente.getEnderecos().stream()
+                .skip((long) page * pageSize)
+                .limit(pageSize)
                 .map(EnderecoMapper::toResponseEnderecoClienteDTO)
                 .toList();
+    }
+
+    @Override
+    public long countEnderecos(String login) {
+        if (login == null || login.isBlank()) {
+            throw new ValidationException("Usuário não autenticado");
+        }
+        Usuario cliente = usuarioService.buscarPorLogin(login);
+        if (cliente == null) {
+            throw new ValidationException("Usuário não encontrado");
+        }
+        return cliente.getEnderecos().size();
     }
 
 

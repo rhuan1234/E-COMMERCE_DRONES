@@ -20,6 +20,10 @@ public class PagamentoPixRepository implements PanacheRepository<PagamentoPix> {
         return find("pedido.id", pedidoId).list();
     }
 
+    public io.quarkus.hibernate.orm.panache.PanacheQuery<PagamentoPix> findQueryByPedidoId(Long pedidoId) {
+        return find("pedido.id", pedidoId);
+    }
+
     public PagamentoPix findByPedidoIdPix(Long pedidoId) {
         return find("pedido.id", pedidoId).firstResult();
     }

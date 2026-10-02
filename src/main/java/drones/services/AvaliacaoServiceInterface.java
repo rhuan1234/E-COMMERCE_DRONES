@@ -8,6 +8,8 @@ import drones.model.drones.Avaliacao;
 public interface AvaliacaoServiceInterface {
     List<Avaliacao> buscarTodos();
     List<Avaliacao> buscarPorDrone(Long droneId);
+    List<Avaliacao> buscarPorDrone(Long droneId, int page, int pageSize);
+    long countPorDrone(Long droneId);
     Avaliacao buscarPorId(Long id);
     Avaliacao criar(AvaliacaoRequestDTO dados, String login);
     Avaliacao atualizar(Long id, AvaliacaoRequestDTO dados, String login);

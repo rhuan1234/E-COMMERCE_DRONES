@@ -36,6 +36,16 @@ public class PromocaoService implements PromocaoServiceInterface {
     }
 
     @Override
+    public List<Promocao> buscarTodos(int page, int pageSize) {
+        return promocaoRepository.findAll().page(page, pageSize).list();
+    }
+
+    @Override
+    public long count() {
+        return promocaoRepository.count();
+    }
+
+    @Override
     public Promocao buscarPorId(Long id) {
         validarId(id);
         Promocao promocao = promocaoRepository.findById(id);

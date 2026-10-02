@@ -19,6 +19,8 @@ public interface ClienteServiceInterface {
     void enviarRecuperacao(String email);
     void resetarSenha(ResetarSenhaDTO dto);
     List<EnderecoResponseClienteDTO> listarEnderecos(String login);
+    List<EnderecoResponseClienteDTO> listarEnderecos(String login, int page, int pageSize);
+    long countEnderecos(String login);
     public EnderecoResponseClienteDTO adicionarEndereco(String login, EnderecoRequestClienteDTO dto);
     public void removerEndereco(String login, Long enderecoId);
     public EnderecoResponseClienteDTO editarEndereco(String login, Long enderecoId, EnderecoRequestClienteDTO dto);

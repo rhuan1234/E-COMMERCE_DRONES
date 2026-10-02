@@ -9,8 +9,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class AvaliacaoRepository implements PanacheRepository<Avaliacao> {
 
-    public List<Avaliacao> findByDroneId(Long droneId) {
-        return list("drone.id", droneId);
+    public io.quarkus.hibernate.orm.panache.PanacheQuery<Avaliacao> findByDroneId(Long droneId) {
+        return find("drone.id", droneId);
     }
 
     public List<Avaliacao> findByUsuarioId(Long usuarioId) {

@@ -58,6 +58,16 @@ public class FornecedorService implements FornecedorServiceInterface{
     }
 
     @Override
+    public List<Fornecedor> buscarTodos(int page, int pageSize) {
+        return fornecedorRepository.findAll().page(page, pageSize).list();
+    }
+
+    @Override
+    public long count() {
+        return fornecedorRepository.count();
+    }
+
+    @Override
     public Fornecedor buscarPorId(Long id) {
         if (id == null) {
             throw new ValidationException("Id do fornecedor é obrigatório", "id");

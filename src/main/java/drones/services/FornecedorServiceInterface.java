@@ -7,6 +7,8 @@ import drones.model.fornecedor.Fornecedor;
 public interface FornecedorServiceInterface {
 
     List<Fornecedor> buscarTodos();
+    List<Fornecedor> buscarTodos(int page, int pageSize);
+    long count();
     Fornecedor buscarPorId(Long id);
     Fornecedor criar(Fornecedor fornecedor);
     Fornecedor atualizar(Long id, Fornecedor fornecedor);

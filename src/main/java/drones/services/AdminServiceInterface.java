@@ -7,6 +7,8 @@ import drones.model.usuario.Usuario;
 
 public interface AdminServiceInterface {
     List<Usuario> buscarTodos();
+    List<Usuario> buscarTodos(int page, int pageSize);
+    long count();
     Usuario buscarPorId(Long id);
     Usuario buscarPorLogin(String login);
     Usuario criar(Usuario usuario);

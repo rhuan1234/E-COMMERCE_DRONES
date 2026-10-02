@@ -35,9 +35,21 @@ public class AvaliacaoService implements AvaliacaoServiceInterface {
 
     @Override
     public List<Avaliacao> buscarPorDrone(Long droneId) {
+        return buscarPorDrone(droneId, 0, 10);
+    }
+
+    @Override
+    public List<Avaliacao> buscarPorDrone(Long droneId, int page, int pageSize) {
         validarId(droneId, "droneId", "Id do drone inválido");
         validarDrone(droneId);
-        return avaliacaoRepository.findByDroneId(droneId);
+        return avaliacaoRepository.findByDroneId(droneId).page(page, pageSize).list();
+    }
+
+    @Override
+    public long countPorDrone(Long droneId) {
+        validarId(droneId, "droneId", "Id do drone inválido");
+        validarDrone(droneId);
+        return avaliacaoRepository.findByDroneId(droneId).count();
     }
 
     @Override

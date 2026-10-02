@@ -57,8 +57,19 @@ public class FavoritoService implements FavoritoServiceInterface {
 
     @Override
     public List<Favorito> listarFavoritos(String login) {
+        return listarFavoritos(login, 0, 10);
+    }
+
+    @Override
+    public List<Favorito> listarFavoritos(String login, int page, int pageSize) {
         Usuario usuario = buscarUsuario(login);
-        return favoritoRepository.listarPorUsuario(usuario.getId());
+        return favoritoRepository.findByUsuarioId(usuario.getId()).page(page, pageSize).list();
+    }
+
+    @Override
+    public long countFavoritos(String login) {
+        Usuario usuario = buscarUsuario(login);
+        return favoritoRepository.findByUsuarioId(usuario.getId()).count();
     }
 
     private Usuario buscarUsuario(String login) {

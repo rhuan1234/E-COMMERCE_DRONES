@@ -2,14 +2,17 @@ package drones.resources;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
+import drones.dto.PageResponse;
 import drones.dto.drones.DroneResponseEcommerceDTO;
 import drones.exception.ValidationException;
 import drones.mapper.DroneMapper;
 import drones.services.FavoritoServiceInterface;
 
 import java.util.List;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -62,14 +65,14 @@ public class FavoritoController {
     @GET
     @Path("/listar")
     @RolesAllowed({"CLIENTE", "ADMIN"})
-    public Response listarFavoritos() {
+    public PageResponse<DroneResponseEcommerceDTO> listarFavoritos(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("pageSize") @DefaultValue("10") int pageSize) {
 
-        List<drones.model.drones.Favorito> favoritos = favoritoService.listarFavoritos(loginAutenticado());
-        List<DroneResponseEcommerceDTO> drones = favoritos.stream()
-                .map(d -> DroneMapper.toResponseEcommerceDTO(d.getDrone()))
-                .toList();
+        List<drones.model.drones.Favorito> favoritos = favoritoService.listarFavoritos(loginAutenticado(), page, pageSize);
+        long totalItems = favoritoService.countFavoritos(loginAutenticado());
 
-        return Response.ok(drones).build();
+        return PageResponse.of(favoritos, page, pageSize, totalItems, d -> DroneMapper.toResponseEcommerceDTO(d.getDrone()));
     }
 
     private String loginAutenticado() {

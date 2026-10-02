@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
+import drones.dto.PageResponse;
 import drones.dto.drones.AvaliacaoRequestDTO;
 import drones.dto.drones.AvaliacaoResponseDTO;
 import drones.exception.UnauthorizedException;
@@ -17,6 +18,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
@@ -24,6 +26,7 @@ import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -48,11 +51,13 @@ public class AvaliacaoController {
 
     @GET
     @Path("/drone/{droneId}")
-    public Response buscarPorDrone(@PathParam("droneId") Long droneId) {
-        List<AvaliacaoResponseDTO> avaliacoes = avaliacaoService.buscarPorDrone(droneId).stream()
-            .map(AvaliacaoMapper::toResponseDTO)
-            .toList();
-        return Response.ok(avaliacoes).build();
+    public PageResponse<AvaliacaoResponseDTO> buscarPorDrone(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("pageSize") @DefaultValue("10") int pageSize,
+            @PathParam("droneId") Long droneId) {
+        List<Avaliacao> avaliacoes = avaliacaoService.buscarPorDrone(droneId, page, pageSize);
+        long totalItems = avaliacaoService.countPorDrone(droneId);
+        return PageResponse.of(avaliacoes, page, pageSize, totalItems, AvaliacaoMapper::toResponseDTO);
     }
 
     @GET

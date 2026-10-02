@@ -20,6 +20,10 @@ public class PagamentoCartaoRepository implements PanacheRepository<PagamentoCar
         return find("pedido.id", pedidoId).list();
     }
 
+    public io.quarkus.hibernate.orm.panache.PanacheQuery<PagamentoCartao> findQueryByPedidoId(Long pedidoId) {
+        return find("pedido.id", pedidoId);
+    }
+
     public PagamentoCartao findByPedidoIdCartao(Long pedidoId) {
         return find("pedido.id", pedidoId).firstResult();
     }

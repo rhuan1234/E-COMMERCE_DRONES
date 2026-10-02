@@ -2,6 +2,7 @@ package drones.resources;
 
 import java.util.List;
 
+import drones.dto.PageResponse;
 import drones.dto.fornecedores.FornecedorRequestDTO;
 import drones.dto.fornecedores.FornecedorResponseDTO;
 import drones.exception.ValidationException;
@@ -11,6 +12,7 @@ import drones.services.FornecedorService;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -18,6 +20,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
@@ -37,12 +40,12 @@ public class FornecedorController {
     @GET
     @Path("/admin")
     @RolesAllowed("ADMIN")
-    public Response buscarPorTodos(){
-        List<FornecedorResponseDTO> fornecedores = fornecedorService.buscarTodos()
-        .stream()
-        .map(e -> FornecedorMapper.toResponseDTO(e))
-        .toList();
-        return Response.ok(fornecedores).build();
+    public PageResponse<FornecedorResponseDTO> buscarPorTodos(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("pageSize") @DefaultValue("10") int pageSize){
+        List<Fornecedor> fornecedores = fornecedorService.buscarTodos(page, pageSize);
+        long totalItems = fornecedorService.count();
+        return PageResponse.of(fornecedores, page, pageSize, totalItems, FornecedorMapper::toResponseDTO);
     }
 
     @POST

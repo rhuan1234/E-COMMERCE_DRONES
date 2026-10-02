@@ -27,4 +27,8 @@ public class FavoritoRepository implements PanacheRepository<Favorito>{
     public List<Favorito> listarPorUsuario(Long usuarioId) {
         return list("usuario.id = ?1", usuarioId);
     }
+
+    public io.quarkus.hibernate.orm.panache.PanacheQuery<Favorito> findByUsuarioId(Long usuarioId) {
+        return find("usuario.id = ?1", usuarioId);
+    }
 }
