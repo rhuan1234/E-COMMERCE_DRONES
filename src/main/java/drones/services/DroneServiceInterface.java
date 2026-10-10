@@ -1,0 +1,22 @@
+package drones.services;
+
+import java.util.List;
+
+import drones.model.drones.Drone;
+
+public interface DroneServiceInterface {
+
+    List<Drone> buscarTodos(int page, int pageSize);
+    Drone buscarPorId(Long id);
+    Drone criar(Drone drone);
+    Drone atualizar(Long id, Drone drone);
+    boolean deletar(Long id);
+    Drone buscarPorNome(String nome);
+    List<Drone> buscarPorMarca(int page, int pageSize, String marca);
+    List<Drone> buscarPorModelo(int page, int pageSize, String modelo);
+    List<Drone> buscarPorPreco(int page, int pageSize, double precoMin, double precoMax);
+    Long count();
+    Long countModelos(String modelo);
+    Long countMarcas(String marca);
+    Long countPreco(double precoMin, double precoMax);
+}
