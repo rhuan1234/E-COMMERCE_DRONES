@@ -1,0 +1,21 @@
+.toolbar-title {
+    flex: 1;
+    text-align: center;
+}
+
+.flex-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.mat-column-id {
+    width: 5em;
+    border-right: 1px solid currentColor;
+    padding-right: 24px;
+    text-align: center;
+}
+
+.fornecedor-table tr.mat-mdc-row:hover {
+    background-color: rgb(32, 30, 30);
+}

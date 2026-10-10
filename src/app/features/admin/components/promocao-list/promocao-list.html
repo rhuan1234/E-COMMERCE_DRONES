@@ -1,0 +1,78 @@
+<mat-toolbar class="mat-toolbar">
+    <div class="flex-container" color="primary">
+        <span class="toolbar-title">Controle de Promoções</span>
+        <button mat-fab class="accent" routerLink="/promocoes/new">
+            <mat-icon>add</mat-icon>
+        </button>
+    </div>
+</mat-toolbar>
+
+<mat-form-field appearance="outline" class="flex-container">
+    <mat-label>Filtro</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex: Black Friday" #input>
+</mat-form-field>
+
+<table mat-table [dataSource]="dataSource" class="promocoes-table mat-elevation-z8">
+
+    <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> ID </th>
+        <td mat-cell *matCellDef="let promocao"> {{promocao.id}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="nome">
+        <th mat-header-cell *matHeaderCellDef> Nome </th>
+        <td mat-cell *matCellDef="let promocao"> {{promocao.nome}} </td>
+    </ng-container>
+
+
+    <ng-container matColumnDef="desconto">
+        <th mat-header-cell *matHeaderCellDef> Percentual de Desconto </th>
+        <td mat-cell *matCellDef="let promocao"> {{promocao.percentualDesconto}} </td>
+    </ng-container>
+
+  
+    <ng-container matColumnDef="inicio">
+        <th mat-header-cell *matHeaderCellDef> Início </th>
+        <td mat-cell *matCellDef="let promocao"> {{promocao.dataInicio}} </td>
+    </ng-container>
+
+   
+    <ng-container matColumnDef="fim">
+        <th mat-header-cell *matHeaderCellDef> Fim </th>
+        <td mat-cell *matCellDef="let promocao"> {{promocao.dataFim}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="drones">
+        <th mat-header-cell *matHeaderCellDef> Drones Qtd </th>
+        <td mat-cell *matCellDef="let promocao"> {{promocao.droneIds.length}} </td>
+    </ng-container>
+
+
+    <ng-container matColumnDef="acao">
+        <th mat-header-cell *matHeaderCellDef> Ação </th>
+        <td mat-cell *matCellDef="let obj">
+            <button mat-icon-button color="primary" routerLink="/promocoes/{{obj.id}}/edit">
+                <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="excluirPromocao(obj)">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </td>
+    </ng-container>
+
+    
+    
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<mat-paginator
+    [length]="totalItems"
+    [pageIndex]="pageIndex"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="[5, 10, 20]"
+    (page)="onPageChange($event)">
+</mat-paginator>
+
+
+

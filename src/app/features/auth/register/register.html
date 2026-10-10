@@ -1,0 +1,100 @@
+<div class="min-h-screen flex items-center justify-center px-4 py-12">
+
+  <div class="w-full max-w-md bg-[#121417] border border-[#1f2429] rounded-2xl shadow-2xl p-8">
+
+    <!-- Logo & Título -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#84cc16] text-black font-extrabold text-2xl mb-4 shadow-lg shadow-[#84cc16]/20">
+        S
+      </div>
+      <h1 class="text-2xl font-bold text-white tracking-wide">
+        Criar Conta
+      </h1>
+      <p class="text-gray-400 text-sm mt-1">
+        Preencha os dados abaixo para se cadastrar
+      </p>
+    </div>
+
+    <!-- Formulário -->
+    <form [formGroup]="form" (ngSubmit)="register()" class="space-y-5">
+
+      <!-- Login -->
+      <div>
+        <label
+          for="login"
+          class="block text-sm font-medium text-gray-300 mb-2">
+          Login
+        </label>
+
+        <input
+          id="login"
+          type="text"
+          formControlName="login"
+          placeholder="Digite seu login"
+          class="w-full px-4 py-3 bg-[#16191d] border border-[#2d333b] rounded-lg
+                 text-white placeholder-gray-500 outline-none transition
+                 focus:ring-2 focus:ring-[#84cc16] focus:border-[#84cc16]"
+        >
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label
+          for="email"
+          class="block text-sm font-medium text-gray-300 mb-2">
+          Email
+        </label>
+
+        <input
+          id="email"
+          type="text"
+          formControlName="email"
+          placeholder="Digite seu email"
+          class="w-full px-4 py-3 bg-[#16191d] border border-[#2d333b] rounded-lg
+                 text-white placeholder-gray-500 outline-none transition
+                 focus:ring-2 focus:ring-[#84cc16] focus:border-[#84cc16]"
+        >
+      </div>
+
+      <!-- Senha -->
+      <div>
+        <label
+          for="senha"
+          class="block text-sm font-medium text-gray-300 mb-2">
+          Senha
+        </label>
+
+        <input
+          id="senha"
+          type="senha"
+          formControlName="senha"
+          placeholder="Digite sua senha"
+          class="w-full px-4 py-3 bg-[#16191d] border border-[#2d333b] rounded-lg
+                 text-white placeholder-gray-500 outline-none transition
+                 focus:ring-2 focus:ring-[#84cc16] focus:border-[#84cc16]"
+        >
+      </div>
+
+      <!-- Botão -->
+      <button
+        type="submit"
+        class="w-full py-3 px-4
+               bg-[#84cc16] hover:bg-[#a3e635]
+               text-black font-bold
+               rounded-lg
+               transition duration-200
+               cursor-pointer shadow-md shadow-[#84cc16]/20">
+        Cadastrar
+      </button>
+
+      <div class="text-center pt-2">
+        <a routerLink="/login" class="text-sm text-gray-400 hover:text-[#84cc16] transition-colors">
+          Já possui uma conta? <span class="text-[#84cc16] font-medium">Faça login</span>
+        </a>
+      </div>
+
+    </form>
+
+  </div>
+
+</div>

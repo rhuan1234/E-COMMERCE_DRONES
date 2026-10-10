@@ -1,0 +1,249 @@
+<mat-toolbar class="toolbar-title" color="primary">
+    Controle de Drones
+</mat-toolbar>
+
+<mat-card>
+    <mat-card-content>
+
+        <form class="form" [formGroup]="form">
+
+            <div class="columns">
+
+                <!-- ==================== COLUNA 1 ==================== -->
+                <div class="column">
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Nome</mat-label>
+                        <input
+                            matInput
+                            formControlName="nome"
+                            placeholder="Nome do drone">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Marca</mat-label>
+                        <input
+                            matInput
+                            formControlName="marca"
+                            placeholder="Marca do drone">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Modelo</mat-label>
+                        <input
+                            matInput
+                            formControlName="modelo"
+                            placeholder="Modelo do drone">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Preço</mat-label>
+                        <input
+                            matInput
+                            type="number"
+                            formControlName="preco"
+                            placeholder="Preço">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Quantidade disponível</mat-label>
+                        <input
+                            matInput
+                            type="number"
+                            formControlName="quantidadeDisponivel"
+                            placeholder="Quantidade">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Fornecedor</mat-label>
+
+                        <mat-select formControlName="fornecedorId">
+                            @for (fornecedor of fornecedores; track fornecedor.id) {
+                                <mat-option [value]="fornecedor.id">
+                                    {{ fornecedor.nome }}
+                                </mat-option>
+                            }
+                        </mat-select>
+
+                    </mat-form-field>
+
+                </div>
+
+
+                <!-- ==================== COLUNA 2 ==================== -->
+                <div class="column">
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Tempo de voo prático</mat-label>
+                        <input
+                            matInput
+                            type="number"
+                            formControlName="tempoVooPratico"
+                            placeholder="Tempo em minutos">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Peso de decolagem</mat-label>
+                        <input
+                            matInput
+                            type="number"
+                            formControlName="pesoDecolagem"
+                            placeholder="Peso">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Altitude máxima</mat-label>
+                        <input
+                            matInput
+                            type="number"
+                            formControlName="altitudeMaxima"
+                            placeholder="Altitude">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Velocidade máxima</mat-label>
+                        <input
+                            matInput
+                            type="number"
+                            formControlName="velocidadeMaxima"
+                            placeholder="Velocidade">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Alcance de transmissão</mat-label>
+                        <input
+                            matInput
+                            type="number"
+                            formControlName="alcanceTransmissao"
+                            placeholder="Alcance">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Câmera</mat-label>
+
+                        <mat-select formControlName="cameraId">
+                            @for (camera of cameras; track camera.id) {
+                                <mat-option [value]="camera.id">
+                                    {{ camera.marca }} - {{ camera.modelo }}
+                                </mat-option>
+                            }
+                        </mat-select>
+
+                    </mat-form-field>
+
+                </div>
+
+
+                <!-- ==================== COLUNA 3 ==================== -->
+                <div class="column">
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Quantidade de motores</mat-label>
+                        <input
+                            matInput
+                            type="number"
+                            formControlName="quantidadeMotores"
+                            placeholder="Quantidade">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Quantidade de baterias</mat-label>
+                        <input
+                            matInput
+                            type="number"
+                            formControlName="quantidadeBaterias"
+                            placeholder="Quantidade">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Duração da bateria</mat-label>
+                        <input
+                            matInput
+                            formControlName="duracaoBateria"
+                            placeholder="Ex: 30 minutos">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Frequência Wi-Fi</mat-label>
+                        <input
+                            matInput
+                            formControlName="frequenciaWifi"
+                            placeholder="Ex: 2.4 GHz">
+                    </mat-form-field>
+
+
+                    <!-- Características -->
+                    <div class="checkboxes">
+
+                        <mat-checkbox formControlName="possuiCamera">
+                            Possui câmera
+                        </mat-checkbox>
+
+                        <mat-checkbox formControlName="possuiGPS">
+                            Possui GPS
+                        </mat-checkbox>
+
+                        <mat-checkbox formControlName="comControleRemoto">
+                            Possui controle remoto
+                        </mat-checkbox>
+
+                        <mat-checkbox formControlName="controladoPorAplicativo">
+                            Controlado por aplicativo
+                        </mat-checkbox>
+
+                        <mat-checkbox formControlName="ativa">
+                            Ativo
+                        </mat-checkbox>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================== BOTÕES ==================== -->
+            <div class="actions">
+
+                <button
+                    mat-raised-button
+                    color="warn"
+                    type="button"
+                    (click)="excluir()"
+                    [disabled]="!form.value.id">
+
+                    <mat-icon>delete</mat-icon>
+                    Excluir
+
+                </button>
+
+
+                <button
+                    mat-raised-button
+                    type="button"
+                    (click)="voltar()">
+
+                    <mat-icon>arrow_back</mat-icon>
+                    Cancelar
+
+                </button>
+
+
+                <button
+                    mat-raised-button
+                    color="primary"
+                    type="button"
+                    (click)="salvar()"
+                    [disabled]="form.invalid">
+
+                    <mat-icon>save</mat-icon>
+                    Salvar
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </mat-card-content>
+</mat-card>

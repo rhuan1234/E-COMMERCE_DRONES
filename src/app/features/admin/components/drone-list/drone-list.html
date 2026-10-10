@@ -1,0 +1,153 @@
+<!-- Toolbar -->
+<mat-toolbar class="toolbar">
+  <span class="toolbar-title"> Controle de Drones </span>
+
+  <button mat-fab color="accent" routerLink="/drones/new" aria-label="Adicionar drone">
+    <mat-icon>add</mat-icon>
+  </button>
+</mat-toolbar>
+
+<!-- Área do filtro -->
+<div class="filter-container">
+  <mat-form-field appearance="outline">
+    <mat-label>Filtro por Modelo</mat-label>
+
+    <input 
+      matInput 
+      [value]="filtroModelo"
+      (keyup.enter)="filtrarPorModelo(input.value)" 
+      placeholder="Ex: DJI" 
+      #input 
+    />
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" (click)="filtrarPorModelo(input.value)">
+    Buscar
+  </button>
+
+  <button mat-button color="warn" (click)="limparFiltro(input)">
+    Limpar Filtro
+  </button>
+</div>
+
+<!-- Tabela -->
+<div class="table-container">
+  <table mat-table [dataSource]="dataSource" class="drone-table mat-elevation-z8">
+    <!-- ID -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef>ID</th>
+
+      <td mat-cell *matCellDef="let drone">
+        {{ drone.id }}
+      </td>
+    </ng-container>
+
+    <!-- Nome -->
+    <ng-container matColumnDef="nome">
+      <th mat-header-cell *matHeaderCellDef>Nome</th>
+
+      <td mat-cell *matCellDef="let drone">
+        {{ drone.nome }}
+      </td>
+    </ng-container>
+
+    <!-- Marca -->
+    <ng-container matColumnDef="marca">
+      <th mat-header-cell *matHeaderCellDef>Marca</th>
+
+      <td mat-cell *matCellDef="let drone">
+        {{ drone.marca }}
+      </td>
+    </ng-container>
+
+    <!-- Modelo -->
+    <ng-container matColumnDef="modelo">
+      <th mat-header-cell *matHeaderCellDef>Modelo</th>
+
+      <td mat-cell *matCellDef="let drone">
+        {{ drone.modelo }}
+      </td>
+    </ng-container>
+
+    <!-- Preço -->
+    <ng-container matColumnDef="preco">
+      <th mat-header-cell *matHeaderCellDef>Preço</th>
+
+      <td mat-cell *matCellDef="let drone">R$ {{ drone.preco }}</td>
+    </ng-container>
+
+    <!-- Estoque -->
+    <ng-container matColumnDef="quantidadeDisponivel">
+      <th mat-header-cell *matHeaderCellDef>Estoque</th>
+
+      <td mat-cell *matCellDef="let drone">
+        {{ drone.quantidadeDisponivel }}
+      </td>
+    </ng-container>
+
+    <!-- Câmera -->
+    <ng-container matColumnDef="possuiCamera">
+      <th mat-header-cell *matHeaderCellDef>Câmera</th>
+
+      <td mat-cell *matCellDef="let drone">
+        {{ drone.possuiCamera ? 'Sim' : 'Não' }}
+      </td>
+    </ng-container>
+
+    <!-- GPS -->
+    <ng-container matColumnDef="possuiGPS">
+      <th mat-header-cell *matHeaderCellDef>GPS</th>
+
+      <td mat-cell *matCellDef="let drone">
+        {{ drone.possuiGPS ? 'Sim' : 'Não' }}
+      </td>
+    </ng-container>
+
+    <!-- Ativo -->
+    <ng-container matColumnDef="ativa">
+      <th mat-header-cell *matHeaderCellDef>Ativo</th>
+
+      <td mat-cell *matCellDef="let drone">
+        {{ drone.ativa ? 'Sim' : 'Não' }}
+      </td>
+    </ng-container>
+
+    <!-- Ações -->
+    <ng-container matColumnDef="acao">
+      <th mat-header-cell *matHeaderCellDef>Ação</th>
+      <td mat-cell *matCellDef="let drone">
+        <button
+          mat-icon-button
+          color="primary"
+          routerLink="/drones/{{ drone.id }}/edit"
+          aria-label="Editar drone"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="excluirDrone(drone)"
+          aria-label="Excluir drone"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <!-- Cabeçalho -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+    <!-- Linhas -->
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <mat-paginator
+    [length]="totalItems"
+    [pageIndex]="pageIndex"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="[5, 10, 20]"
+    (page)="onPageChange($event)"
+  >
+  </mat-paginator>
+</div>
