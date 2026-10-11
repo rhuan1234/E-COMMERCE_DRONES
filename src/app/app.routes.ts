@@ -14,6 +14,8 @@ import { AdmnistradorList } from './features/admin/components/admnistrador-list/
 import { AdministradorForm } from './features/admin/components/administrador-form/administrador-form';
 import { PromocaoList } from './features/admin/components/promocao-list/promocao-list';
 import { PromocaoForm } from './features/admin/components/promocao-form/promocao-form';
+import { PerfilPage } from './features/admin/components/perfil-page/perfil-page';
+
 
 export const routes: Routes = [
   // Rotas auth
@@ -48,7 +50,10 @@ export const routes: Routes = [
       // Promoções
       { path: 'promocoes', component: PromocaoList, title: 'Lista de Promoções' },
       { path: 'promocoes/new', component: PromocaoForm, title: 'Nova Promoção' },
-      { path: 'promocoes/:id/edit', component: PromocaoForm, title: 'Editar Promoção' }
+      { path: 'promocoes/:id/edit', component: PromocaoForm, title: 'Editar Promoção' },
+
+      //Perfil
+      {path: 'perfil', component: PerfilPage, title: 'Perfil do Usuário'}
     ]
   },
 

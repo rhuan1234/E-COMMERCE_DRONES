@@ -27,12 +27,12 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
 export class FornecedorForm implements OnInit {
   readonly form: FormGroup;
   private readonly location = inject(Location);
+  private readonly enderecoService = inject(EnderecoService);
   carregandoCep = false;
 
   constructor(
     private fb: FormBuilder,
     private fornecedorService: FornecedorService,
-    private enderecoService: EnderecoService,
     private activatedRoute: ActivatedRoute,
     private snack: MatSnackBar,
     private router: Router,

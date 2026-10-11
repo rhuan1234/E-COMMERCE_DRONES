@@ -1,0 +1,453 @@
+<div class="perfil-container">
+
+  <div class="perfil-header">
+    <div>
+      <h1>Meu perfil</h1>
+      <p>Visualize e atualize suas informações pessoais.</p>
+    </div>
+@if (carregando) {
+  <p>Carregando dados do perfil...</p>
+}
+
+@if (erroCarregamento) {
+  <p class="erro">{{ erroCarregamento }}</p>
+
+  <button
+    mat-stroked-button
+    type="button"
+    (click)="carregarPerfil()">
+    Tentar novamente
+  </button>
+}
+    
+  </div>
+
+  <mat-card class="perfil-card">
+    <mat-card-header>
+      <div mat-card-avatar class="avatar">
+        <mat-icon>person</mat-icon>
+      </div>
+
+      <mat-card-title>Informações pessoais</mat-card-title>
+      <mat-card-subtitle>
+        Dados da sua conta
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="perfilForm" (ngSubmit)="salvarPerfil()">
+
+        <div class="form-grid">
+
+          <mat-form-field appearance="outline">
+            <mat-label>Login</mat-label>
+            <input matInput formControlName="login">
+            <mat-icon matSuffix>account_circle</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Nome completo</mat-label>
+            <input matInput formControlName="nomeCompleto">
+
+            @if (perfilForm.controls.nomeCompleto.hasError('required')) {
+              <mat-error>Informe seu nome completo.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>E-mail</mat-label>
+            <input matInput type="email" formControlName="email">
+            <mat-icon matSuffix>email</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>CPF</mat-label>
+            <input matInput formControlName="cpf">
+            <mat-icon matSuffix>badge</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Telefone</mat-label>
+            <input matInput type="tel" formControlName="telefone">
+            <mat-icon matSuffix>phone</mat-icon>
+          </mat-form-field>
+
+        </div>
+
+        <div class="form-actions">
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="salvando">
+
+            <mat-icon>
+              {{ salvando ? 'hourglass_empty' : 'save' }}
+            </mat-icon>
+
+            {{ salvando ? 'Salvando...' : 'Salvar alterações' }}
+          </button>
+        </div>
+
+          @if (mensagemSucesso) {
+            <p class="mensagem-sucesso">
+              {{ mensagemSucesso }}
+            </p>
+          }
+
+          @if (erroSalvamento) {
+            <p class="erro">
+              {{ erroSalvamento }}
+            </p>
+          }
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+  
+  <mat-card class="perfil-card endereco-card">
+  <div class="endereco-header">
+    <div>
+      <h2>Meus endereços</h2>
+      <p>Gerencie os endereços da sua conta.</p>
+    </div>
+
+    <button
+      mat-flat-button
+      color="primary"
+      type="button"
+      (click)="novoEndereco()">
+
+      <mat-icon>add</mat-icon>
+      Novo endereço
+    </button>
+  </div>
+
+  @if (mensagemEndereco) {
+    <p class="mensagem-sucesso">{{ mensagemEndereco }}</p>
+  }
+
+  @if (erroEndereco) {
+    <p class="erro">{{ erroEndereco }}</p>
+  }
+
+  @if (carregandoEnderecos) {
+    <p>Carregando endereços...</p>
+  } @else {
+    @if (enderecos.length === 0) {
+      <div class="endereco-vazio">
+        <mat-icon>location_on</mat-icon>
+        <p>Você ainda não possui endereços cadastrados.</p>
+      </div>
+    } @else {
+      <div class="enderecos-lista">
+        @for (endereco of enderecos; track endereco.id) {
+          <div class="endereco-item">
+            <div class="endereco-item-conteudo">
+              <div class="endereco-titulo">
+                <mat-icon>location_on</mat-icon>
+                <strong>{{ endereco.rua }}</strong>
+
+                @if (endereco.principal) {
+                  <span class="principal-badge">Principal</span>
+                }
+              </div>
+
+              <p>{{ endereco.bairro }}</p>
+
+              <p>
+                {{ endereco.cidade.nome }} -
+                {{ endereco.cidade.estado.nome }}
+              </p>
+
+              <p>CEP: {{ endereco.cep }}</p>
+            </div>
+
+            <div class="endereco-acoes">
+              @if (!endereco.principal) {
+                <button
+                  mat-button
+                  type="button"
+                  (click)="definirEnderecoPrincipal(endereco)">
+                  Definir como principal
+                </button>
+              }
+
+              <button
+                mat-icon-button
+                type="button"
+                aria-label="Editar endereço"
+                (click)="editarEndereco(endereco)">
+                <mat-icon>edit</mat-icon>
+              </button>
+
+              <button
+                mat-icon-button
+                type="button"
+                aria-label="Excluir endereço"
+                (click)="excluirEndereco(endereco)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <mat-divider></mat-divider>
+
+  <div class="form-endereco">
+    <h3>
+      {{ editandoEnderecoId === null
+        ? 'Cadastrar endereço'
+        : 'Editar endereço' }}
+    </h3>
+
+    <form
+      [formGroup]="enderecoForm"
+      (ngSubmit)="salvarEndereco()">
+
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>CEP</mat-label>
+          <input
+            matInput
+            formControlName="cep"
+            placeholder="00000-000"
+            maxlength="9">
+
+          <mat-icon matSuffix>markunread_mailbox</mat-icon>
+
+          @if (enderecoForm.controls.cep.hasError('required')) {
+            <mat-error>Informe o CEP.</mat-error>
+          }
+
+          @if (enderecoForm.controls.cep.hasError('pattern')) {
+            <mat-error>Informe um CEP válido.</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="buscar-cep">
+          <button
+            mat-stroked-button
+            type="button"
+            [disabled]="buscandoCep"
+            (click)="buscarCep()">
+
+            <mat-icon>search</mat-icon>
+            {{ buscandoCep ? 'Buscando...' : 'Buscar CEP' }}
+          </button>
+        </div>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Rua</mat-label>
+          <input matInput formControlName="rua">
+          @if (enderecoForm.controls.rua.hasError('required')) {
+            <mat-error>Informe a rua.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Bairro</mat-label>
+          <input matInput formControlName="bairro">
+          @if (enderecoForm.controls.bairro.hasError('required')) {
+            <mat-error>Informe o bairro.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Cidade</mat-label>
+          <input matInput formControlName="cidade">
+          @if (enderecoForm.controls.cidade.hasError('required')) {
+            <mat-error>Informe a cidade.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Estado</mat-label>
+          <input matInput formControlName="estado">
+          @if (enderecoForm.controls.estado.hasError('required')) {
+            <mat-error>Informe o estado.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <mat-checkbox formControlName="principal">
+        Definir como endereço principal
+      </mat-checkbox>
+
+      <div class="form-actions">
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="cancelarEdicaoEndereco()">
+          Cancelar
+        </button>
+
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          [disabled]="salvandoEndereco">
+
+          <mat-icon>save</mat-icon>
+          {{ salvandoEndereco
+            ? 'Salvando...'
+            : 'Salvar endereço' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</mat-card>
+
+<!-- Alterar senha -->
+<section class="perfil-card senha-card">
+  <div class="secao-header">
+    <div class="secao-icone">
+      <mat-icon>lock</mat-icon>
+    </div>
+
+    <div class="secao-titulo">
+      <h2>Alterar senha</h2>
+      <p>
+        Mantenha sua conta segura atualizando sua senha periodicamente.
+      </p>
+    </div>
+  </div>
+
+  <form
+    class="form-senha"
+    [formGroup]="senhaForm"
+    (ngSubmit)="alterarSenha()"
+  >
+    <div class="campo-senha">
+      <mat-form-field appearance="outline">
+        <mat-label>Senha atual</mat-label>
+        <input
+          matInput
+          [type]="mostrarSenhaAtual ? 'text' : 'password'"
+          formControlName="senhaAtual"
+          autocomplete="current-password"
+        />
+
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          [attr.aria-label]="mostrarSenhaAtual ? 'Ocultar senha atual' : 'Mostrar senha atual'"
+          (click)="mostrarSenhaAtual = !mostrarSenhaAtual"
+        >
+          <mat-icon>
+            {{ mostrarSenhaAtual ? 'visibility_off' : 'visibility' }}
+          </mat-icon>
+        </button>
+
+        @if (senhaForm.get('senhaAtual')?.hasError('required')
+          && senhaForm.get('senhaAtual')?.touched) {
+          <mat-error>Informe sua senha atual.</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="campo-senha">
+      <mat-form-field appearance="outline">
+        <mat-label>Nova senha</mat-label>
+        <input
+          matInput
+          [type]="mostrarNovaSenha ? 'text' : 'password'"
+          formControlName="novaSenha"
+          autocomplete="new-password"
+        />
+
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          [attr.aria-label]="mostrarNovaSenha ? 'Ocultar nova senha' : 'Mostrar nova senha'"
+          (click)="mostrarNovaSenha = !mostrarNovaSenha"
+        >
+          <mat-icon>
+            {{ mostrarNovaSenha ? 'visibility_off' : 'visibility' }}
+          </mat-icon>
+        </button>
+
+        @if (senhaForm.get('novaSenha')?.hasError('required')
+          && senhaForm.get('novaSenha')?.touched) {
+          <mat-error>Informe a nova senha.</mat-error>
+        }
+
+        @if (senhaForm.get('novaSenha')?.hasError('minlength')
+          && senhaForm.get('novaSenha')?.touched) {
+          <mat-error>A senha deve ter pelo menos 8 caracteres.</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="campo-senha">
+      <mat-form-field appearance="outline">
+        <mat-label>Confirmar nova senha</mat-label>
+        <input
+          matInput
+          [type]="mostrarConfirmacao ? 'text' : 'password'"
+          formControlName="confirmarSenha"
+          autocomplete="new-password"
+        />
+
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          [attr.aria-label]="mostrarConfirmacao ? 'Ocultar confirmação' : 'Mostrar confirmação'"
+          (click)="mostrarConfirmacao = !mostrarConfirmacao"
+        >
+          <mat-icon>
+            {{ mostrarConfirmacao ? 'visibility_off' : 'visibility' }}
+          </mat-icon>
+        </button>
+
+        @if (senhaForm.get('confirmarSenha')?.hasError('required')
+          && senhaForm.get('confirmarSenha')?.touched) {
+          <mat-error>Confirme sua nova senha.</mat-error>
+        }
+
+        @if (senhaForm.hasError('senhasDiferentes')
+          && senhaForm.get('confirmarSenha')?.touched) {
+          <mat-error>As senhas não coincidem.</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    @if (mensagemSenha) {
+      <div class="mensagem-senha sucesso" role="status">
+        <mat-icon>check_circle</mat-icon>
+        <span>{{ mensagemSenha }}</span>
+      </div>
+    }
+
+    @if (erroSenha) {
+      <div class="mensagem-senha erro" role="alert">
+        <mat-icon>error</mat-icon>
+        <span>{{ erroSenha }}</span>
+      </div>
+    }
+
+    <div class="senha-acoes">
+      <button
+        mat-flat-button
+        type="submit"
+        [disabled]="senhaForm.invalid || alterandoSenha"
+      >
+        @if (alterandoSenha) {
+          <mat-spinner diameter="20"></mat-spinner>
+          <span>Alterando...</span>
+        } @else {
+          <mat-icon>lock_reset</mat-icon>
+          <span>Alterar senha</span>
+        }
+      </button>
+    </div>
+  </form>
+</section>
+
+</div>
