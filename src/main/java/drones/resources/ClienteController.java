@@ -191,7 +191,7 @@ public class ClienteController {
         return PageResponse.of(enderecos, page, pageSize, totalItems);
     }
 
-    @PUT
+    @POST
     @Path("/adicionar-endereco")
     @RolesAllowed({"CLIENTE", "ADMIN"})
     public Response adicionarEndereco(@Valid EnderecoRequestClienteDTO dto) {

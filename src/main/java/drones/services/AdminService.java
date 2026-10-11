@@ -9,6 +9,7 @@ import drones.repository.UsuarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response.Status;
 
@@ -28,7 +29,7 @@ public class AdminService implements AdminServiceInterface {
 
     @Override
     public List<Usuario> buscarTodos(int page, int pageSize) {
-        return repository.findAll().page(page, pageSize).list();
+        return repository.find("ativo", true).page(page, pageSize).list();
     }
 
     @Override
@@ -66,8 +67,13 @@ public class AdminService implements AdminServiceInterface {
     @Override
     @Transactional
     public void deletar(Long id) {
-        Usuario u = buscarPorId(id);
-        repository.delete(u);
+         boolean excluido = repository.softDelete(id);
+
+    if (!excluido) {
+        throw new NotFoundException(
+            "Usuario não encontrado ou já desativado"
+        );
+    }
     }
 
     @Override

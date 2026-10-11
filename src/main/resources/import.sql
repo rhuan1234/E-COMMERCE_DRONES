@@ -21,7 +21,7 @@ INSERT INTO telefone (id, numero) VALUES (2, '(11) 3456-7890');
 ALTER SEQUENCE telefone_id_seq RESTART WITH 3;
 
 -- 4. Usuários
-INSERT INTO usuario (id, login, email, senha_hash, perfil, nomecompleto, cpf, telefone)
+INSERT INTO usuario (id, login, email, senha_hash, perfil, nomecompleto, cpf, telefone, ativo)
 VALUES (
     1,
     'rhuan',
@@ -30,10 +30,11 @@ VALUES (
     'ADMIN',
     'Rhuan Administrador',
     '111.222.333-44',
-    '(63) 99111-2222'
+    '(63) 99111-2222',
+    true
 );
 
-INSERT INTO usuario (id, login, email, senha_hash, perfil, nomecompleto, cpf, telefone)
+INSERT INTO usuario (id, login, email, senha_hash, perfil, nomecompleto, cpf, telefone, ativo)
 VALUES (
     2,
     'cliente',
@@ -42,7 +43,8 @@ VALUES (
     'CLIENTE',
     'Lucas Silva',
     '555.666.777-88',
-    '(63) 98444-5555'
+    '(63) 98444-5555',
+    true
 );
 ALTER SEQUENCE usuario_id_seq RESTART WITH 3;
 

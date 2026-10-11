@@ -59,9 +59,25 @@ public class Usuario {
 
     private String telefone;
 
+    @Column(nullable = false)
+    public boolean ativo = true;
+
     public Usuario() {
         
     }
+
+    
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
 
 
     public String getLogin() {
