@@ -2,6 +2,7 @@ package drones.repository;
 
 import drones.model.drones.Drone;
 import drones.model.fornecedor.Fornecedor;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
@@ -20,5 +21,9 @@ public class FornecedorRepository implements PanacheRepository<Fornecedor> {
 
     public Fornecedor findByNome(String nome) {
         return find("lower(nome) = ?1", nome.toLowerCase()).firstResult();
+    }
+
+    public PanacheQuery<Fornecedor> findByNomeContaining(String nome) {
+        return find("nome ILIKE ?1", "%" + nome + "%");
     }
 }

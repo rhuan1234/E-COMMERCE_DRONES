@@ -33,8 +33,25 @@ public class AdminService implements AdminServiceInterface {
     }
 
     @Override
+    public List<Usuario> buscarPorLogin(int page, int pageSize, String login) {
+        if (login == null || login.isBlank()) {
+            throw new ValidationException("Login do usuário é obrigatório", "login");
+        }
+        List<Usuario> usuarios = repository.findActiveByLoginContaining(login).page(page, pageSize).list();
+        if (usuarios.isEmpty()) {
+            throw new ValidationException("Nenhum usuário encontrado para o login '" + login + "'", "login");
+        }
+        return usuarios;
+    }
+
+    @Override
     public long count() {
         return repository.count();
+    }
+
+    @Override
+    public long countLogins(String login) {
+        return repository.findActiveByLoginContaining(login).count();
     }
 
     @Override

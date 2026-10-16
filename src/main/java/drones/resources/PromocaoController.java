@@ -58,6 +58,20 @@ public class PromocaoController {
     }
 
     @GET
+    @Path("/nomes/{nome}")
+    public PageResponse<PromocaoResponseDTO> buscarPorNome(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("pageSize") @DefaultValue("10") int pageSize,
+            @PathParam("nome") String nome) {
+        if (nome == null || nome.isBlank()) {
+            throw new ValidationException("Nome da promoção é obrigatório", "nome");
+        }
+        List<Promocao> promocoes = promocaoService.buscarPorNome(page, pageSize, nome);
+        long totalItems = promocaoService.countNomes(nome);
+        return PageResponse.of(promocoes, page, pageSize, totalItems, PromocaoMapper::toResponseDTO);
+    }
+
+    @GET
     @Path("/admin/{id}")
     @RolesAllowed("ADMIN")
     public Response buscarPorId(@PathParam("id") Long id) {

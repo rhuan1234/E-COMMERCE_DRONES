@@ -48,6 +48,20 @@ public class FornecedorController {
         return PageResponse.of(fornecedores, page, pageSize, totalItems, FornecedorMapper::toResponseDTO);
     }
 
+    @GET
+    @Path("/nomes/{nome}")
+    public PageResponse<FornecedorResponseDTO> buscarPorNomeEcommerce(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("pageSize") @DefaultValue("10") int pageSize,
+            @PathParam("nome") String nome) {
+        if (nome == null || nome.isBlank()) {
+            throw new ValidationException("Nome do fornecedor é obrigatório", "nome");
+        }
+        List<Fornecedor> fornecedores = fornecedorService.buscarPorNome(page, pageSize, nome);
+        long totalItems = fornecedorService.countNomes(nome);
+        return PageResponse.of(fornecedores, page, pageSize, totalItems, FornecedorMapper::toResponseDTO);
+    }
+
     @POST
     @Path("/admin")
     @RolesAllowed("ADMIN")

@@ -8,7 +8,9 @@ public interface CameraServiceInterface {
 
     List<Camera> buscarTodos();
     List<Camera> buscarTodos(int page, int pageSize);
+    List<Camera> buscarPorModelo(int page, int pageSize, String modelo);
     long count();
+    long countModelos(String modelo);
     Camera buscarPorId(Long id);
     Camera criar(Camera camera);
     Camera atualizar(Long id, Camera camera);

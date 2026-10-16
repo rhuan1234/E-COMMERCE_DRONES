@@ -40,8 +40,25 @@ public class CameraService implements CameraServiceInterface {
     }
 
     @Override
+    public List<Camera> buscarPorModelo(int page, int pageSize, String modelo) {
+        if (modelo == null || modelo.isBlank()) {
+            throw new ValidationException("Modelo da câmera é obrigatório", "modelo");
+        }
+        List<Camera> cameras = cameraRepository.findByModelo(modelo).page(page, pageSize).list();
+        if (cameras.isEmpty()) {
+            throw new ValidationException("Nenhuma câmera encontrada para o modelo '" + modelo + "'", "modelo");
+        }
+        return cameras;
+    }
+
+    @Override
     public long count() {
         return cameraRepository.count();
+    }
+
+    @Override
+    public long countModelos(String modelo) {
+        return cameraRepository.findByModelo(modelo).count();
     }
 
     @Override

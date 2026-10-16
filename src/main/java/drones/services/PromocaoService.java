@@ -41,8 +41,25 @@ public class PromocaoService implements PromocaoServiceInterface {
     }
 
     @Override
+    public List<Promocao> buscarPorNome(int page, int pageSize, String nome) {
+        if (nome == null || nome.isBlank()) {
+            throw new ValidationException("Nome da promoção é obrigatório", "nome");
+        }
+        List<Promocao> promocoes = promocaoRepository.findByNomeContaining(nome).page(page, pageSize).list();
+        if (promocoes.isEmpty()) {
+            throw new ValidationException("Nenhuma promoção encontrada para o nome '" + nome + "'", "nome");
+        }
+        return promocoes;
+    }
+
+    @Override
     public long count() {
         return promocaoRepository.count();
+    }
+
+    @Override
+    public long countNomes(String nome) {
+        return promocaoRepository.findByNomeContaining(nome).count();
     }
 
     @Override

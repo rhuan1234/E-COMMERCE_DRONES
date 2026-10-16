@@ -50,6 +50,21 @@ public class AdminController {
     }
 
     @GET
+    @Path("/admin/logins/{login}")
+    @RolesAllowed("ADMIN")
+    public PageResponse<UsuarioResponseDTO> buscarPorLogin(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("pageSize") @DefaultValue("10") int pageSize,
+            @PathParam("login") String login) {
+        if (login == null || login.isBlank()) {
+            throw new ValidationException("Login do usuário é obrigatório", "login");
+        }
+        List<Usuario> usuarios = usuarioService.buscarPorLogin(page, pageSize, login);
+        long totalItems = usuarioService.countLogins(login);
+        return PageResponse.of(usuarios, page, pageSize, totalItems, UsuarioMapper::toResponseDTO);
+    }
+
+    @GET
     @Path("/admin/{id}")
     @RolesAllowed("ADMIN")
     public Response buscarPeloId(@PathParam("id") Long id) {

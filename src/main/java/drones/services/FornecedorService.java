@@ -63,8 +63,25 @@ public class FornecedorService implements FornecedorServiceInterface{
     }
 
     @Override
+    public List<Fornecedor> buscarPorNome(int page, int pageSize, String nome) {
+        if (nome == null || nome.isBlank()) {
+            throw new ValidationException("Nome do fornecedor é obrigatório", "nome");
+        }
+        List<Fornecedor> fornecedores = fornecedorRepository.findByNomeContaining(nome).page(page, pageSize).list();
+        if (fornecedores.isEmpty()) {
+            throw new ValidationException("Nenhum fornecedor encontrado para o nome '" + nome + "'", "nome");
+        }
+        return fornecedores;
+    }
+
+    @Override
     public long count() {
         return fornecedorRepository.count();
+    }
+
+    @Override
+    public long countNomes(String nome) {
+        return fornecedorRepository.findByNomeContaining(nome).count();
     }
 
     @Override

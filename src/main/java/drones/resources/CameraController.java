@@ -62,6 +62,20 @@ public class CameraController {
     }
 
     @GET
+    @Path("/modelos/{modelo}")
+    public PageResponse<CameraResponseDTO> buscarPorModelo(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("pageSize") @DefaultValue("10") int pageSize,
+            @PathParam("modelo") String modelo) {
+        if (modelo == null || modelo.isBlank()) {
+            throw new ValidationException("Modelo da câmera é obrigatório", "modelo");
+        }
+        List<Camera> cameras = cameraService.buscarPorModelo(page, pageSize, modelo);
+        long totalItems = cameraService.countModelos(modelo);
+        return PageResponse.of(cameras, page, pageSize, totalItems, CameraMapper::toResponseDTO);
+    }
+
+    @GET
     @Path("/admin/{id}")
     @RolesAllowed("ADMIN")
     public Response buscarPorId(@PathParam("id") Long id) {

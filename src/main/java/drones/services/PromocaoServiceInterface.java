@@ -7,7 +7,9 @@ import drones.model.promocao.Promocao;
 public interface PromocaoServiceInterface {
     List<Promocao> buscarTodos();
     List<Promocao> buscarTodos(int page, int pageSize);
+    List<Promocao> buscarPorNome(int page, int pageSize, String nome);
     long count();
+    long countNomes(String nome);
     Promocao buscarPorId(Long id);
     Promocao criar(Promocao promocao, List<Long> droneIds);
     Promocao atualizar(Long id, Promocao promocao, List<Long> droneIds);
