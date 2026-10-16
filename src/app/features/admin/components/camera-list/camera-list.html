@@ -7,10 +7,26 @@
     </div>
 </mat-toolbar>
 
-<mat-form-field appearance="outline" class="flex-container">
-    <mat-label>Filtro</mat-label>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Ex: 4K HDR" #input>
-</mat-form-field>
+<div class="filter-container">
+    <mat-form-field appearance="outline">
+        <mat-label>Filtro por Modelo</mat-label>
+        <input
+            matInput
+            [value]="filtroModelo"
+            (keyup.enter)="filtrarPorModelo(input.value)"
+            placeholder="Ex: DJI"
+            #input
+        >
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="filtrarPorModelo(input.value)">
+        Buscar
+    </button>
+
+    <button mat-button color="warn" (click)="limparFiltro(input)">
+        Limpar Filtro
+    </button>
+</div>
 
 <table mat-table [dataSource]="dataSource" class="camera-table mat-elevation-z8">
 

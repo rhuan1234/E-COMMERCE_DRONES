@@ -38,17 +38,21 @@ export const routes: Routes = [
 
       // Câmeras
       { path: 'cameras', component: CameraList, title: 'Lista de Câmeras' },
+      { path: 'cameras/filtro/modelo/:modelo', component: CameraList, title: 'Câmeras por modelo' },
 
       // Fornecedores
       { path: 'fornecedores', component: FornecedorList, title: 'Lista de Fornecedores' },
+      { path: 'fornecedores/filtro/nome/:nome', component: FornecedorList, title: 'Fornecedores por nome' },
       { path: 'fornecedores/new', component: FornecedorForm, title: 'Novo Fornecedor' },
       { path: 'fornecedores/:id/edit', component: FornecedorForm, title: 'Editar Fornecedor', resolve: { fornecedor: fornecedorResolver } },
 
       {path: 'administradores', component: AdmnistradorList, title: 'Lista de Administradores'},
+      {path: 'administradores/filtro/login/:login', component: AdmnistradorList, title: 'Administradores por login'},
       {path: 'administradores/new', component: AdministradorForm, title: 'Novo Administrador'},
 
       // Promoções
       { path: 'promocoes', component: PromocaoList, title: 'Lista de Promoções' },
+      { path: 'promocoes/filtro/nome/:nome', component: PromocaoList, title: 'Promoções por nome' },
       { path: 'promocoes/new', component: PromocaoForm, title: 'Nova Promoção' },
       { path: 'promocoes/:id/edit', component: PromocaoForm, title: 'Editar Promoção' },
 

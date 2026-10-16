@@ -7,11 +7,18 @@ import { PagedResponse } from "../models/PagedResponse";
 @Injectable({providedIn: 'root'})
 export class FornecedorService{
     private readonly apiUrl = 'http://localhost:8080/fornecedores/admin';
+    private readonly apiUrlEcommerce = 'http://localhost:8080/fornecedores';
 
     constructor(private http: HttpClient){}
 
     findAll(page: number = 0, pageSize: number = 10): Observable<PagedResponse<Fornecedor>>{
         return this.http.get<PagedResponse<Fornecedor>>(`${this.apiUrl}?page=${page}&pageSize=${pageSize}`);
+    }
+
+    findByNome(page: number = 0, pageSize: number = 10, nome: string): Observable<PagedResponse<Fornecedor>> {
+        return this.http.get<PagedResponse<Fornecedor>>(
+            `${this.apiUrlEcommerce}/nomes/${encodeURIComponent(nome)}?page=${page}&pageSize=${pageSize}`
+        );
     }
 
     findById(id: string | null): Observable<Fornecedor>{

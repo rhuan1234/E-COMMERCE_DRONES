@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Administrador } from '../../../../core/models/administrador/Administrado';
 import { AdministradorService } from '../../../../core/services/AdministradorService';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
@@ -34,14 +34,26 @@ export class AdmnistradorList implements OnInit {
   pageIndex = 0;
   pageSize = 10;
   totalItems = 0;
+  filtroLogin = '';
 
   constructor(
     private administradorService: AdministradorService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router,
+    private route: ActivatedRoute,
   ) { }
 
   ngOnInit(): void {
-    this.carregarAdministradores();
+    this.route.params.subscribe((params) => {
+      const login = params['login'];
+      if (login && login.trim()) {
+        this.filtroLogin = login.trim();
+        this.carregarAdministradorPorLogin(this.filtroLogin);
+      } else {
+        this.filtroLogin = '';
+        this.carregarAdministradores();
+      }
+    });
   }
 
   carregarAdministradores(): void {
@@ -54,6 +66,37 @@ export class AdmnistradorList implements OnInit {
       },
       error: (err) => console.error('Erro ao carregar administradores', err),
     });
+  }
+
+  carregarAdministradorPorLogin(login: string): void {
+    this.administradorService.findByLogin(this.pageIndex, this.pageSize, login).subscribe({
+      next: (response) => {
+        this.dataSource.data = response.items;
+        this.pageIndex = response.page;
+        this.pageSize = response.pageSize;
+        this.totalItems = response.totalItems;
+      },
+      error: (err) => console.error('Erro ao carregar administradores por login', err),
+    });
+  }
+
+  filtrarPorLogin(login: string): void {
+    const termo = (login || '').trim();
+    this.pageIndex = 0;
+    if (termo) {
+      this.router.navigate(['/administradores/filtro/login', termo]);
+    } else {
+      this.router.navigate(['/administradores']);
+    }
+  }
+
+  limparFiltro(input?: HTMLInputElement): void {
+    if (input) {
+      input.value = '';
+    }
+    this.filtroLogin = '';
+    this.pageIndex = 0;
+    this.router.navigate(['/administradores']);
   }
 
   excluirAdministrador(administrador: Administrador): void {
@@ -70,7 +113,7 @@ export class AdmnistradorList implements OnInit {
       }
 
       this.administradorService.delete(administrador.id).subscribe({
-        next: () => this.carregarAdministradores(),
+        next: () => this.carregarListaAtual(),
         error: (err) => console.error('Erro ao excluir administrador', err)
       });
     });
@@ -79,11 +122,14 @@ export class AdmnistradorList implements OnInit {
   onPageChange(event: PageEvent): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
-    this.carregarAdministradores();
+    this.carregarListaAtual();
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  private carregarListaAtual(): void {
+    if (this.filtroLogin) {
+      this.carregarAdministradorPorLogin(this.filtroLogin);
+    } else {
+      this.carregarAdministradores();
+    }
   }
 }

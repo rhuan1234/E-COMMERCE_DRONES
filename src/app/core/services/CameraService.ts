@@ -7,11 +7,18 @@ import { Camera } from "../models/camera/Camera";
 @Injectable({providedIn: 'root'})
 export class CameraService {
     private readonly apiUrl = 'http://localhost:8080/cameras/admin';
+    private readonly apiUrlEcommerce = 'http://localhost:8080/cameras';
 
     constructor(private http: HttpClient) { }
     
     findAll(page: number = 0, pageSize: number = 10): Observable<PagedResponse<Camera>> {
         return this.http.get<PagedResponse<Camera>>(`${this.apiUrl}?page=${page}&pageSize=${pageSize}`);
+    }
+
+    findByModelo(page: number = 0, pageSize: number = 10, modelo: string): Observable<PagedResponse<Camera>> {
+        return this.http.get<PagedResponse<Camera>>(
+            `${this.apiUrlEcommerce}/modelos/${encodeURIComponent(modelo)}?page=${page}&pageSize=${pageSize}`
+        );
     }
     
     findById(id: any): Observable<Camera> {

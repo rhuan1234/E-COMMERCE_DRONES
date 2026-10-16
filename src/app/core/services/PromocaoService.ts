@@ -7,11 +7,18 @@ import { PagedResponse } from "./DroneService";
 @Injectable({ providedIn: 'root' })
 export class PromocaoService {
     private readonly apiUrl = 'http://localhost:8080/promocoes/admin';
+    private readonly apiUrlEcommerce = 'http://localhost:8080/promocoes';
 
     constructor(private http: HttpClient) { }
 
     findAll(page: number = 0, pageSize: number = 10): Observable<PagedResponse<PromocaoRequest>> {
         return this.http.get<PagedResponse<PromocaoRequest>>(`${this.apiUrl}?page=${page}&pageSize=${pageSize}`);
+    }
+
+    findByNome(page: number = 0, pageSize: number = 10, nome: string): Observable<PagedResponse<PromocaoRequest>> {
+        return this.http.get<PagedResponse<PromocaoRequest>>(
+            `${this.apiUrlEcommerce}/nomes/${encodeURIComponent(nome)}?page=${page}&pageSize=${pageSize}`
+        );
     }
 
     findById(id: string | null | number): Observable<PromocaoRequest> {

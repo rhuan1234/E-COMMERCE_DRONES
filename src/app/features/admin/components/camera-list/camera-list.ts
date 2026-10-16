@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CameraService } from '../../../../core/services/CameraService';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CameraForm } from '../camera-form/camera-form';
@@ -35,14 +35,26 @@ export class CameraList implements OnInit {
   pageIndex = 0;
   pageSize = 10;
   totalItems = 0;
+  filtroModelo = '';
 
   constructor(
     private cameraService: CameraService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router,
+    private route: ActivatedRoute,
   ) { }
 
   ngOnInit(): void {
-    this.carregarCameras();
+    this.route.params.subscribe((params) => {
+      const modelo = params['modelo'];
+      if (modelo && modelo.trim()) {
+        this.filtroModelo = modelo.trim();
+        this.carregarCameraPorModelo(this.filtroModelo);
+      } else {
+        this.filtroModelo = '';
+        this.carregarCameras();
+      }
+    });
   }
 
   carregarCameras(): void {
@@ -57,6 +69,37 @@ export class CameraList implements OnInit {
     });
   }
 
+  carregarCameraPorModelo(modelo: string): void {
+    this.cameraService.findByModelo(this.pageIndex, this.pageSize, modelo).subscribe({
+      next: (response) => {
+        this.dataSource.data = response.items;
+        this.pageIndex = response.page;
+        this.pageSize = response.pageSize;
+        this.totalItems = response.totalItems;
+      },
+      error: (err) => console.error('Erro ao carregar câmeras por modelo', err),
+    });
+  }
+
+  filtrarPorModelo(modelo: string): void {
+    const termo = (modelo || '').trim();
+    this.pageIndex = 0;
+    if (termo) {
+      this.router.navigate(['/cameras/filtro/modelo', termo]);
+    } else {
+      this.router.navigate(['/cameras']);
+    }
+  }
+
+  limparFiltro(input?: HTMLInputElement): void {
+    if (input) {
+      input.value = '';
+    }
+    this.filtroModelo = '';
+    this.pageIndex = 0;
+    this.router.navigate(['/cameras']);
+  }
+
   openFormDialog(camera?: Camera): void {
     const dialogRef = this.dialog.open(CameraForm, {
       width: '600px',
@@ -65,7 +108,7 @@ export class CameraList implements OnInit {
 
     dialogRef.afterClosed().subscribe((resultado) => {
       if (resultado) {
-        this.carregarCameras();
+        this.carregarListaAtual();
       }
     });
   }
@@ -84,7 +127,7 @@ export class CameraList implements OnInit {
       }
 
       this.cameraService.delete(camera.id!).subscribe({
-        next: () => this.carregarCameras(),
+        next: () => this.carregarListaAtual(),
         error: (err) => console.error('Erro ao excluir', err)
       });
     });
@@ -93,11 +136,14 @@ export class CameraList implements OnInit {
   onPageChange(event: PageEvent): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
-    this.carregarCameras();
+    this.carregarListaAtual();
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  private carregarListaAtual(): void {
+    if (this.filtroModelo) {
+      this.carregarCameraPorModelo(this.filtroModelo);
+    } else {
+      this.carregarCameras();
+    }
   }
 }

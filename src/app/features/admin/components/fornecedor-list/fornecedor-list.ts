@@ -5,7 +5,7 @@ import { FornecedorService } from '../../../../core/services/FornecedorService';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -29,19 +29,31 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
   templateUrl: './fornecedor-list.html',
 })
 export class FornecedorList implements OnInit {
-  displayedColumns: string[] = ['id', 'nome', 'cnpj', 'telefone', 'email', 'ativo', 'acao'];
+  displayedColumns: string[] = ['id', 'nome', 'cnpj', 'telefone', 'email', 'acao'];
   dataSource = new MatTableDataSource<Fornecedor>();
   pageIndex = 0;
   pageSize = 10;
   totalItems = 0;
+  filtroNome = '';
 
   constructor(
     private fornecedorService: FornecedorService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router,
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
-    this.carregarFornecedores();
+    this.route.params.subscribe((params) => {
+      const nome = params['nome'];
+      if (nome && nome.trim()) {
+        this.filtroNome = nome.trim();
+        this.carregarFornecedorPorNome(this.filtroNome);
+      } else {
+        this.filtroNome = '';
+        this.carregarFornecedores();
+      }
+    });
   }
 
   carregarFornecedores(): void {
@@ -54,6 +66,37 @@ export class FornecedorList implements OnInit {
       },
       error: (err) => console.error('Erro ao carregar fornecedores', err),
     });
+  }
+
+  carregarFornecedorPorNome(nome: string): void {
+    this.fornecedorService.findByNome(this.pageIndex, this.pageSize, nome).subscribe({
+      next: (response) => {
+        this.dataSource.data = response.items;
+        this.pageIndex = response.page;
+        this.pageSize = response.pageSize;
+        this.totalItems = response.totalItems;
+      },
+      error: (err) => console.error('Erro ao carregar fornecedores por nome', err),
+    });
+  }
+
+  filtrarPorNome(nome: string): void {
+    const termo = (nome || '').trim();
+    this.pageIndex = 0;
+    if (termo) {
+      this.router.navigate(['/fornecedores/filtro/nome', termo]);
+    } else {
+      this.router.navigate(['/fornecedores']);
+    }
+  }
+
+  limparFiltro(input?: HTMLInputElement): void {
+    if (input) {
+      input.value = '';
+    }
+    this.filtroNome = '';
+    this.pageIndex = 0;
+    this.router.navigate(['/fornecedores']);
   }
 
   excluirFornecedor(fornecedor: Fornecedor): void {
@@ -70,7 +113,7 @@ export class FornecedorList implements OnInit {
       }
 
       this.fornecedorService.delete(fornecedor.id).subscribe({
-        next: () => this.carregarFornecedores(),
+        next: () => this.carregarListaAtual(),
         error: (err) => console.error('Erro ao excluir fornecedor', err)
       });
     });
@@ -79,11 +122,14 @@ export class FornecedorList implements OnInit {
   onPageChange(event: PageEvent): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
-    this.carregarFornecedores();
+    this.carregarListaAtual();
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  private carregarListaAtual(): void {
+    if (this.filtroNome) {
+      this.carregarFornecedorPorNome(this.filtroNome);
+    } else {
+      this.carregarFornecedores();
+    }
   }
 }
