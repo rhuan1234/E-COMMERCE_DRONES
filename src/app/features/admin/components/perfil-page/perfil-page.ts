@@ -392,7 +392,7 @@ salvarPerfil(): void {
     senhaAtual: ['', [Validators.required, Validators.maxLength(100)]],
     novaSenha: [
       '',
-      [Validators.required, Validators.minLength(8), Validators.maxLength(100)]
+      [Validators.required, Validators.minLength(6), Validators.maxLength(100)]
     ],
     confirmarSenha: ['', [Validators.required, Validators.maxLength(100)]]
   },

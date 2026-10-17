@@ -37,7 +37,6 @@ export class DroneList implements OnInit {
     'modelo',
     'preco',
     'quantidadeDisponivel',
-    'possuiCamera',
     'possuiGPS',
     'ativa',
     'acao',

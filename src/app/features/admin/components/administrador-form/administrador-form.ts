@@ -47,7 +47,7 @@ export class AdministradorForm implements OnInit {
     this.form = this.fb.group({
       id: [null],
       login: ['', [Validators.required, Validators.pattern(/^\S+$/), Validators.minLength(3), Validators.maxLength(40)]],
-      senha: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(100)]],
+      senha: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(100)]],
       email: ['', [Validators.required, Validators.email, Validators.maxLength(254)]],
       perfil: ['ADMIN']
     });

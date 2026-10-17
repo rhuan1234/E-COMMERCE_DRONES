@@ -405,7 +405,7 @@
 
         @if (senhaForm.get('novaSenha')?.hasError('minlength')
           && senhaForm.get('novaSenha')?.touched) {
-          <mat-error>A senha deve ter pelo menos 8 caracteres.</mat-error>
+          <mat-error>A senha deve ter pelo menos 6 caracteres.</mat-error>
         }
         @if (senhaForm.get('novaSenha')?.hasError('maxlength')
           && senhaForm.get('novaSenha')?.touched) {

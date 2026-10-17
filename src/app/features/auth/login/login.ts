@@ -17,7 +17,7 @@ export class Login {
 
   form = this.fb.group({
     login: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(40)]],
-    senha: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(100)]]
+    senha: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(100)]]
   })
 
   login(): void{
