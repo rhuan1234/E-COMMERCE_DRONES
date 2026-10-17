@@ -11,7 +11,7 @@ html {
   @include mat.theme(
     (
       color: (
-        theme-type: dark,
+        theme-type: light,
         primary: theme.$primary-palette,
         tertiary: theme.$tertiary-palette,
       ),
@@ -20,25 +20,23 @@ html {
     )
   );
 
-  // Superfícies escuras refinadas e suaves (dark mode confortável aos olhos)
-  --mat-sys-surface: #0d0f11;
-  --mat-sys-surface-dim: #090b0d;
-  --mat-sys-surface-container: #121417;
-  --mat-sys-surface-container-low: #0f1114;
-  --mat-sys-surface-container-high: #16191d;
-  --mat-sys-surface-container-highest: #1e2227;
-  --mat-sys-outline: #2d333b;
-  --mat-sys-outline-variant: #1f2429;
-  --mat-sys-on-surface: #e5e7eb;
-  --mat-sys-on-surface-variant: #9ca3af;
+  --mat-sys-surface: #f5f6f4;
+  --mat-sys-surface-dim: #e5e8e2;
+  --mat-sys-surface-container: #ffffff;
+  --mat-sys-surface-container-low: #fafbf9;
+  --mat-sys-surface-container-high: #eef1eb;
+  --mat-sys-surface-container-highest: #e6e9e2;
+  --mat-sys-outline: #747b70;
+  --mat-sys-outline-variant: #d4d9d0;
+  --mat-sys-on-surface: #1b1f18;
+  --mat-sys-on-surface-variant: #454b42;
 }
 
 body {
-  // Configura o navegador para modo escuro
-  color-scheme: dark;
+  color-scheme: light;
 
-  background-color: var(--mat-sys-surface, #0d0f11);
-  color: var(--mat-sys-on-surface, #e5e7eb);
+  background-color: var(--mat-sys-surface, #f5f6f4);
+  color: var(--mat-sys-on-surface, #1b1f18);
   font: var(--mat-sys-body-medium);
 
   margin: 0;
