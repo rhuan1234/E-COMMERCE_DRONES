@@ -11,9 +11,11 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import {
+  AbstractControl,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
+  ValidationErrors,
   Validators
 } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -21,6 +23,17 @@ import { Drone } from '../../../../core/models/drone/Drone';
 import { DroneService } from '../../../../core/services/DroneService';
 import { PromocaoRequest } from '../../../../core/models/promocao/PromocaoRequest';
 import { PromocaoService } from '../../../../core/services/PromocaoService';
+
+function validarIntervaloPromocao(control: AbstractControl): ValidationErrors | null {
+  const inicio = control.get('dataInicio')?.value;
+  const fim = control.get('dataFim')?.value;
+
+  if (!inicio || !fim) {
+    return null;
+  }
+
+  return new Date(fim) > new Date(inicio) ? null : { intervaloInvalido: true };
+}
 
 @Component({
   imports: [ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule,
@@ -51,7 +64,7 @@ export class PromocaoForm implements OnInit {
 
       nome: [
         '',
-        Validators.required
+        [Validators.required, Validators.pattern(/\S/), Validators.minLength(2), Validators.maxLength(100)]
       ],
 
       percentualDesconto: [
@@ -59,12 +72,9 @@ export class PromocaoForm implements OnInit {
         [Validators.required, Validators.min(0), Validators.max(100)]
       ],
 
-      dataInicio: ['', Validators.required
-      ],
-
-      dataFim: ['', Validators.required
-      ]
-    });
+      dataInicio: ['', Validators.required],
+      dataFim: ['', Validators.required]
+    }, { validators: validarIntervaloPromocao });
   }
 
   ngOnInit(): void {

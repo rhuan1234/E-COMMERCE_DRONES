@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSelectModule } from '@angular/material/select';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 import { Camera } from '../../../../core/models/camera/Camera';
 
@@ -39,12 +39,12 @@ export class CameraForm implements OnInit {
   ) {
     this.form = this.fb.group({
       id: [null],
-      modelo: [''],
-      marca: [''],
-      resolucao: [''],
-      zoom: [0],
+      modelo: ['', [Validators.required, Validators.pattern(/\S/), Validators.minLength(2), Validators.maxLength(60)]],
+      marca: ['', [Validators.required, Validators.pattern(/\S/), Validators.minLength(2), Validators.maxLength(60)]],
+      resolucao: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(40)]],
+      zoom: [0, [Validators.required, Validators.min(0)]],
       estabilizacao: [false],
-      fps: ['']
+      fps: ['', [Validators.required, Validators.pattern(/^[1-9]\d{0,2}$/)]]
     })
   }
 
@@ -55,6 +55,12 @@ export class CameraForm implements OnInit {
   }
 
   salvar() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.exibirMensagem('Revise os campos destacados antes de salvar.');
+      return;
+    }
+
     const camera = this.form.value;
 
     let resultado = (camera.id) ?

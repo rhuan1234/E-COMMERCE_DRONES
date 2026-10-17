@@ -52,10 +52,10 @@ export class PerfilPage implements OnInit {
 
   perfilForm = this.fb.group({
     login: [{ value: '', disabled: true }],
-    nomeCompleto: ['', Validators.required],
+    nomeCompleto: ['', [Validators.required, Validators.pattern(/\S/), Validators.minLength(2), Validators.maxLength(120)]],
     email: [{ value: '', disabled: true }],
-    cpf: ['', Validators.required],
-    telefone: ['', Validators.required]
+    cpf: ['', [Validators.required, Validators.pattern(/^(?:\d{11}|\d{3}\.\d{3}\.\d{3}-\d{2})$/)]],
+    telefone: ['', [Validators.required, Validators.pattern(/^(?:\d{10,11}|(?:\+?55\s?)?\(\d{2}\)\s?9?\d{4}-?\d{4})$/)]]
   });
 
   private readonly enderecoApi = inject(EnderecoApiService);
@@ -75,10 +75,10 @@ export class PerfilPage implements OnInit {
   editandoEnderecoId: number | null = null;
 
   enderecoForm = this.fb.group({
-    rua: ['', Validators.required],
-    bairro: ['', Validators.required],
-    cidade: ['', Validators.required],
-    estado: ['', Validators.required],
+    rua: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(120)]],
+    bairro: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(80)]],
+    cidade: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(80)]],
+    estado: ['', [Validators.required, Validators.pattern(/^[A-Za-zÀ-ÿ]{2}$/)]],
     cep: ['', [
       Validators.required,
       Validators.pattern(/^\d{5}-?\d{3}$/)
@@ -190,6 +190,11 @@ salvarPerfil(): void {
 
   buscarCep(): void {
     const cep = this.enderecoForm.controls.cep.value ?? '';
+
+    if (this.enderecoForm.controls.cep.invalid) {
+      this.enderecoForm.controls.cep.markAsTouched();
+      return;
+    }
 
     this.buscandoCep = true;
     this.erroEndereco = '';
@@ -384,12 +389,12 @@ salvarPerfil(): void {
 
   senhaForm = this.fb.group(
   {
-    senhaAtual: ['', Validators.required],
+    senhaAtual: ['', [Validators.required, Validators.maxLength(100)]],
     novaSenha: [
       '',
-      [Validators.required, Validators.minLength(8)]
+      [Validators.required, Validators.minLength(8), Validators.maxLength(100)]
     ],
-    confirmarSenha: ['', Validators.required]
+    confirmarSenha: ['', [Validators.required, Validators.maxLength(100)]]
   },
   {
     validators: (form) => {

@@ -6,24 +6,50 @@
         <mat-form-field appearance="outline" class="full-width-input">
             <mat-label>Modelo</mat-label>
             <input matInput formControlName="modelo" placeholder="Modelo da câmera">
+            @if (form.controls['modelo'].hasError('required') && form.controls['modelo'].touched) {
+                <mat-error>Informe o modelo.</mat-error>
+            } @else if (form.controls['modelo'].hasError('pattern')) {
+                <mat-error>O modelo não pode conter apenas espaços.</mat-error>
+            } @else if (form.controls['modelo'].hasError('minlength') || form.controls['modelo'].hasError('maxlength')) {
+                <mat-error>O modelo deve ter entre 2 e 60 caracteres.</mat-error>
+            }
         </mat-form-field>
     
         <!-- Marca -->
         <mat-form-field appearance="outline" class="full-width-input">
             <mat-label>Marca</mat-label>
             <input matInput formControlName="marca" placeholder="Marca da câmera">
+            @if (form.controls['marca'].hasError('required') && form.controls['marca'].touched) {
+                <mat-error>Informe a marca.</mat-error>
+            } @else if (form.controls['marca'].hasError('pattern')) {
+                <mat-error>A marca não pode conter apenas espaços.</mat-error>
+            } @else if (form.controls['marca'].hasError('minlength') || form.controls['marca'].hasError('maxlength')) {
+                <mat-error>A marca deve ter entre 2 e 60 caracteres.</mat-error>
+            }
         </mat-form-field>
     
         <!-- Resolução -->
         <mat-form-field appearance="outline" class="full-width-input">
             <mat-label>Resolução</mat-label>
             <input matInput formControlName="resolucao" placeholder="Resolução da câmera">
+            @if (form.controls['resolucao'].hasError('required') && form.controls['resolucao'].touched) {
+                <mat-error>Informe a resolução.</mat-error>
+            } @else if (form.controls['resolucao'].hasError('pattern')) {
+                <mat-error>A resolução não pode conter apenas espaços.</mat-error>
+            } @else if (form.controls['resolucao'].hasError('maxlength')) {
+                <mat-error>A resolução deve ter no máximo 40 caracteres.</mat-error>
+            }
         </mat-form-field>
     
         <!-- Zoom -->
         <mat-form-field appearance="outline" class="full-width-input">
             <mat-label>Zoom</mat-label>
             <input matInput type="number" formControlName="zoom" placeholder="Zoom da câmera">
+            @if (form.controls['zoom'].hasError('required') && form.controls['zoom'].touched) {
+                <mat-error>Informe o zoom.</mat-error>
+            } @else if (form.controls['zoom'].hasError('min') && form.controls['zoom'].touched) {
+                <mat-error>O zoom não pode ser negativo.</mat-error>
+            }
         </mat-form-field>
     
         <!-- Estabilização -->
@@ -39,6 +65,11 @@
         <mat-form-field appearance="outline" class="full-width-input">
             <mat-label>FPS</mat-label>
             <input matInput formControlName="fps" placeholder="FPS da câmera">
+            @if (form.controls['fps'].hasError('required') && form.controls['fps'].touched) {
+                <mat-error>Informe o FPS.</mat-error>
+            } @else if (form.controls['fps'].hasError('pattern')) {
+                <mat-error>Informe o FPS como um número inteiro positivo.</mat-error>
+            }
         </mat-form-field>
     </form>
 </mat-dialog-content>

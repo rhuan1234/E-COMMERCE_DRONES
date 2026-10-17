@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FornecedorService } from '../../../../core/services/FornecedorService';
 import { EnderecoService } from '../../../../core/services/EnderecoService';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -40,19 +40,19 @@ export class FornecedorForm implements OnInit {
   ) {
     this.form = this.fb.group({
       id: [null],
-      nome: [''],
-      cnpj: [''],
-      email: [''],
+      nome: ['', [Validators.required, Validators.pattern(/\S/), Validators.minLength(2), Validators.maxLength(100)]],
+      cnpj: ['', [Validators.required, Validators.pattern(/^(?:\d{14}|\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2})$/)]],
+      email: ['', [Validators.required, Validators.email, Validators.maxLength(254)]],
       ativo: [true],
-      telefone: [''],
+      telefone: ['', [Validators.required, Validators.pattern(/^(?:\d{10,11}|(?:\+?55\s?)?\(\d{2}\)\s?9?\d{4}-?\d{4})$/)]],
       endereco: this.fb.group({
-        cep: [''],
-        rua: [''],
-        bairro: [''],
+        cep: ['', [Validators.required, Validators.pattern(/^(?:\d{8}|\d{5}-\d{3})$/)]],
+        rua: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(120)]],
+        bairro: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(80)]],
         cidade: this.fb.group({
-          nome: [''],
+          nome: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(80)]],
           estado: this.fb.group({
-            nome: ['']
+            nome: ['', [Validators.required, Validators.pattern(/^[A-Za-zÀ-ÿ]{2}$/)]]
           })
         })
       })
@@ -123,6 +123,12 @@ export class FornecedorForm implements OnInit {
   }
 
   salvar() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.exibirMensagem('Revise os campos destacados antes de salvar.');
+      return;
+    }
+
     const fornecedor = this.form.value;
 
     let resultado = (fornecedor.id) ?

@@ -51,6 +51,10 @@
 
             @if (perfilForm.controls.nomeCompleto.hasError('required')) {
               <mat-error>Informe seu nome completo.</mat-error>
+            } @else if (perfilForm.controls.nomeCompleto.hasError('pattern')) {
+              <mat-error>O nome não pode conter apenas espaços.</mat-error>
+            } @else if (perfilForm.controls.nomeCompleto.hasError('minlength') || perfilForm.controls.nomeCompleto.hasError('maxlength')) {
+              <mat-error>O nome deve ter entre 2 e 120 caracteres.</mat-error>
             }
           </mat-form-field>
 
@@ -63,12 +67,22 @@
           <mat-form-field appearance="outline">
             <mat-label>CPF</mat-label>
             <input matInput formControlName="cpf">
+            @if (perfilForm.controls.cpf.hasError('required') && perfilForm.controls.cpf.touched) {
+              <mat-error>Informe o CPF.</mat-error>
+            } @else if (perfilForm.controls.cpf.hasError('pattern')) {
+              <mat-error>Informe um CPF com 11 dígitos.</mat-error>
+            }
             <mat-icon matSuffix>badge</mat-icon>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Telefone</mat-label>
             <input matInput type="tel" formControlName="telefone">
+            @if (perfilForm.controls.telefone.hasError('required') && perfilForm.controls.telefone.touched) {
+              <mat-error>Informe o telefone.</mat-error>
+            } @else if (perfilForm.controls.telefone.hasError('pattern')) {
+              <mat-error>Informe um telefone válido com DDD.</mat-error>
+            }
             <mat-icon matSuffix>phone</mat-icon>
           </mat-form-field>
 
@@ -245,6 +259,8 @@
           <input matInput formControlName="rua">
           @if (enderecoForm.controls.rua.hasError('required')) {
             <mat-error>Informe a rua.</mat-error>
+          } @else if (enderecoForm.controls.rua.hasError('pattern')) {
+            <mat-error>A rua não pode conter apenas espaços.</mat-error>
           }
         </mat-form-field>
 
@@ -253,6 +269,8 @@
           <input matInput formControlName="bairro">
           @if (enderecoForm.controls.bairro.hasError('required')) {
             <mat-error>Informe o bairro.</mat-error>
+          } @else if (enderecoForm.controls.bairro.hasError('pattern')) {
+            <mat-error>O bairro não pode conter apenas espaços.</mat-error>
           }
         </mat-form-field>
 
@@ -261,6 +279,8 @@
           <input matInput formControlName="cidade">
           @if (enderecoForm.controls.cidade.hasError('required')) {
             <mat-error>Informe a cidade.</mat-error>
+          } @else if (enderecoForm.controls.cidade.hasError('pattern')) {
+            <mat-error>A cidade não pode conter apenas espaços.</mat-error>
           }
         </mat-form-field>
 
@@ -269,6 +289,8 @@
           <input matInput formControlName="estado">
           @if (enderecoForm.controls.estado.hasError('required')) {
             <mat-error>Informe o estado.</mat-error>
+          } @else if (enderecoForm.controls.estado.hasError('pattern')) {
+            <mat-error>Informe a sigla do estado com 2 letras.</mat-error>
           }
         </mat-form-field>
       </div>
@@ -347,6 +369,10 @@
           && senhaForm.get('senhaAtual')?.touched) {
           <mat-error>Informe sua senha atual.</mat-error>
         }
+        @if (senhaForm.get('senhaAtual')?.hasError('maxlength')
+          && senhaForm.get('senhaAtual')?.touched) {
+          <mat-error>A senha atual deve ter no máximo 100 caracteres.</mat-error>
+        }
       </mat-form-field>
     </div>
 
@@ -380,6 +406,10 @@
         @if (senhaForm.get('novaSenha')?.hasError('minlength')
           && senhaForm.get('novaSenha')?.touched) {
           <mat-error>A senha deve ter pelo menos 8 caracteres.</mat-error>
+        }
+        @if (senhaForm.get('novaSenha')?.hasError('maxlength')
+          && senhaForm.get('novaSenha')?.touched) {
+          <mat-error>A senha deve ter no máximo 100 caracteres.</mat-error>
         }
       </mat-form-field>
     </div>

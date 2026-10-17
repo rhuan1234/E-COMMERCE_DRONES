@@ -11,24 +11,48 @@
                 <mat-form-field appearance="outline" class="full-width-input">
                     <mat-label>Nome</mat-label>
                     <input matInput formControlName="nome" placeholder="Nome do fornecedor">
+                    @if (form.controls['nome'].hasError('required') && form.controls['nome'].touched) {
+                        <mat-error>Informe o nome do fornecedor.</mat-error>
+                    } @else if (form.controls['nome'].hasError('pattern')) {
+                        <mat-error>O nome não pode conter apenas espaços.</mat-error>
+                    } @else if (form.controls['nome'].hasError('minlength') || form.controls['nome'].hasError('maxlength')) {
+                        <mat-error>O nome deve ter entre 2 e 100 caracteres.</mat-error>
+                    }
                 </mat-form-field>
 
                 <!-- CNPJ -->
                 <mat-form-field appearance="outline" class="full-width-input">
                     <mat-label>CNPJ</mat-label>
                     <input matInput formControlName="cnpj" placeholder="CNPJ do fornecedor">
+                    @if (form.controls['cnpj'].hasError('required') && form.controls['cnpj'].touched) {
+                        <mat-error>Informe o CNPJ.</mat-error>
+                    } @else if (form.controls['cnpj'].hasError('pattern')) {
+                        <mat-error>Informe um CNPJ válido, com ou sem pontuação.</mat-error>
+                    }
                 </mat-form-field>
 
                 <!-- Email -->
                 <mat-form-field appearance="outline" class="full-width-input">
                     <mat-label>Email</mat-label>
                     <input matInput formControlName="email" placeholder="Email do fornecedor">
+                    @if (form.controls['email'].hasError('required') && form.controls['email'].touched) {
+                        <mat-error>Informe o e-mail.</mat-error>
+                    } @else if (form.controls['email'].hasError('email')) {
+                        <mat-error>Informe um e-mail válido.</mat-error>
+                    } @else if (form.controls['email'].hasError('maxlength')) {
+                        <mat-error>O e-mail deve ter no máximo 254 caracteres.</mat-error>
+                    }
                 </mat-form-field>
 
                 <!-- Telefone -->
                 <mat-form-field appearance="outline" class="full-width-input">
                     <mat-label>Telefone</mat-label>
                     <input matInput formControlName="telefone" placeholder="Telefone do fornecedor">
+                    @if (form.controls['telefone'].hasError('required') && form.controls['telefone'].touched) {
+                        <mat-error>Informe o telefone.</mat-error>
+                    } @else if (form.controls['telefone'].hasError('pattern')) {
+                        <mat-error>Informe um telefone válido com DDD.</mat-error>
+                    }
                 </mat-form-field>
                 <div>
                     Endereço
@@ -41,18 +65,37 @@
                         <button mat-icon-button matSuffix type="button" (click)="buscarCep(true)" [disabled]="carregandoCep" aria-label="Consultar CEP" title="Consultar CEP">
                             <mat-icon>{{ carregandoCep ? 'hourglass_empty' : 'search' }}</mat-icon>
                         </button>
+                        @if (form.get('endereco.cep')?.hasError('required') && form.get('endereco.cep')?.touched) {
+                            <mat-error>Informe o CEP.</mat-error>
+                        } @else if (form.get('endereco.cep')?.hasError('pattern')) {
+                            <mat-error>Informe um CEP válido.</mat-error>
+                        }
                     </mat-form-field>
 
                     <!-- rua -->
                     <mat-form-field appearance="outline" class="full-width-input">
                         <mat-label>Rua</mat-label>
                         <input matInput formControlName="rua" placeholder="rua">
+                        @if (form.get('endereco.rua')?.hasError('required') && form.get('endereco.rua')?.touched) {
+                            <mat-error>Informe a rua.</mat-error>
+                        } @else if (form.get('endereco.rua')?.hasError('pattern')) {
+                            <mat-error>A rua não pode conter apenas espaços.</mat-error>
+                        } @else if (form.get('endereco.rua')?.hasError('maxlength')) {
+                            <mat-error>A rua deve ter no máximo 120 caracteres.</mat-error>
+                        }
                     </mat-form-field>
 
                     <!-- bairro -->
                     <mat-form-field appearance="outline" class="full-width-input">
                         <mat-label>Bairro</mat-label>
                         <input matInput formControlName="bairro" placeholder="bairro">
+                        @if (form.get('endereco.bairro')?.hasError('required') && form.get('endereco.bairro')?.touched) {
+                            <mat-error>Informe o bairro.</mat-error>
+                        } @else if (form.get('endereco.bairro')?.hasError('pattern')) {
+                            <mat-error>O bairro não pode conter apenas espaços.</mat-error>
+                        } @else if (form.get('endereco.bairro')?.hasError('maxlength')) {
+                            <mat-error>O bairro deve ter no máximo 80 caracteres.</mat-error>
+                        }
                     </mat-form-field>
                     
                     <div formGroupName="cidade">
@@ -60,6 +103,13 @@
                         <mat-form-field appearance="outline" class="full-width-input">
                             <mat-label>Cidade</mat-label>
                             <input matInput formControlName="nome" placeholder="cidade">
+                            @if (form.get('endereco.cidade.nome')?.hasError('required') && form.get('endereco.cidade.nome')?.touched) {
+                                <mat-error>Informe a cidade.</mat-error>
+                            } @else if (form.get('endereco.cidade.nome')?.hasError('pattern')) {
+                                <mat-error>A cidade não pode conter apenas espaços.</mat-error>
+                            } @else if (form.get('endereco.cidade.nome')?.hasError('maxlength')) {
+                                <mat-error>A cidade deve ter no máximo 80 caracteres.</mat-error>
+                            }
                         </mat-form-field>
 
                         <!-- estado -->
@@ -67,6 +117,11 @@
                             <mat-form-field appearance="outline" class="full-width-input">
                                 <mat-label>Estado</mat-label>
                                 <input matInput formControlName="nome" placeholder="estado">
+                                @if (form.get('endereco.cidade.estado.nome')?.hasError('required') && form.get('endereco.cidade.estado.nome')?.touched) {
+                                    <mat-error>Informe a sigla do estado.</mat-error>
+                                } @else if (form.get('endereco.cidade.estado.nome')?.hasError('pattern')) {
+                                    <mat-error>Informe a sigla do estado com 2 letras.</mat-error>
+                                }
                             </mat-form-field>
                         </div>
                         </div>

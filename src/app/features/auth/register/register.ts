@@ -1,5 +1,5 @@
 import { Component, inject, Injectable } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth/AuthService';
 import { Router, RouterLink } from '@angular/router';
 
@@ -18,14 +18,15 @@ export class Register {
 
   form = this.fb.group(
     {
-      login: [''],
-      senha: [''],
-      email: ['']
+      login: ['', [Validators.required, Validators.pattern(/^\S+$/), Validators.minLength(3), Validators.maxLength(40)]],
+      senha: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(100)]],
+      email: ['', [Validators.required, Validators.email, Validators.maxLength(254)]]
     }
   )
 
   register(): void{
     if(this.form.invalid){
+      this.form.markAllAsTouched();
       return;
     }
 

@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DroneService } from '../../../../core/services/DroneService';
 import { CameraService } from '../../../../core/services/CameraService';
@@ -57,27 +57,27 @@ export class DroneForm implements OnInit {
     this.form = this.fb.group({
 
       id: [null],
-      nome: [''],
-      marca: [''],
-      modelo: [''],
-      preco: [0],
-      quantidadeDisponivel: [0],
+      nome: ['', [Validators.required, Validators.pattern(/\S/), Validators.minLength(2), Validators.maxLength(100)]],
+      marca: ['', [Validators.required, Validators.pattern(/\S/), Validators.minLength(2), Validators.maxLength(60)]],
+      modelo: ['', [Validators.required, Validators.pattern(/\S/), Validators.minLength(2), Validators.maxLength(60)]],
+      preco: [0, [Validators.required, Validators.min(0)]],
+      quantidadeDisponivel: [0, [Validators.required, Validators.min(0), Validators.pattern(/^\d+$/)]],
       ativa: [true],
-      tempoVooPratico: [0],
-      pesoDecolagem: [0],
-      altitudeMaxima: [0],
-      velocidadeMaxima: [0],
-      alcanceTransmissao: [0],
+      tempoVooPratico: [0, [Validators.required, Validators.min(1)]],
+      pesoDecolagem: [0, [Validators.required, Validators.min(1)]],
+      altitudeMaxima: [0, [Validators.required, Validators.min(1)]],
+      velocidadeMaxima: [0, [Validators.required, Validators.min(1)]],
+      alcanceTransmissao: [0, [Validators.required, Validators.min(1)]],
       possuiCamera: [false],
-      quantidadeMotores: [0],
+      quantidadeMotores: [0, [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)]],
       comControleRemoto: [false],
       controladoPorAplicativo: [false],
-      quantidadeBaterias: [0],
-      duracaoBateria: [''],
-      frequenciaWifi: [''],
+      quantidadeBaterias: [0, [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)]],
+      duracaoBateria: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(40)]],
+      frequenciaWifi: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(40)]],
       possuiGPS: [false],
       cameraId: [null],
-      fornecedorId: [null]
+      fornecedorId: [null, Validators.required]
 
     });
 
@@ -85,6 +85,16 @@ export class DroneForm implements OnInit {
 
 
   ngOnInit(): void {
+    const possuiCameraControl = this.form.controls['possuiCamera'];
+    const cameraIdControl = this.form.controls['cameraId'];
+    const atualizarValidacaoCamera = (possuiCamera: boolean | null) => {
+      cameraIdControl.setValidators(possuiCamera ? Validators.required : null);
+      cameraIdControl.updateValueAndValidity({ emitEvent: false });
+    };
+
+    possuiCameraControl.valueChanges.subscribe(atualizarValidacaoCamera);
+    atualizarValidacaoCamera(possuiCameraControl.value);
+
     this.carregarCameras();
     this.carregarFornecedores();
 
@@ -127,6 +137,12 @@ export class DroneForm implements OnInit {
   }
 
    salvar(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.exibirMensagem('Revise os campos destacados antes de salvar.');
+      return;
+    }
+
     const drone = this.form.value;
     const resultado = drone.id
       ? this.droneService.update(drone.id, drone)

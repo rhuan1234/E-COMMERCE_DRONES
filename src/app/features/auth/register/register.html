@@ -35,6 +35,13 @@
                  text-white placeholder-gray-500 outline-none transition
                  focus:ring-2 focus:ring-[#84cc16] focus:border-[#84cc16]"
         >
+        @if (form.controls.login.hasError('required') && form.controls.login.touched) {
+          <p class="mt-1 text-sm text-red-400">Informe seu login.</p>
+        } @else if (form.controls.login.hasError('minlength') || form.controls.login.hasError('maxlength')) {
+          <p class="mt-1 text-sm text-red-400">O login deve ter entre 3 e 40 caracteres.</p>
+        } @else if (form.controls.login.hasError('pattern')) {
+          <p class="mt-1 text-sm text-red-400">O login não pode conter espaços.</p>
+        }
       </div>
 
       <!-- Email -->
@@ -47,13 +54,20 @@
 
         <input
           id="email"
-          type="text"
+          type="email"
           formControlName="email"
           placeholder="Digite seu email"
           class="w-full px-4 py-3 bg-[#16191d] border border-[#2d333b] rounded-lg
                  text-white placeholder-gray-500 outline-none transition
                  focus:ring-2 focus:ring-[#84cc16] focus:border-[#84cc16]"
         >
+        @if (form.controls.email.hasError('required') && form.controls.email.touched) {
+          <p class="mt-1 text-sm text-red-400">Informe seu e-mail.</p>
+        } @else if (form.controls.email.hasError('email')) {
+          <p class="mt-1 text-sm text-red-400">Informe um e-mail válido.</p>
+        } @else if (form.controls.email.hasError('maxlength')) {
+          <p class="mt-1 text-sm text-red-400">O e-mail deve ter no máximo 254 caracteres.</p>
+        }
       </div>
 
       <!-- Senha -->
@@ -66,24 +80,32 @@
 
         <input
           id="senha"
-          type="senha"
+          type="password"
           formControlName="senha"
           placeholder="Digite sua senha"
           class="w-full px-4 py-3 bg-[#16191d] border border-[#2d333b] rounded-lg
                  text-white placeholder-gray-500 outline-none transition
                  focus:ring-2 focus:ring-[#84cc16] focus:border-[#84cc16]"
         >
+        @if (form.controls.senha.hasError('required') && form.controls.senha.touched) {
+          <p class="mt-1 text-sm text-red-400">Informe sua senha.</p>
+        } @else if (form.controls.senha.hasError('minlength')) {
+          <p class="mt-1 text-sm text-red-400">A senha deve ter pelo menos 8 caracteres.</p>
+        } @else if (form.controls.senha.hasError('maxlength')) {
+          <p class="mt-1 text-sm text-red-400">A senha deve ter no máximo 100 caracteres.</p>
+        }
       </div>
 
       <!-- Botão -->
       <button
         type="submit"
+        [disabled]="form.invalid"
         class="w-full py-3 px-4
                bg-[#84cc16] hover:bg-[#a3e635]
                text-black font-bold
                rounded-lg
                transition duration-200
-               cursor-pointer shadow-md shadow-[#84cc16]/20">
+               cursor-pointer shadow-md shadow-[#84cc16]/20 disabled:opacity-50 disabled:cursor-not-allowed">
         Cadastrar
       </button>
 

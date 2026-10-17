@@ -25,6 +25,13 @@
             matInput
             formControlName="nome"
             placeholder="Nome da promoção">
+          @if (form.controls['nome'].hasError('required') && form.controls['nome'].touched) {
+            <mat-error>Informe o nome da promoção.</mat-error>
+          } @else if (form.controls['nome'].hasError('pattern')) {
+            <mat-error>O nome não pode conter apenas espaços.</mat-error>
+          } @else if (form.controls['nome'].hasError('minlength') || form.controls['nome'].hasError('maxlength')) {
+            <mat-error>O nome deve ter entre 2 e 100 caracteres.</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field
@@ -37,6 +44,11 @@
             matInput
             type="number"
             formControlName="percentualDesconto">
+          @if (form.controls['percentualDesconto'].hasError('required') && form.controls['percentualDesconto'].touched) {
+            <mat-error>Informe o percentual de desconto.</mat-error>
+          } @else if (form.controls['percentualDesconto'].hasError('min') || form.controls['percentualDesconto'].hasError('max')) {
+            <mat-error>O desconto deve estar entre 0% e 100%.</mat-error>
+          }
 
         </mat-form-field>
 
@@ -51,6 +63,9 @@
             matInput
             type="datetime-local"
             formControlName="dataInicio">
+          @if (form.controls['dataInicio'].hasError('required') && form.controls['dataInicio'].touched) {
+            <mat-error>Informe a data e hora de início.</mat-error>
+          }
 
         </mat-form-field>
 
@@ -66,6 +81,11 @@
             matInput
             type="datetime-local"
             formControlName="dataFim">
+          @if (form.controls['dataFim'].hasError('required') && form.controls['dataFim'].touched) {
+            <mat-error>Informe a data e hora de fim.</mat-error>
+          } @else if (form.hasError('intervaloInvalido') && form.controls['dataFim'].touched) {
+            <mat-error>O fim deve ser posterior ao início.</mat-error>
+          }
 
         </mat-form-field>
 
