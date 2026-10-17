@@ -111,7 +111,7 @@ export class AdmnistradorList implements OnInit {
       if (!confirmado) {
         return;
       }
-
+      
       this.administradorService.delete(administrador.id).subscribe({
         next: () => this.carregarListaAtual(),
         error: (err) => console.error('Erro ao excluir administrador', err)
