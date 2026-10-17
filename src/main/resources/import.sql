@@ -72,16 +72,16 @@ ALTER SEQUENCE fornecedor_id_seq RESTART WITH 3;
 
 -- 7. Câmeras
 INSERT INTO camera (id, modelo, marca, resolucao, zoom, estabilizacao, fps)
-VALUES (1, 'DJI 4K HDR Mini', 'DJI', '4K / 60fps', 4, true, '60fps');
+VALUES (1, 'DJI 4K HDR Mini', 'DJI', '1080', 4, true, '60');
 
 INSERT INTO camera (id, modelo, marca, resolucao, zoom, estabilizacao, fps)
-VALUES (2, 'Dual Camera 4K Wide + Tele', 'DJI', '4K / 100fps', 9, true, '100fps');
+VALUES (2, 'Dual Camera 4K Wide + Tele', 'DJI', '1080', 9, true, '100');
 
 INSERT INTO camera (id, modelo, marca, resolucao, zoom, estabilizacao, fps)
-VALUES (3, 'Autel 6K Super-Resolution', 'Autel Robotics', '6K / 30fps', 16, true, '30fps');
+VALUES (3, 'Autel 6K Super-Resolution', 'Autel Robotics', '1080', 16, true, '30');
 
 INSERT INTO camera (id, modelo, marca, resolucao, zoom, estabilizacao, fps)
-VALUES (4, 'Hasselblad 4/3 CMOS Tri-Camera', 'Hasselblad', '5.1K / 50fps', 28, true, '120fps');
+VALUES (4, 'Hasselblad 4/3 CMOS Tri-Camera', 'Hasselblad', '1080', 28, true, '120');
 ALTER SEQUENCE camera_id_seq RESTART WITH 5;
 
 -- 8. Promoções
@@ -104,7 +104,7 @@ INSERT INTO drone (
     1, 'Drone DJI Mini 4 Pro', 'DJI', 'Mini 4 Pro Fly More', 6499.00, 15, true,
     34, 249.0, 4000, 58, 20000,
     true, 4, true, true,
-    3, '34 minutos', '2.4 GHz, 5.8 GHz', true,
+    3, '34', '2.4', true,
     1, 1, 1
 );
 
@@ -119,7 +119,7 @@ INSERT INTO drone (
     2, 'Drone DJI Air 3', 'DJI', 'Air 3 Fly More Combo', 10899.00, 8, true,
     46, 720.0, 6000, 75, 20000,
     true, 4, true, true,
-    3, '46 minutos', '2.4 GHz, 5.1 GHz, 5.8 GHz', true,
+    3, '46', '2.4', true,
     1, 2, NULL
 );
 
@@ -134,7 +134,7 @@ INSERT INTO drone (
     3, 'Drone Autel EVO Lite+', 'Autel Robotics', 'EVO Lite+ Premium', 8499.00, 6, true,
     40, 835.0, 5000, 65, 12000,
     true, 4, true, true,
-    2, '40 minutos', '2.4 GHz, 5.8 GHz', true,
+    2, '40', '2.4', true,
     2, 3, 2
 );
 
@@ -149,7 +149,7 @@ INSERT INTO drone (
     4, 'Drone DJI Mavic 3 Pro', 'DJI', 'Mavic 3 Pro Cine', 18999.00, 4, true,
     43, 958.0, 6000, 76, 15000,
     true, 4, true, true,
-    3, '43 minutos', '2.4 GHz, 5.8 GHz', true,
+    3, '43', '2.4', true,
     2, 4, NULL
 );
 ALTER SEQUENCE drone_id_seq RESTART WITH 5;

@@ -103,6 +103,13 @@ public class DroneService implements DroneServiceInterface {
         drone.setPossuiCamera(dados.isPossuiCamera());
         drone.setPossuiGPS(dados.isPossuiGPS());
         drone.setFornecedor((fornecedorService.buscarPorId(dados.getFornecedor().getId())));
+        drone.setQuantidadeMotores(dados.getQuantidadeMotores());
+        drone.setQuantidadeBaterias(dados.getQuantidadeBaterias());
+        drone.setDuracaoBateria(dados.getDuracaoBateria());
+        drone.setFrequenciaWifi(dados.getFrequenciaWifi());
+        drone.setQuantidadeDisponivel(dados.getQuantidadeDisponivel());
+        drone.setComControleRemoto(dados.isComControleRemoto());
+        drone.setControladoPorAplicativo(dados.isControladoPorAplicativo());
 
         return drone;
     }
