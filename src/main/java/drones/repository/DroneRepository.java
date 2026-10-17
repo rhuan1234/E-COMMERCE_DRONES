@@ -1,6 +1,6 @@
 package drones.repository;
 
-import java.util.List;
+
 
 import drones.model.drones.Drone;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;

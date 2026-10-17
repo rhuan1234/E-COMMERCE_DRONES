@@ -101,6 +101,7 @@ public class DroneService implements DroneServiceInterface {
         drone.setVelocidadeMaxima(dados.getVelocidadeMaxima());
         drone.setAlcanceTransmissao(dados.getAlcanceTransmissao());
         drone.setPossuiCamera(dados.isPossuiCamera());
+        drone.setPossuiGPS(dados.isPossuiGPS());
         drone.setFornecedor((fornecedorService.buscarPorId(dados.getFornecedor().getId())));
 
         return drone;
