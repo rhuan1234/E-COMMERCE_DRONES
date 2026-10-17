@@ -43,7 +43,7 @@ export class Register {
         })
         .subscribe({
           next: () => {
-            this.router.navigate(['/cameras']);
+            this.router.navigate(['/drones']);
           },
           error: (err) => {
             console.error('Erro ao fazer o login após o cadastro', err);

@@ -32,7 +32,7 @@ export class Login {
     })
     .subscribe({
       next: () =>{
-        this.router.navigate(['/fornecedores']);
+        this.router.navigate(['/drones']);
       },
 
       error: (err) =>{
