@@ -4,6 +4,7 @@ import java.util.List;
 
 import drones.dto.usuarios.AlterarSenhaAdminDTO;
 import drones.exception.ValidationException;
+import drones.model.usuario.Perfil;
 import drones.model.usuario.Usuario;
 import drones.repository.UsuarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -29,7 +30,9 @@ public class AdminService implements AdminServiceInterface {
 
     @Override
     public List<Usuario> buscarTodos(int page, int pageSize) {
-        return repository.find("ativo", true).page(page, pageSize).list();
+        return repository.find("ativo = ?1 and perfil = ?2", true, Perfil.ADMIN)
+                .page(page, pageSize)
+                .list();
     }
 
     @Override

@@ -3,6 +3,7 @@ package drones.repository;
 import java.util.Optional;
 import java.util.UUID;
 
+import drones.model.usuario.Perfil;
 import drones.model.usuario.Usuario;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
@@ -17,7 +18,7 @@ public class UsuarioRepository implements PanacheRepository<Usuario> {
     }
 
     public PanacheQuery<Usuario> findActiveByLoginContaining(String login) {
-        return find("ativo = true AND login ILIKE ?1", "%" + login + "%");
+        return find("ativo = true AND perfil = ?1 AND login ILIKE ?2", Perfil.ADMIN, "%" + login + "%");
     }
 
     public Usuario findByEmail(String email) {
