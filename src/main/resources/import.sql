@@ -152,7 +152,51 @@ INSERT INTO drone (
     3, '43', '2.4', true,
     2, 4, NULL
 );
-ALTER SEQUENCE drone_id_seq RESTART WITH 5;
+
+INSERT INTO drone (
+    id, nome, marca, modelo, preco, quantidadedisponivel, ativa,
+    tempovoopratico, pesodecolagem, altitudemaxima, velocidademaxima, alcancetransmissao,
+    possuicamera, quantidademotores, comcontroleremoto, controladoporaplicativo,
+    quantidadebaterias, duracaobateria, frequenciawifi, possuigps,
+    fornecedor_id, camera_id, promocao_id
+) VALUES
+(
+    5, 'DJI Mini 4 Pro', 'DJI', 'Mini 4 Pro', 7499.00, 10, true,
+    34, 249.0, 4000, 57, 20000,
+    true, 4, true, true,
+    2, '34', '2.4', true,
+    2, 4, NULL
+),
+(
+    6, 'DJI Air 3', 'DJI', 'Air 3', 9999.00, 6, true,
+    46, 720.0, 6000, 75, 20000,
+    true, 4, true, true,
+    3, '46', '2.4', true,
+    2, 4, NULL
+),
+(
+    7, 'Autel EVO Lite+', 'Autel Robotics', 'EVO Lite+', 8999.00, 5, true,
+    40, 835.0, 4000, 67, 12000,
+    true, 4, true, true,
+    2, '40', '2.4', true,
+    2, 4, NULL
+),
+(
+    8, 'DJI Matrice 30', 'DJI', 'Matrice 30', 32999.00, 3, true,
+    41, 3770.0, 7000, 82, 15000,
+    true, 4, true, true,
+    2, '41', '2.4', true,
+    2, 4, NULL
+),
+(
+    9, 'Ryze Tello', 'Ryze', 'Tello', 899.00, 15, true,
+    13, 87.0, 3000, 28, 100,
+    true, 4, true, true,
+    1, '13', '2.4', true,
+    2, 4, NULL
+);
+
+ALTER SEQUENCE drone_id_seq RESTART WITH 10;
 
 -- 10. Avaliações
 INSERT INTO avaliacao (id, nota, comentario, dataavaliacao, usuario_id, drone_id)
