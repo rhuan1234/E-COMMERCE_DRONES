@@ -99,7 +99,11 @@
   padding: 16px;
 }
 
-.logout-btn {
+.profile-menu {
+  position: relative;
+}
+
+.profile-link {
   width: 100%;
   justify-content: flex-start !important;
   color: var(--mat-sys-on-surface-variant, #9ca3af) !important;
@@ -110,9 +114,41 @@
   gap: 12px;
 }
 
-.logout-btn:hover {
+.profile-link:hover {
   background-color: var(--mat-sys-surface-container-high, #16191d) !important;
+  color: var(--mat-sys-on-surface, #ffffff) !important;
+}
+
+.profile-email {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logout-btn {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  width: 100%;
+  justify-content: flex-start !important;
   color: var(--mat-sys-error, #ef4444) !important;
+  background-color: var(--mat-sys-surface-container-high, #16191d) !important;
+  border-radius: 10px !important;
+  padding: 10px 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+}
+
+.profile-menu:hover .logout-btn,
+.profile-menu:focus-within .logout-btn {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 /* Área de conteúdo */

@@ -34,12 +34,27 @@
 
     <mat-divider></mat-divider>
 
-    <!-- Rodapé da Sidebar: Logout / Sair -->
+    <!-- Atalho do perfil e logout -->
     <div class="sidenav-footer">
-      <button mat-button class="logout-btn" (click)="logout()">
-        <mat-icon>logout</mat-icon>
-        <span>Sair do sistema</span>
-      </button>
+      <div class="profile-menu">
+        <a mat-button class="profile-link" routerLink="/perfil" aria-label="Abrir perfil do usuário">
+          <mat-icon>account_circle</mat-icon>
+          <span class="profile-email">
+            @if (emailUsuario) {
+              {{ emailUsuario }}
+            } @else if (erroCarregamentoEmail) {
+              E-mail indisponível
+            } @else {
+              Carregando e-mail...
+            }
+          </span>
+        </a>
+
+        <button mat-button class="logout-btn" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Sair do sistema</span>
+        </button>
+      </div>
     </div>
 
   </mat-sidenav>

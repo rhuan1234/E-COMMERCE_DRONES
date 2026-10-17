@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon'; 
@@ -7,6 +7,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../../../../core/services/auth/AuthService';
+import { PerfilService } from '../../../../core/services/PerfilService';
 
 interface NavItem {
   label: string;
@@ -31,9 +32,13 @@ interface NavItem {
   templateUrl: './admin-layout.html',
   styleUrl: './admin-layout.css'
 })
-export class AdminLayoutComponent {
+export class AdminLayoutComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private perfilService = inject(PerfilService);
+
+  emailUsuario = '';
+  erroCarregamentoEmail = false;
 
   navItems: NavItem[] = [
     { label: 'Drones', route: '/drones', icon: 'flight_takeoff' },
@@ -41,8 +46,19 @@ export class AdminLayoutComponent {
     { label: 'Fornecedores', route: '/fornecedores', icon: 'business' },
     { label: 'Administradores', route: '/administradores', icon: 'admin_panel_settings' },
     { label: 'Promoções', route: '/promocoes', icon: 'local_offer' },
-    { label: 'Perfil', route: '/perfil', icon: 'person' },
   ];
+
+  ngOnInit(): void {
+    this.perfilService.obterPerfil().subscribe({
+      next: (perfil) => {
+        this.emailUsuario = perfil.email;
+      },
+      error: (err) => {
+        this.erroCarregamentoEmail = true;
+        console.error('Erro ao carregar e-mail do usuário', err);
+      },
+    });
+  }
 
   logout() {
     this.authService.logout();
