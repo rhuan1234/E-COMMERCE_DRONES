@@ -1,331 +1,410 @@
 <mat-toolbar class="toolbar-title" color="primary">
-    Controle de Drones
+  <mat-icon>flight</mat-icon>
+  Controle de Drones
 </mat-toolbar>
 
-<mat-card>
-    <mat-card-content>
+<mat-card class="drone-card">
+  <mat-card-content>
 
-        <form class="form" [formGroup]="form">
+    <form class="form" [formGroup]="form">
 
-            <div class="columns">
+      <mat-stepper linear #stepper>
 
-                <!-- ==================== COLUNA 1 ==================== -->
-                <div class="column">
+        <!-- ETAPA 1: INFORMAÇÕES BÁSICAS -->
+        <mat-step>
+          <ng-template matStepLabel>
+            Informações básicas
+          </ng-template>
 
-                    <mat-form-field appearance="outline">
-                        <mat-label>Nome</mat-label>
-                        <input
-                            matInput
-                            formControlName="nome"
-                            placeholder="Nome do drone">
-                        @if (form.controls['nome'].hasError('required') && form.controls['nome'].touched) {
-                            <mat-error>Informe o nome.</mat-error>
-                        } @else if (form.controls['nome'].hasError('pattern')) {
-                            <mat-error>O nome não pode conter apenas espaços.</mat-error>
-                        } @else if (form.controls['nome'].hasError('minlength') || form.controls['nome'].hasError('maxlength')) {
-                            <mat-error>O nome deve ter entre 2 e 100 caracteres.</mat-error>
-                        }
-                    </mat-form-field>
+          <div class="step-content">
+            <h2>Informações básicas</h2>
+            <p class="step-description">
+              Informe os dados comerciais e a identificação do drone.
+            </p>
 
-                    <mat-form-field appearance="outline">
-                        <mat-label>Marca</mat-label>
-                        <input
-                            matInput
-                            formControlName="marca"
-                            placeholder="Marca do drone">
-                        @if (form.controls['marca'].hasError('required') && form.controls['marca'].touched) {
-                            <mat-error>Informe a marca.</mat-error>
-                        } @else if (form.controls['marca'].hasError('pattern')) {
-                            <mat-error>A marca não pode conter apenas espaços.</mat-error>
-                        } @else if (form.controls['marca'].hasError('minlength') || form.controls['marca'].hasError('maxlength')) {
-                            <mat-error>A marca deve ter entre 2 e 60 caracteres.</mat-error>
-                        }
-                    </mat-form-field>
+            <div class="form-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Nome</mat-label>
+                <input matInput formControlName="nome"
+                  placeholder="Nome do drone">
+                @if (form.controls['nome'].hasError('required')
+                  && form.controls['nome'].touched) {
+                  <mat-error>Informe o nome.</mat-error>
+                }
+                @if (form.controls['nome'].hasError('minlength')
+                  || form.controls['nome'].hasError('maxlength')) {
+                  <mat-error>Use entre 2 e 100 caracteres.</mat-error>
+                }
+                @if (form.controls['nome'].hasError('pattern')) {
+                  <mat-error>Informe um nome válido.</mat-error>
+                }
+              </mat-form-field>
 
-                    <mat-form-field appearance="outline">
-                        <mat-label>Modelo</mat-label>
-                        <input
-                            matInput
-                            formControlName="modelo"
-                            placeholder="Modelo do drone">
-                        @if (form.controls['modelo'].hasError('required') && form.controls['modelo'].touched) {
-                            <mat-error>Informe o modelo.</mat-error>
-                        } @else if (form.controls['modelo'].hasError('pattern')) {
-                            <mat-error>O modelo não pode conter apenas espaços.</mat-error>
-                        } @else if (form.controls['modelo'].hasError('minlength') || form.controls['modelo'].hasError('maxlength')) {
-                            <mat-error>O modelo deve ter entre 2 e 60 caracteres.</mat-error>
-                        }
-                    </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Marca</mat-label>
+                <input matInput formControlName="marca"
+                  placeholder="Marca do drone">
+                @if (form.controls['marca'].hasError('required')
+                  && form.controls['marca'].touched) {
+                  <mat-error>Informe a marca.</mat-error>
+                }
+                @if (form.controls['marca'].hasError('minlength')
+                  || form.controls['marca'].hasError('maxlength')) {
+                  <mat-error>Use entre 2 e 60 caracteres.</mat-error>
+                }
+                @if (form.controls['marca'].hasError('pattern')) {
+                  <mat-error>Informe uma marca válida.</mat-error>
+                }
+              </mat-form-field>
 
-                    <mat-form-field appearance="outline">
-                        <mat-label>Preço (R$)</mat-label>
-                        <input
-                            matInput
-                            type="number"
-                            formControlName="preco"
-                            placeholder="Ex: 1000.00">
-                        @if (form.controls['preco'].hasError('required') && form.controls['preco'].touched) {
-                            <mat-error>Informe o preço.</mat-error>
-                        } @else if (form.controls['preco'].hasError('min') && form.controls['preco'].touched) {
-                            <mat-error>O preço não pode ser negativo.</mat-error>
-                        }
-                    </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Modelo</mat-label>
+                <input matInput formControlName="modelo"
+                  placeholder="Modelo do drone">
+                @if (form.controls['modelo'].hasError('required')
+                  && form.controls['modelo'].touched) {
+                  <mat-error>Informe o modelo.</mat-error>
+                }
+                @if (form.controls['modelo'].hasError('minlength')
+                  || form.controls['modelo'].hasError('maxlength')) {
+                  <mat-error>Use entre 2 e 60 caracteres.</mat-error>
+                }
+                @if (form.controls['modelo'].hasError('pattern')) {
+                  <mat-error>Informe um modelo válido.</mat-error>
+                }
+              </mat-form-field>
 
-                    <mat-form-field appearance="outline">
-                        <mat-label>Quantidade disponível</mat-label>
-                        <input
-                            matInput
-                            type="number"
-                            formControlName="quantidadeDisponivel"
-                            placeholder="Ex: 10 unidades">
-                        @if (form.controls['quantidadeDisponivel'].hasError('required') && form.controls['quantidadeDisponivel'].touched) {
-                            <mat-error>Informe a quantidade disponível.</mat-error>
-                        } @else if ((form.controls['quantidadeDisponivel'].hasError('min') || form.controls['quantidadeDisponivel'].hasError('pattern')) && form.controls['quantidadeDisponivel'].touched) {
-                            <mat-error>Informe uma quantidade inteira igual ou maior que zero.</mat-error>
-                        }
-                    </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Preço (R$)</mat-label>
+                <input matInput type="number" min="0" step="0.01"
+                  formControlName="preco" placeholder="Ex.: 1000.00">
+                @if (form.controls['preco'].hasError('required')
+                  && form.controls['preco'].touched) {
+                  <mat-error>Informe o preço.</mat-error>
+                }
+                @if (form.controls['preco'].hasError('min')
+                  && form.controls['preco'].touched) {
+                  <mat-error>O preço não pode ser negativo.</mat-error>
+                }
+              </mat-form-field>
 
-                    <mat-form-field appearance="outline">
-                        <mat-label>Fornecedor</mat-label>
+              <mat-form-field appearance="outline">
+                <mat-label>Quantidade disponível</mat-label>
+                <input matInput type="number" min="0"
+                  formControlName="quantidadeDisponivel"
+                  placeholder="Ex.: 10">
+                @if (form.controls['quantidadeDisponivel'].hasError('required')
+                  && form.controls['quantidadeDisponivel'].touched) {
+                  <mat-error>Informe a quantidade.</mat-error>
+                }
+                @if ((form.controls['quantidadeDisponivel'].hasError('min')
+                  || form.controls['quantidadeDisponivel'].hasError('pattern'))
+                  && form.controls['quantidadeDisponivel'].touched) {
+                  <mat-error>Informe um inteiro maior ou igual a zero.</mat-error>
+                }
+              </mat-form-field>
 
-                        <mat-select formControlName="fornecedorId">
-                            @for (fornecedor of fornecedores; track fornecedor.id) {
-                                <mat-option [value]="fornecedor.id">
-                                    {{ fornecedor.nome }}
-                                </mat-option>
-                            }
-                        </mat-select>
-                        @if (form.controls['fornecedorId'].hasError('required') && form.controls['fornecedorId'].touched) {
-                            <mat-error>Selecione um fornecedor.</mat-error>
-                        }
-
-                    </mat-form-field>
-
-                </div>
-
-
-                <!-- ==================== COLUNA 2 ==================== -->
-                <div class="column">
-
-                    <mat-form-field appearance="outline">
-                        <mat-label>Tempo de voo prático (min)</mat-label>
-                        <input
-                            matInput
-                            type="number"
-                            formControlName="tempoVooPratico"
-                            placeholder="Ex: 30 minutos">
-                        @if (form.controls['tempoVooPratico'].hasError('required') && form.controls['tempoVooPratico'].touched) {
-                            <mat-error>Informe o tempo de voo.</mat-error>
-                        } @else if (form.controls['tempoVooPratico'].hasError('min') && form.controls['tempoVooPratico'].touched) {
-                            <mat-error>O tempo de voo deve ser maior que zero.</mat-error>
-                        }
-                    </mat-form-field>
-
-                    <mat-form-field appearance="outline">
-                        <mat-label>Peso de decolagem (g)</mat-label>
-                        <input
-                            matInput
-                            type="number"
-                            formControlName="pesoDecolagem"
-                            placeholder="Ex: 1000g">
-                        @if (form.controls['pesoDecolagem'].hasError('required') && form.controls['pesoDecolagem'].touched) {
-                            <mat-error>Informe o peso de decolagem.</mat-error>
-                        } @else if (form.controls['pesoDecolagem'].hasError('min') && form.controls['pesoDecolagem'].touched) {
-                            <mat-error>O peso deve ser maior que zero.</mat-error>
-                        }
-                    </mat-form-field>
-
-                    <mat-form-field appearance="outline">
-                        <mat-label>Altitude máxima (m)</mat-label>
-                        <input
-                            matInput
-                            type="number"
-                            formControlName="altitudeMaxima"
-                            placeholder="Ex: 100 metros">
-                        @if (form.controls['altitudeMaxima'].hasError('required') && form.controls['altitudeMaxima'].touched) {
-                            <mat-error>Informe a altitude máxima.</mat-error>
-                        } @else if (form.controls['altitudeMaxima'].hasError('min') && form.controls['altitudeMaxima'].touched) {
-                            <mat-error>A altitude deve ser maior que zero.</mat-error>
-                        }
-                    </mat-form-field>
-
-                    <mat-form-field appearance="outline">
-                        <mat-label>Velocidade máxima (km/h)</mat-label>
-                        <input
-                            matInput
-                            type="number"
-                            formControlName="velocidadeMaxima"
-                            placeholder="Ex: 100 km/h">
-                        @if (form.controls['velocidadeMaxima'].hasError('required') && form.controls['velocidadeMaxima'].touched) {
-                            <mat-error>Informe a velocidade máxima.</mat-error>
-                        } @else if (form.controls['velocidadeMaxima'].hasError('min') && form.controls['velocidadeMaxima'].touched) {
-                            <mat-error>A velocidade deve ser maior que zero.</mat-error>
-                        }
-                    </mat-form-field>
-
-                    <mat-form-field appearance="outline">
-                        <mat-label>Alcance de transmissão (m)</mat-label>
-                        <input
-                            matInput
-                            type="number"
-                            formControlName="alcanceTransmissao"
-                            placeholder="Ex: 100 metros">
-                        @if (form.controls['alcanceTransmissao'].hasError('required') && form.controls['alcanceTransmissao'].touched) {
-                            <mat-error>Informe o alcance de transmissão.</mat-error>
-                        } @else if (form.controls['alcanceTransmissao'].hasError('min') && form.controls['alcanceTransmissao'].touched) {
-                            <mat-error>O alcance deve ser maior que zero.</mat-error>
-                        }
-                    </mat-form-field>
-
-                    <mat-form-field appearance="outline">
-                        <mat-label>Câmera</mat-label>
-
-                        <mat-select formControlName="cameraId">
-                            @for (camera of cameras; track camera.id) {
-                                <mat-option [value]="camera.id">
-                                    {{ camera.marca }} - {{ camera.modelo }}
-                                </mat-option>
-                            }
-                        </mat-select>
-                        @if (form.controls['cameraId'].hasError('required') && form.controls['cameraId'].touched) {
-                            <mat-error>Selecione uma câmera para este drone.</mat-error>
-                        }
-
-                    </mat-form-field>
-
-                </div>
-
-
-                <!-- ==================== COLUNA 3 ==================== -->
-                <div class="column">
-
-                    <mat-form-field appearance="outline">
-                        <mat-label>Quantidade de motores</mat-label>
-                        <input
-                            matInput
-                            type="number"
-                            formControlName="quantidadeMotores"
-                            placeholder="Ex: 4 motores">
-                        @if (form.controls['quantidadeMotores'].hasError('required') && form.controls['quantidadeMotores'].touched) {
-                            <mat-error>Informe a quantidade de motores.</mat-error>
-                        } @else if ((form.controls['quantidadeMotores'].hasError('min') || form.controls['quantidadeMotores'].hasError('pattern')) && form.controls['quantidadeMotores'].touched) {
-                            <mat-error>Informe uma quantidade inteira maior que zero.</mat-error>
-                        }
-                    </mat-form-field>
-
-                    <mat-form-field appearance="outline">
-                        <mat-label>Quantidade de baterias</mat-label>
-                        <input
-                            matInput
-                            type="number"
-                            formControlName="quantidadeBaterias"
-                            placeholder="Ex: 2 baterias">
-                        @if (form.controls['quantidadeBaterias'].hasError('required') && form.controls['quantidadeBaterias'].touched) {
-                            <mat-error>Informe a quantidade de baterias.</mat-error>
-                        } @else if ((form.controls['quantidadeBaterias'].hasError('min') || form.controls['quantidadeBaterias'].hasError('pattern')) && form.controls['quantidadeBaterias'].touched) {
-                            <mat-error>Informe uma quantidade inteira maior que zero.</mat-error>
-                        }
-                    </mat-form-field>
-
-                    <mat-form-field appearance="outline">
-                        <mat-label>Duração da bateria (min)</mat-label>
-                        <input
-                            matInput
-                            formControlName="duracaoBateria"
-                            placeholder="Ex: 30 minutos">
-                        @if (form.controls['duracaoBateria'].hasError('required') && form.controls['duracaoBateria'].touched) {
-                            <mat-error>Informe a duração da bateria.</mat-error>
-                        } @else if (form.controls['duracaoBateria'].hasError('pattern')) {
-                            <mat-error>Informe um valor para a duração da bateria.</mat-error>
-                        } @else if (form.controls['duracaoBateria'].hasError('maxlength')) {
-                            <mat-error>Use no máximo 40 caracteres.</mat-error>
-                        }
-                    </mat-form-field>
-
-                    <mat-form-field appearance="outline">
-                        <mat-label>Frequência Wi-Fi (GHz)</mat-label>
-                        <input
-                            matInput
-                            formControlName="frequenciaWifi"
-                            placeholder="Ex: 2.4 GHz">
-                        @if (form.controls['frequenciaWifi'].hasError('required') && form.controls['frequenciaWifi'].touched) {
-                            <mat-error>Informe a frequência Wi-Fi.</mat-error>
-                        } @else if (form.controls['frequenciaWifi'].hasError('pattern')) {
-                            <mat-error>Informe um valor para a frequência Wi-Fi.</mat-error>
-                        } @else if (form.controls['frequenciaWifi'].hasError('maxlength')) {
-                            <mat-error>Use no máximo 40 caracteres.</mat-error>
-                        }
-                    </mat-form-field>
-
-
-                    <!-- Características -->
-                    <div class="checkboxes">
-
-                        <mat-checkbox formControlName="possuiGPS">
-                            Possui GPS
-                        </mat-checkbox>
-
-                        <mat-checkbox formControlName="comControleRemoto">
-                            Possui controle remoto
-                        </mat-checkbox>
-
-                        <mat-checkbox formControlName="controladoPorAplicativo">
-                            Controlado por aplicativo
-                        </mat-checkbox>
-
-                        <mat-checkbox formControlName="ativa">
-                            Ativo
-                        </mat-checkbox>
-
-                    </div>
-
-                </div>
-
+              <mat-form-field appearance="outline">
+                <mat-label>Fornecedor</mat-label>
+                <mat-select formControlName="fornecedorId">
+                  @for (fornecedor of fornecedores; track fornecedor.id) {
+                    <mat-option [value]="fornecedor.id">
+                      {{ fornecedor.nome }}
+                    </mat-option>
+                  }
+                </mat-select>
+                @if (form.controls['fornecedorId'].hasError('required')
+                  && form.controls['fornecedorId'].touched) {
+                  <mat-error>Selecione um fornecedor.</mat-error>
+                }
+              </mat-form-field>
             </div>
 
+            <div class="step-actions">
+              <button mat-raised-button color="primary"
+                type="button" matStepperNext>
+                Próximo
+                <mat-icon>arrow_forward</mat-icon>
+              </button>
+            </div>
+          </div>
+        </mat-step>
 
-            <!-- ==================== BOTÕES ==================== -->
-            <div class="actions">
+        <!-- ETAPA 2: DESEMPENHO DE VOO -->
+        <mat-step>
+          <ng-template matStepLabel>
+            Desempenho de voo
+          </ng-template>
 
-                <button
-                    mat-raised-button
-                    color="warn"
-                    type="button"
-                    (click)="excluir()"
-                    [disabled]="!form.value.id">
+          <div class="step-content">
+            <h2>Desempenho de voo</h2>
+            <p class="step-description">
+              Informe os limites e a capacidade de voo do drone.
+            </p>
 
-                    <mat-icon>delete</mat-icon>
-                    Excluir
+            <div class="form-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Tempo de voo prático (min)</mat-label>
+                <input matInput type="number" min="1"
+                  formControlName="tempoVooPratico"
+                  placeholder="Ex.: 30">
+                @if (form.controls['tempoVooPratico'].hasError('required')
+                  && form.controls['tempoVooPratico'].touched) {
+                  <mat-error>Informe o tempo de voo.</mat-error>
+                }
+                @if (form.controls['tempoVooPratico'].hasError('min')
+                  && form.controls['tempoVooPratico'].touched) {
+                  <mat-error>O tempo deve ser maior que zero.</mat-error>
+                }
+              </mat-form-field>
 
-                </button>
+              <mat-form-field appearance="outline">
+                <mat-label>Peso de decolagem (g)</mat-label>
+                <input matInput type="number" min="1"
+                  formControlName="pesoDecolagem"
+                  placeholder="Ex.: 1000">
+                @if (form.controls['pesoDecolagem'].hasError('required')
+                  && form.controls['pesoDecolagem'].touched) {
+                  <mat-error>Informe o peso.</mat-error>
+                }
+                @if (form.controls['pesoDecolagem'].hasError('min')
+                  && form.controls['pesoDecolagem'].touched) {
+                  <mat-error>O peso deve ser maior que zero.</mat-error>
+                }
+              </mat-form-field>
 
+              <mat-form-field appearance="outline">
+                <mat-label>Altitude máxima (m)</mat-label>
+                <input matInput type="number" min="1"
+                  formControlName="altitudeMaxima"
+                  placeholder="Ex.: 100">
+                @if (form.controls['altitudeMaxima'].hasError('required')
+                  && form.controls['altitudeMaxima'].touched) {
+                  <mat-error>Informe a altitude.</mat-error>
+                }
+                @if (form.controls['altitudeMaxima'].hasError('min')
+                  && form.controls['altitudeMaxima'].touched) {
+                  <mat-error>A altitude deve ser maior que zero.</mat-error>
+                }
+              </mat-form-field>
 
-                <button
-                    mat-raised-button
-                    type="button"
-                    (click)="voltar()">
+              <mat-form-field appearance="outline">
+                <mat-label>Velocidade máxima (km/h)</mat-label>
+                <input matInput type="number" min="1"
+                  formControlName="velocidadeMaxima"
+                  placeholder="Ex.: 100">
+                @if (form.controls['velocidadeMaxima'].hasError('required')
+                  && form.controls['velocidadeMaxima'].touched) {
+                  <mat-error>Informe a velocidade.</mat-error>
+                }
+                @if (form.controls['velocidadeMaxima'].hasError('min')
+                  && form.controls['velocidadeMaxima'].touched) {
+                  <mat-error>A velocidade deve ser maior que zero.</mat-error>
+                }
+              </mat-form-field>
 
-                    <mat-icon>arrow_back</mat-icon>
-                    Cancelar
-
-                </button>
-
-
-                <button
-                    mat-raised-button
-                    color="primary"
-                    type="button"
-                    (click)="salvar()"
-                    [disabled]="form.invalid">
-
-                    <mat-icon>save</mat-icon>
-                    Salvar
-
-                </button>
-
+              <mat-form-field appearance="outline">
+                <mat-label>Alcance de transmissão (m)</mat-label>
+                <input matInput type="number" min="1"
+                  formControlName="alcanceTransmissao"
+                  placeholder="Ex.: 1000">
+                @if (form.controls['alcanceTransmissao'].hasError('required')
+                  && form.controls['alcanceTransmissao'].touched) {
+                  <mat-error>Informe o alcance.</mat-error>
+                }
+                @if (form.controls['alcanceTransmissao'].hasError('min')
+                  && form.controls['alcanceTransmissao'].touched) {
+                  <mat-error>O alcance deve ser maior que zero.</mat-error>
+                }
+              </mat-form-field>
             </div>
 
-        </form>
+            <div class="step-actions">
+              <button mat-button type="button" matStepperPrevious>
+                <mat-icon>arrow_back</mat-icon>
+                Voltar
+              </button>
+              <button mat-raised-button color="primary"
+                type="button" matStepperNext>
+                Próximo
+                <mat-icon>arrow_forward</mat-icon>
+              </button>
+            </div>
+          </div>
+        </mat-step>
 
-    </mat-card-content>
+        <!-- ETAPA 3: COMPONENTES -->
+        <mat-step>
+          <ng-template matStepLabel>
+            Componentes
+          </ng-template>
+
+          <div class="step-content">
+            <h2>Componentes e conectividade</h2>
+            <p class="step-description">
+              Configure os componentes instalados e a conectividade.
+            </p>
+
+            <div class="form-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Câmera</mat-label>
+                <mat-select formControlName="cameraId">
+                  @for (camera of cameras; track camera.id) {
+                    <mat-option [value]="camera.id">
+                      {{ camera.marca }} - {{ camera.modelo }}
+                    </mat-option>
+                  }
+                </mat-select>
+                @if (form.controls['cameraId'].hasError('required')
+                  && form.controls['cameraId'].touched) {
+                  <mat-error>Selecione uma câmera.</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Quantidade de motores</mat-label>
+                <input matInput type="number" min="1"
+                  formControlName="quantidadeMotores"
+                  placeholder="Ex.: 4">
+                @if (form.controls['quantidadeMotores'].hasError('required')
+                  && form.controls['quantidadeMotores'].touched) {
+                  <mat-error>Informe a quantidade de motores.</mat-error>
+                }
+                @if ((form.controls['quantidadeMotores'].hasError('min')
+                  || form.controls['quantidadeMotores'].hasError('pattern'))
+                  && form.controls['quantidadeMotores'].touched) {
+                  <mat-error>Informe um inteiro maior que zero.</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Quantidade de baterias</mat-label>
+                <input matInput type="number" min="1"
+                  formControlName="quantidadeBaterias"
+                  placeholder="Ex.: 2">
+                @if (form.controls['quantidadeBaterias'].hasError('required')
+                  && form.controls['quantidadeBaterias'].touched) {
+                  <mat-error>Informe a quantidade de baterias.</mat-error>
+                }
+                @if ((form.controls['quantidadeBaterias'].hasError('min')
+                  || form.controls['quantidadeBaterias'].hasError('pattern'))
+                  && form.controls['quantidadeBaterias'].touched) {
+                  <mat-error>Informe um inteiro maior que zero.</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Duração da bateria (min)</mat-label>
+                <input matInput formControlName="duracaoBateria"
+                  placeholder="Ex.: 30 minutos">
+                @if (form.controls['duracaoBateria'].hasError('required')
+                  && form.controls['duracaoBateria'].touched) {
+                  <mat-error>Informe a duração da bateria.</mat-error>
+                }
+                @if (form.controls['duracaoBateria'].hasError('pattern')) {
+                  <mat-error>Informe um valor válido.</mat-error>
+                }
+                @if (form.controls['duracaoBateria'].hasError('maxlength')) {
+                  <mat-error>Use no máximo 40 caracteres.</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Frequência Wi-Fi (GHz)</mat-label>
+                <input matInput formControlName="frequenciaWifi"
+                  placeholder="Ex.: 2.4 GHz">
+                @if (form.controls['frequenciaWifi'].hasError('required')
+                  && form.controls['frequenciaWifi'].touched) {
+                  <mat-error>Informe a frequência Wi-Fi.</mat-error>
+                }
+                @if (form.controls['frequenciaWifi'].hasError('pattern')) {
+                  <mat-error>Informe um valor válido.</mat-error>
+                }
+                @if (form.controls['frequenciaWifi'].hasError('maxlength')) {
+                  <mat-error>Use no máximo 40 caracteres.</mat-error>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="step-actions">
+              <button mat-button type="button" matStepperPrevious>
+                <mat-icon>arrow_back</mat-icon>
+                Voltar
+              </button>
+              <button mat-raised-button color="primary"
+                type="button" matStepperNext>
+                Próximo
+                <mat-icon>arrow_forward</mat-icon>
+              </button>
+            </div>
+          </div>
+        </mat-step>
+
+        <!-- ETAPA 4: RECURSOS E REVISÃO -->
+        <mat-step>
+          <ng-template matStepLabel>
+            Recursos e revisão
+          </ng-template>
+
+          <div class="step-content">
+            <h2>Recursos e revisão</h2>
+            <p class="step-description">
+              Marque os recursos disponíveis e revise o cadastro.
+            </p>
+
+            <div class="feature-list">
+              <mat-checkbox formControlName="possuiGPS">
+                Possui GPS
+              </mat-checkbox>
+
+              <mat-checkbox formControlName="comControleRemoto">
+                Possui controle remoto
+              </mat-checkbox>
+
+              <mat-checkbox formControlName="controladoPorAplicativo">
+                Controlado por aplicativo
+              </mat-checkbox>
+
+              <mat-checkbox formControlName="ativa">
+                Drone ativo
+              </mat-checkbox>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="step-actions final-actions">
+              <button mat-button type="button" matStepperPrevious>
+                <mat-icon>arrow_back</mat-icon>
+                Voltar
+              </button>
+
+              <span class="actions-spacer"></span>
+
+              <button mat-raised-button color="warn"
+                type="button" (click)="excluir()"
+                [disabled]="!form.value.id">
+                <mat-icon>delete</mat-icon>
+                Excluir
+              </button>
+
+              <button mat-stroked-button type="button"
+                (click)="voltar()">
+                Cancelar
+              </button>
+
+              <button mat-raised-button color="primary"
+                type="button" (click)="salvar()"
+                [disabled]="form.invalid">
+                <mat-icon>save</mat-icon>
+                Salvar drone
+              </button>
+            </div>
+          </div>
+        </mat-step>
+
+      </mat-stepper>
+
+    </form>
+
+  </mat-card-content>
 </mat-card>

@@ -14,6 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Administrador } from '../../../../core/models/administrador/Administrado';
 import { AdministradorService } from '../../../../core/services/AdministradorService';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
+import { MatDivider } from '@angular/material/divider';
 
 @Component({
   imports: [
@@ -26,8 +27,9 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
     MatSelectModule,
     MatIconModule,
     MatSnackBarModule,
-    MatDialogModule
-  ],
+    MatDialogModule,
+    MatDivider
+],
   selector: 'app-administrador-form',
   styleUrl: './administrador-form.css',
   templateUrl: './administrador-form.html',

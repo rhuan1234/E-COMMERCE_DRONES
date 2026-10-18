@@ -1,29 +1,166 @@
-.columns {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-}
-
-.column {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.column mat-form-field {
+:host {
+    display: block;
     width: 100%;
 }
 
-.checkboxes {
+/* Cabeçalho */
+.toolbar-title {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding-top: 4px;
+    align-items: center;
+    gap: 12px;
 }
 
-.actions {
+/* Card principal */
+.drone-card {
+    width: calc(100% - 48px);
+    max-width: 900px;
+    margin: 24px auto;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+.drone-card mat-card-content {
+    padding: 16px;
+}
+
+/* Conteúdo de cada etapa */
+.step-content {
+    padding: 28px 8px 12px;
+}
+
+.step-content h2 {
+    margin: 0 0 8px;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.step-description {
+    margin: 0 0 28px;
+    color: var(--mat-sys-on-surface-variant, #666);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Campos do formulário */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 20px;
+}
+
+.form-grid mat-form-field {
+    width: 100%;
+    min-width: 0;
+}
+
+/* Características do drone */
+.feature-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    padding: 8px 0 28px;
+}
+
+.feature-list mat-checkbox {
+    width: fit-content;
+}
+
+/* Navegação entre etapas */
+.step-actions {
     display: flex;
+    align-items: center;
     justify-content: flex-end;
+    flex-wrap: wrap;
     gap: 12px;
     margin-top: 24px;
+}
+
+.step-actions button {
+    min-height: 40px;
+}
+
+.step-actions mat-icon {
+    margin-right: 4px;
+}
+
+.actions-spacer {
+    flex: 1;
+}
+
+/* Separação visual */
+.step-content mat-divider {
+    margin: 8px 0 20px;
+}
+
+/* Ajustes para tablets */
+@media (max-width: 768px) {
+    .drone-card {
+        width: calc(100% - 24px);
+        margin: 12px auto;
+        padding: 4px;
+    }
+
+    .drone-card mat-card-content {
+        padding: 12px;
+    }
+
+    .step-content {
+        padding: 24px 4px 8px;
+    }
+
+    .form-grid {
+        gap: 8px 12px;
+    }
+}
+
+/* Ajustes para celulares */
+@media (max-width: 600px) {
+    .drone-card {
+        width: 100%;
+        margin: 12px 0;
+        padding: 0;
+    }
+
+    .drone-card mat-card-content {
+        padding: 12px 8px;
+    }
+
+    .step-content {
+        padding: 20px 4px 8px;
+    }
+
+    .step-content h2 {
+        font-size: 19px;
+    }
+
+    .step-description {
+        margin-bottom: 20px;
+    }
+
+    .form-grid,
+    .feature-list {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .feature-list {
+        gap: 20px;
+    }
+
+    .step-actions {
+        justify-content: flex-start;
+        gap: 8px;
+    }
+
+    .step-actions button {
+        max-width: 100%;
+    }
+
+    .final-actions {
+        justify-content: flex-start;
+    }
+
+    .actions-spacer {
+        display: none;
+    }
 }

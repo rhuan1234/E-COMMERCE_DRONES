@@ -1,99 +1,146 @@
-<mat-card>
 
-  <mat-card-header class="cabecalho">
-    <mat-card-title>
+<mat-toolbar color="primary" class="admin-toolbar">
+  <mat-icon>admin_panel_settings</mat-icon>
+  <span>Controle de Administradores</span>
+</mat-toolbar>
+
+<div class="admin-container">
+  <mat-card class="admin-card">
+    <mat-card-header class="admin-header">
+      <div mat-card-avatar class="admin-avatar">
+        <mat-icon>person_add</mat-icon>
+      </div>
+
+      <mat-card-title>
         Novo Administrador
-    </mat-card-title>
-  </mat-card-header>
+      </mat-card-title>
 
-  <mat-card-content>
+      <mat-card-subtitle>
+        Cadastre as credenciais de acesso ao sistema.
+      </mat-card-subtitle>
+    </mat-card-header>
 
-    <form [formGroup]="form" class="form">
+    <mat-divider></mat-divider>
 
-      <mat-form-field appearance="outline" class="full-width-input">
-        <mat-label>Login</mat-label>
-        <input
-          matInput
-          formControlName="login"
-          placeholder="Digite o login">
-        @if (form.controls['login'].hasError('required') && form.controls['login'].touched) {
-          <mat-error>Informe o login.</mat-error>
-        } @else if (form.controls['login'].hasError('minlength') || form.controls['login'].hasError('maxlength')) {
-          <mat-error>O login deve ter entre 3 e 40 caracteres.</mat-error>
-        } @else if (form.controls['login'].hasError('pattern')) {
-          <mat-error>O login não pode conter espaços.</mat-error>
-        }
-      </mat-form-field>
+    <mat-card-content>
+      <form [formGroup]="form" class="admin-form">
+        <section class="form-section">
+          <div class="section-heading">
+            <mat-icon>person</mat-icon>
+            <div>
+              <h3>Dados de acesso</h3>
+              <p>Defina o login e o e-mail do administrador.</p>
+            </div>
+          </div>
 
-      <mat-form-field appearance="outline" class="full-width-input">
-        <mat-label>Email</mat-label>
-        <input
-          matInput
-          type="email"
-          formControlName="email"
-          placeholder="Digite o e-mail">
-        @if (form.controls['email'].hasError('required') && form.controls['email'].touched) {
-          <mat-error>Informe o e-mail.</mat-error>
-        } @else if (form.controls['email'].hasError('email')) {
-          <mat-error>Informe um e-mail válido.</mat-error>
-        } @else if (form.controls['email'].hasError('maxlength')) {
-          <mat-error>O e-mail deve ter no máximo 254 caracteres.</mat-error>
-        }
-      </mat-form-field>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Login</mat-label>
+            <mat-icon matPrefix>account_circle</mat-icon>
+            <input
+              matInput
+              formControlName="login"
+              placeholder="Digite o login"
+              autocomplete="username"
+            />
 
-      <mat-form-field appearance="outline" class="full-width-input">
-        <mat-label>Senha</mat-label>
-        <input
-          matInput
-          type="password"
-          formControlName="senha"
-          placeholder="Digite a senha">
-        @if (form.controls['senha'].hasError('required') && form.controls['senha'].touched) {
-          <mat-error>Informe a senha.</mat-error>
-        } @else if (form.controls['senha'].hasError('minlength')) {
-          <mat-error>A senha deve ter pelo menos 6 caracteres.</mat-error>
-        } @else if (form.controls['senha'].hasError('maxlength')) {
-          <mat-error>A senha deve ter no máximo 100 caracteres.</mat-error>
-        }
-      </mat-form-field>
+            @if (form.controls['login'].hasError('required') && form.controls['login'].touched) {
+              <mat-error>Informe o login.</mat-error>
+            } @else if (form.controls['login'].hasError('minlength') || form.controls['login'].hasError('maxlength')) {
+              <mat-error>O login deve ter entre 3 e 40 caracteres.</mat-error>
+            } @else if (form.controls['login'].hasError('pattern')) {
+              <mat-error>O login não pode conter espaços.</mat-error>
+            }
+          </mat-form-field>
 
-    </form>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>E-mail</mat-label>
+            <mat-icon matPrefix>mail</mat-icon>
+            <input
+              matInput
+              type="email"
+              formControlName="email"
+              placeholder="admin@exemplo.com"
+              autocomplete="email"
+            />
 
-  </mat-card-content>
+            @if (form.controls['email'].hasError('required') && form.controls['email'].touched) {
+              <mat-error>Informe o e-mail.</mat-error>
+            } @else if (form.controls['email'].hasError('email')) {
+              <mat-error>Informe um e-mail válido.</mat-error>
+            } @else if (form.controls['email'].hasError('maxlength')) {
+              <mat-error>O e-mail deve ter no máximo 254 caracteres.</mat-error>
+            }
+          </mat-form-field>
+        </section>
 
-  <mat-card-actions align="end">
+        <mat-divider></mat-divider>
 
-    <button
-      mat-raised-button
-      color="warn"
-      (click)="excluir()"
-      [disabled]="!form.value.id">
+        <section class="form-section">
+          <div class="section-heading">
+            <mat-icon>lock</mat-icon>
+            <div>
+              <h3>Segurança</h3>
+              <p>Crie uma senha para acessar o sistema.</p>
+            </div>
+          </div>
 
-      <mat-icon>delete</mat-icon>
-      Excluir
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Senha</mat-label>
+            <mat-icon matPrefix>lock</mat-icon>
+            <input
+              matInput
+              type="password"
+              formControlName="senha"
+              placeholder="Digite a senha"
+              autocomplete="new-password"
+            />
 
-    </button>
+            <mat-hint>Mínimo de 6 caracteres.</mat-hint>
 
-    <button
-      mat-raised-button
-      color="primary"
-      (click)="salvar()"
-      [disabled]="form.invalid">
+            @if (form.controls['senha'].hasError('required') && form.controls['senha'].touched) {
+              <mat-error>Informe a senha.</mat-error>
+            } @else if (form.controls['senha'].hasError('minlength')) {
+              <mat-error>A senha deve ter pelo menos 6 caracteres.</mat-error>
+            } @else if (form.controls['senha'].hasError('maxlength')) {
+              <mat-error>A senha deve ter no máximo 100 caracteres.</mat-error>
+            }
+          </mat-form-field>
+        </section>
+      </form>
+    </mat-card-content>
 
-      <mat-icon>save</mat-icon>
-      Salvar
+    <mat-divider></mat-divider>
 
-    </button>
+    <mat-card-actions class="admin-actions">
+      <button
+        mat-button
+        type="button"
+        (click)="voltar()">
+        <mat-icon>arrow_back</mat-icon>
+        Voltar
+      </button>
 
-    <button
-      mat-button
-      type="button"
-      (click)="voltar()">
+      <span class="actions-spacer"></span>
 
-      Voltar
+      <button
+        mat-raised-button
+        color="warn"
+        type="button"
+        (click)="excluir()"
+        [disabled]="!form.value.id">
+        <mat-icon>delete</mat-icon>
+        Excluir
+      </button>
 
-    </button>
-
-  </mat-card-actions>
-
-</mat-card>
+      <button
+        mat-raised-button
+        color="primary"
+        type="button"
+        (click)="salvar()"
+        [disabled]="form.invalid">
+        <mat-icon>save</mat-icon>
+        Salvar
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

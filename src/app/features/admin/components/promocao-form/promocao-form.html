@@ -1,284 +1,237 @@
-<mat-toolbar
-  class="toolbar-title"
-  color="primary">
 
-  Controle de Promoções
-
+<mat-toolbar color="primary" class="toolbar-title">
+  <mat-icon>local_offer</mat-icon>
+  <span>Controle de Promoções</span>
 </mat-toolbar>
 
-
-<mat-card>
-
-  <mat-card-content>
-
-    <form
-      class="form"
-      [formGroup]="form">
-      <div class="grid">
-        <mat-form-field
-          appearance="outline">
-          <mat-label>
-            Nome
-          </mat-label>
-
-          <input
-            matInput
-            formControlName="nome"
-            placeholder="Nome da promoção">
-          @if (form.controls['nome'].hasError('required') && form.controls['nome'].touched) {
-            <mat-error>Informe o nome da promoção.</mat-error>
-          } @else if (form.controls['nome'].hasError('pattern')) {
-            <mat-error>O nome não pode conter apenas espaços.</mat-error>
-          } @else if (form.controls['nome'].hasError('minlength') || form.controls['nome'].hasError('maxlength')) {
-            <mat-error>O nome deve ter entre 2 e 100 caracteres.</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field
-          appearance="outline">
-          <mat-label>
-            Desconto (%)
-          </mat-label>
-
-          <input
-            matInput
-            type="number"
-            formControlName="percentualDesconto">
-          @if (form.controls['percentualDesconto'].hasError('required') && form.controls['percentualDesconto'].touched) {
-            <mat-error>Informe o percentual de desconto.</mat-error>
-          } @else if (form.controls['percentualDesconto'].hasError('min') || form.controls['percentualDesconto'].hasError('max')) {
-            <mat-error>O desconto deve estar entre 0% e 100%.</mat-error>
-          }
-
-        </mat-form-field>
-
-
-        <mat-form-field
-          appearance="outline">
-          <mat-label>
-            Início
-          </mat-label>
-
-          <input
-            matInput
-            type="datetime-local"
-            formControlName="dataInicio">
-          @if (form.controls['dataInicio'].hasError('required') && form.controls['dataInicio'].touched) {
-            <mat-error>Informe a data e hora de início.</mat-error>
-          }
-
-        </mat-form-field>
-
-
-        <mat-form-field
-          appearance="outline">
-
-          <mat-label>
-            Fim
-          </mat-label>
-
-          <input
-            matInput
-            type="datetime-local"
-            formControlName="dataFim">
-          @if (form.controls['dataFim'].hasError('required') && form.controls['dataFim'].touched) {
-            <mat-error>Informe a data e hora de fim.</mat-error>
-          } @else if (form.hasError('intervaloInvalido') && form.controls['dataFim'].touched) {
-            <mat-error>O fim deve ser posterior ao início.</mat-error>
-          }
-
-        </mat-form-field>
-
-
+<div class="promocao-container">
+  <mat-card class="promocao-card">
+    <mat-card-header class="promocao-header">
+      <div mat-card-avatar class="promocao-avatar">
+        <mat-icon>campaign</mat-icon>
       </div>
 
+      <mat-card-title>Nova promoção</mat-card-title>
+      <mat-card-subtitle>
+        Configure o desconto, o período de validade e os drones participantes.
+      </mat-card-subtitle>
+    </mat-card-header>
 
-      <h3>
-        Drones da promoção
-      </h3>
+    <mat-divider></mat-divider>
 
+    <mat-card-content>
+      <form [formGroup]="form" class="promocao-form">
 
-      <!-- Pesquisa -->
-
-      <mat-form-field
-        appearance="outline"
-        class="full-width-input">
-
-        <mat-label>
-          Pesquisar drone
-        </mat-label>
-
-        <input
-          matInput
-          #modelo
-          placeholder="Digite o modelo"
-          (input)="pesquisarDrone(modelo.value)">
-
-        <mat-icon matSuffix>
-          search
-        </mat-icon>
-
-      </mat-form-field>
-
-
-      <!-- Resultados -->
-
-      <div class="drone-results">
-
-        @for (
-          drone of dronesFiltrados;
-          track drone.id
-        ) {
-
-          <div class="drone-item">
-
+        <!-- Informações da promoção -->
+        <section class="form-section">
+          <div class="section-heading">
+            <mat-icon>edit_note</mat-icon>
             <div>
-
-              <strong>
-                {{ drone.nome }}
-              </strong>
-
-              <span>
-                {{ drone.marca }}
-                -
-                {{ drone.modelo }}
-              </span>
-
+              <h3>Informações da promoção</h3>
+              <p>Defina o nome, o desconto e o período de validade.</p>
             </div>
-
-
-            <button
-              mat-icon-button
-              color="primary"
-              type="button"
-              (click)="adicionarDrone(drone)">
-
-              <mat-icon>
-                add
-              </mat-icon>
-
-            </button>
-
           </div>
 
-        }
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nome da promoção</mat-label>
+            <input
+              matInput
+              formControlName="nome"
+              placeholder="Ex.: Semana do Drone"
+            />
+            <mat-icon matSuffix>sell</mat-icon>
 
-      </div>
+            @if (form.controls['nome'].hasError('required') && form.controls['nome'].touched) {
+              <mat-error>Informe o nome da promoção.</mat-error>
+            } @else if (form.controls['nome'].hasError('pattern')) {
+              <mat-error>O nome não pode conter apenas espaços.</mat-error>
+            } @else if (form.controls['nome'].hasError('minlength') || form.controls['nome'].hasError('maxlength')) {
+              <mat-error>O nome deve ter entre 2 e 100 caracteres.</mat-error>
+            }
+          </mat-form-field>
 
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Desconto</mat-label>
+              <input
+                matInput
+                type="number"
+                formControlName="percentualDesconto"
+                min="0"
+                max="100"
+                placeholder="Ex.: 15"
+              />
+              <span matTextSuffix>%</span>
 
-      <h3>
-        Drones selecionados
-      </h3>
+              @if (form.controls['percentualDesconto'].hasError('required') && form.controls['percentualDesconto'].touched) {
+                <mat-error>Informe o percentual de desconto.</mat-error>
+              } @else if (form.controls['percentualDesconto'].hasError('min') || form.controls['percentualDesconto'].hasError('max')) {
+                <mat-error>O desconto deve estar entre 0% e 100%.</mat-error>
+              }
+            </mat-form-field>
 
+            <mat-form-field appearance="outline">
+              <mat-label>Início da promoção</mat-label>
+              <input
+                matInput
+                type="datetime-local"
+                formControlName="dataInicio"
+              />
+              <mat-icon matSuffix>event</mat-icon>
 
-      <div class="selected-drones">
+              @if (form.controls['dataInicio'].hasError('required') && form.controls['dataInicio'].touched) {
+                <mat-error>Informe a data e hora de início.</mat-error>
+              }
+            </mat-form-field>
 
-        @for (
-          drone of dronesSelecionados;
-          track drone.id
-        ) {
+            <mat-form-field appearance="outline">
+              <mat-label>Fim da promoção</mat-label>
+              <input
+                matInput
+                type="datetime-local"
+                formControlName="dataFim"
+              />
+              <mat-icon matSuffix>event_available</mat-icon>
 
-          <div class="selected-drone">
+              @if (form.controls['dataFim'].hasError('required') && form.controls['dataFim'].touched) {
+                <mat-error>Informe a data e hora de fim.</mat-error>
+              } @else if (form.hasError('intervaloInvalido') && form.controls['dataFim'].touched) {
+                <mat-error>O fim deve ser posterior ao início.</mat-error>
+              }
+            </mat-form-field>
+          </div>
+        </section>
 
+        <mat-divider></mat-divider>
+
+        <!-- Seleção dos drones -->
+        <section class="form-section">
+          <div class="section-heading">
+            <mat-icon>flight</mat-icon>
             <div>
-
-              <strong>
-                {{ drone.nome }}
-              </strong>
-
-              <span>
-                {{ drone.marca }}
-                -
-                {{ drone.modelo }}
-              </span>
-
+              <h3>Drones participantes</h3>
+              <p>Pesquise os drones disponíveis e adicione-os à promoção.</p>
             </div>
-
-
-            <button
-              mat-icon-button
-              color="warn"
-              type="button"
-              (click)="removerDrone(drone)">
-
-              <mat-icon>
-                close
-              </mat-icon>
-
-            </button>
-
           </div>
 
-        }
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Pesquisar drone</mat-label>
+            <input
+              matInput
+              #modelo
+              placeholder="Digite o nome, a marca ou o modelo"
+              (input)="pesquisarDrone(modelo.value)"
+            />
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
 
+          <div class="selection-layout">
 
-        @if (
-          dronesSelecionados.length === 0
-        ) {
+            <!-- Drones disponíveis -->
+            <div class="drone-panel">
+              <div class="panel-heading">
+                <h4>Drones disponíveis</h4>
+                <span class="count-badge">{{ dronesFiltrados.length }}</span>
+              </div>
 
-          <p>
-            Nenhum drone selecionado.
-          </p>
+              <div class="drone-list">
+                @for (drone of dronesFiltrados; track drone.id) {
+                  <div class="drone-item">
+                    <div class="drone-info">
+                      <strong>{{ drone.nome }}</strong>
+                      <span>{{ drone.marca }} — {{ drone.modelo }}</span>
+                    </div>
 
-        }
+                    <button
+                      mat-icon-button
+                      color="primary"
+                      type="button"
+                      (click)="adicionarDrone(drone)"
+                      [attr.aria-label]="'Adicionar ' + drone.nome">
+                      <mat-icon>add_circle</mat-icon>
+                    </button>
+                  </div>
+                } @empty {
+                  <div class="empty-state">
+                    <mat-icon>search_off</mat-icon>
+                    <p>Nenhum drone encontrado.</p>
+                  </div>
+                }
+              </div>
+            </div>
 
-      </div>
+            <!-- Drones selecionados -->
+            <div class="drone-panel selected-panel">
+              <div class="panel-heading">
+                <h4>Selecionados</h4>
+                <span class="count-badge selected-count">
+                  {{ dronesSelecionados.length }}
+                </span>
+              </div>
 
+              <div class="drone-list">
+                @for (drone of dronesSelecionados; track drone.id) {
+                  <div class="drone-item selected-item">
+                    <div class="drone-info">
+                      <strong>{{ drone.nome }}</strong>
+                      <span>{{ drone.marca }} — {{ drone.modelo }}</span>
+                    </div>
 
-      <div class="actions">
+                    <button
+                      mat-icon-button
+                      color="warn"
+                      type="button"
+                      (click)="removerDrone(drone)"
+                      [attr.aria-label]="'Remover ' + drone.nome">
+                      <mat-icon>remove_circle</mat-icon>
+                    </button>
+                  </div>
+                } @empty {
+                  <div class="empty-state">
+                    <mat-icon>inventory_2</mat-icon>
+                    <p>Nenhum drone selecionado.</p>
+                    <span>Adicione drones usando o botão +.</span>
+                  </div>
+                }
+              </div>
+            </div>
 
+          </div>
+        </section>
 
-        <button
-          mat-raised-button
-          color="warn"
-          type="button"
-          (click)="excluir()"
-          [disabled]="!form.value.id">
+        <!-- Ações -->
+        <div class="actions">
+          <button
+            mat-button
+            type="button"
+            (click)="voltar()">
+            <mat-icon>arrow_back</mat-icon>
+            Cancelar
+          </button>
 
-          <mat-icon>
-            delete
-          </mat-icon>
+          <span class="actions-spacer"></span>
 
-          Excluir
+          <button
+            mat-raised-button
+            color="warn"
+            type="button"
+            (click)="excluir()"
+            [disabled]="!form.value.id">
+            <mat-icon>delete</mat-icon>
+            Excluir
+          </button>
 
-        </button>
-
-
-        <button
-          mat-raised-button
-          type="button"
-          (click)="voltar()">
-
-          <mat-icon>
-            arrow_back
-          </mat-icon>
-
-          Cancelar
-
-        </button>
-
-
-        <button
-          mat-raised-button
-          color="primary"
-          type="button"
-          (click)="salvar()"
-          [disabled]="form.invalid">
-
-          <mat-icon>
-            save
-          </mat-icon>
-
-          Salvar
-
-        </button>
-
-
-      </div>
-
-
-    </form>
-
-  </mat-card-content>
-
-</mat-card>
+          <button
+            mat-raised-button
+            color="primary"
+            type="button"
+            (click)="salvar()"
+            [disabled]="form.invalid">
+            <mat-icon>save</mat-icon>
+            Salvar promoção
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

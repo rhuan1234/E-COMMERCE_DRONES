@@ -1,0 +1,207 @@
+<main class="senha-container">
+  <header class="pagina-header">
+    <div>
+      <h1 class="pagina-titulo">Alterar senha</h1>
+      <p class="pagina-subtitulo">
+        Atualize sua senha para manter sua conta segura.
+      </p>
+    </div>
+  </header>
+
+  <mat-card class="senha-card">
+    <div class="card-header">
+      <div class="card-icone">
+        <mat-icon>lock</mat-icon>
+      </div>
+
+      <div>
+        <h2 class="card-titulo">Segurança da conta</h2>
+        <p class="card-descricao">
+          Informe sua senha atual e escolha uma nova senha.
+        </p>
+      </div>
+    </div>
+
+    @if (mensagemSenha) {
+      <div class="mensagem mensagem-sucesso" role="status">
+        <mat-icon>check_circle</mat-icon>
+        <span>{{ mensagemSenha }}</span>
+      </div>
+    }
+
+    @if (erroSenha) {
+      <div class="mensagem mensagem-erro" role="alert">
+        <mat-icon>error</mat-icon>
+        <span>{{ erroSenha }}</span>
+      </div>
+    }
+
+    <form
+      class="form-senha"
+      [formGroup]="senhaForm"
+      (ngSubmit)="alterarSenha()"
+      (input)="limparMensagens()"
+    >
+      <!-- Senha atual -->
+      <mat-form-field appearance="outline" class="campo-senha">
+        <mat-label>Senha atual</mat-label>
+
+        <mat-icon matPrefix>lock</mat-icon>
+
+        <input
+          matInput
+          [type]="mostrarSenhaAtual ? 'text' : 'password'"
+          formControlName="senhaAtual"
+          autocomplete="current-password"
+          placeholder="Digite sua senha atual"
+        />
+
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          [attr.aria-label]="mostrarSenhaAtual ? 'Ocultar senha atual' : 'Mostrar senha atual'"
+          (click)="mostrarSenhaAtual = !mostrarSenhaAtual"
+        >
+          <mat-icon>
+            {{ mostrarSenhaAtual ? 'visibility_off' : 'visibility' }}
+          </mat-icon>
+        </button>
+
+        @if (
+          senhaForm.get('senhaAtual')?.hasError('required') &&
+          senhaForm.get('senhaAtual')?.touched
+        ) {
+          <mat-error>Informe sua senha atual.</mat-error>
+        }
+
+        @if (
+          senhaForm.get('senhaAtual')?.hasError('maxlength') &&
+          senhaForm.get('senhaAtual')?.touched
+        ) {
+          <mat-error>
+            A senha atual deve ter no máximo 100 caracteres.
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Nova senha -->
+      <mat-form-field appearance="outline" class="campo-senha">
+        <mat-label>Nova senha</mat-label>
+
+        <mat-icon matPrefix>key</mat-icon>
+
+        <input
+          matInput
+          [type]="mostrarNovaSenha ? 'text' : 'password'"
+          formControlName="novaSenha"
+          autocomplete="new-password"
+          placeholder="Digite sua nova senha"
+        />
+
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          [attr.aria-label]="mostrarNovaSenha ? 'Ocultar nova senha' : 'Mostrar nova senha'"
+          (click)="mostrarNovaSenha = !mostrarNovaSenha"
+        >
+          <mat-icon>
+            {{ mostrarNovaSenha ? 'visibility_off' : 'visibility' }}
+          </mat-icon>
+        </button>
+
+        @if (
+          senhaForm.get('novaSenha')?.hasError('required') &&
+          senhaForm.get('novaSenha')?.touched
+        ) {
+          <mat-error>Informe a nova senha.</mat-error>
+        }
+
+        @if (
+          senhaForm.get('novaSenha')?.hasError('minlength') &&
+          senhaForm.get('novaSenha')?.touched
+        ) {
+          <mat-error>
+            A senha deve ter pelo menos 6 caracteres.
+          </mat-error>
+        }
+
+        @if (
+          senhaForm.get('novaSenha')?.hasError('maxlength') &&
+          senhaForm.get('novaSenha')?.touched
+        ) {
+          <mat-error>
+            A senha deve ter no máximo 100 caracteres.
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Confirmação da nova senha -->
+      <mat-form-field appearance="outline" class="campo-senha">
+        <mat-label>Confirmar nova senha</mat-label>
+
+        <mat-icon matPrefix>verified_user</mat-icon>
+
+        <input
+          matInput
+          [type]="mostrarConfirmacao ? 'text' : 'password'"
+          formControlName="confirmarSenha"
+          autocomplete="new-password"
+          placeholder="Digite novamente sua nova senha"
+        />
+
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          [attr.aria-label]="mostrarConfirmacao ? 'Ocultar confirmação' : 'Mostrar confirmação'"
+          (click)="mostrarConfirmacao = !mostrarConfirmacao"
+        >
+          <mat-icon>
+            {{ mostrarConfirmacao ? 'visibility_off' : 'visibility' }}
+          </mat-icon>
+        </button>
+
+        @if (
+          senhaForm.get('confirmarSenha')?.hasError('required') &&
+          senhaForm.get('confirmarSenha')?.touched
+        ) {
+          <mat-error>Confirme sua nova senha.</mat-error>
+        }
+
+        @if (
+          senhaForm.hasError('senhasDiferentes') &&
+          senhaForm.get('confirmarSenha')?.touched
+        ) {
+          <mat-error>As senhas informadas não são iguais.</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="dica-senha">
+        <mat-icon>info</mat-icon>
+        <span>
+          A nova senha deve ter pelo menos 6 caracteres.
+        </span>
+      </div>
+
+      <div class="form-acoes">
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          class="botao-salvar"
+          [disabled]="alterandoSenha"
+        >
+          @if (alterandoSenha) {
+            <mat-spinner diameter="20"></mat-spinner>
+            <span>Alterando senha...</span>
+          } @else {
+            <mat-icon>save</mat-icon>
+            <span>Alterar senha</span>
+          }
+        </button>
+      </div>
+    </form>
+  </mat-card>
+</main>

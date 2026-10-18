@@ -8,7 +8,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CameraService } from '../../../../core/services/CameraService';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { CameraForm } from '../camera-form/camera-form';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { Camera } from '../../../../core/models/camera/Camera';
@@ -100,17 +99,12 @@ export class CameraList implements OnInit {
     this.router.navigate(['/cameras']);
   }
 
-  openFormDialog(camera?: Camera): void {
-    const dialogRef = this.dialog.open(CameraForm, {
-      width: '600px',
-      data: { camera }
-    });
+  novaCamera(): void {
+    this.router.navigate(['/cameras/new']);
+  }
 
-    dialogRef.afterClosed().subscribe((resultado) => {
-      if (resultado) {
-        this.carregarListaAtual();
-      }
-    });
+  editarCamera(camera: Camera): void {
+    this.router.navigate(['/cameras', camera.id, 'edit']);
   }
 
   excluirCamera(camera: Camera): void {

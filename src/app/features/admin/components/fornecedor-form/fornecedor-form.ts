@@ -15,11 +15,15 @@ import { FornecedorService } from '../../../../core/services/FornecedorService';
 import { EnderecoService } from '../../../../core/services/EnderecoService';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
+import { MatDivider } from '@angular/material/divider';
+import { MatStepper, MatStepperNext, MatStepperPrevious, MatStep } from '@angular/material/stepper';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   imports: [ReactiveFormsModule, MatCardModule, MatFormFieldModule,
-            MatInputModule, MatButtonModule, MatToolbarModule,
-            MatSelectModule, MatIconModule, MatSnackBarModule, MatCheckboxModule, MatDialogModule],
+    MatInputModule, MatButtonModule, MatToolbarModule,
+    MatSelectModule, MatIconModule, MatSnackBarModule, MatCheckboxModule, MatDialogModule,
+    MatDivider, MatStepper, MatStepperNext, MatStepperPrevious, MatStep, MatProgressSpinner],
   selector: 'app-fornecedor-form',
   styleUrl: './fornecedor-form.css',
   templateUrl: './fornecedor-form.html',

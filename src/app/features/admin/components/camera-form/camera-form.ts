@@ -1,32 +1,36 @@
-import { Location } from '@angular/common';
-import { Component, Inject, inject, OnInit, Optional } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CameraService } from "../../../../core/services/CameraService";
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSelectModule } from '@angular/material/select';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 import { Camera } from '../../../../core/models/camera/Camera';
 
 @Component({
-  imports: [ReactiveFormsModule, MatCardModule, MatFormFieldModule,
-    MatInputModule, MatButtonModule, MatToolbarModule,
-    MatSelectModule, MatIconModule, MatSnackBarModule, MatDialogModule],
+  imports: [
+    ReactiveFormsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatIconModule,
+    MatSnackBarModule,
+    MatDialogModule
+  ],
   selector: 'app-camera-form',
   styleUrl: './camera-form.css',
   templateUrl: './camera-form.html',
 })
 export class CameraForm implements OnInit {
-
   readonly form: FormGroup;
-  private readonly location = inject(Location);
 
   constructor(
     private fb: FormBuilder,
@@ -34,8 +38,7 @@ export class CameraForm implements OnInit {
     private snack: MatSnackBar,
     private dialog: MatDialog,
     private router: Router,
-    @Optional() public dialogRef?: MatDialogRef<CameraForm>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data?: { camera?: Camera }
+    private activatedRoute: ActivatedRoute
   ) {
     this.form = this.fb.group({
       id: [null],
@@ -49,39 +52,38 @@ export class CameraForm implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.data?.camera) {
-      this.form.patchValue(this.data.camera);
+    const camera = this.activatedRoute.snapshot.data['camera'] as Camera | undefined;
+    if (camera) {
+      this.form.patchValue(camera);
     }
   }
 
-  salvar() {
+  salvar(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       this.exibirMensagem('Revise os campos destacados antes de salvar.');
       return;
     }
 
-    const camera = this.form.value;
-
-    let resultado = (camera.id) ?
-      this.cameraService.update(camera.id, camera) :
-      this.cameraService.create(camera);
+    const camera = this.form.getRawValue() as Camera;
+    const resultado = camera.id
+      ? this.cameraService.update(camera.id, camera)
+      : this.cameraService.create(camera);
 
     resultado.subscribe({
       next: () => {
         this.exibirMensagem('Câmera salva com sucesso!');
-        if (this.dialogRef) {
-          this.dialogRef.close(true);
-        } else {
-          this.router.navigate(['/cameras']);
-        }
-      }
+        this.router.navigate(['/cameras']);
+      },
+      error: (error) => {
+        console.error('Erro ao salvar câmera:', error);
+        this.exibirMensagem('Não foi possível salvar a câmera.');
+      },
     });
   }
 
-  excluir() {
-    const camera = this.form.value;
-
+  excluir(): void {
+    const camera = this.form.getRawValue() as Camera;
     if (!camera.id) {
       return;
     }
@@ -101,16 +103,12 @@ export class CameraForm implements OnInit {
       this.cameraService.delete(camera.id).subscribe({
         next: () => {
           this.exibirMensagem('Câmera excluída com sucesso!');
-          if (this.dialogRef) {
-            this.dialogRef.close(true);
-          } else {
-            this.router.navigate(['/cameras']);
-          }
+          this.router.navigate(['/cameras']);
         },
         error: (error) => {
-          this.exibirMensagem('Erro ao excluir a câmera: ');
-          console.log('Erro ao excluir a câmera: ', error);
-        }
+          console.error('Erro ao excluir câmera:', error);
+          this.exibirMensagem('Não foi possível excluir a câmera.');
+        },
       });
     });
   }
@@ -123,7 +121,7 @@ export class CameraForm implements OnInit {
     });
   }
 
-  voltar() {
-    this.location.back();
+  voltar(): void {
+    this.router.navigate(['/cameras']);
   }
 }

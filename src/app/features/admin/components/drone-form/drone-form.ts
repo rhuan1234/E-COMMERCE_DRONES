@@ -20,6 +20,8 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
 
 import { Camera } from '../../../../core/models/camera/Camera';
 import { Fornecedor } from '../../../../core/models/fornecedor/FornecedorRequest';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatStepperModule } from '@angular/material/stepper';
 
 
 @Component({
@@ -28,7 +30,7 @@ import { Fornecedor } from '../../../../core/models/fornecedor/FornecedorRequest
     CommonModule,
     ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule,
     MatButtonModule, MatToolbarModule, MatSelectModule, MatIconModule, MatSnackBarModule,
-    MatCheckboxModule, MatDialogModule
+    MatCheckboxModule, MatDialogModule, MatDividerModule, MatStepperModule
   ],
   selector: 'app-drone-form',
   styleUrl: './drone-form.css',
