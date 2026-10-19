@@ -11,6 +11,7 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
 import { PromocaoRequest } from '../../../../core/models/promocao/PromocaoRequest';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { PromocaoService } from '../../../../core/services/PromocaoService';
+import { PromocaoDetalhesDialog } from '../promocao-detalhes-dialog/promocao-detalhes-dialog';
 
 @Component({
   imports: [
@@ -97,6 +98,15 @@ export class PromocaoList implements OnInit {
     this.filtroNome = '';
     this.pageIndex = 0;
     this.router.navigate(['/promocoes']);
+  }
+
+  abrirDetalhes(promocao: PromocaoRequest): void {
+    this.dialog.open(PromocaoDetalhesDialog, {
+      width: '720px',
+      maxWidth: 'calc(100vw - 32px)',
+      maxHeight: '90vh',
+      data: promocao,
+    });
   }
 
   excluirPromocao(promocao: PromocaoRequest): void {

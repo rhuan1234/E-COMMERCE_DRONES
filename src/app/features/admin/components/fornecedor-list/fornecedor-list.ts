@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { FornecedorDetalhesDialog } from '../fornecedor-detalhes-dialog/fornecedor-detalhes-dialog';
 
 @Component({
   imports: [
@@ -97,6 +98,15 @@ export class FornecedorList implements OnInit {
     this.filtroNome = '';
     this.pageIndex = 0;
     this.router.navigate(['/fornecedores']);
+  }
+
+  abrirDetalhes(fornecedor: Fornecedor): void {
+    this.dialog.open(FornecedorDetalhesDialog, {
+      width: '720px',
+      maxWidth: 'calc(100vw - 32px)',
+      maxHeight: '90vh',
+      data: fornecedor,
+    });
   }
 
   excluirFornecedor(fornecedor: Fornecedor): void {

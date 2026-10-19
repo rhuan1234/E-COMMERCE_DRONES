@@ -1,0 +1,92 @@
+<header class="dialog-header">
+  <div class="dialog-icon">
+    <mat-icon>business</mat-icon>
+  </div>
+  <div class="dialog-heading">
+    <h2 mat-dialog-title>{{ fornecedor.nome }}</h2>
+    <p>{{ fornecedor.cnpj || 'CNPJ não informado' }}</p>
+  </div>
+  <button mat-icon-button type="button" aria-label="Fechar detalhes" (click)="fechar()">
+    <mat-icon>close</mat-icon>
+  </button>
+</header>
+
+<mat-dialog-content>
+  @if (!carregando) {
+    <div class="dialog-status">
+      <mat-spinner diameter="32"></mat-spinner>
+      <span>Carregando informações do fornecedor...</span>
+    </div>
+  } @else if (erro) {
+    <div class="dialog-error" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ erro }}</span>
+    </div>
+  } @else {
+    <section class="detail-section" aria-labelledby="identificacao-title">
+      <h3 id="identificacao-title">Identificação</h3>
+      <dl class="detail-grid">
+        <div class="detail-item">
+          <dt>ID</dt>
+          <dd>{{ fornecedor.id }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Nome</dt>
+          <dd>{{ fornecedor.nome }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>CNPJ</dt>
+          <dd>{{ fornecedor.cnpj || 'Não informado' }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Status</dt>
+          <dd>{{ fornecedor.ativo ? 'Ativo' : 'Inativo' }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="detail-section" aria-labelledby="contato-title">
+      <h3 id="contato-title">Contato</h3>
+      <dl class="detail-grid">
+        <div class="detail-item">
+          <dt>E-mail</dt>
+          <dd>{{ fornecedor.email || 'Não informado' }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Telefone</dt>
+          <dd>{{ fornecedor.telefone || 'Não informado' }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="detail-section" aria-labelledby="endereco-title">
+      <h3 id="endereco-title">Endereço</h3>
+      <dl class="detail-grid">
+        <div class="detail-item">
+          <dt>Rua</dt>
+          <dd>{{ fornecedor.endereco?.rua || 'Não informado' }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Bairro</dt>
+          <dd>{{ fornecedor.endereco?.bairro || 'Não informado' }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Cidade</dt>
+          <dd>{{ fornecedor.endereco?.cidade?.nome || 'Não informada' }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Estado</dt>
+          <dd>{{ fornecedor.endereco?.cidade?.estado?.nome || 'Não informado' }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>CEP</dt>
+          <dd>{{ fornecedor.endereco?.cep || 'Não informado' }}</dd>
+        </div>
+      </dl>
+    </section>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-flat-button color="primary" type="button" (click)="fechar()">Fechar</button>
+</mat-dialog-actions>

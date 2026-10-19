@@ -30,4 +30,5 @@
 
 .camera-table tr.mat-mdc-row:hover {
     background-color: #f0f5e8;
+    cursor: pointer;
 }

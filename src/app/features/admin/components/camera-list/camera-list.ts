@@ -11,6 +11,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { Camera } from '../../../../core/models/camera/Camera';
+import { CameraDetalhesDialog } from '../camera-detalhes-dialog/camera-detalhes-dialog';
 
 @Component({
   imports: [
@@ -105,6 +106,15 @@ export class CameraList implements OnInit {
 
   editarCamera(camera: Camera): void {
     this.router.navigate(['/cameras', camera.id, 'edit']);
+  }
+
+  abrirDetalhes(camera: Camera): void {
+    this.dialog.open(CameraDetalhesDialog, {
+      width: '720px',
+      maxWidth: 'calc(100vw - 32px)',
+      maxHeight: '90vh',
+      data: camera,
+    });
   }
 
   excluirCamera(camera: Camera): void {
