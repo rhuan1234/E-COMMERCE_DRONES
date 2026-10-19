@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon'; 
@@ -6,6 +6,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '../../../../core/services/auth/AuthService';
 import { PerfilService } from '../../../../core/services/PerfilService';
 
@@ -27,7 +28,8 @@ interface NavItem {
     MatSidenavModule,
     MatListModule,
     MatButtonModule,
-    MatDividerModule
+    MatDividerModule,
+    MatTooltipModule
   ],
   templateUrl: './admin-layout.html',
   styleUrl: './admin-layout.css'
@@ -39,6 +41,7 @@ export class AdminLayoutComponent implements OnInit {
 
   emailUsuario = '';
   erroCarregamentoEmail = false;
+  isCollapsed = signal(false);
 
   navItems: NavItem[] = [
     { label: 'Drones', route: '/drones', icon: 'flight_takeoff' },
@@ -59,6 +62,10 @@ export class AdminLayoutComponent implements OnInit {
         console.error('Erro ao carregar e-mail do usuário', err);
       },
     });
+  }
+
+  toggleSidebar(): void {
+    this.isCollapsed.update((collapsed) => !collapsed);
   }
 
   logout() {
