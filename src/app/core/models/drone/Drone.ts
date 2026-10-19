@@ -1,8 +1,13 @@
+import { Marca } from '../marca/Marca';
+import { Modelo } from '../modelo/Modelo';
+
 export class Drone {
   id!: number;
   nome!: string;
-  marca!: string;
-  modelo!: string;
+  marcaId!: number;
+  modeloId!: number;
+  marca?: Marca;
+  modelo?: Modelo;
   preco!: number;
   quantidadeDisponivel!: number;
   ativa!: boolean;

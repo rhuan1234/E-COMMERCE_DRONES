@@ -15,11 +15,15 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DroneService } from '../../../../core/services/DroneService';
 import { CameraService } from '../../../../core/services/CameraService';
 import { FornecedorService } from '../../../../core/services/FornecedorService';
+import { MarcaService } from '../../../../core/services/MarcaService';
+import { ModeloService } from '../../../../core/services/ModeloService';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 
 
 import { Camera } from '../../../../core/models/camera/Camera';
 import { Fornecedor } from '../../../../core/models/fornecedor/FornecedorRequest';
+import { Marca } from '../../../../core/models/marca/Marca';
+import { Modelo } from '../../../../core/models/modelo/Modelo';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatStepperModule } from '@angular/material/stepper';
 
@@ -41,6 +45,8 @@ export class DroneForm implements OnInit {
   readonly form: FormGroup;
   cameras: Camera[] = [];
   fornecedores: Fornecedor[] = [];
+  marcas: Marca[] = [];
+  modelos: Modelo[] = [];
   private readonly location = inject(Location);
 
   constructor(
@@ -49,6 +55,8 @@ export class DroneForm implements OnInit {
     private droneService: DroneService,
     private cameraService: CameraService,
     private fornecedorService: FornecedorService,
+    private marcaService: MarcaService,
+    private modeloService: ModeloService,
     private activatedRoute: ActivatedRoute,
     private snack: MatSnackBar,
     private router: Router,
@@ -60,8 +68,8 @@ export class DroneForm implements OnInit {
 
       id: [null],
       nome: ['', [Validators.required, Validators.pattern(/\S/), Validators.minLength(2), Validators.maxLength(100)]],
-      marca: ['', [Validators.required, Validators.pattern(/\S/), Validators.minLength(2), Validators.maxLength(60)]],
-      modelo: ['', [Validators.required, Validators.pattern(/\S/), Validators.minLength(2), Validators.maxLength(60)]],
+      marcaId: [null, [Validators.required]],
+      modeloId: [{ value: null, disabled: true }, [Validators.required]],
       preco: [0, [Validators.required, Validators.min(0)]],
       quantidadeDisponivel: [0, [Validators.required, Validators.min(0), Validators.pattern(/^\d+$/)]],
       ativa: [true],
@@ -97,21 +105,77 @@ export class DroneForm implements OnInit {
     possuiCameraControl.valueChanges.subscribe(atualizarValidacaoCamera);
     atualizarValidacaoCamera(possuiCameraControl.value);
 
+    const marcaIdControl = this.form.controls['marcaId'];
+    const modeloIdControl = this.form.controls['modeloId'];
+
+    marcaIdControl.valueChanges.subscribe((marcaId: number | null) => {
+      modeloIdControl.setValue(null, { emitEvent: false });
+      if (marcaId) {
+        modeloIdControl.enable({ emitEvent: false });
+        this.carregarModelosPorMarca(marcaId);
+      } else {
+        this.modelos = [];
+        modeloIdControl.disable({ emitEvent: false });
+      }
+    });
+
+    this.carregarMarcas();
     this.carregarCameras();
     this.carregarFornecedores();
 
     const drone = this.activatedRoute.snapshot.data['drone'];
 
     if (drone) {
+      const marcaIdInicial = drone.marcaId ?? drone.marca?.id ?? null;
+      const modeloIdInicial = drone.modeloId ?? drone.modelo?.id ?? null;
 
-      this.form.patchValue({
-        ...drone,
-        cameraId: drone.camera?.id
-      });
+      this.form.patchValue(
+        {
+          ...drone,
+          marcaId: marcaIdInicial,
+          cameraId: drone.camera?.id ?? drone.cameraId ?? null,
+        },
+        { emitEvent: false }
+      );
 
+      if (marcaIdInicial) {
+        modeloIdControl.enable({ emitEvent: false });
+        this.carregarModelosPorMarca(marcaIdInicial, modeloIdInicial);
+      }
     }
   }
 
+
+  carregarMarcas(): void {
+    this.marcaService.findAll(0, 100).subscribe({
+      next: (response) => {
+        this.marcas = response.items;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar marcas:', error);
+        this.exibirMensagem('Erro ao carregar as marcas.');
+      }
+    });
+  }
+
+  carregarModelosPorMarca(marcaId: number, modeloSelecionadoId?: number | null): void {
+    this.modeloService.findByMarca(marcaId, 0, 100).subscribe({
+      next: (response) => {
+        this.modelos = response.items;
+        if (modeloSelecionadoId) {
+          const pertence = this.modelos.some((m) => m.id === modeloSelecionadoId);
+          if (pertence) {
+            this.form.controls['modeloId'].setValue(modeloSelecionadoId, { emitEvent: false });
+          }
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao carregar modelos da marca:', error);
+        this.modelos = [];
+        this.exibirMensagem('Erro ao carregar os modelos da marca selecionada.');
+      }
+    });
+  }
 
   carregarCameras(): void {
     this.cameraService.findAll(0, 100).subscribe({
@@ -145,7 +209,16 @@ export class DroneForm implements OnInit {
       return;
     }
 
-    const drone = this.form.value;
+    const drone = this.form.getRawValue();
+    const modeloEscolhido = this.modelos.find((m) => m.id === drone.modeloId);
+    const marcaDoModelo = modeloEscolhido?.marcaId ?? modeloEscolhido?.marca?.id;
+    if (!modeloEscolhido || marcaDoModelo !== drone.marcaId) {
+      this.form.controls['modeloId'].setErrors({ marcaIncompativel: true });
+      this.form.controls['modeloId'].markAsTouched();
+      this.exibirMensagem('O modelo selecionado deve pertencer à marca escolhida.');
+      return;
+    }
+
     const resultado = drone.id
       ? this.droneService.update(drone.id, drone)
       : this.droneService.create(drone);

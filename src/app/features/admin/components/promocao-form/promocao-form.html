@@ -139,7 +139,7 @@
                   <div class="drone-item">
                     <div class="drone-info">
                       <strong>{{ drone.nome }}</strong>
-                      <span>{{ drone.marca }} — {{ drone.modelo }}</span>
+                      <span>{{ drone.marca?.nome }} — {{ drone.modelo?.nome }}</span>
                     </div>
 
                     <button
@@ -174,7 +174,7 @@
                   <div class="drone-item selected-item">
                     <div class="drone-info">
                       <strong>{{ drone.nome }}</strong>
-                      <span>{{ drone.marca }} — {{ drone.modelo }}</span>
+                      <span>{{ drone.marca?.nome }} — {{ drone.modelo?.nome }}</span>
                     </div>
 
                     <button

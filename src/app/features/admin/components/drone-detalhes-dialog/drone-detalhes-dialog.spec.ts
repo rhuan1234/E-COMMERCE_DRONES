@@ -12,8 +12,10 @@ describe('DroneDetalhesDialog', () => {
   const drone: Drone = {
     id: 1,
     nome: 'Drone teste',
-    marca: 'Marca',
-    modelo: 'Modelo',
+    marcaId: 1,
+    marca: { id: 1, nome: 'Marca' },
+    modeloId: 1,
+    modelo: { id: 1, nome: 'Modelo', marcaId: 1 },
     preco: 100,
     quantidadeDisponivel: 2,
     ativa: true,

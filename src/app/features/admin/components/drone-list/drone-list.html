@@ -7,27 +7,234 @@
   </button>
 </mat-toolbar>
 
-<!-- Área do filtro -->
-<div class="filter-container">
-  <mat-form-field appearance="outline">
-    <mat-label>Filtro por Modelo</mat-label>
+<!-- Barra de Filtros Compacta + Pop-up Oculto -->
+<div class="filter-bar">
+  <div class="filter-trigger-wrapper">
+    <button
+      mat-stroked-button
+      type="button"
+      class="filter-trigger-btn"
+      [class.active]="menuFiltrosAberto || filtroAtivo"
+      (click)="toggleMenuFiltros()"
+      [attr.aria-expanded]="menuFiltrosAberto"
+      aria-haspopup="dialog"
+      aria-controls="drone-filter-popup"
+    >
+      <mat-icon>tune</mat-icon>
+      <span>Filtros</span>
+      @if (quantidadeFiltrosAtivos > 0) {
+        <span class="filter-count-badge">{{ quantidadeFiltrosAtivos }}</span>
+      }
+      <mat-icon class="chevron-icon">
+        {{ menuFiltrosAberto ? 'expand_less' : 'expand_more' }}
+      </mat-icon>
+    </button>
 
-    <input 
-      matInput 
-      [value]="filtroModelo"
-      (keyup.enter)="filtrarPorModelo(input.value)" 
-      placeholder="Ex: DJI" 
-      #input 
-    />
-  </mat-form-field>
+    @if (menuFiltrosAberto) {
+      <div
+        class="filter-backdrop"
+        (click)="fecharMenuFiltros()"
+        aria-hidden="true"
+      ></div>
 
-  <button mat-raised-button color="primary" (click)="filtrarPorModelo(input.value)">
-    Buscar
-  </button>
+      <div
+        id="drone-filter-popup"
+        class="filter-popup mat-elevation-z8"
+        role="dialog"
+        aria-label="Filtros de drones"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="filter-popup-header">
+          <div class="filter-popup-title">
+            <mat-icon>filter_list</mat-icon>
+            <span>Filtrar Drones</span>
+          </div>
+          <button
+            mat-icon-button
+            type="button"
+            aria-label="Fechar filtros"
+            (click)="fecharMenuFiltros()"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
 
-  <button mat-button color="warn" (click)="limparFiltro(input)">
-    Limpar Filtro
-  </button>
+        <div class="filter-popup-body">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nome do Drone</mat-label>
+            <input
+              matInput
+              [(ngModel)]="filtroNome"
+              (keyup.enter)="aplicarFiltro()"
+              placeholder="Ex: Drone DJI Air"
+            />
+            @if (filtroNome) {
+              <button
+                matSuffix
+                mat-icon-button
+                type="button"
+                aria-label="Limpar nome"
+                (click)="filtroNome = ''"
+              >
+                <mat-icon>close</mat-icon>
+              </button>
+            }
+          </mat-form-field>
+
+          <div class="filter-popup-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Marca</mat-label>
+              <input
+                matInput
+                [(ngModel)]="filtroMarca"
+                (keyup.enter)="aplicarFiltro()"
+                placeholder="Ex: DJI"
+              />
+              @if (filtroMarca) {
+                <button
+                  matSuffix
+                  mat-icon-button
+                  type="button"
+                  aria-label="Limpar marca"
+                  (click)="filtroMarca = ''"
+                >
+                  <mat-icon>close</mat-icon>
+                </button>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Modelo</mat-label>
+              <input
+                matInput
+                [(ngModel)]="filtroModelo"
+                (keyup.enter)="aplicarFiltro()"
+                placeholder="Ex: Mavic 3 Pro"
+              />
+              @if (filtroModelo) {
+                <button
+                  matSuffix
+                  mat-icon-button
+                  type="button"
+                  aria-label="Limpar modelo"
+                  (click)="filtroModelo = ''"
+                >
+                  <mat-icon>close</mat-icon>
+                </button>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="filter-popup-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Preço Mínimo (R$)</mat-label>
+              <input
+                matInput
+                type="number"
+                min="0"
+                step="0.01"
+                [(ngModel)]="precoMin"
+                (keyup.enter)="aplicarFiltro()"
+                placeholder="Ex: 500"
+              />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Preço Máximo (R$)</mat-label>
+              <input
+                matInput
+                type="number"
+                min="0"
+                step="0.01"
+                [(ngModel)]="precoMax"
+                (keyup.enter)="aplicarFiltro()"
+                placeholder="Ex: 5000"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="filter-popup-footer">
+          <button
+            mat-button
+            type="button"
+            color="warn"
+            (click)="limparFiltro()"
+            [disabled]="!filtroAtivo && !temCamposPreenchidos"
+          >
+            <mat-icon>filter_alt_off</mat-icon>
+            Limpar tudo
+          </button>
+
+          <button
+            mat-raised-button
+            type="button"
+            color="primary"
+            (click)="aplicarFiltro()"
+          >
+            <mat-icon>search</mat-icon>
+            Aplicar Filtros
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Chips de Filtros Ativos -->
+  @if (filtroAtivo) {
+    <mat-chip-set class="active-filters-chips" aria-label="Filtros ativos">
+      @if (nomeAplicado) {
+        <mat-chip-row (removed)="removerFiltroIndividual('nome')">
+          Nome: {{ nomeAplicado }}
+          <button matChipRemove aria-label="Remover filtro de nome">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+      }
+      @if (marcaAplicada) {
+        <mat-chip-row (removed)="removerFiltroIndividual('marca')">
+          Marca: {{ marcaAplicada }}
+          <button matChipRemove aria-label="Remover filtro de marca">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+      }
+      @if (modeloAplicado) {
+        <mat-chip-row (removed)="removerFiltroIndividual('modelo')">
+          Modelo: {{ modeloAplicado }}
+          <button matChipRemove aria-label="Remover filtro de modelo">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+      }
+      @if (precoMinAplicado !== null) {
+        <mat-chip-row (removed)="removerFiltroIndividual('min')">
+          Mín: R$ {{ precoMinAplicado }}
+          <button matChipRemove aria-label="Remover filtro de preço mínimo">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+      }
+      @if (precoMaxAplicado !== null) {
+        <mat-chip-row (removed)="removerFiltroIndividual('max')">
+          Máx: R$ {{ precoMaxAplicado }}
+          <button matChipRemove aria-label="Remover filtro de preço máximo">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+      }
+    </mat-chip-set>
+
+    <button
+      mat-button
+      type="button"
+      color="warn"
+      class="clear-all-inline-btn"
+      (click)="limparFiltro()"
+    >
+      Limpar filtros
+    </button>
+  }
 </div>
 
 <!-- Tabela -->
@@ -56,7 +263,7 @@
       <th mat-header-cell *matHeaderCellDef>Marca</th>
 
       <td mat-cell *matCellDef="let drone">
-        {{ drone.marca }}
+        {{ drone.marca?.nome }}
       </td>
     </ng-container>
 
@@ -65,7 +272,7 @@
       <th mat-header-cell *matHeaderCellDef>Modelo</th>
 
       <td mat-cell *matCellDef="let drone">
-        {{ drone.modelo }}
+        {{ drone.modelo?.nome }}
       </td>
     </ng-container>
 
@@ -142,6 +349,23 @@
       (keydown.enter)="abrirDetalhes(row)"
       (keydown.space)="$event.preventDefault(); abrirDetalhes(row)"
     ></tr>
+
+    <!-- Estado Vazio -->
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell empty-state-cell" [attr.colspan]="displayedColumns.length">
+        <div class="empty-state">
+          <mat-icon class="empty-state-icon">search_off</mat-icon>
+          <p class="empty-state-text">
+            Nenhum drone encontrado para os critérios informados.
+          </p>
+          @if (filtroAtivo) {
+            <button mat-stroked-button color="primary" (click)="limparFiltro()">
+              Limpar filtro e ver todos
+            </button>
+          }
+        </div>
+      </td>
+    </tr>
   </table>
 
   <mat-paginator

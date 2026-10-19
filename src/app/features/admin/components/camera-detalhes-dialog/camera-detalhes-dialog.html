@@ -3,7 +3,7 @@
     <mat-icon>photo_camera</mat-icon>
   </div>
   <div class="dialog-heading">
-    <h2 mat-dialog-title>{{ camera.modelo }}</h2>
+    <h2 mat-dialog-title>{{ camera.modelo?.nome }}</h2>
     <p>{{ camera.marca?.nome || (camera.marca?.id ? 'ID ' + camera.marca.id : 'Marca não informada') }}</p>
   </div>
   <button mat-icon-button type="button" aria-label="Fechar detalhes" (click)="fechar()">
@@ -32,7 +32,7 @@
         </div>
         <div class="detail-item">
           <dt>Modelo</dt>
-          <dd>{{ camera.modelo }}</dd>
+          <dd>{{ camera.modelo?.nome || (camera.modelo?.id ? 'ID ' + camera.modelo.id : 'Não informado') }}</dd>
         </div>
         <div class="detail-item">
           <dt>Marca</dt>
