@@ -12,6 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { DroneDetalhesDialog } from '../drone-detalhes-dialog/drone-detalhes-dialog';
 
 @Component({
   imports: [
@@ -139,4 +140,14 @@ export class DroneList implements OnInit {
       this.carregarDrones();
     }
   }
+
+    abrirDetalhes(drone: Drone): void {
+      this.dialog.open(DroneDetalhesDialog, {
+        width: '720px',
+        maxWidth: 'calc(100vw - 32px)',
+        maxHeight: '90vh',
+        data: drone,
+      });
+    }
+  
 }

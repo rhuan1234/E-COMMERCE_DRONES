@@ -69,6 +69,15 @@
     background-color: #f0f5e8;
 }
 
+.drone-table tr.mat-mdc-row {
+    cursor: pointer;
+}
+
+.drone-table tr.mat-mdc-row:focus-visible {
+    outline: 2px solid var(--mat-sys-primary, #84cc16);
+    outline-offset: -2px;
+}
+
 
 /* =========================
    AÇÕES

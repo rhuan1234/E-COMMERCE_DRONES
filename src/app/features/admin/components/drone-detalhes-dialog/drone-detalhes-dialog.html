@@ -1,0 +1,141 @@
+<header class="dialog-header">
+  <div class="dialog-icon">
+    <mat-icon>flight</mat-icon>
+  </div>
+  <div class="dialog-heading">
+    <h2 mat-dialog-title>{{ drone.nome }}</h2>
+    <p>{{ drone.marca }} · {{ drone.modelo }}</p>
+  </div>
+  <button mat-icon-button type="button" aria-label="Fechar detalhes" (click)="fechar()">
+    <mat-icon>close</mat-icon>
+  </button>
+</header>
+
+<mat-dialog-content>
+  @if (!carregando) {
+    <div class="dialog-status">
+      <mat-spinner diameter="32"></mat-spinner>
+      <span>Carregando informações do drone...</span>
+    </div>
+  } @else if (erro) {
+    <div class="dialog-error" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ erro }}</span>
+    </div>
+  } @else {
+    <section class="detail-section" aria-labelledby="identificacao-title">
+      <h3 id="identificacao-title">Identificação e venda</h3>
+      <dl class="detail-grid">
+        <div class="detail-item">
+          <dt>ID</dt>
+          <dd>{{ drone.id }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Nome</dt>
+          <dd>{{ drone.nome }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Marca</dt>
+          <dd>{{ drone.marca }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Modelo</dt>
+          <dd>{{ drone.modelo }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Preço</dt>
+          <dd>R$ {{ drone.preco | number:'1.2-2' }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Quantidade disponível</dt>
+          <dd>{{ drone.quantidadeDisponivel }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Status</dt>
+          <dd>{{ drone.ativa ? 'Ativo' : 'Inativo' }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Fornecedor</dt>
+          <dd>{{ drone.fornecedor?.nome || (drone.fornecedorId ? 'ID ' + drone.fornecedorId : 'Não informado') }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="detail-section" aria-labelledby="voo-title">
+      <h3 id="voo-title">Desempenho de voo</h3>
+      <dl class="detail-grid">
+        <div class="detail-item">
+          <dt>Tempo de voo prático</dt>
+          <dd>{{ drone.tempoVooPratico }} min</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Peso de decolagem</dt>
+          <dd>{{ drone.pesoDecolagem }} g</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Altitude máxima</dt>
+          <dd>{{ drone.altitudeMaxima }} m</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Velocidade máxima</dt>
+          <dd>{{ drone.velocidadeMaxima }} km/h</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Alcance de transmissão</dt>
+          <dd>{{ drone.alcanceTransmissao }} m</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Frequência Wi-Fi</dt>
+          <dd>{{ drone.frequenciaWifi || 'Não informado' }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="detail-section" aria-labelledby="recursos-title">
+      <h3 id="recursos-title">Recursos e componentes</h3>
+      <dl class="detail-grid">
+        <div class="detail-item">
+          <dt>Câmera</dt>
+          <dd>
+            @if (drone.possuiCamera) {
+              {{ drone.camera?.modelo || (drone.cameraId ? 'ID ' + drone.cameraId : 'Sim') }}
+              @if (drone.camera?.resolucao) {
+                · {{ drone.camera?.resolucao }}
+              }
+            } @else {
+              Não possui
+            }
+          </dd>
+        </div>
+        <div class="detail-item">
+          <dt>GPS</dt>
+          <dd>{{ drone.possuiGPS ? 'Sim' : 'Não' }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Quantidade de motores</dt>
+          <dd>{{ drone.quantidadeMotores }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Controle remoto</dt>
+          <dd>{{ drone.comControleRemoto ? 'Sim' : 'Não' }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Controlado por aplicativo</dt>
+          <dd>{{ drone.controladoPorAplicativo ? 'Sim' : 'Não' }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Quantidade de baterias</dt>
+          <dd>{{ drone.quantidadeBaterias }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Duração da bateria</dt>
+          <dd>{{ drone.duracaoBateria || 'Não informado' }}</dd>
+        </div>
+      </dl>
+    </section>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-flat-button color="primary" type="button" (click)="fechar()">Fechar</button>
+</mat-dialog-actions>

@@ -112,13 +112,16 @@
           color="primary"
           routerLink="/drones/{{ drone.id }}/edit"
           aria-label="Editar drone"
+          (click)="$event.stopPropagation()"
+          (keydown)="$event.stopPropagation()"
         >
           <mat-icon>edit</mat-icon>
         </button>
         <button
           mat-icon-button
           color="warn"
-          (click)="excluirDrone(drone)"
+          (click)="$event.stopPropagation(); excluirDrone(drone)"
+          (keydown)="$event.stopPropagation()"
           aria-label="Excluir drone"
         >
           <mat-icon>delete</mat-icon>
@@ -130,7 +133,15 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
     <!-- Linhas -->
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns"
+      tabindex="0"
+      [attr.aria-label]="'Ver detalhes de ' + row.nome"
+      (click)="abrirDetalhes(row)"
+      (keydown.enter)="abrirDetalhes(row)"
+      (keydown.space)="$event.preventDefault(); abrirDetalhes(row)"
+    ></tr>
   </table>
 
   <mat-paginator

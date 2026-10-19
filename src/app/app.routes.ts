@@ -15,6 +15,10 @@ import { AdministradorForm } from './features/admin/components/administrador-for
 import { PromocaoList } from './features/admin/components/promocao-list/promocao-list';
 import { PromocaoForm } from './features/admin/components/promocao-form/promocao-form';
 import { PerfilPage } from './features/admin/components/perfil-page/perfil-page';
+import { EnderecosPage } from './features/admin/components/enderecos-page/enderecos-page';
+import { AlterarSenhaPage } from './features/admin/components/alterar-senha-page/alterar-senha-page';
+import { CameraForm } from './features/admin/components/camera-form/camera-form';
+import { cameraResolver } from './core/resolvers/CameraResolver';
 
 
 export const routes: Routes = [
@@ -38,6 +42,8 @@ export const routes: Routes = [
 
       // Câmeras
       { path: 'cameras', component: CameraList, title: 'Lista de Câmeras' },
+      { path: 'cameras/new', component: CameraForm, title: 'Nova Câmera' },
+      { path: 'cameras/:id/edit', component: CameraForm, title: 'Editar Câmera', resolve: { camera: cameraResolver } },
       { path: 'cameras/filtro/modelo/:modelo', component: CameraList, title: 'Câmeras por modelo' },
 
       // Fornecedores
@@ -57,7 +63,13 @@ export const routes: Routes = [
       { path: 'promocoes/:id/edit', component: PromocaoForm, title: 'Editar Promoção' },
 
       //Perfil
-      {path: 'perfil', component: PerfilPage, title: 'Perfil do Usuário'}
+      {path: 'perfil', component: PerfilPage, title: 'Perfil do Usuário'},
+
+      //Alterar Senha
+      {path: 'perfil/alterar-senha', component: AlterarSenhaPage, title: 'Alterar Senha'},
+
+      //Endereco
+      {path: 'enderecos', component: EnderecosPage, title: 'Lista de Endereços'}
     ]
   },
 
