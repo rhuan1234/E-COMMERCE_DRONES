@@ -45,11 +45,13 @@ export class AdminLayoutComponent implements OnInit {
 
   navItems: NavItem[] = [
     { label: 'Drones', route: '/drones', icon: 'flight_takeoff' },
+    { label: 'Marcas', route: '/marcas', icon: 'branding_watermark' },
+    { label: 'Modelos', route: '/modelos', icon: 'category' },
     { label: 'Câmeras', route: '/cameras', icon: 'videocam' },
     { label: 'Fornecedores', route: '/fornecedores', icon: 'business' },
     { label: 'Administradores', route: '/administradores', icon: 'admin_panel_settings' },
     { label: 'Promoções', route: '/promocoes', icon: 'local_offer' },
-    {label: 'Endereços', route: '/enderecos', icon: 'location_on'},
+    { label: 'Endereços', route: '/enderecos', icon: 'location_on' },
   ];
 
   ngOnInit(): void {

@@ -1,0 +1,44 @@
+<header class="dialog-header">
+  <div class="dialog-icon">
+    <mat-icon>branding_watermark</mat-icon>
+  </div>
+  <div class="dialog-heading">
+    <h2 mat-dialog-title>{{ marca.nome }}</h2>
+    <p>Marca cadastrada no sistema</p>
+  </div>
+  <button mat-icon-button type="button" aria-label="Fechar detalhes" (click)="fechar()">
+    <mat-icon>close</mat-icon>
+  </button>
+</header>
+
+<mat-dialog-content>
+  @if (carregando) {
+    <div class="dialog-status">
+      <mat-spinner diameter="32"></mat-spinner>
+      <span>Carregando informações da marca...</span>
+    </div>
+  } @else if (erro) {
+    <div class="dialog-error" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ erro }}</span>
+    </div>
+  } @else {
+    <section class="detail-section" aria-labelledby="identificacao-title">
+      <h3 id="identificacao-title">Identificação</h3>
+      <dl class="detail-grid">
+        <div class="detail-item">
+          <dt>ID</dt>
+          <dd>{{ marca.id }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Nome</dt>
+          <dd>{{ marca.nome }}</dd>
+        </div>
+      </dl>
+    </section>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-flat-button color="primary" type="button" (click)="fechar()">Fechar</button>
+</mat-dialog-actions>
