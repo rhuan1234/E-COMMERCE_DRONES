@@ -2,8 +2,10 @@ package drones.dto.drones;
 
 public record CameraResponseDTO(
     Long id,
-    String modelo,
-    String marca,
+    ModeloResponseDTO modelo,
+    MarcaResponseDTO marca,
+    Long modeloId,
+    Long marcaId,
     String resolucao,
     int zoom,
     boolean estabilizacao,

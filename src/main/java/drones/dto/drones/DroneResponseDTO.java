@@ -3,8 +3,10 @@ package drones.dto.drones;
 public record DroneResponseDTO(
     Long id,
     String nome,
-    String marca,
-    String modelo,
+    MarcaResponseDTO marca,
+    ModeloResponseDTO modelo,
+    Long marcaId,
+    Long modeloId,
     double preco,
     int quantidadeDisponivel,
     boolean ativa,

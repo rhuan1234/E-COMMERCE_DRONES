@@ -1,6 +1,7 @@
 package drones.repository;
 
-
+import java.util.HashMap;
+import java.util.Map;
 
 import drones.model.drones.Drone;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
@@ -16,8 +17,41 @@ public class DroneRepository implements PanacheRepository<Drone> {
         persist(drone);
     }
 
+    public final PanacheQuery<Drone> findByFiltros(
+            String nome,
+            String marca,
+            String modelo,
+            Double precoMin,
+            Double precoMax) {
+        StringBuilder query = new StringBuilder("1 = 1");
+        Map<String, Object> params = new HashMap<>();
+
+        if (nome != null && !nome.isBlank()) {
+            query.append(" AND nome ILIKE :nome");
+            params.put("nome", "%" + nome.trim() + "%");
+        }
+        if (marca != null && !marca.isBlank()) {
+            query.append(" AND marca.nome ILIKE :marca");
+            params.put("marca", "%" + marca.trim() + "%");
+        }
+        if (modelo != null && !modelo.isBlank()) {
+            query.append(" AND modelo.nome ILIKE :modelo");
+            params.put("modelo", "%" + modelo.trim() + "%");
+        }
+        if (precoMin != null) {
+            query.append(" AND preco >= :precoMin");
+            params.put("precoMin", precoMin);
+        }
+        if (precoMax != null) {
+            query.append(" AND preco <= :precoMax");
+            params.put("precoMax", precoMax);
+        }
+
+        return find(query.toString(), params);
+    }
+
     public final PanacheQuery<Drone> findByMarca(String marca) {
-        return find("marca ILIKE ?1", "%" + marca + "%");
+        return find("marca.nome ILIKE ?1", "%" + marca + "%");
     }
 
     public final Drone findByNome(String nome) {
@@ -25,7 +59,7 @@ public class DroneRepository implements PanacheRepository<Drone> {
     }
 
     public final PanacheQuery<Drone> findByModelo(String modelo) {
-        return find("modelo ILIKE ?1", "%" + modelo + "%");
+        return find("modelo.nome ILIKE ?1", "%" + modelo + "%");
     }
 
     public final PanacheQuery<Drone> findByPrecoRange(double precoMin, double precoMax) {

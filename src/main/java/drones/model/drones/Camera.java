@@ -4,14 +4,23 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Camera {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String modelo;
-    private String marca;
+
+    @ManyToOne
+    @JoinColumn(name = "modelo_id")
+    private Modelo modelo;
+
+    @ManyToOne
+    @JoinColumn(name = "marca_id")
+    private Marca marca;
+
     private String resolucao;
     private int zoom;
     private boolean estabilizacao;
@@ -20,16 +29,16 @@ public class Camera {
     
     public Camera() {
     }
-    public String getModelo() {
+    public Modelo getModelo() {
         return modelo;
     }
-    public void setModelo(String modelo) {
+    public void setModelo(Modelo modelo) {
         this.modelo = modelo;
     }
-    public String getMarca() {
+    public Marca getMarca() {
         return marca;
     }
-    public void setMarca(String marca) {
+    public void setMarca(Marca marca) {
         this.marca = marca;
     }
     public String getResolucao() {

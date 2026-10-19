@@ -15,8 +15,10 @@ public interface DroneServiceInterface {
     List<Drone> buscarPorMarca(int page, int pageSize, String marca);
     List<Drone> buscarPorModelo(int page, int pageSize, String modelo);
     List<Drone> buscarPorPreco(int page, int pageSize, double precoMin, double precoMax);
+    List<Drone> buscarComFiltros(int page, int pageSize, String nome, String marca, String modelo, Double precoMin, Double precoMax);
     Long count();
     Long countModelos(String modelo);
     Long countMarcas(String marca);
     Long countPreco(double precoMin, double precoMax);
+    Long countComFiltros(String nome, String marca, String modelo, Double precoMin, Double precoMax);
 }

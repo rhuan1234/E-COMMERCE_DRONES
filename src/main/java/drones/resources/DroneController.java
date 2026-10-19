@@ -53,18 +53,30 @@ public class DroneController {
     @GET
     @Path("/admin")
     @RolesAllowed("ADMIN")
-    public PageResponse<DroneResponseDTO> buscarPorTodos(@QueryParam("page") @DefaultValue("0") int page,
-                                    @QueryParam("pageSize") @DefaultValue("10") int pageSize){
-        List<Drone> drones = droneService.buscarTodos(page, pageSize);
-        long totalItems = droneService.count();
+    public PageResponse<DroneResponseDTO> buscarPorTodos(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("pageSize") @DefaultValue("10") int pageSize,
+            @QueryParam("nome") String nome,
+            @QueryParam("marca") String marca,
+            @QueryParam("modelo") String modelo,
+            @QueryParam("min") Double precoMin,
+            @QueryParam("max") Double precoMax){
+        List<Drone> drones = droneService.buscarComFiltros(page, pageSize, nome, marca, modelo, precoMin, precoMax);
+        long totalItems = droneService.countComFiltros(nome, marca, modelo, precoMin, precoMax);
         return PageResponse.of(drones, page, pageSize, totalItems, DroneMapper::toResponseDTO);
     }
 
     @GET
-    public PageResponse<DroneResponseEcommerceDTO> buscarPorTodosEcommerce(@QueryParam("page") @DefaultValue("0") int page,
-                                    @QueryParam("pageSize") @DefaultValue("10") int pageSize){
-        List<Drone> drones = droneService.buscarTodos(page, pageSize);
-        long totalItems = droneService.count();
+    public PageResponse<DroneResponseEcommerceDTO> buscarPorTodosEcommerce(
+            @QueryParam("page") @DefaultValue("0") int page,
+            @QueryParam("pageSize") @DefaultValue("10") int pageSize,
+            @QueryParam("nome") String nome,
+            @QueryParam("marca") String marca,
+            @QueryParam("modelo") String modelo,
+            @QueryParam("min") Double precoMin,
+            @QueryParam("max") Double precoMax){
+        List<Drone> drones = droneService.buscarComFiltros(page, pageSize, nome, marca, modelo, precoMin, precoMax);
+        long totalItems = droneService.countComFiltros(nome, marca, modelo, precoMin, precoMax);
         return PageResponse.of(drones, page, pageSize, totalItems, DroneMapper::toResponseEcommerceDTO);
     }
 

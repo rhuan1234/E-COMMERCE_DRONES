@@ -70,21 +70,44 @@ INSERT INTO fornecedor (id, nome, cnpj, email, telefone, ativo, endereco_id)
 VALUES (2, 'AeroBrasil Tecnologia', '22.333.444/0001-81', 'contato@aerobrasil.com.br', '(11) 3456-7890', true, 2);
 ALTER SEQUENCE fornecedor_id_seq RESTART WITH 3;
 
--- 7. Câmeras
-INSERT INTO camera (id, modelo, marca, resolucao, zoom, estabilizacao, fps)
-VALUES (1, 'DJI 4K HDR Mini', 'DJI', '1080', 4, true, '60');
+-- 7. Marcas
+INSERT INTO marca (id, nome) VALUES (1, 'DJI');
+INSERT INTO marca (id, nome) VALUES (2, 'Autel Robotics');
+INSERT INTO marca (id, nome) VALUES (3, 'Hasselblad');
+INSERT INTO marca (id, nome) VALUES (4, 'Ryze');
+ALTER SEQUENCE marca_id_seq RESTART WITH 5;
 
-INSERT INTO camera (id, modelo, marca, resolucao, zoom, estabilizacao, fps)
-VALUES (2, 'Dual Camera 4K Wide + Tele', 'DJI', '1080', 9, true, '100');
+-- 8. Modelos
+INSERT INTO modelo (id, nome, marca_id) VALUES (1, 'DJI 4K HDR Mini', 1);
+INSERT INTO modelo (id, nome, marca_id) VALUES (2, 'Dual Camera 4K Wide + Tele', 1);
+INSERT INTO modelo (id, nome, marca_id) VALUES (3, 'Autel 6K Super-Resolution', 2);
+INSERT INTO modelo (id, nome, marca_id) VALUES (4, 'Hasselblad 4/3 CMOS Tri-Camera', 3);
+INSERT INTO modelo (id, nome, marca_id) VALUES (5, 'Mini 4 Pro Fly More', 1);
+INSERT INTO modelo (id, nome, marca_id) VALUES (6, 'Air 3 Fly More Combo', 1);
+INSERT INTO modelo (id, nome, marca_id) VALUES (7, 'EVO Lite+ Premium', 2);
+INSERT INTO modelo (id, nome, marca_id) VALUES (8, 'Mavic 3 Pro Cine', 1);
+INSERT INTO modelo (id, nome, marca_id) VALUES (9, 'Mini 4 Pro', 1);
+INSERT INTO modelo (id, nome, marca_id) VALUES (10, 'Air 3', 1);
+INSERT INTO modelo (id, nome, marca_id) VALUES (11, 'EVO Lite+', 2);
+INSERT INTO modelo (id, nome, marca_id) VALUES (12, 'Matrice 30', 1);
+INSERT INTO modelo (id, nome, marca_id) VALUES (13, 'Tello', 4);
+ALTER SEQUENCE modelo_id_seq RESTART WITH 14;
 
-INSERT INTO camera (id, modelo, marca, resolucao, zoom, estabilizacao, fps)
-VALUES (3, 'Autel 6K Super-Resolution', 'Autel Robotics', '1080', 16, true, '30');
+-- 9. Câmeras
+INSERT INTO camera (id, modelo_id, marca_id, resolucao, zoom, estabilizacao, fps)
+VALUES (1, 1, 1, '1080', 4, true, '60');
 
-INSERT INTO camera (id, modelo, marca, resolucao, zoom, estabilizacao, fps)
-VALUES (4, 'Hasselblad 4/3 CMOS Tri-Camera', 'Hasselblad', '1080', 28, true, '120');
+INSERT INTO camera (id, modelo_id, marca_id, resolucao, zoom, estabilizacao, fps)
+VALUES (2, 2, 1, '1080', 9, true, '100');
+
+INSERT INTO camera (id, modelo_id, marca_id, resolucao, zoom, estabilizacao, fps)
+VALUES (3, 3, 2, '1080', 16, true, '30');
+
+INSERT INTO camera (id, modelo_id, marca_id, resolucao, zoom, estabilizacao, fps)
+VALUES (4, 4, 3, '1080', 28, true, '120');
 ALTER SEQUENCE camera_id_seq RESTART WITH 5;
 
--- 8. Promoções
+-- 10. Promoções
 INSERT INTO promocao (id, nome, percentualdesconto, datainicio, datafim)
 VALUES (1, 'Semana do Consumidor', 10.00, '2026-01-01 00:00:00', '2026-12-31 23:59:59');
 
@@ -92,16 +115,16 @@ INSERT INTO promocao (id, nome, percentualdesconto, datainicio, datafim)
 VALUES (2, 'Queima de Estoque', 15.00, '2026-01-01 00:00:00', '2026-12-31 23:59:59');
 ALTER SEQUENCE promocao_id_seq RESTART WITH 3;
 
--- 9. Drones (4 drones cadastrados)
+-- 11. Drones (9 drones cadastrados)
 -- Drone 1: DJI Mini 4 Pro
 INSERT INTO drone (
-    id, nome, marca, modelo, preco, quantidadedisponivel, ativa,
+    id, nome, marca_id, modelo_id, preco, quantidadedisponivel, ativa,
     tempovoopratico, pesodecolagem, altitudemaxima, velocidademaxima, alcancetransmissao,
     possuicamera, quantidademotores, comcontroleremoto, controladoporaplicativo,
     quantidadebaterias, duracaobateria, frequenciawifi, possuigps,
     fornecedor_id, camera_id, promocao_id
 ) VALUES (
-    1, 'Drone DJI Mini 4 Pro', 'DJI', 'Mini 4 Pro Fly More', 6499.00, 15, true,
+    1, 'Drone DJI Mini 4 Pro', 1, 5, 6499.00, 15, true,
     34, 249.0, 4000, 58, 20000,
     true, 4, true, true,
     3, '34', '2.4', true,
@@ -110,13 +133,13 @@ INSERT INTO drone (
 
 -- Drone 2: DJI Air 3
 INSERT INTO drone (
-    id, nome, marca, modelo, preco, quantidadedisponivel, ativa,
+    id, nome, marca_id, modelo_id, preco, quantidadedisponivel, ativa,
     tempovoopratico, pesodecolagem, altitudemaxima, velocidademaxima, alcancetransmissao,
     possuicamera, quantidademotores, comcontroleremoto, controladoporaplicativo,
     quantidadebaterias, duracaobateria, frequenciawifi, possuigps,
     fornecedor_id, camera_id, promocao_id
 ) VALUES (
-    2, 'Drone DJI Air 3', 'DJI', 'Air 3 Fly More Combo', 10899.00, 8, true,
+    2, 'Drone DJI Air 3', 1, 6, 10899.00, 8, true,
     46, 720.0, 6000, 75, 20000,
     true, 4, true, true,
     3, '46', '2.4', true,
@@ -125,13 +148,13 @@ INSERT INTO drone (
 
 -- Drone 3: Autel EVO Lite+
 INSERT INTO drone (
-    id, nome, marca, modelo, preco, quantidadedisponivel, ativa,
+    id, nome, marca_id, modelo_id, preco, quantidadedisponivel, ativa,
     tempovoopratico, pesodecolagem, altitudemaxima, velocidademaxima, alcancetransmissao,
     possuicamera, quantidademotores, comcontroleremoto, controladoporaplicativo,
     quantidadebaterias, duracaobateria, frequenciawifi, possuigps,
     fornecedor_id, camera_id, promocao_id
 ) VALUES (
-    3, 'Drone Autel EVO Lite+', 'Autel Robotics', 'EVO Lite+ Premium', 8499.00, 6, true,
+    3, 'Drone Autel EVO Lite+', 2, 7, 8499.00, 6, true,
     40, 835.0, 5000, 65, 12000,
     true, 4, true, true,
     2, '40', '2.4', true,
@@ -140,13 +163,13 @@ INSERT INTO drone (
 
 -- Drone 4: DJI Mavic 3 Pro
 INSERT INTO drone (
-    id, nome, marca, modelo, preco, quantidadedisponivel, ativa,
+    id, nome, marca_id, modelo_id, preco, quantidadedisponivel, ativa,
     tempovoopratico, pesodecolagem, altitudemaxima, velocidademaxima, alcancetransmissao,
     possuicamera, quantidademotores, comcontroleremoto, controladoporaplicativo,
     quantidadebaterias, duracaobateria, frequenciawifi, possuigps,
     fornecedor_id, camera_id, promocao_id
 ) VALUES (
-    4, 'Drone DJI Mavic 3 Pro', 'DJI', 'Mavic 3 Pro Cine', 18999.00, 4, true,
+    4, 'Drone DJI Mavic 3 Pro', 1, 8, 18999.00, 4, true,
     43, 958.0, 6000, 76, 15000,
     true, 4, true, true,
     3, '43', '2.4', true,
@@ -154,42 +177,42 @@ INSERT INTO drone (
 );
 
 INSERT INTO drone (
-    id, nome, marca, modelo, preco, quantidadedisponivel, ativa,
+    id, nome, marca_id, modelo_id, preco, quantidadedisponivel, ativa,
     tempovoopratico, pesodecolagem, altitudemaxima, velocidademaxima, alcancetransmissao,
     possuicamera, quantidademotores, comcontroleremoto, controladoporaplicativo,
     quantidadebaterias, duracaobateria, frequenciawifi, possuigps,
     fornecedor_id, camera_id, promocao_id
 ) VALUES
 (
-    5, 'DJI Mini 4 Pro', 'DJI', 'Mini 4 Pro', 7499.00, 10, true,
+    5, 'DJI Mini 4 Pro', 1, 9, 7499.00, 10, true,
     34, 249.0, 4000, 57, 20000,
     true, 4, true, true,
     2, '34', '2.4', true,
     2, 4, NULL
 ),
 (
-    6, 'DJI Air 3', 'DJI', 'Air 3', 9999.00, 6, true,
+    6, 'DJI Air 3', 1, 10, 9999.00, 6, true,
     46, 720.0, 6000, 75, 20000,
     true, 4, true, true,
     3, '46', '2.4', true,
     2, 4, NULL
 ),
 (
-    7, 'Autel EVO Lite+', 'Autel Robotics', 'EVO Lite+', 8999.00, 5, true,
+    7, 'Autel EVO Lite+', 2, 11, 8999.00, 5, true,
     40, 835.0, 4000, 67, 12000,
     true, 4, true, true,
     2, '40', '2.4', true,
     2, 4, NULL
 ),
 (
-    8, 'DJI Matrice 30', 'DJI', 'Matrice 30', 32999.00, 3, true,
+    8, 'DJI Matrice 30', 1, 12, 32999.00, 3, true,
     41, 3770.0, 7000, 82, 15000,
     true, 4, true, true,
     2, '41', '2.4', true,
     2, 4, NULL
 ),
 (
-    9, 'Ryze Tello', 'Ryze', 'Tello', 899.00, 15, true,
+    9, 'Ryze Tello', 4, 13, 899.00, 15, true,
     13, 87.0, 3000, 28, 100,
     true, 4, true, true,
     1, '13', '2.4', true,

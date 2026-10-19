@@ -16,8 +16,15 @@ public class Drone {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
-    private String marca;
-    private String modelo;
+
+    @ManyToOne
+    @JoinColumn(name = "marca_id")
+    private Marca marca;
+
+    @ManyToOne
+    @JoinColumn(name = "modelo_id")
+    private Modelo modelo;
+
     private double preco;
     private boolean ativa;
     private int tempoVooPratico;
@@ -127,11 +134,11 @@ public class Drone {
         this.nome = nome;
     }
 
-    public void setMarca(String marca) {
+    public void setMarca(Marca marca) {
         this.marca = marca;
     }
 
-    public void setModelo(String modelo) {
+    public void setModelo(Modelo modelo) {
         this.modelo = modelo;
     }
 
@@ -151,11 +158,11 @@ public class Drone {
         return nome;
     }
 
-    public String getMarca() {
+    public Marca getMarca() {
         return marca;
     }
 
-    public String getModelo() {
+    public Modelo getModelo() {
         return modelo;
     }
 

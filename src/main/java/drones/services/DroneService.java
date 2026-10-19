@@ -4,7 +4,11 @@ import java.util.List;
 
 import drones.exception.ValidationException;
 import drones.model.drones.Drone;
+import drones.model.drones.Marca;
+import drones.model.drones.Modelo;
 import drones.repository.DroneRepository;
+import drones.repository.MarcaRepository;
+import drones.repository.ModeloRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -15,12 +19,42 @@ public class DroneService implements DroneServiceInterface {
     DroneRepository droneRepository;
     @Inject
     FornecedorService fornecedorService;
+    @Inject
+    MarcaRepository marcaRepository;
+    @Inject
+    ModeloRepository modeloRepository;
+
+    private void validarMarcaEModelo(Drone drone) {
+        if (drone.getMarca() == null || drone.getMarca().getId() == null) {
+            throw new ValidationException("A marca do drone é obrigatória", "marcaId");
+        }
+        Marca marca = marcaRepository.findById(drone.getMarca().getId());
+        if (marca == null) {
+            throw new ValidationException("Marca do drone não encontrada", "marcaId");
+        }
+
+        if (drone.getModelo() == null || drone.getModelo().getId() == null) {
+            throw new ValidationException("O modelo do drone é obrigatório", "modeloId");
+        }
+        Modelo modelo = modeloRepository.findById(drone.getModelo().getId());
+        if (modelo == null) {
+            throw new ValidationException("Modelo do drone não encontrado", "modeloId");
+        }
+
+        if (modelo.getMarca() == null || !modelo.getMarca().getId().equals(marca.getId())) {
+            throw new ValidationException("O modelo selecionado não pertence à marca escolhida", "modeloId");
+        }
+
+        drone.setMarca(marca);
+        drone.setModelo(modelo);
+    }
 
     @Override
     public Drone criar(Drone drone) {
         if (drone == null) {
             throw new ValidationException("Dados do drone são obrigatórios");
         }
+        validarMarcaEModelo(drone);
         if (drone.getFornecedor() != null) {
             if(fornecedorService.buscarPorId(drone.getFornecedor().getId()) == null) {
                 throw new ValidationException("Fornecedor do drone é inválido", "fornecedor");
@@ -79,6 +113,8 @@ public class DroneService implements DroneServiceInterface {
             throw new ValidationException("Drone com id '" + id + "' não encontrado", "id");
         }
 
+        validarMarcaEModelo(dados);
+
         if (dados.getFornecedor() != null) {
             if(fornecedorService.buscarPorId(dados.getFornecedor().getId()) == null) {
                 throw new ValidationException("Fornecedor do drone é inválido", "fornecedor");
@@ -87,8 +123,6 @@ public class DroneService implements DroneServiceInterface {
         else {
             throw new ValidationException("Fornecedor do drone é obrigatório", "fornecedor");
         }
-
-        
 
         drone.setNome(dados.getNome());
         drone.setMarca(dados.getMarca());
@@ -101,6 +135,7 @@ public class DroneService implements DroneServiceInterface {
         drone.setVelocidadeMaxima(dados.getVelocidadeMaxima());
         drone.setAlcanceTransmissao(dados.getAlcanceTransmissao());
         drone.setPossuiCamera(dados.isPossuiCamera());
+        drone.setCamera(dados.isPossuiCamera() ? dados.getCamera() : null);
         drone.setPossuiGPS(dados.isPossuiGPS());
         drone.setFornecedor((fornecedorService.buscarPorId(dados.getFornecedor().getId())));
         drone.setQuantidadeMotores(dados.getQuantidadeMotores());
@@ -169,6 +204,26 @@ public class DroneService implements DroneServiceInterface {
         }
         return drones;
     }
+
+    @Override
+    public List<Drone> buscarComFiltros(
+            int page,
+            int pageSize,
+            String nome,
+            String marca,
+            String modelo,
+            Double precoMin,
+            Double precoMax) {
+        if ((precoMin != null && precoMin < 0) || (precoMax != null && precoMax < 0)) {
+            throw new ValidationException("Preço mínimo e máximo devem ser positivos", "precoMin/precoMax");
+        }
+        if (precoMin != null && precoMax != null && precoMin > precoMax) {
+            throw new ValidationException("Preço mínimo não pode ser maior que o preço máximo", "precoMin/precoMax");
+        }
+        return droneRepository.findByFiltros(nome, marca, modelo, precoMin, precoMax)
+                .page(page, pageSize)
+                .list();
+    }
    
     public Long count() {
         return droneRepository.findAll().count();
@@ -184,5 +239,10 @@ public class DroneService implements DroneServiceInterface {
 
     public Long countPreco(double precoMin, double precoMax) {
         return droneRepository.findByPrecoRange(precoMin, precoMax).count();
+    }
+
+    @Override
+    public Long countComFiltros(String nome, String marca, String modelo, Double precoMin, Double precoMax) {
+        return droneRepository.findByFiltros(nome, marca, modelo, precoMin, precoMax).count();
     }
 }

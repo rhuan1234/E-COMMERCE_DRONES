@@ -13,13 +13,13 @@ public record DroneRequestDTO(
      @Pattern(regexp = "^[\\p{L}\\p{N}\\s._-]{3,100}$", message = "Nome deve conter apenas letras, números, espaços, pontos, underscores e hífens")
      String nome,
 
-     @NotBlank(message = "Marca é obrigatória")
-     @Pattern(regexp = "^[\\p{L}\\p{N}\\s._-]{2,50}$", message = "Marca deve conter apenas letras, números, espaços, pontos, underscores e hífens")
-     String marca,
+     @NotNull(message = "A marca é obrigatória")
+     @Positive(message = "O id da marca deve ser um número positivo")
+     Long marcaId,
 
-     @NotBlank(message = "Modelo é obrigatório")
-     @Pattern(regexp = "^[\\p{L}\\p{N}\\s._-]{2,50}$", message = "Modelo deve conter apenas letras, números, espaços, pontos, underscores e hífens")
-     String modelo,
+     @NotNull(message = "O modelo é obrigatório")
+     @Positive(message = "O id do modelo deve ser um número positivo")
+     Long modeloId,
 
      @NotNull(message = "O preço é obrigatório")
      @Positive(message = "O preço deve ser um número positivo")

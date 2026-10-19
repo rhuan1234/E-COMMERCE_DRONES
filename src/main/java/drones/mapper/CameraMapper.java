@@ -3,6 +3,10 @@ package drones.mapper;
 import drones.dto.drones.CameraRequestDTO;
 import drones.dto.drones.CameraResponseDTO;
 import drones.model.drones.Camera;
+import drones.model.drones.Marca;
+import drones.model.drones.Modelo;
+import drones.repository.MarcaRepository;
+import drones.repository.ModeloRepository;
 
 public class CameraMapper {
 
@@ -12,8 +16,28 @@ public class CameraMapper {
         }
 
         Camera camera = new Camera();
-        camera.setModelo(dto.modelo());
-        camera.setMarca(dto.marca());
+        if (dto.modeloId() != null) {
+            ModeloRepository modeloRepository = new ModeloRepository();
+            Modelo modelo = modeloRepository.findById(dto.modeloId());
+            if (modelo != null) {
+                camera.setModelo(modelo);
+            } else {
+                Modelo ref = new Modelo();
+                ref.setId(dto.modeloId());
+                camera.setModelo(ref);
+            }
+        }
+        if (dto.marcaId() != null) {
+            MarcaRepository marcaRepository = new MarcaRepository();
+            Marca marca = marcaRepository.findById(dto.marcaId());
+            if (marca != null) {
+                camera.setMarca(marca);
+            } else {
+                Marca ref = new Marca();
+                ref.setId(dto.marcaId());
+                camera.setMarca(ref);
+            }
+        }
         camera.setResolucao(dto.resolucao());
         camera.setZoom(dto.zoom());
         camera.setEstabilizacao(dto.estabilizacao());
@@ -28,8 +52,10 @@ public class CameraMapper {
 
         return new CameraResponseDTO(
             camera.getId(),
-            camera.getModelo(),
-            camera.getMarca(),
+            ModeloMapper.toResponseDTO(camera.getModelo()),
+            MarcaMapper.toResponseDTO(camera.getMarca()),
+            camera.getModelo() != null ? camera.getModelo().getId() : null,
+            camera.getMarca() != null ? camera.getMarca().getId() : null,
             camera.getResolucao(),
             camera.getZoom(),
             camera.isEstabilizacao(),

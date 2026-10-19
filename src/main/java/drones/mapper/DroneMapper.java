@@ -4,8 +4,12 @@ import drones.dto.drones.DroneRequestDTO;
 import drones.dto.drones.DroneResponseDTO;
 import drones.dto.drones.DroneResponseEcommerceDTO;
 import drones.model.drones.Drone;
+import drones.model.drones.Marca;
+import drones.model.drones.Modelo;
 import drones.repository.CameraRepository;
 import drones.repository.FornecedorRepository;
+import drones.repository.MarcaRepository;
+import drones.repository.ModeloRepository;
 
 
 public class DroneMapper {
@@ -14,8 +18,28 @@ public class DroneMapper {
         Drone drone = new Drone();
 
         drone.setNome(dto.nome());
-        drone.setMarca(dto.marca());
-        drone.setModelo(dto.modelo());
+        if (dto.marcaId() != null) {
+            MarcaRepository marcaRepository = new MarcaRepository();
+            Marca marca = marcaRepository.findById(dto.marcaId());
+            if (marca != null) {
+                drone.setMarca(marca);
+            } else {
+                Marca ref = new Marca();
+                ref.setId(dto.marcaId());
+                drone.setMarca(ref);
+            }
+        }
+        if (dto.modeloId() != null) {
+            ModeloRepository modeloRepository = new ModeloRepository();
+            Modelo modelo = modeloRepository.findById(dto.modeloId());
+            if (modelo != null) {
+                drone.setModelo(modelo);
+            } else {
+                Modelo ref = new Modelo();
+                ref.setId(dto.modeloId());
+                drone.setModelo(ref);
+            }
+        }
         drone.setPreco(dto.preco());
         drone.setQuantidadeDisponivel(dto.quantidadeDisponivel());
         drone.setAtiva(dto.ativa());
@@ -53,8 +77,10 @@ public class DroneMapper {
     return new DroneResponseDTO(
         drone.getId(),
         drone.getNome(),
-        drone.getMarca(),
-        drone.getModelo(),
+        MarcaMapper.toResponseDTO(drone.getMarca()),
+        ModeloMapper.toResponseDTO(drone.getModelo()),
+        drone.getMarca() != null ? drone.getMarca().getId() : null,
+        drone.getModelo() != null ? drone.getModelo().getId() : null,
         drone.getPreco(),
         drone.getQuantidadeDisponivel(),
         drone.isAtiva(),
@@ -80,8 +106,10 @@ public class DroneMapper {
     return new DroneResponseEcommerceDTO(
         drone.getId(),
         drone.getNome(),
-        drone.getMarca(),
-        drone.getModelo(),
+        MarcaMapper.toResponseDTO(drone.getMarca()),
+        ModeloMapper.toResponseDTO(drone.getModelo()),
+        drone.getMarca() != null ? drone.getMarca().getId() : null,
+        drone.getModelo() != null ? drone.getModelo().getId() : null,
         drone.getPreco(),
         drone.getQuantidadeDisponivel(),
         drone.isAtiva(),

@@ -9,6 +9,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class CameraRepository implements PanacheRepository<Camera> {
 
     public PanacheQuery<Camera> findByModelo(String modelo) {
-        return find("modelo ILIKE ?1", "%" + modelo + "%");
+        return find("modelo.nome ILIKE ?1", "%" + modelo + "%");
     }
 }
