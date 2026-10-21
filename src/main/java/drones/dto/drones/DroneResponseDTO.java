@@ -7,8 +7,6 @@ public record DroneResponseDTO(
     String nome,
     MarcaResponseDTO marca,
     ModeloResponseDTO modelo,
-    Long marcaId,
-    Long modeloId,
     double preco,
     int quantidadeDisponivel,
     boolean ativa,
