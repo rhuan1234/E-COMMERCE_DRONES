@@ -4,8 +4,6 @@ import { Modelo } from '../modelo/Modelo';
 export class Drone {
   id!: number;
   nome!: string;
-  marcaId!: number;
-  modeloId!: number;
   marca?: Marca;
   modelo?: Modelo;
   preco!: number;

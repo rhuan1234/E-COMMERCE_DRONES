@@ -126,8 +126,8 @@ export class DroneForm implements OnInit {
     const drone = this.activatedRoute.snapshot.data['drone'];
 
     if (drone) {
-      const marcaIdInicial = drone.marcaId ?? drone.marca?.id ?? null;
-      const modeloIdInicial = drone.modeloId ?? drone.modelo?.id ?? null;
+      const marcaIdInicial = drone.marca?.id ?? null;
+      const modeloIdInicial = drone.modelo?.id ?? null;
 
       this.form.patchValue(
         {
