@@ -3,12 +3,15 @@ package drones.resources;
 import java.util.List;
 
 import drones.dto.PageResponse;
+
 import drones.dto.drones.DroneRequestDTO;
 import drones.dto.drones.DroneResponseDTO;
 import drones.dto.drones.DroneResponseEcommerceDTO;
 import drones.exception.ValidationException;
 import drones.mapper.DroneMapper;
 import drones.model.drones.Drone;
+import drones.model.drones.DroneImage;
+import drones.services.DroneImageStorageService;
 import drones.services.DroneService;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -28,6 +31,11 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.StreamingOutput;
+import org.jboss.resteasy.reactive.RestForm;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
+
+import java.nio.file.Files;
 
 @ApplicationScoped
 @Path("/drones")
@@ -37,6 +45,8 @@ public class DroneController {
 
     @Inject
     DroneService droneService;
+    @Inject
+    DroneImageStorageService droneImageStorageService;
 
     @POST
     @Path("/admin")
@@ -48,6 +58,63 @@ public class DroneController {
         Drone nova = droneService.criar(DroneMapper.toEntity(drone));
         DroneResponseDTO novaDTO = DroneMapper.toResponseDTO(nova);
         return Response.status(Response.Status.CREATED).entity(novaDTO).build();
+    }
+
+    @POST
+    @Path("/admin/{id}/imagens")
+    @RolesAllowed("ADMIN")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response adicionarImagem(
+            @PathParam("id") Long id,
+            @RestForm("arquivo") FileUpload arquivo,
+            @RestForm("principal") boolean principal,
+            @RestForm("ordem") int ordem) {
+        if (ordem < 0) {
+            throw new ValidationException("A ordem da imagem deve ser zero ou maior", "ordem");
+        }
+        var caminhoArquivo = droneImageStorageService.salvar(arquivo);
+        DroneImage novaImagem = new DroneImage();
+        novaImagem.setCaminho(caminhoArquivo.getFileName().toString());
+        novaImagem.setPrincipal(principal);
+        novaImagem.setOrdem(ordem);
+
+        Drone droneAtualizado;
+        try {
+            droneAtualizado = droneService.adicionarImagem(id, novaImagem);
+        } catch (RuntimeException e) {
+            try {
+                droneImageStorageService.deletar(novaImagem.getCaminho());
+            } catch (RuntimeException cleanupFailure) {
+                e.addSuppressed(cleanupFailure);
+            }
+            throw e;
+        }
+        return Response.status(Response.Status.CREATED)
+                .entity(DroneMapper.toResponseDTO(droneAtualizado))
+                .build();
+    }
+
+    @DELETE
+    @Path("/admin/{droneId}/imagens/{imagemId}")
+    @RolesAllowed("ADMIN")
+    public Response deletarImagem(
+            @PathParam("droneId") Long droneId,
+            @PathParam("imagemId") Long imagemId) {
+        droneService.deletarImagem(droneId, imagemId);
+        return Response.noContent().build();
+    }
+
+    @GET
+    @Path("/imagens/{imagemId}/arquivo")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response buscarArquivoImagem(@PathParam("imagemId") Long imagemId) {
+        DroneImage imagem = droneService.buscarImagem(imagemId);
+        var arquivo = droneImageStorageService.buscar(imagem.getCaminho());
+        StreamingOutput conteudo = output -> Files.copy(arquivo, output);
+        return Response.ok(conteudo)
+                .type(droneImageStorageService.obterTipoConteudo(imagem.getCaminho()))
+                .header("Content-Disposition", "inline")
+                .build();
     }
 
     @GET

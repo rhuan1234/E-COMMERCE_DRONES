@@ -1,4 +1,7 @@
 package drones.dto.drones;
+
+import java.util.List;
+
 public record DroneResponseEcommerceDTO(
 
     Long id,
@@ -23,7 +26,8 @@ public record DroneResponseEcommerceDTO(
     String duracaoBateria,
     String frequenciaWifi,
     boolean possuiGPS,
-    CameraResponseDTO camera
+    CameraResponseDTO camera,
+    List<DroneImageResponseDTO> imagens
 
 ) {
 

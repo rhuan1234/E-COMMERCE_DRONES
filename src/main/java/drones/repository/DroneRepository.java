@@ -7,6 +7,7 @@ import drones.model.drones.Drone;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
 
 @ApplicationScoped
@@ -15,6 +16,10 @@ public class DroneRepository implements PanacheRepository<Drone> {
     @Transactional
     public void salvar(Drone drone){
         persist(drone);
+    }
+
+    public Drone findByIdForUpdate(Long id) {
+        return findById(id, LockModeType.PESSIMISTIC_WRITE);
     }
 
     public final PanacheQuery<Drone> findByFiltros(

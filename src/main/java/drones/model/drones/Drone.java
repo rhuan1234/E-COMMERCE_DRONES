@@ -2,13 +2,18 @@ package drones.model.drones;
 
 import drones.model.fornecedor.Fornecedor;
 import drones.model.promocao.Promocao;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Drone {
@@ -55,6 +60,10 @@ public class Drone {
     @JoinColumn(name = "promocao_id")
     private Promocao promocao;
 
+    @OneToMany(mappedBy = "drone", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OrderBy("ordem ASC, id ASC")
+    private List<DroneImage> imagens = new ArrayList<>();
+
     public Drone() {
     }
 
@@ -64,6 +73,15 @@ public class Drone {
 
     public void setCamera(Camera camera) {
         this.camera = camera;
+    }
+
+    public List<DroneImage> getImagens() {
+        return imagens;
+    }
+
+    public void adicionarImagem(DroneImage imagem) {
+        imagens.add(imagem);
+        imagem.setDrone(this);
     }
 
     public Promocao getPromocao() {

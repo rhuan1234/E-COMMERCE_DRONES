@@ -1,17 +1,17 @@
 package drones.mapper;
 
 import drones.dto.drones.DroneRequestDTO;
+import drones.dto.drones.DroneImageResponseDTO;
 import drones.dto.drones.DroneResponseDTO;
 import drones.dto.drones.DroneResponseEcommerceDTO;
 import drones.model.drones.Drone;
+import drones.model.drones.DroneImage;
 import drones.model.drones.Marca;
 import drones.model.drones.Modelo;
 import drones.repository.CameraRepository;
 import drones.repository.FornecedorRepository;
 import drones.repository.MarcaRepository;
 import drones.repository.ModeloRepository;
-
-
 public class DroneMapper {
     public static Drone toEntity(DroneRequestDTO dto){
         
@@ -98,9 +98,19 @@ public class DroneMapper {
         drone.getFrequenciaWifi(),
         drone.isPossuiGPS(),
         drone.getFornecedor() != null ? drone.getFornecedor().getId() : null,
-        CameraMapper.toResponseDTO(drone.getCamera())
+        CameraMapper.toResponseDTO(drone.getCamera()),
+        drone.getImagens().stream().map(DroneMapper::toImageResponseDTO).toList()
     );
     }
+
+    private static DroneImageResponseDTO toImageResponseDTO(DroneImage imagem) {
+        return new DroneImageResponseDTO(
+                imagem.getId(),
+                "/drones/imagens/" + imagem.getId() + "/arquivo",
+                imagem.isPrincipal(),
+                imagem.getOrdem());
+    }
+
     public static DroneResponseEcommerceDTO toResponseEcommerceDTO(Drone drone){
         
     return new DroneResponseEcommerceDTO(
@@ -126,7 +136,8 @@ public class DroneMapper {
         drone.getDuracaoBateria(),
         drone.getFrequenciaWifi(),
         drone.isPossuiGPS(),
-        CameraMapper.toResponseDTO(drone.getCamera())
+        CameraMapper.toResponseDTO(drone.getCamera()),
+        drone.getImagens().stream().map(DroneMapper::toImageResponseDTO).toList()
     );
     }
 }

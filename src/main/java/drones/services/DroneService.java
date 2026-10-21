@@ -4,8 +4,10 @@ import java.util.List;
 
 import drones.exception.ValidationException;
 import drones.model.drones.Drone;
+import drones.model.drones.DroneImage;
 import drones.model.drones.Marca;
 import drones.model.drones.Modelo;
+import drones.repository.DroneImageRepository;
 import drones.repository.DroneRepository;
 import drones.repository.MarcaRepository;
 import drones.repository.ModeloRepository;
@@ -17,6 +19,10 @@ import jakarta.transaction.Transactional;
 public class DroneService implements DroneServiceInterface {
     @Inject
     DroneRepository droneRepository;
+    @Inject
+    DroneImageRepository droneImageRepository;
+    @Inject
+    DroneImageStorageService droneImageStorageService;
     @Inject
     FornecedorService fornecedorService;
     @Inject
@@ -66,6 +72,60 @@ public class DroneService implements DroneServiceInterface {
 
         droneRepository.salvar(drone);
         return drone;
+    }
+
+    @Override
+    @Transactional
+    public Drone adicionarImagem(Long droneId, DroneImage imagem) {
+        if (droneId == null || droneId <= 0) {
+            throw new ValidationException("Id do drone é inválido", "id");
+        }
+        if (imagem == null || imagem.getCaminho() == null || imagem.getCaminho().isBlank()) {
+            throw new ValidationException("O caminho da imagem é obrigatório", "caminho");
+        }
+        if (imagem.getOrdem() < 0) {
+            throw new ValidationException("A ordem da imagem deve ser zero ou maior", "ordem");
+        }
+
+        Drone drone = droneRepository.findByIdForUpdate(droneId);
+        if (drone == null) {
+            throw new ValidationException("Drone com id '" + droneId + "' não encontrado", "id");
+        }
+        if (droneImageRepository.count("drone.id", droneId) >= 5) {
+            throw new ValidationException("Um drone pode ter no máximo 5 imagens", "imagens");
+        }
+
+        imagem.setCaminho(imagem.getCaminho().trim());
+        drone.adicionarImagem(imagem);
+        droneImageRepository.salvar(imagem);
+        return drone;
+    }
+
+    @Override
+    @Transactional
+    public void deletarImagem(Long droneId, Long imagemId) {
+        if (droneId == null || droneId <= 0 || imagemId == null || imagemId <= 0) {
+            throw new ValidationException("Os ids do drone e da imagem devem ser positivos");
+        }
+        DroneImage imagem = droneImageRepository.buscarPorDrone(imagemId, droneId);
+        if (imagem == null) {
+            throw new ValidationException("Imagem não encontrada para o drone informado", "imagemId");
+        }
+
+        droneImageStorageService.deletar(imagem.getCaminho());
+        droneImageRepository.delete(imagem);
+    }
+
+    @Override
+    public DroneImage buscarImagem(Long imagemId) {
+        if (imagemId == null || imagemId <= 0) {
+            throw new ValidationException("Id da imagem é inválido", "imagemId");
+        }
+        DroneImage imagem = droneImageRepository.findById(imagemId);
+        if (imagem == null) {
+            throw new ValidationException("Imagem com id '" + imagemId + "' não encontrada", "imagemId");
+        }
+        return imagem;
     }
 
     @Override
