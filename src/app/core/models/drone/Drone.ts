@@ -1,7 +1,23 @@
+export interface DroneImagem {
+  id: number;
+  caminho: string;
+  principal: boolean;
+  ordem: number;
+}
+
+interface Marca {
+  id: number;
+  nome: string
+}
+interface Modelo {
+  id: number;
+  nome: string
+}
+
 export class Drone {
   id!: number;
   nome!: string;
-  marca!: string;
+  marca!: Marca;
   modelo!: string;
   preco!: number;
   quantidadeDisponivel!: number;
@@ -21,4 +37,5 @@ export class Drone {
   possuiGPS!: boolean;
   cameraId!: number;
   fornecedorId!: number;
+  imagens?: DroneImagem[];
 }

@@ -119,6 +119,16 @@
         </button>
         <button
           mat-icon-button
+          color="primary"
+          type="button"
+          [attr.aria-label]="'Gerenciar imagens de ' + drone.nome"
+          (click)="$event.stopPropagation(); gerenciarImagens(drone)"
+          (keydown)="$event.stopPropagation()"
+        >
+          <mat-icon>photo_library</mat-icon>
+        </button>
+        <button
+          mat-icon-button
           color="warn"
           (click)="$event.stopPropagation(); excluirDrone(drone)"
           (keydown)="$event.stopPropagation()"

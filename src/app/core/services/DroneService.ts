@@ -4,6 +4,7 @@ import { Drone } from '../models/drone/Drone';
 import { Observable } from 'rxjs';
 
 import { PagedResponse } from '../models/PagedResponse';
+import { DroneImagem } from '../models/drone/Drone';
 
 export type { PagedResponse };
 
@@ -36,5 +37,31 @@ export class DroneService {
 
   delete(id: any): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  uploadImagem(
+    droneId: number,
+    arquivo: File,
+    principal: boolean,
+    ordem: number
+  ): Observable<Drone> {
+    const formData = new FormData();
+    formData.append('arquivo', arquivo);
+    formData.append('principal', String(principal));
+    formData.append('ordem', String(ordem));
+
+    return this.http.post<Drone>(`${this.apiUrl}/${droneId}/imagens`, formData);
+  }
+
+  excluirImagem(droneId: number, imagemId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${droneId}/imagens/${imagemId}`);
+  }
+
+  obterUrlImagem(imagem: DroneImagem): string {
+    if (/^https?:\/\//i.test(imagem.caminho)) {
+      return imagem.caminho;
+    }
+
+    return `http://localhost:8080${imagem.caminho.startsWith('/') ? '' : '/'}${imagem.caminho}`;
   }
 }

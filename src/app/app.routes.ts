@@ -19,6 +19,8 @@ import { EnderecosPage } from './features/admin/components/enderecos-page/endere
 import { AlterarSenhaPage } from './features/admin/components/alterar-senha-page/alterar-senha-page';
 import { CameraForm } from './features/admin/components/camera-form/camera-form';
 import { cameraResolver } from './core/resolvers/CameraResolver';
+import { EcommerceLayout } from './features/ecommerce/layout/ecommerce-layout/ecommerce-layout';
+import { Home } from './features/ecommerce/components/home/home';
 
 
 export const routes: Routes = [
@@ -69,7 +71,16 @@ export const routes: Routes = [
       {path: 'perfil/alterar-senha', component: AlterarSenhaPage, title: 'Alterar Senha'},
 
       //Endereco
-      {path: 'enderecos', component: EnderecosPage, title: 'Lista de Endereços'}
+      {path: 'enderecos', component: EnderecosPage, title: 'Lista de Endereços'},
+    ]
+  },
+  // Rotas do ecommerce
+  {
+    path: '',
+    component: EcommerceLayout,
+    children: [
+        //Pagina principal ecommerce
+        {path: 'home', component: Home, title: 'Página Inicial'},
     ]
   },
 

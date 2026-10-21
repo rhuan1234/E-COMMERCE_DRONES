@@ -1,0 +1,200 @@
+<div class="storefront">
+  <header class="store-header">
+    <a class="store-brand" routerLink="/drones" aria-label="Skyline Drones - página inicial">
+      <span class="brand-mark"><mat-icon>flight</mat-icon></span>
+      <span class="brand-name">SKYLINE<span>DRONES</span></span>
+    </a>
+
+    <form class="search-form" role="search" (submit)="$event.preventDefault()">
+      <label class="visually-hidden" for="store-search">Buscar drones</label>
+      <input id="store-search" type="search" placeholder="O que você está procurando?">
+      <button type="submit" aria-label="Buscar">
+        <mat-icon>search</mat-icon>
+      </button>
+    </form>
+
+    <nav class="header-actions" aria-label="Acesso à conta e ao carrinho">
+      <a class="header-action profile-action" routerLink="/perfil">
+        <mat-icon>account_circle</mat-icon>
+        <span>Minha conta</span>
+      </a>
+      <button class="header-action cart-action" type="button" aria-label="Carrinho de compras">
+        <mat-icon>shopping_cart</mat-icon>
+        <span>Carrinho</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="store-main">
+    <aside class="filters-panel" aria-labelledby="filters-title">
+      <div class="filters-heading">
+        <div>
+          <span class="eyebrow">ENCONTRE O SEU VOO</span>
+          <h1 id="filters-title">Filtros</h1>
+        </div>
+        @if (hasActiveFilters) {
+          <button class="clear-filters" type="button" (click)="limparFiltros()">Limpar</button>
+        }
+      </div>
+
+      <section class="filter-group" aria-labelledby="price-filter-title">
+        <h2 id="price-filter-title">Preço</h2>
+        <div class="price-range">
+          <label class="price-field">
+            <span>Mínimo</span>
+            <span class="price-input">
+              <span aria-hidden="true">R$</span>
+              <input
+                type="number"
+                name="precoMinimo"
+                min="0"
+                step="0.01"
+                placeholder="0,00"
+                aria-label="Preço mínimo"
+                [(ngModel)]="precoMinimo">
+            </span>
+          </label>
+          <label class="price-field">
+            <span>Máximo</span>
+            <span class="price-input">
+              <span aria-hidden="true">R$</span>
+              <input
+                type="number"
+                name="precoMaximo"
+                min="0"
+                step="0.01"
+                placeholder="0,00"
+                aria-label="Preço máximo"
+                [(ngModel)]="precoMaximo">
+            </span>
+          </label>
+        </div>
+      </section>
+
+      @for (group of filterGroups; track group.title) {
+        <section class="filter-group" [attr.aria-labelledby]="'filter-' + $index">
+          <h2 [id]="'filter-' + $index">{{ group.title }}</h2>
+          <div class="filter-options">
+            @for (option of group.options; track option) {
+              <button
+                class="filter-option"
+                [class.selected]="selectedFilters.has(option)"
+                type="button"
+                [attr.aria-pressed]="selectedFilters.has(option)"
+                (click)="alternarFiltro(option)">
+                <span class="filter-check" aria-hidden="true">
+                  @if (selectedFilters.has(option)) {
+                    <mat-icon>check</mat-icon>
+                  }
+                </span>
+                {{ option }}
+              </button>
+            }
+          </div>
+        </section>
+      }
+
+      <section class="filter-group" aria-labelledby="features-filter-title">
+        <h2 id="features-filter-title">Recursos</h2>
+        <div class="feature-options">
+          @for (feature of featureFilters; track feature) {
+            <label class="feature-option">
+              <input
+                type="checkbox"
+                [checked]="selectedFeatures.has(feature)"
+                (change)="aoAlterarRecurso(feature, $event)">
+              <span>{{ feature }}</span>
+            </label>
+          }
+        </div>
+      </section>
+
+      @if (hasActiveFilters) {
+        <p class="filter-summary" aria-live="polite">
+          {{ totalSelectedFilters }} {{ totalSelectedFilters === 1 ? 'filtro selecionado' : 'filtros selecionados' }}
+        </p>
+      }
+    </aside>
+
+    <section class="catalog-area" aria-label="Produtos">
+      <router-outlet></router-outlet>
+    </section>
+  </main>
+
+  <section class="service-benefits" aria-label="Vantagens da loja">
+    <div class="benefit">
+      <span class="benefit-icon"><mat-icon>local_shipping</mat-icon></span>
+      <div>
+        <h2>Frete grátis</h2>
+        <p>Em pedidos selecionados</p>
+      </div>
+    </div>
+    <div class="benefit">
+      <span class="benefit-icon"><mat-icon>credit_card</mat-icon></span>
+      <div>
+        <h2>Pagamento facilitado</h2>
+        <p>Parcele em até 10x</p>
+      </div>
+    </div>
+    <div class="benefit">
+      <span class="benefit-icon"><mat-icon>verified</mat-icon></span>
+      <div>
+        <h2>Garantia nacional</h2>
+        <p>Suporte em todo o Brasil</p>
+      </div>
+    </div>
+    <div class="benefit">
+      <span class="benefit-icon"><mat-icon>lock</mat-icon></span>
+      <div>
+        <h2>Site seguro</h2>
+        <p>Seus dados protegidos</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="store-footer">
+    <div class="footer-main">
+      <div class="footer-about">
+        <a class="store-brand footer-brand" routerLink="/drones" aria-label="Skyline Drones - página inicial">
+          <span class="brand-mark"><mat-icon>flight</mat-icon></span>
+          <span class="brand-name">SKYLINE<span>DRONES</span></span>
+        </a>
+        <p>Tecnologia e liberdade para você ir mais longe. Encontre o drone ideal para o seu próximo destino.</p>
+      </div>
+
+      <div class="footer-column">
+        <h2>Institucional</h2>
+        <a href="mailto:contato@skylinedrones.com.br">Sobre a Skyline</a>
+        <a href="mailto:contato@skylinedrones.com.br">Fale conosco</a>
+        <a href="mailto:contato@skylinedrones.com.br">Trabalhe conosco</a>
+      </div>
+
+      <div class="footer-column">
+        <h2>Ajuda e suporte</h2>
+        <a href="mailto:suporte@skylinedrones.com.br">Dúvidas frequentes</a>
+        <a href="mailto:suporte@skylinedrones.com.br">Trocas e devoluções</a>
+        <a href="mailto:suporte@skylinedrones.com.br">Acompanhe seu pedido</a>
+      </div>
+
+      <div class="footer-column">
+        <h2>Atendimento</h2>
+        <p>Segunda a sexta, das 9h às 18h</p>
+        <a href="mailto:oi@skylinedrones.com.br">oi&#64;skylinedrones.com.br</a>
+        <p>(11) 4000-2025</p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 Skyline Drones. Todos os direitos reservados.</p>
+      <div class="payment-methods" aria-label="Formas de pagamento aceitas">
+        <span class="payment-label">PAGUE COM</span>
+        <span class="payment-card visa">VISA</span>
+        <span class="payment-card mastercard" aria-label="Mastercard"><i></i><i></i></span>
+        <span class="payment-card elo">elo</span>
+        <span class="payment-card amex">AMEX</span>
+        <span class="payment-digital"><mat-icon>g_mobiledata</mat-icon>Pay</span>
+        <span class="payment-pix"><mat-icon>pix</mat-icon>Pix</span>
+      </div>
+    </div>
+  </footer>
+</div>

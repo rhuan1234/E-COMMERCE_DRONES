@@ -1,0 +1,175 @@
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 24px 12px;
+}
+
+.dialog-icon {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--mat-sys-primary-container, #e8f5c9);
+  color: var(--mat-sys-on-primary-container, #253600);
+}
+
+.dialog-heading {
+  flex: 1;
+  min-width: 0;
+}
+
+.dialog-heading h2 {
+  margin: 0 0 4px;
+  padding: 0;
+  font-size: 21px;
+  font-weight: 600;
+}
+
+.dialog-heading p,
+.help-text,
+.empty-state {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant, #454b42);
+  font-size: 14px;
+}
+
+mat-dialog-content {
+  max-height: min(68vh, 680px);
+  padding: 8px 24px 16px;
+}
+
+.upload-section,
+.images-section {
+  padding: 16px;
+  border: 1px solid var(--mat-sys-outline-variant, #d4d9d0);
+  border-radius: 10px;
+}
+
+.images-section {
+  margin-top: 18px;
+}
+
+.upload-section h3,
+.images-section h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.help-text {
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.upload-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.file-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+.file-picker input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.image-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--mat-sys-outline-variant, #d4d9d0);
+  border-radius: 8px;
+}
+
+.image-card img {
+  display: block;
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  background: var(--mat-sys-surface-container-low, #f5f6f4);
+}
+
+.image-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 4px 8px 4px 10px;
+}
+
+.image-info span {
+  font-size: 13px;
+}
+
+.empty-state {
+  padding: 8px 0 2px;
+}
+
+.dialog-status,
+.dialog-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 140px;
+  text-align: center;
+}
+
+.dialog-error {
+  justify-content: flex-start;
+  min-height: 0;
+  margin-top: 12px;
+  color: var(--mat-sys-error, #ba1a1a);
+}
+
+mat-dialog-actions {
+  padding: 8px 24px 20px;
+}
+
+@media (max-width: 520px) {
+  .dialog-header {
+    gap: 10px;
+    padding: 16px 16px 10px;
+  }
+
+  mat-dialog-content {
+    padding: 8px 16px 14px;
+  }
+
+  .upload-section,
+  .images-section {
+    padding: 12px;
+  }
+
+  .upload-controls {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  mat-dialog-actions {
+    padding: 8px 16px 16px;
+  }
+}
