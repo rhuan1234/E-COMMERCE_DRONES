@@ -1,8 +1,18 @@
+import { Marca } from "../marca/Marca";
+import { Modelo } from "../modelo/Modelo";
+
+export interface DroneImagem {
+  id: number;
+  caminho: string;
+  principal: boolean;
+  ordem: number;
+}
+
 export class Drone {
   id!: number;
   nome!: string;
-  marca!: string;
-  modelo!: string;
+  marca!: Marca;
+  modelo!: Modelo;
   preco!: number;
   quantidadeDisponivel!: number;
   ativa!: boolean;

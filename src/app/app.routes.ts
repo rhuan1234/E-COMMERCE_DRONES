@@ -19,6 +19,14 @@ import { EnderecosPage } from './features/admin/components/enderecos-page/endere
 import { AlterarSenhaPage } from './features/admin/components/alterar-senha-page/alterar-senha-page';
 import { CameraForm } from './features/admin/components/camera-form/camera-form';
 import { cameraResolver } from './core/resolvers/CameraResolver';
+import { EcommerceLayout } from './features/ecommerce/layout/ecommerce-layout/ecommerce-layout';
+import { Home } from './features/ecommerce/components/home/home';
+import { ModeloList } from './features/admin/components/modelo-list/modelo-list';
+import { ModeloForm } from './features/admin/components/modelo-form/modelo-form';
+import { MarcaList } from './features/admin/components/marca-list/marca-list';
+import { MarcaForm } from './features/admin/components/marca-form/marca-form';
+import { modeloResolver } from './core/resolvers/ModeloResolver';
+import { marcaResolver } from './core/resolvers/MarcaResolver';
 
 
 export const routes: Routes = [

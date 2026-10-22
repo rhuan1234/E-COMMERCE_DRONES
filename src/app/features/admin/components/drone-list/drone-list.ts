@@ -16,6 +16,9 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { DroneDetalhesDialog } from '../drone-detalhes-dialog/drone-detalhes-dialog';
+import { DroneImagemDialog } from '../drone-imagem-dialog/drone-imagem-dialog';
+
+type CampoFiltroDrone = 'nome' | 'marca' | 'modelo' | 'min' | 'max';
 
 @Component({
   imports: [
@@ -283,5 +286,13 @@ export class DroneList implements OnInit {
         data: drone,
       });
     }
+    gerenciarImagens(drone: Drone): void {
+    this.dialog.open(DroneImagemDialog, {
+      width: '720px',
+      maxWidth: 'calc(100vw - 32px)',
+      maxHeight: '90vh',
+      data: drone,
+    });
+  }
   
 }
