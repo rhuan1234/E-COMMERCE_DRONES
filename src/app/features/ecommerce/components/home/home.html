@@ -1,1 +1,71 @@
-<p>home works!</p>
+<section class="home-catalog" aria-labelledby="catalog-title">
+  <header class="catalog-heading">
+    <div>
+      <span class="catalog-eyebrow">SKYLINE DRONES</span>
+      <h1 id="catalog-title">Drones em destaque</h1>
+      <p>Encontre o equipamento ideal para o seu próximo voo.</p>
+    </div>
+  </header>
+
+  @if (carregandoDrones) {
+    <p class="catalog-state" role="status">Carregando drones...</p>
+  } @else if (mensagemErroDrones) {
+    <p class="catalog-state catalog-error" role="alert">{{ mensagemErroDrones }}</p>
+  } @else if (drones.length === 0) {
+    <p class="catalog-state">Nenhum drone disponível no momento.</p>
+  } @else {
+    <div class="drone-grid">
+      @for (drone of drones; track drone.id) {
+        <article class="drone-card">
+          <div class="product-visual">
+            <button class="favorite-button" type="button" aria-label="Adicionar aos favoritos">
+              <mat-icon>favorite_border</mat-icon>
+            </button>
+
+            @if (imagemPrincipal(drone); as imagem) {
+              @if (!imagensComFalha.has(drone.id)) {
+                <img
+                  class="product-image"
+                  [src]="obterUrlImagem(imagem)"
+                  [alt]="drone.nome"
+                  (error)="marcarImagemComFalha(drone.id)"
+                >
+              } @else {
+                <div class="image-placeholder" role="img" [attr.aria-label]="'Imagem indisponível para ' + drone.nome"></div>
+              }
+            } @else {
+              <div class="image-placeholder" role="img" [attr.aria-label]="'Imagem indisponível para ' + drone.nome"></div>
+            }
+
+            <button class="cart-button" type="button" [attr.aria-label]="'Adicionar ' + drone.nome + ' ao carrinho'">
+              <mat-icon>shopping_cart</mat-icon>
+              <span>Adicionar ao carrinho</span>
+            </button>
+          </div>
+
+          <div class="product-details">
+            <h2 class="product-name">
+              <span>{{ drone.nome }}</span>
+              @if (drone.modelo?.nome) {
+                <span class="product-model">{{ drone.modelo.nome }}</span>
+              }
+            </h2>
+
+            <div class="product-pricing">
+              <span class="current-price">{{ formatarPreco(drone.preco) }}</span>
+            </div>
+
+            <p class="installment-price">
+              ou 12x de {{ formatarPreco(drone.preco / 12) }} sem juros
+            </p>
+
+            <p class="shipping-label">
+              <mat-icon>local_shipping</mat-icon>
+              Frete grátis
+            </p>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>
