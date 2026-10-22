@@ -40,4 +40,11 @@ describe('Home', () => {
 
     expect(fixture.nativeElement.querySelectorAll('.drone-card')).toHaveLength(1);
   });
+
+  it('renders the filters next to the product catalog in the home', () => {
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.filters-panel')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('.products-area')).not.toBeNull();
+  });
 });
