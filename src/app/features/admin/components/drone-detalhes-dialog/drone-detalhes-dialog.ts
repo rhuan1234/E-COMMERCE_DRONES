@@ -8,7 +8,7 @@ import { Drone } from '../../../../core/models/drone/Drone';
 import { DroneService } from '../../../../core/services/DroneService';
 
 type DroneDetalhado = Drone & {
-  camera?: { modelo?: string; resolucao?: string };
+  camera?: { modelo?: { nome?: string }; resolucao?: string };
   fornecedor?: { nome?: string };
 };
 

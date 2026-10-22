@@ -1,23 +1,7 @@
-export interface DroneImagem {
-  id: number;
-  caminho: string;
-  principal: boolean;
-  ordem: number;
-}
-
-interface Marca {
-  id: number;
-  nome: string
-}
-interface Modelo {
-  id: number;
-  nome: string
-}
-
 export class Drone {
   id!: number;
   nome!: string;
-  marca!: Marca;
+  marca!: string;
   modelo!: string;
   preco!: number;
   quantidadeDisponivel!: number;

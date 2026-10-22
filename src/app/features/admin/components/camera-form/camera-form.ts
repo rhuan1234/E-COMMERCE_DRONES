@@ -12,6 +12,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 import { Camera } from '../../../../core/models/camera/Camera';
+import { Marca } from '../../../../core/models/marca/Marca';
+import { Modelo } from '../../../../core/models/modelo/Modelo';
+import { MarcaService } from '../../../../core/services/MarcaService';
+import { ModeloService } from '../../../../core/services/ModeloService';
 
 @Component({
   imports: [
@@ -31,10 +35,14 @@ import { Camera } from '../../../../core/models/camera/Camera';
 })
 export class CameraForm implements OnInit {
   readonly form: FormGroup;
+  marcas: Marca[] = [];
+  modelos: Modelo[] = [];
 
   constructor(
     private fb: FormBuilder,
     private cameraService: CameraService,
+    private marcaService: MarcaService,
+    private modeloService: ModeloService,
     private snack: MatSnackBar,
     private dialog: MatDialog,
     private router: Router,
@@ -42,20 +50,81 @@ export class CameraForm implements OnInit {
   ) {
     this.form = this.fb.group({
       id: [null],
-      modelo: ['', [Validators.required, Validators.pattern(/\S/), Validators.minLength(2), Validators.maxLength(60)]],
-      marca: ['', [Validators.required, Validators.pattern(/\S/), Validators.minLength(2), Validators.maxLength(60)]],
+      marcaId: [null, [Validators.required]],
+      modeloId: [{ value: null, disabled: true }, [Validators.required]],
       resolucao: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(40)]],
       zoom: [0, [Validators.required, Validators.min(0)]],
       estabilizacao: [false],
       fps: ['', [Validators.required, Validators.pattern(/^[1-9]\d{0,2}$/)]]
-    })
+    });
   }
 
   ngOnInit(): void {
+    const marcaIdControl = this.form.controls['marcaId'];
+    const modeloIdControl = this.form.controls['modeloId'];
+
+    marcaIdControl.valueChanges.subscribe((marcaId: number | null) => {
+      modeloIdControl.setValue(null, { emitEvent: false });
+      if (marcaId) {
+        modeloIdControl.enable({ emitEvent: false });
+        this.carregarModelosPorMarca(marcaId);
+      } else {
+        this.modelos = [];
+        modeloIdControl.disable({ emitEvent: false });
+      }
+    });
+
+    this.carregarMarcas();
+
     const camera = this.activatedRoute.snapshot.data['camera'] as Camera | undefined;
     if (camera) {
-      this.form.patchValue(camera);
+      const marcaIdInicial = camera.marcaId ?? camera.marca?.id ?? null;
+      const modeloIdInicial = camera.modeloId ?? camera.modelo?.id ?? null;
+
+      this.form.patchValue(
+        {
+          ...camera,
+          marcaId: marcaIdInicial,
+        },
+        { emitEvent: false }
+      );
+
+      if (marcaIdInicial) {
+        modeloIdControl.enable({ emitEvent: false });
+        this.carregarModelosPorMarca(marcaIdInicial, modeloIdInicial);
+      }
     }
+  }
+
+  carregarMarcas(): void {
+    this.marcaService.findAll(0, 100).subscribe({
+      next: (response) => {
+        this.marcas = response.items;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar marcas:', error);
+        this.exibirMensagem('Erro ao carregar as marcas.');
+      },
+    });
+  }
+
+  carregarModelosPorMarca(marcaId: number, modeloSelecionadoId?: number | null): void {
+    this.modeloService.findByMarca(marcaId, 0, 100).subscribe({
+      next: (response) => {
+        this.modelos = response.items;
+        if (modeloSelecionadoId) {
+          const pertence = this.modelos.some((m) => m.id === modeloSelecionadoId);
+          if (pertence) {
+            this.form.controls['modeloId'].setValue(modeloSelecionadoId, { emitEvent: false });
+          }
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao carregar modelos da marca:', error);
+        this.modelos = [];
+        this.exibirMensagem('Erro ao carregar os modelos da marca selecionada.');
+      },
+    });
   }
 
   salvar(): void {
@@ -66,6 +135,15 @@ export class CameraForm implements OnInit {
     }
 
     const camera = this.form.getRawValue() as Camera;
+    const modeloEscolhido = this.modelos.find((m) => m.id === camera.modeloId);
+    const marcaDoModelo = modeloEscolhido?.marcaId ?? modeloEscolhido?.marca?.id;
+    if (!modeloEscolhido || marcaDoModelo !== camera.marcaId) {
+      this.form.controls['modeloId'].setErrors({ marcaIncompativel: true });
+      this.form.controls['modeloId'].markAsTouched();
+      this.exibirMensagem('O modelo selecionado deve pertencer à marca escolhida.');
+      return;
+    }
+
     const resultado = camera.id
       ? this.cameraService.update(camera.id, camera)
       : this.cameraService.create(camera);
@@ -88,10 +166,11 @@ export class CameraForm implements OnInit {
       return;
     }
 
+    const nomeModelo = this.modelos.find((m) => m.id === camera.modeloId)?.nome || `ID ${camera.id}`;
     const confirmRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         titulo: 'Excluir Câmera',
-        mensagem: `Deseja realmente excluir a câmera "${camera.modelo}"?`
+        mensagem: `Deseja realmente excluir a câmera "${nomeModelo}"?`
       }
     });
 

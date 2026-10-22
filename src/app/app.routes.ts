@@ -19,8 +19,6 @@ import { EnderecosPage } from './features/admin/components/enderecos-page/endere
 import { AlterarSenhaPage } from './features/admin/components/alterar-senha-page/alterar-senha-page';
 import { CameraForm } from './features/admin/components/camera-form/camera-form';
 import { cameraResolver } from './core/resolvers/CameraResolver';
-import { EcommerceLayout } from './features/ecommerce/layout/ecommerce-layout/ecommerce-layout';
-import { Home } from './features/ecommerce/components/home/home';
 
 
 export const routes: Routes = [
@@ -40,7 +38,18 @@ export const routes: Routes = [
       { path: 'drones', component: DroneList, title: 'Drones' },
       { path: 'drones/new', component: DroneForm, title: 'Novo Drone' },
       { path: 'drones/:id/edit', component: DroneForm, title: 'Editar Drone', resolve: { drone: droneResolver } },
-      {path: 'drones/filtro/modelo/:modelo', component:DroneList, title:"Drones por modelo"},
+
+      // Marcas
+      { path: 'marcas', component: MarcaList, title: 'Lista de Marcas' },
+      { path: 'marcas/new', component: MarcaForm, title: 'Nova Marca' },
+      { path: 'marcas/:id/edit', component: MarcaForm, title: 'Editar Marca', resolve: { marca: marcaResolver } },
+      { path: 'marcas/filtro/nome/:nome', component: MarcaList, title: 'Marcas por nome' },
+
+      // Modelos
+      { path: 'modelos', component: ModeloList, title: 'Lista de Modelos' },
+      { path: 'modelos/new', component: ModeloForm, title: 'Novo Modelo' },
+      { path: 'modelos/:id/edit', component: ModeloForm, title: 'Editar Modelo', resolve: { modelo: modeloResolver } },
+      { path: 'modelos/filtro/nome/:nome', component: ModeloList, title: 'Modelos por nome' },
 
       // Câmeras
       { path: 'cameras', component: CameraList, title: 'Lista de Câmeras' },

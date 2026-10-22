@@ -21,26 +21,32 @@
       <form [formGroup]="form" (ngSubmit)="salvar()">
         <div class="form-grid">
           <mat-form-field appearance="outline">
-            <mat-label>Modelo</mat-label>
-            <input matInput formControlName="modelo" placeholder="Modelo da câmera">
-            @if (form.controls['modelo'].hasError('required') && form.controls['modelo'].touched) {
-              <mat-error>Informe o modelo.</mat-error>
-            } @else if (form.controls['modelo'].hasError('pattern')) {
-              <mat-error>O modelo não pode conter apenas espaços.</mat-error>
-            } @else if (form.controls['modelo'].hasError('minlength') || form.controls['modelo'].hasError('maxlength')) {
-              <mat-error>O modelo deve ter entre 2 e 60 caracteres.</mat-error>
+            <mat-label>Marca</mat-label>
+            <mat-select formControlName="marcaId" placeholder="Selecione a marca">
+              @for (marca of marcas; track marca.id) {
+                <mat-option [value]="marca.id">{{ marca.nome }}</mat-option>
+              }
+            </mat-select>
+            @if (form.controls['marcaId'].hasError('required') && form.controls['marcaId'].touched) {
+              <mat-error>Selecione uma marca.</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Marca</mat-label>
-            <input matInput formControlName="marca" placeholder="Marca da câmera">
-            @if (form.controls['marca'].hasError('required') && form.controls['marca'].touched) {
-              <mat-error>Informe a marca.</mat-error>
-            } @else if (form.controls['marca'].hasError('pattern')) {
-              <mat-error>A marca não pode conter apenas espaços.</mat-error>
-            } @else if (form.controls['marca'].hasError('minlength') || form.controls['marca'].hasError('maxlength')) {
-              <mat-error>A marca deve ter entre 2 e 60 caracteres.</mat-error>
+            <mat-label>Modelo</mat-label>
+            <mat-select
+              formControlName="modeloId"
+              [placeholder]="form.controls['marcaId'].value ? 'Selecione o modelo' : 'Selecione uma marca primeiro'"
+            >
+              @for (modelo of modelos; track modelo.id) {
+                <mat-option [value]="modelo.id">{{ modelo.nome }}</mat-option>
+              }
+            </mat-select>
+            @if (form.controls['modeloId'].hasError('required') && form.controls['modeloId'].touched) {
+              <mat-error>Selecione um modelo da marca escolhida.</mat-error>
+            }
+            @if (form.controls['modeloId'].hasError('marcaIncompativel')) {
+              <mat-error>O modelo deve pertencer à marca selecionada.</mat-error>
             }
           </mat-form-field>
 

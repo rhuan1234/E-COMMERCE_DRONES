@@ -4,7 +4,7 @@
   </div>
   <div class="dialog-heading">
     <h2 mat-dialog-title>{{ drone.nome }}</h2>
-    <p>{{ drone.marca }} · {{ drone.modelo }}</p>
+    <p>{{ drone.marca?.nome }} · {{ drone.modelo?.nome }}</p>
   </div>
   <button mat-icon-button type="button" aria-label="Fechar detalhes" (click)="fechar()">
     <mat-icon>close</mat-icon>
@@ -36,11 +36,11 @@
         </div>
         <div class="detail-item">
           <dt>Marca</dt>
-          <dd>{{ drone.marca }}</dd>
+          <dd>{{ drone.marca?.nome || 'Não informada' }}</dd>
         </div>
         <div class="detail-item">
           <dt>Modelo</dt>
-          <dd>{{ drone.modelo }}</dd>
+          <dd>{{ drone.modelo?.nome || 'Não informado' }}</dd>
         </div>
         <div class="detail-item">
           <dt>Preço</dt>
@@ -98,7 +98,7 @@
           <dt>Câmera</dt>
           <dd>
             @if (drone.possuiCamera) {
-              {{ drone.camera?.modelo || (drone.cameraId ? 'ID ' + drone.cameraId : 'Sim') }}
+              {{ drone.camera?.modelo?.nome || (drone.cameraId ? 'ID ' + drone.cameraId : 'Sim') }}
               @if (drone.camera?.resolucao) {
                 · {{ drone.camera?.resolucao }}
               }

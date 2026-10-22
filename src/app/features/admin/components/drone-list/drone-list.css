@@ -20,16 +20,147 @@
    FILTRO
    ========================= */
 
-.filter-container {
+.filter-bar {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 12px;
     padding: 0 24px;
-    margin-bottom: 8px;
+    margin-bottom: 16px;
 }
 
-.filter-container mat-form-field {
-    width: 350px;
+.filter-trigger-wrapper {
+    position: relative;
+}
+
+.filter-trigger-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 42px;
+    padding: 0 16px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.filter-trigger-btn.active {
+    border-color: var(--mat-sys-primary, #84cc16);
+    background-color: color-mix(in srgb, var(--mat-sys-primary, #84cc16) 10%, transparent);
+}
+
+.filter-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    background-color: var(--mat-sys-primary, #84cc16);
+    color: var(--mat-sys-on-primary, #000000);
+    margin-left: 4px;
+}
+
+.chevron-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    margin-left: 2px;
+}
+
+.filter-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    background: transparent;
+}
+
+.filter-popup {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 100;
+    width: 480px;
+    max-width: calc(100vw - 48px);
+    background-color: var(--mat-sys-surface-container-lowest, #ffffff);
+    color: var(--mat-sys-on-surface, #1b1f18);
+    border: 1px solid var(--mat-sys-outline-variant, #d4d9d0);
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-sizing: border-box;
+    animation: filterPopupFadeIn 0.16s cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes filterPopupFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.filter-popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--mat-sys-outline-variant, #e5e7eb);
+}
+
+.filter-popup-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.filter-popup-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.filter-popup-body .full-width {
+    width: 100%;
+}
+
+.filter-popup-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+@media (max-width: 560px) {
+    .filter-popup-row {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+}
+
+.filter-popup-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 8px;
+    border-top: 1px solid var(--mat-sys-outline-variant, #e5e7eb);
+}
+
+.active-filters-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.clear-all-inline-btn {
+    margin-left: auto;
 }
 
 
@@ -76,6 +207,35 @@
 .drone-table tr.mat-mdc-row:focus-visible {
     outline: 2px solid var(--mat-sys-primary, #84cc16);
     outline-offset: -2px;
+}
+
+
+/* Estado Vazio */
+
+.empty-state-cell {
+    text-align: center;
+    padding: 36px 16px !important;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #666;
+}
+
+.empty-state-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    color: #9ca3af;
+}
+
+.empty-state-text {
+    margin: 0 0 4px;
+    font-size: 15px;
 }
 
 

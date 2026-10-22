@@ -121,7 +121,7 @@ export class CameraList implements OnInit {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         titulo: 'Excluir Câmera',
-        mensagem: `Tem certeza que deseja excluir a câmera "${camera.modelo}"?`
+        mensagem: `Tem certeza que deseja excluir a câmera "${camera.modelo?.nome || camera.id}"?`
       }
     });
 

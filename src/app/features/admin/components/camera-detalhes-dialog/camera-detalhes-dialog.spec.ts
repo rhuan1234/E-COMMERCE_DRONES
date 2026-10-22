@@ -11,8 +11,10 @@ describe('CameraDetalhesDialog', () => {
   let fixture: ComponentFixture<CameraDetalhesDialog>;
   const camera: Camera = {
     id: 1,
-    modelo: 'Câmera teste',
+    marcaId: 2,
     marca: { id: 2, nome: 'Marca teste' },
+    modeloId: 1,
+    modelo: { id: 1, nome: 'Câmera teste', marcaId: 2 },
     resolucao: '4K',
     zoom: 3,
     estabilizacao: true,
