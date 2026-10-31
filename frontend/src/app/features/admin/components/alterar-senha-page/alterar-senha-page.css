@@ -1,0 +1,227 @@
+:host {
+  display: block;
+  width: 100%;
+  color: #212529;
+}
+
+.senha-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+/* Cabeçalho */
+
+.pagina-header {
+  margin-bottom: 24px;
+}
+
+.pagina-titulo {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #212529;
+}
+
+.pagina-subtitulo {
+  margin: 8px 0 0;
+  color: #6c757d;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Cartão principal */
+
+.senha-card {
+  padding: 28px;
+  border: 1px solid #e9ecef;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 4%);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.card-icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  color: #198754;
+  background: #e8f5ee;
+}
+
+.card-icone mat-icon {
+  width: 28px;
+  height: 28px;
+  font-size: 28px;
+}
+
+.card-titulo {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #212529;
+}
+
+.card-descricao {
+  margin: 6px 0 0;
+  color: #6c757d;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* Formulário */
+
+.form-senha {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.campo-senha {
+  width: 100%;
+}
+
+.campo-senha mat-icon[matPrefix] {
+  margin-right: 8px;
+  color: #6c757d;
+}
+
+.campo-senha input {
+  letter-spacing: 0.2px;
+}
+
+.dica-senha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  color: #6c757d;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.dica-senha mat-icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+  color: #198754;
+}
+
+/* Mensagens */
+
+.mensagem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.mensagem mat-icon {
+  flex-shrink: 0;
+}
+
+.mensagem-sucesso {
+  color: #146c43;
+  background: #d1e7dd;
+  border-color: #a3cfbb;
+}
+
+.mensagem-erro {
+  color: #842029;
+  background: #f8d7da;
+  border-color: #f1aeb5;
+}
+
+/* Botão */
+
+.form-acoes {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
+}
+
+.botao-salvar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 180px;
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.botao-salvar mat-spinner {
+  display: inline-block;
+}
+
+/* Responsividade */
+
+@media (max-width: 600px) {
+  .senha-container {
+    padding: 16px;
+  }
+
+  .pagina-titulo {
+    font-size: 1.5rem;
+  }
+
+  .senha-card {
+    padding: 20px 16px;
+    border-radius: 10px;
+  }
+
+  .card-header {
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .card-icone {
+    width: 44px;
+    height: 44px;
+  }
+
+  .card-titulo {
+    font-size: 1.05rem;
+  }
+
+  .form-acoes {
+    padding-top: 16px;
+  }
+
+  .botao-salvar {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

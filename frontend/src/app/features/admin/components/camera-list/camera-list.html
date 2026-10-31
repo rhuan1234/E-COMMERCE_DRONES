@@ -1,0 +1,114 @@
+<mat-toolbar class="mat-toolbar">
+    <div class="flex-container" color="primary">
+        <span class="toolbar-title">Controle de Câmeras</span>
+        <button mat-fab class="accent" (click)="novaCamera()">
+            <mat-icon>add</mat-icon>
+        </button>
+    </div>
+</mat-toolbar>
+
+<div class="filter-container">
+    <mat-form-field appearance="outline">
+        <mat-label>Filtro por Modelo</mat-label>
+        <input
+            matInput
+            [value]="filtroModelo"
+            (keyup.enter)="filtrarPorModelo(input.value)"
+            placeholder="Ex: DJI"
+            #input
+        >
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="filtrarPorModelo(input.value)">
+        Buscar
+    </button>
+
+    <button mat-button color="warn" (click)="limparFiltro(input)">
+        Limpar Filtro
+    </button>
+</div>
+
+<table mat-table [dataSource]="dataSource" class="camera-table mat-elevation-z8">
+
+    <!-- ID Column -->
+    <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> ID </th>
+        <td mat-cell *matCellDef="let camera"> {{camera.id}} </td>
+    </ng-container>
+
+    <!-- Modelo Column -->
+    <ng-container matColumnDef="modelo">
+        <th mat-header-cell *matHeaderCellDef> Modelo </th>
+        <td mat-cell *matCellDef="let camera"> {{camera.modelo?.nome}} </td>
+    </ng-container>
+
+    <!-- Marca Column -->
+    <ng-container matColumnDef="marca">
+        <th mat-header-cell *matHeaderCellDef> Marca </th>
+        <td mat-cell *matCellDef="let camera"> {{camera.marca?.nome}} </td>
+    </ng-container>
+
+    <!-- Resolução Column -->
+    <ng-container matColumnDef="resolucao">
+        <th mat-header-cell *matHeaderCellDef> Resolução </th>
+        <td mat-cell *matCellDef="let camera"> {{camera.resolucao}} </td>
+    </ng-container>
+
+    <!-- Zoom Column -->
+    <ng-container matColumnDef="zoom">
+        <th mat-header-cell *matHeaderCellDef> Zoom </th>
+        <td mat-cell *matCellDef="let camera"> {{camera.zoom}} </td>
+    </ng-container>
+
+    <!-- Estabilização Column -->
+    <ng-container matColumnDef="estabilizacao">
+        <th mat-header-cell *matHeaderCellDef> Estabilização </th>
+        <td mat-cell *matCellDef="let camera"> {{camera.estabilizacao ? 'Sim' : 'Não'}} </td>
+    </ng-container>
+
+    <!-- FPS Column -->
+    <ng-container matColumnDef="fps">
+        <th mat-header-cell *matHeaderCellDef> FPS </th>
+        <td mat-cell *matCellDef="let camera"> {{camera.fps}} </td>
+    </ng-container>
+
+    <!-- Acao Column -->
+    <ng-container matColumnDef="acao">
+        <th mat-header-cell *matHeaderCellDef> Ação </th>
+        <td mat-cell *matCellDef="let obj">
+            <button
+                mat-icon-button
+                color="primary"
+                (click)="$event.stopPropagation(); editarCamera(obj)"
+                (keydown)="$event.stopPropagation()">
+                <mat-icon>edit</mat-icon>
+            </button>
+            <button
+                mat-icon-button
+                color="warn"
+                (click)="$event.stopPropagation(); excluirCamera(obj)"
+                (keydown)="$event.stopPropagation()">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </td>
+    </ng-container>
+    
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns;"
+        tabindex="0"
+        [attr.aria-label]="'Ver detalhes de ' + row.modelo?.nome"
+        (click)="abrirDetalhes(row)"
+        (keydown.enter)="abrirDetalhes(row)"
+        (keydown.space)="$event.preventDefault(); abrirDetalhes(row)">
+    </tr>
+</table>
+
+<mat-paginator
+    [length]="totalItems"
+    [pageIndex]="pageIndex"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="[5, 10, 20]"
+    (page)="onPageChange($event)">
+</mat-paginator>

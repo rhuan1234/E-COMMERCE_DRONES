@@ -1,0 +1,286 @@
+<div class="enderecos-container">
+  <header class="pagina-header">
+    <div>
+      <h1>Meus endereços</h1>
+      <p>Gerencie os endereços associados à sua conta.</p>
+    </div>
+
+    <button
+      mat-flat-button
+      color="primary"
+      type="button"
+      (click)="novoEndereco()"
+      [disabled]="carregandoEnderecos"
+    >
+      <mat-icon>add</mat-icon>
+      Novo endereço
+    </button>
+  </header>
+
+  @if (mensagemEndereco) {
+    <div class="mensagem sucesso" role="status">
+      <mat-icon>check_circle</mat-icon>
+      <span>{{ mensagemEndereco }}</span>
+    </div>
+  }
+
+  @if (erroEndereco) {
+    <div class="mensagem erro" role="alert">
+      <mat-icon>error</mat-icon>
+      <span>{{ erroEndereco }}</span>
+    </div>
+  }
+
+  @if (carregandoEnderecos) {
+    <div class="estado-carregamento">
+      <mat-spinner diameter="36"></mat-spinner>
+      <p>Carregando seus endereços...</p>
+    </div>
+  } @else {
+    @if (enderecos.length === 0) {
+      <section class="estado-vazio">
+        <div class="vazio-icone">
+          <mat-icon>location_on</mat-icon>
+        </div>
+
+        <h2>Nenhum endereço cadastrado</h2>
+        <p>
+          Adicione um endereço para facilitar suas futuras compras.
+        </p>
+
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          (click)="novoEndereco()"
+        >
+          <mat-icon>add</mat-icon>
+          Adicionar endereço
+        </button>
+      </section>
+    } @else {
+      <section class="enderecos-lista">
+        <div class="lista-titulo">
+          <h2>Endereços cadastrados</h2>
+          <span>{{ enderecos.length }} endereço(s)</span>
+        </div>
+
+        @for (endereco of enderecos; track endereco.id) {
+          <article class="endereco-card">
+            <div class="endereco-conteudo">
+              <div class="endereco-titulo">
+                <div class="endereco-icone">
+                  <mat-icon>location_on</mat-icon>
+                </div>
+
+                <div>
+                  <h3>{{ endereco.rua }}</h3>
+
+                  @if (endereco.principal) {
+                    <span class="principal-badge">
+                      <mat-icon>check_circle</mat-icon>
+                      Endereço principal
+                    </span>
+                  }
+                </div>
+              </div>
+
+              <div class="endereco-detalhes">
+                <p>
+                  <span>Bairro</span>
+                  {{ endereco.bairro }}
+                </p>
+
+                <p>
+                  <span>Cidade/Estado</span>
+                  {{ endereco.cidade?.nome || '—' }} -
+                  {{ endereco.cidade?.estado?.nome || '—' }}
+                </p>
+
+                <p>
+                  <span>CEP</span>
+                  {{ endereco.cep }}
+                </p>
+              </div>
+            </div>
+
+            <div class="endereco-acoes">
+              @if (!endereco.principal) {
+                <button
+                  mat-stroked-button
+                  type="button"
+                  (click)="definirEnderecoPrincipal(endereco)"
+                  [disabled]="processandoEndereco"
+                >
+                  Definir como principal
+                </button>
+              }
+
+              <button
+                mat-icon-button
+                type="button"
+                aria-label="Editar endereço"
+                matTooltip="Editar endereço"
+                (click)="editarEndereco(endereco)"
+                [disabled]="processandoEndereco"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+
+              <button
+                mat-icon-button
+                type="button"
+                aria-label="Excluir endereço"
+                matTooltip="Excluir endereço"
+                class="botao-excluir"
+                (click)="excluirEndereco(endereco)"
+                [disabled]="processandoEndereco"
+              >
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
+          </article>
+        }
+      </section>
+    }
+  }
+
+  @if (mostrarFormularioEndereco) {
+    <section class="formulario-card" id="formulario-endereco">
+      <div class="formulario-header">
+        <div>
+          <h2>
+            {{ editandoEnderecoId === null
+              ? 'Adicionar endereço'
+              : 'Editar endereço' }}
+          </h2>
+
+          <p>Preencha os dados do endereço abaixo.</p>
+        </div>
+
+        <button
+          mat-icon-button
+          type="button"
+          aria-label="Fechar formulário"
+          (click)="cancelarEdicaoEndereco()"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <form
+        [formGroup]="enderecoForm"
+        (ngSubmit)="salvarEndereco()"
+      >
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>CEP</mat-label>
+            <input
+              matInput
+              formControlName="cep"
+              placeholder="00000-000"
+              maxlength="9"
+              autocomplete="postal-code"
+            />
+            <mat-icon matSuffix>markunread_mailbox</mat-icon>
+
+            @if (enderecoForm.controls.cep.hasError('required')) {
+              <mat-error>Informe o CEP.</mat-error>
+            }
+
+            @if (enderecoForm.controls.cep.hasError('pattern')) {
+              <mat-error>Informe um CEP válido.</mat-error>
+            }
+          </mat-form-field>
+
+          <div class="buscar-cep">
+            <button
+              mat-stroked-button
+              type="button"
+              (click)="buscarCep()"
+              [disabled]="buscandoCep"
+            >
+              <mat-icon>search</mat-icon>
+              {{ buscandoCep ? 'Buscando...' : 'Buscar CEP' }}
+            </button>
+          </div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Rua</mat-label>
+            <input
+              matInput
+              formControlName="rua"
+              autocomplete="street-address"
+            />
+
+            @if (enderecoForm.controls.rua.hasError('required')) {
+              <mat-error>Informe a rua.</mat-error>
+            } @else if (enderecoForm.controls.rua.hasError('pattern')) {
+              <mat-error>Informe um nome de rua válido.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Bairro</mat-label>
+            <input matInput formControlName="bairro" />
+
+            @if (enderecoForm.controls.bairro.hasError('required')) {
+              <mat-error>Informe o bairro.</mat-error>
+            } @else if (enderecoForm.controls.bairro.hasError('pattern')) {
+              <mat-error>Informe um bairro válido.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Cidade</mat-label>
+            <input matInput formControlName="cidade" />
+
+            @if (enderecoForm.controls.cidade.hasError('required')) {
+              <mat-error>Informe a cidade.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Estado (UF)</mat-label>
+            <input
+              matInput
+              formControlName="estado"
+              placeholder="TO"
+              maxlength="2"
+            />
+
+            @if (enderecoForm.controls.estado.hasError('required')) {
+              <mat-error>Informe o estado.</mat-error>
+            } @else if (enderecoForm.controls.estado.hasError('pattern')) {
+              <mat-error>Informe a sigla com 2 letras.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <mat-checkbox formControlName="principal">
+          Definir como endereço principal
+        </mat-checkbox>
+
+        <div class="formulario-acoes">
+          <button
+            mat-stroked-button
+            type="button"
+            (click)="cancelarEdicaoEndereco()"
+          >
+            Cancelar
+          </button>
+
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="salvandoEndereco"
+          >
+            <mat-icon>save</mat-icon>
+            {{ salvandoEndereco ? 'Salvando...' : 'Salvar endereço' }}
+          </button>
+        </div>
+      </form>
+    </section>
+  }
+</div>

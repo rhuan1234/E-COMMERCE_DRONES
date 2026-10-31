@@ -1,0 +1,105 @@
+<mat-sidenav-container class="admin-container">
+  
+  <!-- Sidebar Administrativa -->
+  <mat-sidenav mode="side" opened class="admin-sidenav" [class.collapsed]="isCollapsed()">
+    
+    <!-- Topo da Sidebar: Logo / Brand + Botão Retrátil -->
+    <div class="sidenav-header">
+      @if (!isCollapsed()) {
+        <div class="brand-badge">S</div>
+        <div class="brand-text">
+          <span class="brand-title">SKYLINE ADMIN</span>
+          <span class="brand-subtitle">Gestão da Loja</span>
+        </div>
+      }
+      <button
+        mat-icon-button
+        type="button"
+        class="toggle-sidebar-btn"
+        (click)="toggleSidebar()"
+        [attr.aria-label]="isCollapsed() ? 'Expandir menu lateral' : 'Recolher menu lateral'"
+        [attr.aria-expanded]="!isCollapsed()"
+        [matTooltip]="isCollapsed() ? 'Expandir menu' : 'Recolher menu'"
+        matTooltipPosition="right"
+      >
+        <mat-icon>menu</mat-icon>
+      </button>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Lista de Navegação (Angular Material Nav List) -->
+    <mat-nav-list class="nav-list">
+      @for (item of navItems; track item.route) {
+        <a
+          mat-list-item
+          [routerLink]="item.route"
+          routerLinkActive="active-nav-item"
+          #rla="routerLinkActive"
+          [activated]="rla.isActive"
+          [matTooltip]="isCollapsed() ? item.label : ''"
+          matTooltipPosition="right"
+        >
+          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+          @if (!isCollapsed()) {
+            <span matListItemTitle>{{ item.label }}</span>
+          }
+        </a>
+      }
+    </mat-nav-list>
+
+    <div class="sidenav-spacer"></div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Atalho do perfil e logout -->
+    <div class="sidenav-footer">
+      <div class="profile-menu">
+        <a
+          mat-button
+          class="profile-link"
+          routerLink="/perfil"
+          aria-label="Abrir perfil do usuário"
+          [matTooltip]="isCollapsed() ? (emailUsuario || 'Perfil do usuário') : ''"
+          matTooltipPosition="right"
+        >
+          <mat-icon>account_circle</mat-icon>
+          @if (!isCollapsed()) {
+            <span class="profile-email">
+              @if (emailUsuario) {
+                {{ emailUsuario }}
+              } @else if (erroCarregamentoEmail) {
+                E-mail indisponível
+              } @else {
+                Carregando e-mail...
+              }
+            </span>
+          }
+        </a>
+
+        <button
+          mat-button
+          class="logout-btn"
+          (click)="logout()"
+          aria-label="Sair do sistema"
+          [matTooltip]="isCollapsed() ? 'Sair do sistema' : ''"
+          matTooltipPosition="right"
+        >
+          <mat-icon>logout</mat-icon>
+          @if (!isCollapsed()) {
+            <span>Sair do sistema</span>
+          }
+        </button>
+      </div>
+    </div>
+
+  </mat-sidenav>
+
+  <!-- Área Principal de Conteúdo -->
+  <mat-sidenav-content class="admin-content" [class.collapsed]="isCollapsed()">
+    <div class="content-wrapper">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

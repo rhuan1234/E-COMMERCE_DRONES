@@ -1,0 +1,78 @@
+<header class="dialog-header">
+  <div class="dialog-icon">
+    <mat-icon>local_offer</mat-icon>
+  </div>
+  <div class="dialog-heading">
+    <h2 mat-dialog-title>{{ promocao.nome }}</h2>
+    <p>{{ promocao.percentualDesconto }}% de desconto</p>
+  </div>
+  <button mat-icon-button type="button" aria-label="Fechar detalhes" (click)="fechar()">
+    <mat-icon>close</mat-icon>
+  </button>
+</header>
+
+<mat-dialog-content>
+  @if (!carregando) {
+    <div class="dialog-status">
+      <mat-spinner diameter="32"></mat-spinner>
+      <span>Carregando informações da promoção...</span>
+    </div>
+  } @else if (erro) {
+    <div class="dialog-error" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ erro }}</span>
+    </div>
+  } @else {
+    <section class="detail-section" aria-labelledby="identificacao-title">
+      <h3 id="identificacao-title">Identificação</h3>
+      <dl class="detail-grid">
+        <div class="detail-item">
+          <dt>ID</dt>
+          <dd>{{ promocao.id }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Nome</dt>
+          <dd>{{ promocao.nome }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Percentual de desconto</dt>
+          <dd>{{ promocao.percentualDesconto }}%</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="detail-section" aria-labelledby="vigencia-title">
+      <h3 id="vigencia-title">Vigência</h3>
+      <dl class="detail-grid">
+        <div class="detail-item">
+          <dt>Data de início</dt>
+          <dd>{{ promocao.dataInicio || 'Não informada' }}</dd>
+        </div>
+        <div class="detail-item">
+          <dt>Data de fim</dt>
+          <dd>{{ promocao.dataFim || 'Não informada' }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="detail-section" aria-labelledby="drones-title">
+      <h3 id="drones-title">Drones participantes</h3>
+      @if (promocao.droneIds.length) {
+        <dl class="detail-grid">
+          @for (droneId of promocao.droneIds; track droneId) {
+            <div class="detail-item">
+              <dt>Drone</dt>
+              <dd>ID {{ droneId }}</dd>
+            </div>
+          }
+        </dl>
+      } @else {
+        <p class="empty-drones">Nenhum drone associado a esta promoção.</p>
+      }
+    </section>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-flat-button color="primary" type="button" (click)="fechar()">Fechar</button>
+</mat-dialog-actions>

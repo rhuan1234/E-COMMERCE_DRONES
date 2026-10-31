@@ -1,0 +1,138 @@
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 24px 12px;
+}
+
+.dialog-icon {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--mat-sys-primary-container, #e8f5c9);
+  color: var(--mat-sys-on-primary-container, #253600);
+}
+
+.dialog-icon mat-icon {
+  width: 25px;
+  height: 25px;
+  font-size: 25px;
+}
+
+.dialog-heading {
+  flex: 1;
+  min-width: 0;
+}
+
+.dialog-heading h2 {
+  margin: 0 0 4px;
+  padding: 0;
+  color: var(--mat-sys-on-surface, #1b1f18);
+  font-size: 21px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.dialog-heading p,
+.empty-drones {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant, #454b42);
+  font-size: 14px;
+}
+
+mat-dialog-content {
+  max-height: min(68vh, 680px);
+  padding: 8px 24px 16px;
+}
+
+.detail-section + .detail-section {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--mat-sys-outline-variant, #d4d9d0);
+}
+
+.detail-section h3 {
+  margin: 0 0 12px;
+  color: var(--mat-sys-on-surface, #1b1f18);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.detail-item {
+  min-width: 0;
+  padding: 11px 12px;
+  border-radius: 8px;
+  background: var(--mat-sys-surface-container-low, #f5f6f4);
+}
+
+.detail-item dt {
+  margin-bottom: 4px;
+  color: var(--mat-sys-on-surface-variant, #454b42);
+  font-size: 12px;
+}
+
+.detail-item dd {
+  margin: 0;
+  color: var(--mat-sys-on-surface, #1b1f18);
+  font-size: 14px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.dialog-status,
+.dialog-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 180px;
+  color: var(--mat-sys-on-surface-variant, #454b42);
+  text-align: center;
+}
+
+.dialog-error {
+  color: var(--mat-sys-error, #ba1a1a);
+}
+
+mat-dialog-actions {
+  padding: 8px 24px 20px;
+}
+
+@media (max-width: 520px) {
+  .dialog-header {
+    gap: 10px;
+    padding: 16px 16px 10px;
+  }
+
+  .dialog-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .dialog-heading h2 {
+    font-size: 18px;
+  }
+
+  mat-dialog-content {
+    padding: 8px 16px 14px;
+  }
+
+  .detail-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  mat-dialog-actions {
+    padding: 8px 16px 16px;
+  }
+}

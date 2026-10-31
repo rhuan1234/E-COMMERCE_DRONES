@@ -1,0 +1,165 @@
+<section class="home-catalog" aria-labelledby="catalog-title">
+  <div class="home-content">
+    <aside class="filters-panel" aria-labelledby="filters-title">
+      <div class="filters-heading">
+        <div>
+          <span class="eyebrow">ENCONTRE O SEU VOO</span>
+          <h2 id="filters-title">Filtros</h2>
+        </div>
+        @if (hasActiveFilters) {
+          <button class="clear-filters" type="button" (click)="limparFiltros()">Limpar</button>
+        }
+      </div>
+
+      <section class="filter-group" aria-labelledby="price-filter-title">
+        <h3 id="price-filter-title">Preço</h3>
+        <div class="price-range">
+          <label class="price-field">
+            <span>Mínimo</span>
+            <span class="price-input">
+              <span aria-hidden="true">R$</span>
+              <input
+                type="number"
+                name="precoMinimo"
+                min="0"
+                step="0.01"
+                placeholder="0,00"
+                aria-label="Preço mínimo"
+                [(ngModel)]="precoMinimo">
+            </span>
+          </label>
+          <label class="price-field">
+            <span>Máximo</span>
+            <span class="price-input">
+              <span aria-hidden="true">R$</span>
+              <input
+                type="number"
+                name="precoMaximo"
+                min="0"
+                step="0.01"
+                placeholder="0,00"
+                aria-label="Preço máximo"
+                [(ngModel)]="precoMaximo">
+            </span>
+          </label>
+        </div>
+      </section>
+
+      @for (group of filterGroups; track group.title; let index = $index) {
+        <section class="filter-group" [attr.aria-labelledby]="'home-filter-' + index">
+          <h3 [id]="'home-filter-' + index">{{ group.title }}</h3>
+          <div class="filter-options">
+            @for (option of group.options; track option) {
+              <button
+                class="filter-option"
+                [class.selected]="selectedFilters.has(option)"
+                type="button"
+                [attr.aria-pressed]="selectedFilters.has(option)"
+                (click)="alternarFiltro(option)">
+                <span class="filter-check" aria-hidden="true">
+                  @if (selectedFilters.has(option)) {
+                    <mat-icon>check</mat-icon>
+                  }
+                </span>
+                {{ option }}
+              </button>
+            }
+          </div>
+        </section>
+      }
+
+      <section class="filter-group" aria-labelledby="features-filter-title">
+        <h3 id="features-filter-title">Recursos</h3>
+        <div class="feature-options">
+          @for (feature of featureFilters; track feature) {
+            <label class="feature-option">
+              <input
+                type="checkbox"
+                [checked]="selectedFeatures.has(feature)"
+                (change)="aoAlterarRecurso(feature, $event)">
+              <span>{{ feature }}</span>
+            </label>
+          }
+        </div>
+      </section>
+
+      @if (hasActiveFilters) {
+        <p class="filter-summary" aria-live="polite">
+          {{ totalSelectedFilters }} {{ totalSelectedFilters === 1 ? 'filtro selecionado' : 'filtros selecionados' }}
+        </p>
+      }
+    </aside>
+
+    <div class="products-area">
+      <header class="catalog-heading">
+        <div>
+          <span class="catalog-eyebrow">SKYLINE DRONES</span>
+          <h1 id="catalog-title">Drones em destaque</h1>
+          <p>Encontre o equipamento ideal para o seu próximo voo.</p>
+        </div>
+      </header>
+
+      @if (carregandoDrones) {
+        <p class="catalog-state" role="status">Carregando drones...</p>
+      } @else if (mensagemErroDrones) {
+        <p class="catalog-state catalog-error" role="alert">{{ mensagemErroDrones }}</p>
+      } @else if (drones.length === 0) {
+        <p class="catalog-state">Nenhum drone disponível no momento.</p>
+      } @else {
+        <div class="drone-grid">
+          @for (drone of drones; track drone.id) {
+            <article class="drone-card">
+              <div class="product-visual">
+                <button class="favorite-button" type="button" aria-label="Adicionar aos favoritos">
+                  <mat-icon>favorite_border</mat-icon>
+                </button>
+
+                @if (imagemPrincipal(drone); as imagem) {
+                  @if (!imagensComFalha.has(drone.id)) {
+                    <img
+                      class="product-image"
+                      [src]="obterUrlImagem(imagem)"
+                      [alt]="drone.nome"
+                      (error)="marcarImagemComFalha(drone.id)"
+                    >
+                  } @else {
+                    <div class="image-placeholder" role="img" [attr.aria-label]="'Imagem indisponível para ' + drone.nome"></div>
+                  }
+                } @else {
+                  <div class="image-placeholder" role="img" [attr.aria-label]="'Imagem indisponível para ' + drone.nome"></div>
+                }
+
+                <button class="cart-button" type="button" [attr.aria-label]="'Adicionar ' + drone.nome + ' ao carrinho'">
+                  <mat-icon>shopping_cart</mat-icon>
+                  <span>Adicionar ao carrinho</span>
+                </button>
+              </div>
+
+              <div class="product-details">
+                <h2 class="product-name">
+                  <span>{{ drone.nome }}</span>
+                  @if (drone.modelo?.nome) {
+                    <span class="product-model">{{ drone.modelo.nome }}</span>
+                  }
+                </h2>
+
+                <div class="product-pricing">
+                  <span class="current-price">{{ formatarPreco(drone.preco) }}</span>
+                </div>
+
+                <p class="installment-price">
+                  ou 12x de {{ formatarPreco(drone.preco / 12) }} sem juros
+                </p>
+
+                <p class="shipping-label">
+                  <mat-icon>local_shipping</mat-icon>
+                  Frete grátis
+                </p>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,20 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import 'tailwindcss';
+
+:root {
+  --color-brand-primary: #84cc16;
+  --color-brand-primary-hover: #a3e635;
+  --color-brand-bg: #f5f6f4;
+  --color-brand-sidebar: #ffffff;
+  --color-brand-card: #ffffff;
+  --color-brand-border: #d4d9d0;
+  color-scheme: light;
+}
+
+html, body {
+  background-color: var(--mat-sys-surface, #f5f6f4);
+  color: var(--mat-sys-on-surface, #1b1f18);
+  font-family: Roboto, 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  min-height: 100%;
+}

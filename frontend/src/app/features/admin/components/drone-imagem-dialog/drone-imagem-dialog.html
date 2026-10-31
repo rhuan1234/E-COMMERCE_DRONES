@@ -1,0 +1,102 @@
+<header class="dialog-header">
+  <div class="dialog-icon">
+    <mat-icon>photo_library</mat-icon>
+  </div>
+  <div class="dialog-heading">
+    <h2 mat-dialog-title>Imagens do drone</h2>
+    <p>{{ drone.nome }} · {{ imagens.length }}/5 imagens</p>
+  </div>
+  <button mat-icon-button type="button" aria-label="Fechar gerenciamento de imagens" (click)="fechar()">
+    <mat-icon>close</mat-icon>
+  </button>
+</header>
+
+<mat-dialog-content>
+  @if (carregando) {
+    <div class="dialog-status">
+      <mat-spinner diameter="32"></mat-spinner>
+      <span>Carregando imagens...</span>
+    </div>
+  } @else {
+    <section class="upload-section" aria-labelledby="upload-title">
+      <h3 id="upload-title">Adicionar imagem</h3>
+      <p class="help-text">JPEG, PNG, GIF ou WebP. Até 8 MB por imagem.</p>
+
+      <div class="upload-controls">
+        <label class="file-picker">
+          <mat-icon>attach_file</mat-icon>
+          <span>{{ arquivoSelecionado?.name || 'Selecionar imagem' }}</span>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/gif,image/webp"
+            [disabled]="imagens.length >= 5 || enviando"
+            (change)="selecionarArquivo($event)"
+          >
+        </label>
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          [disabled]="!arquivoSelecionado || enviando || imagens.length >= 5"
+          (click)="enviarImagem()"
+        >
+          @if (enviando) {
+            Enviando...
+          } @else {
+            Enviar imagem
+          }
+        </button>
+      </div>
+
+      <mat-checkbox [(ngModel)]="principal" [disabled]="enviando">
+        Definir como imagem principal
+      </mat-checkbox>
+      @if (imagens.length >= 5) {
+        <p class="help-text">O limite de 5 imagens foi atingido.</p>
+      }
+    </section>
+
+    @if (mensagemErro) {
+      <div class="dialog-error" role="alert">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ mensagemErro }}</span>
+      </div>
+    }
+
+    <section class="images-section" aria-labelledby="images-title">
+      <h3 id="images-title">Imagens cadastradas</h3>
+      @if (imagens.length === 0) {
+        <p class="empty-state">Este drone ainda não possui imagens.</p>
+      } @else {
+        <div class="image-grid">
+          @for (imagem of imagens; track imagem.id) {
+            <article class="image-card">
+              <img [src]="obterUrlImagem(imagem)" [alt]="'Imagem do drone ' + drone.nome">
+              <div class="image-info">
+                <span>{{ imagem.principal ? 'Imagem principal' : 'Imagem ' + (imagem.ordem + 1) }}</span>
+                <button
+                  mat-icon-button
+                  color="warn"
+                  type="button"
+                  [attr.aria-label]="'Remover imagem ' + (imagem.ordem + 1)"
+                  [disabled]="imagemExcluindoId !== null || enviando"
+                  (click)="excluirImagem(imagem)"
+                >
+                  @if (imagemExcluindoId === imagem.id) {
+                    <mat-spinner diameter="20"></mat-spinner>
+                  } @else {
+                    <mat-icon>delete</mat-icon>
+                  }
+                </button>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </section>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-flat-button color="primary" type="button" (click)="fechar()">Fechar</button>
+</mat-dialog-actions>

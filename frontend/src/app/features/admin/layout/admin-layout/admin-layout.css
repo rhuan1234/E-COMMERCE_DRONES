@@ -1,0 +1,222 @@
+.admin-container {
+  height: 100vh;
+  width: 100%;
+  background-color: var(--mat-sys-surface, #f5f6f4);
+  color: var(--mat-sys-on-surface, #1b1f18);
+}
+
+.admin-sidenav {
+  width: 260px;
+  background-color: var(--mat-sys-surface-container, #ffffff) !important;
+  border-right: 1px solid var(--mat-sys-outline-variant, #d4d9d0) !important;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-x: hidden;
+}
+
+.admin-sidenav.collapsed {
+  width: 76px;
+}
+
+/* Força o drawer interno a ocupar 100% da altura para empurrar o rodapé para baixo */
+:host ::ng-deep .admin-sidenav .mat-drawer-inner-container {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  overflow-x: hidden;
+}
+
+/* Cabeçalho da marca */
+.sidenav-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 12px 20px 20px;
+  min-height: 84px;
+  box-sizing: border-box;
+}
+
+.admin-sidenav.collapsed .sidenav-header {
+  justify-content: center;
+  padding: 20px 12px;
+}
+
+.toggle-sidebar-btn {
+  margin-left: auto;
+  color: var(--mat-sys-on-surface-variant, #454b42);
+  flex-shrink: 0;
+}
+
+.admin-sidenav.collapsed .toggle-sidebar-btn {
+  margin-left: 0;
+}
+
+.brand-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background-color: var(--mat-sys-primary, #84cc16);
+  color: var(--mat-sys-on-primary, #000000);
+  font-weight: 800;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--mat-sys-primary, #84cc16) 30%, transparent);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.brand-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--mat-sys-on-surface, #ffffff);
+}
+
+.brand-subtitle {
+  font-size: 0.75rem;
+  color: var(--mat-sys-on-surface-variant, #454b42);
+}
+
+/* Lista de navegação */
+.nav-list {
+  padding: 16px 12px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-sidenav.collapsed .nav-list,
+.admin-sidenav.collapsed .sidenav-footer {
+  padding: 16px 10px !important;
+}
+
+.nav-list a.mat-mdc-list-item {
+  border-radius: 10px;
+  margin-bottom: 2px;
+  color: var(--mat-sys-on-surface-variant, #454b42);
+  transition: all 0.2s ease-in-out;
+}
+
+:host ::ng-deep .admin-sidenav.collapsed .nav-list .mdc-list-item__content {
+  display: none !important;
+}
+
+:host ::ng-deep .admin-sidenav.collapsed .nav-list .mat-mdc-list-item {
+  display: flex !important;
+  justify-content: center !important;
+  padding-inline: 0 !important;
+}
+
+:host ::ng-deep .admin-sidenav.collapsed .nav-list .mdc-list-item__start,
+:host ::ng-deep .admin-sidenav.collapsed .profile-link .mat-icon,
+:host ::ng-deep .admin-sidenav.collapsed .logout-btn .mat-icon {
+  margin: 0 !important;
+}
+
+.nav-list a.mat-mdc-list-item:hover {
+  background-color: var(--mat-sys-surface-container-high, #eef1eb);
+  color: var(--mat-sys-on-surface, #1b1f18);
+}
+
+/* Item de navegação ativo com verde-limão e fundo sutil */
+.nav-list a.active-nav-item {
+  background-color: color-mix(in srgb, var(--mat-sys-primary, #84cc16) 14%, transparent) !important;
+  color: var(--mat-sys-primary, #84cc16) !important;
+  font-weight: 600;
+}
+
+.nav-list a.active-nav-item mat-icon {
+  color: var(--mat-sys-primary, #84cc16) !important;
+}
+
+/* Espaçador flexível para empurrar o logout para o rodapé */
+.sidenav-spacer {
+  flex: 1 1 auto;
+}
+
+/* Rodapé */
+.sidenav-footer {
+  padding: 16px;
+}
+
+.profile-menu {
+  position: relative;
+}
+
+.profile-link,
+.logout-btn {
+  width: 100%;
+  justify-content: flex-start !important;
+  border-radius: 10px !important;
+  padding: 10px 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px;
+}
+
+.profile-link {
+  color: var(--mat-sys-on-surface-variant, #454b42) !important;
+}
+
+.profile-link:hover {
+  background-color: var(--mat-sys-surface-container-high, #eef1eb) !important;
+  color: var(--mat-sys-on-surface, #1b1f18) !important;
+}
+
+.profile-email {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logout-btn {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  color: var(--mat-sys-error, #ef4444) !important;
+  background-color: var(--mat-sys-surface-container-high, #eef1eb) !important;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+}
+
+.admin-sidenav.collapsed .profile-link,
+.admin-sidenav.collapsed .logout-btn {
+  justify-content: center !important;
+  padding: 10px 0 !important;
+  min-width: 0 !important;
+  gap: 0;
+}
+
+.profile-menu:hover .logout-btn,
+.profile-menu:focus-within .logout-btn {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Área de conteúdo */
+.admin-content {
+  background-color: var(--mat-sys-surface, #f5f6f4) !important;
+  overflow-y: auto;
+  padding: 32px;
+  margin-left: 260px !important;
+  transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-content.collapsed {
+  margin-left: 76px !important;
+}
+
+.content-wrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+}
