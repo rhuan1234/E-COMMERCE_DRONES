@@ -122,12 +122,30 @@ E-COMMERCE_DRONES/
    - Criação de pedido reserva/baixa estoque imediatamente.
    - Cancelamento de pedido (seja por cliente ou admin) estorna as quantidades correspondentes de volta ao estoque do drone de forma atômica (`@Transactional`).
 
+9. **Governança e Padronização Backend (Skill `quarkus-backend`)**:
+   - Implantação da skill `.agents/skills/quarkus-backend` para orientar a implementação e revisão em camadas (`Resource -> Service -> Repository -> Entity`), DTOs imutáveis via Records, blindagem contra IDOR, isolamento de usuários e proibição de vazamento de entidades JPA.
+
+10. **Padrão de Persistência, Schema e Concorrência (Skill `persistencia-postgresql`)**:
+    - Implantação da skill `.agents/skills/persistencia-postgresql` para governança de entidades JPA (atributos privados e acessores explícitos), repositórios Panache com queries parametrizadas, migrations SQL versionadas via Flyway, restrições e integridade referencial, isolamento entre tenants (prevenção de relações cruzadas) e controle de concorrência (otimista via `@Version` e pessimista via `FOR UPDATE`).
+    - Exigência de portão de aprovação formal para qualquer alteração que represente nova decisão de domínio.
+
+11. **Padrão e Governança de Frontend Standalone (Skill `angular-frontend`)**:
+    - Implantação da skill `.agents/skills/angular-frontend` para governança da arquitetura Angular standalone, novos controles de fluxo (`@if`, `@for`, `@switch`), Signals, formulários reativos tipados, validações de domínio brasileiro (CPF, CNPJ, CEP), serviços HTTP sem criação de endpoints ou campos inventados, autenticação JWT com interceptor, guards de rota, tratamento estrito dos 4 estados de UI (Loading, Success, Empty, Error) e verificação de integridade via build de produção.
+
+12. **Governança de Testes Frontend e Validação Comportamental (Skill `testes-frontend`)**:
+    - Implantação da skill `.agents/skills/testes-frontend` para orientar a criação, revisão, execução e auditoria de testes unitários e de integração no Angular 22 com Vitest e JSDOM.
+    - Foco em comportamento observável (matriz das 12 dimensões: renderização, interação, validações, chamadas HTTP, fluxos de sucesso, fluxos de erro 400/500, loading, empty state, navegação, autorização/guards, sessão 401 e prevenção de envio duplicado).
+    - Exigência estrita de comprovação com evidência real de terminal, proibindo declarações nominais de aprovação ou cobertura sem logs concretos.
+
 ---
 
 ## 5. Estado Atual de Implementação
 
 ### Backend (Concluído)
 - [x] Arquitetura base Quarkus com Hibernate Panache configurada.
+- [x] Governança e diretrizes de desenvolvimento padronizadas via skill `quarkus-backend`.
+- [x] Governança e padronização de persistência PostgreSQL/JPA/Flyway via skill `persistencia-postgresql`.
+- [x] Governança, arquitetura e execução obrigatória de testes automatizados via skill `testes-backend` (JUnit 5, REST Assured, PostgreSQL e concorrência).
 - [x] Banco de dados PostgreSQL com script de carga inicial completo (`import.sql`).
 - [x] Autenticação e Autorização via JWT (Login, geração e validação de token).
 - [x] CRUD completo de Drones com filtros (nome, marca, modelo, faixa de preço, câmera).
@@ -147,6 +165,7 @@ E-COMMERCE_DRONES/
 - [x] Módulo de Avaliações de produtos (nota de 1 a 5 e comentários por produto e cliente).
 
 ### Frontend (Concluído)
+- [x] Governança e diretrizes de desenvolvimento frontend padronizadas via skill `angular-frontend`.
 - [x] Configuração inicial Angular 22, Tailwind CSS e Angular Material.
 - [x] Layout Administrativo completo com menu lateral, cabeçalho e navegação.
 - [x] Módulo de Autenticação: tela de Login e tela de Cadastro de Cliente (`Register`).

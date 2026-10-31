@@ -203,6 +203,8 @@ Ao implementar novas telas ou componentes no frontend, siga este fluxo:
 
 ## 9. Skills e Ferramentas Aplicáveis
 
+- **Skill `angular-frontend`**: Localizada em `.agents/skills/angular-frontend/SKILL.md`. Consulte e aplique mandatoriamente ao implementar ou revisar frontend Angular standalone (componentes, rotas, formulários reativos, serviços HTTP, modelos TypeScript, guards, estado de sessão, listagens, inclusão, edição, integração com APIs, tratamento dos 4 estados de UI e validação de build).
+- **Skill `testes-frontend`**: Localizada em `.agents/skills/testes-frontend/SKILL.md`. Consulte e aplique mandatoriamente para criação, revisão, depuração e execução de testes automatizados com Vitest e JSDOM, cobrindo componentes, serviços HTTP, formulários, rotas, guards, interceptores, sessão, fluxos de erro e prevenção de envio duplicado, com foco estrito em comportamento observável e evidência real de terminal.
 - **Skill `modern-web-guidance`**: Consulte para diretrizes atualizadas de UI/Layout, acessibilidade (a11y), Tailwind CSS e boas práticas de formulários e estados assíncronos.
 - **Angular CLI**: Utilize para compilação, build e geração de artefatos (`npm start`, `npm run build`).
 - **Vitest**: Ferramenta primária para testes unitários rápidos e orientados a feedback contínuo.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Persistência PostgreSQL"
+  short_description: "Oriente alterações de persistência, JPA, Flyway e concorrência"
+  default_prompt: "Use $persistencia-postgresql para orientar alterações de persistência, entidades JPA, Panache repositories, migrations Flyway, restrições e concorrência no PostgreSQL."

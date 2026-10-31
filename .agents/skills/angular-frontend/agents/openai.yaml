@@ -1,0 +1,4 @@
+interface:
+  display_name: "Angular Frontend"
+  short_description: "Implementação e revisão de frontend Angular standalone"
+  default_prompt: "Oriente a implementação ou revisão deste componente/serviço frontend em Angular standalone."

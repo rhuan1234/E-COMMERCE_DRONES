@@ -201,6 +201,9 @@ Ao receber uma demanda relacionada ao backend, siga rigorosamente as seguintes e
 
 ## 9. Skills e Ferramentas Aplicáveis
 
+- **Skill `quarkus-backend`**: Localizada em `.agents/skills/quarkus-backend/SKILL.md`. Deve ser consultada para implementação, refatoração e revisão de código backend, cobrindo camadas (Resource -> Service -> Repository -> Entity), isolamento de usuários, DTOs imutáveis, transações e validações.
+- **Skill `persistencia-postgresql`**: Localizada em `.agents/skills/persistencia-postgresql/SKILL.md`. Deve ser consultada para criação e alteração de entidades JPA, repositories Panache, migrations Flyway versionadas, índices, constraints, isolamento de tenants e concorrência no PostgreSQL.
+- **Skill `testes-backend`**: Localizada em `.agents/skills/testes-backend/SKILL.md`. Deve ser consultada para orientar a criação, revisão, arquitetura e execução obrigatória de testes automatizados (unitários, integração, API com REST Assured, persistência, autorização, concorrência, isolamento entre tenants e regressão com comprovação de resultados reais).
 - **Quarkus Dev Mode**: Utilize o live-reload (`./mvnw quarkus:dev`) para validação rápida de alterações sem necessidade de reiniciar a JVM.
 - **Swagger UI**: Acesse `http://localhost:8080/q/swagger-ui/` para validar schemas JSON, payloads e testar requisições diretamente.
 - **Mailtrap**: Verifique o recebimento de e-mails de recuperação de senha com tokens UUID em desenvolvimento.

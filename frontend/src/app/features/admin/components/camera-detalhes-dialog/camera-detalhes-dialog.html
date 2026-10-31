@@ -12,7 +12,7 @@
 </header>
 
 <mat-dialog-content>
-  @if (!carregando) {
+  @if (carregando) {
     <div class="dialog-status">
       <mat-spinner diameter="32"></mat-spinner>
       <span>Carregando informações da câmera...</span>
