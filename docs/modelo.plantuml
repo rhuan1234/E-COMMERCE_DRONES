@@ -1,0 +1,252 @@
+@startuml
+title E-Commerce de Drones - Modelo de Dados da Aplicação Backend
+
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam linetype ortho
+skinparam shadowing false
+skinparam roundcorner 5
+hide empty methods
+
+package "drones.model.usuario" {
+    enum Perfil {
+        ADMIN
+        CLIENTE
+    }
+
+    class Usuario {
+        - id: Long
+        - login: String
+        - senhaHash: String
+        - perfil: Perfil
+        - email: String
+        - nomeCompleto: String
+        - cpf: String
+        - enderecoPrincipalId: Long
+        - telefone: String
+        - ativo: boolean
+    }
+
+    class TokenResetarSenha {
+        - id: Long
+        - token: String
+        - expiracao: LocalDateTime
+        - usado: boolean
+        - usuario: Usuario
+    }
+}
+
+package "drones.model.fornecedor" {
+    class Estado {
+        - id: Long
+        - nome: String
+    }
+
+    class Cidade {
+        - id: Long
+        - nome: String
+        - estado: Estado
+    }
+
+    class Endereco {
+        - id: Long
+        - rua: String
+        - bairro: String
+        - cidade: Cidade
+        - cep: String
+        - isPrincipal: boolean
+    }
+
+    class Telefone {
+        - id: Long
+        - numero: String
+    }
+
+    class Fornecedor {
+        - id: Long
+        - nome: String
+        - cnpj: String
+        - email: String
+        - telefone: String
+        - endereco: Endereco
+        - ativo: boolean
+    }
+}
+
+package "drones.model.drones" {
+    class Marca {
+        - id: Long
+        - nome: String
+    }
+
+    class Modelo {
+        - id: Long
+        - nome: String
+        - marca: Marca
+    }
+
+    class Camera {
+        - id: Long
+        - marca: Marca
+        - modelo: Modelo
+        - resolucao: String
+        - zoom: int
+        - estabilizacao: boolean
+        - fps: String
+    }
+
+    class Drone {
+        - id: Long
+        - nome: String
+        - marca: Marca
+        - modelo: Modelo
+        - preco: double
+        - quantidadeDisponivel: int
+        - ativa: boolean
+        - tempoVooPratico: int
+        - pesoDecolagem: double
+        - altitudeMaxima: int
+        - velocidadeMaxima: int
+        - alcanceTransmissao: int
+        - possuiCamera: boolean
+        - camera: Camera
+        - quantidadeMotores: int
+        - comControleRemoto: boolean
+        - controladoPorAplicativo: boolean
+        - quantidadeBaterias: int
+        - duracaoBateria: String
+        - frequenciaWifi: String
+        - possuiGPS: boolean
+        - fornecedor: Fornecedor
+        - promocao: Promocao
+    }
+
+    class DroneImage {
+        - id: Long
+        - drone: Drone
+        - caminho: String
+        - principal: boolean
+        - ordem: int
+    }
+
+    class Avaliacao {
+        - id: Long
+        - nota: Integer
+        - comentario: String
+        - dataAvaliacao: LocalDateTime
+        - usuario: Usuario
+        - drone: Drone
+    }
+
+    class Favorito {
+        - id: Long
+        - usuario: Usuario
+        - drone: Drone
+    }
+}
+
+package "drones.model.promocao" {
+    class Promocao {
+        - id: Long
+        - nome: String
+        - percentualDesconto: BigDecimal
+        - dataInicio: LocalDateTime
+        - dataFim: LocalDateTime
+    }
+}
+
+package "drones.model.pedido" {
+    enum StatusPedido {
+        PENDENTE
+        PAGO
+        CANCELADO
+    }
+
+    enum StatusPagamento {
+        APROVADO
+        PENDENTE
+        CANCELADO
+    }
+
+    class Pedido {
+        - id: Long
+        - dataPedido: LocalDateTime
+        - valorTotal: double
+        - statusPedido: StatusPedido
+        - usuario: Usuario
+        - ruaEntrega: String
+        - bairroEntrega: String
+        - cidadeEntrega: String
+        - estadoEntrega: String
+        - cepEntrega: String
+        + calcularValorTotal(): void
+    }
+
+    class ItemPedido {
+        - id: Long
+        - quantidade: int
+        - precoUnitario: double
+        - drone: Drone
+        - pedido: Pedido
+        + getSubtotal(): double
+    }
+
+    abstract class Pagamento {
+        - id: Long
+        - valor: Double
+        - statusPagamento: StatusPagamento
+        - pedido: Pedido
+    }
+
+    class PagamentoPix {
+        - chavePix: String
+    }
+
+    class PagamentoCartao {
+        - numeroCartao: String
+        - nomeTitular: String
+        - dataValidade: String
+        - codigoSeguranca: String
+    }
+}
+
+' Relacionamentos - Usuário e Segurança
+Usuario --> Perfil
+Usuario "1" *-- "0..*" Endereco : enderecos
+Usuario "1" --> "0..*" TokenResetarSenha : tokens
+Usuario "1" --> "0..*" Pedido : historico
+Usuario "1" --> "0..*" Favorito : favoritos
+Usuario "1" --> "0..*" Avaliacao : avaliacoes
+
+' Relacionamentos - Localidades e Fornecedores
+Estado "1" *-- "0..*" Cidade : cidades
+Cidade "1" *-- "0..*" Endereco : enderecos
+Fornecedor "1" *-- "1" Endereco : endereco
+Fornecedor "1" o-- "0..*" Drone : fornece
+
+' Relacionamentos - Catálogo de Drones
+Marca "1" *-- "0..*" Modelo : modelos
+Camera "0..*" --> "1" Marca : marca
+Camera "0..*" --> "1" Modelo : modelo
+Drone "0..*" --> "1" Marca : marca
+Drone "0..*" --> "1" Modelo : modelo
+Drone "0..*" --> "0..1" Camera : camera
+Drone "0..*" --> "1" Fornecedor : fornecedor
+Drone "0..*" --> "0..1" Promocao : promocao
+Drone "1" *-- "0..5" DroneImage : imagens
+Drone "1" <-- "0..*" Avaliacao : avaliacoes
+Drone "1" <-- "0..*" Favorito : favoritados
+
+' Relacionamentos - Pedidos e Pagamentos
+Pedido "1" *-- "1..*" ItemPedido : itens
+Drone "1" <-- "0..*" ItemPedido : produto
+Pedido "1" *-- "0..1" Pagamento : pagamento
+Pagamento <|-- PagamentoPix
+Pagamento <|-- PagamentoCartao
+Pedido --> StatusPedido
+Pagamento --> StatusPagamento
+
+' Relacionamentos - Promoções
+Promocao "0..1" o-- "0..*" Drone : aplica-se-a
+
+@enduml
