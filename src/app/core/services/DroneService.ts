@@ -53,6 +53,36 @@ export class DroneService {
     return this.http.get<PagedResponse<Drone>>(this.apiUrl, { params });
   }
 
+  findAllEcommerce(
+    page: number = 0,
+    pageSize: number = 10,
+    filtros?: DroneFiltroParams,
+  ): Observable<PagedResponse<Drone>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
+
+    if (filtros) {
+      if (filtros.nome && filtros.nome.trim()) {
+        params = params.set('nome', filtros.nome.trim());
+      }
+      if (filtros.marca && filtros.marca.trim()) {
+        params = params.set('marca', filtros.marca.trim());
+      }
+      if (filtros.modelo && filtros.modelo.trim()) {
+        params = params.set('modelo', filtros.modelo.trim());
+      }
+      if (filtros.min !== null && filtros.min !== undefined && !Number.isNaN(filtros.min)) {
+        params = params.set('min', filtros.min.toString());
+      }
+      if (filtros.max !== null && filtros.max !== undefined && !Number.isNaN(filtros.max)) {
+        params = params.set('max', filtros.max.toString());
+      }
+    }
+
+    return this.http.get<PagedResponse<Drone>>(this.apiUrlEcommerce, { params });
+  }
+
   findByModelo(page: number = 0, pageSize: number = 10, modelo: string): Observable<PagedResponse<Drone>> {
     return this.http.get<PagedResponse<Drone>>(
       `${this.apiUrlEcommerce}/modelos/${encodeURIComponent(modelo)}?page=${page}&pageSize=${pageSize}`,

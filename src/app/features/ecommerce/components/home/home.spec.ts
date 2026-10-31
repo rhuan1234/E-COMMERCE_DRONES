@@ -34,7 +34,7 @@ describe('Home', () => {
         nome: 'Drone de teste',
         preco: 1200,
         imagens: [],
-      } as Drone,
+      } as unknown as Drone,
     ];
     fixture.detectChanges();
 

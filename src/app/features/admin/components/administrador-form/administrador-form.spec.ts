@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AdmnistradorForm } from './admnistrador-form';
+import { AdministradorForm } from './administrador-form';
 
-describe('AdmnistradorForm', () => {
-  let component: AdmnistradorForm;
-  let fixture: ComponentFixture<AdmnistradorForm>;
+describe('AdministradorForm', () => {
+  let component: AdministradorForm;
+  let fixture: ComponentFixture<AdministradorForm>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdmnistradorForm],
+      imports: [AdministradorForm],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(AdmnistradorForm);
+    fixture = TestBed.createComponent(AdministradorForm);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

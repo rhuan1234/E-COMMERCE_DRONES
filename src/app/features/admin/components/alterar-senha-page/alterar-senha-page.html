@@ -195,11 +195,10 @@
         >
           @if (alterandoSenha) {
             <mat-spinner diameter="20"></mat-spinner>
-            <span>Alterando senha...</span>
           } @else {
             <mat-icon>save</mat-icon>
-            <span>Alterar senha</span>
           }
+          <span>{{ alterandoSenha ? 'Alterando senha...' : 'Alterar senha' }}</span>
         </button>
       </div>
     </form>
