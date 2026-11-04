@@ -338,6 +338,15 @@
   color: #e5484d;
 }
 
+.favorite-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.favorite-button[aria-pressed="true"] {
+  color: #e5484d;
+}
+
 .cart-button {
   position: absolute;
   right: 14px;

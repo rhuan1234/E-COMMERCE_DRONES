@@ -3,6 +3,9 @@ import { of, Subject } from 'rxjs';
 import { Drone } from '../../../../core/models/drone/Drone';
 import { DroneService } from '../../../../core/services/DroneService';
 import { EcommerceCatalogSearchService } from '../../../../core/services/EcommerceCatalogSearchService';
+import { FavoritoService } from '../../../../core/services/FavoritoService';
+import { AuthService } from '../../../../core/services/auth/AuthService';
+import { Router } from '@angular/router';
 import { Home } from './home';
 
 function criarDrone(dados: Pick<Drone, 'id' | 'nome' | 'preco' | 'imagens'>): Drone {
@@ -15,12 +18,35 @@ describe('Home', () => {
   const droneService = {
     findAllEcommerce: vi.fn().mockReturnValue(of({ items: [], totalPages: 1 })),
   };
+  const favoritoService = {
+    listar: vi.fn().mockReturnValue(of({
+      items: [],
+      page: 0,
+      pageSize: 100,
+      totalItems: 0,
+      totalPages: 0,
+    })),
+    adicionar: vi.fn().mockReturnValue(of('ok')),
+    remover: vi.fn().mockReturnValue(of('ok')),
+  };
+  const authService = { isAuthenticated: vi.fn().mockReturnValue(true) };
+  const router = { navigate: vi.fn() };
 
   beforeEach(async () => {
     droneService.findAllEcommerce.mockClear();
+    favoritoService.listar.mockClear();
+    favoritoService.adicionar.mockClear();
+    favoritoService.remover.mockClear();
+    authService.isAuthenticated.mockReturnValue(true);
+    router.navigate.mockClear();
     await TestBed.configureTestingModule({
       imports: [Home],
-      providers: [{ provide: DroneService, useValue: droneService }],
+      providers: [
+        { provide: DroneService, useValue: droneService },
+        { provide: FavoritoService, useValue: favoritoService },
+        { provide: AuthService, useValue: authService },
+        { provide: Router, useValue: router },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Home);
@@ -135,5 +161,41 @@ describe('Home', () => {
       expect.objectContaining({ modelo: 'Mavic' }),
     );
     expect(fixture.nativeElement.querySelectorAll('.drone-card')).toHaveLength(2);
+  });
+
+  it('adds and removes a favorite from the drone card', () => {
+    const drone = criarDrone({ id: 21, nome: 'Drone favorito', preco: 3000, imagens: [] });
+    component.drones.set([drone]);
+    fixture.detectChanges();
+
+    const button = fixture.nativeElement.querySelector('.favorite-button') as HTMLButtonElement;
+    expect(button.getAttribute('aria-pressed')).toBe('false');
+    button.click();
+    fixture.detectChanges();
+
+    expect(favoritoService.adicionar).toHaveBeenCalledWith(21);
+    expect(button.getAttribute('aria-pressed')).toBe('true');
+
+    button.click();
+    fixture.detectChanges();
+
+    expect(favoritoService.remover).toHaveBeenCalledWith(21);
+    expect(button.getAttribute('aria-pressed')).toBe('false');
+  });
+
+  it('redirects unauthenticated users to login before adding a favorite', () => {
+    authService.isAuthenticated.mockReturnValue(false);
+    component.alternarFavorito(criarDrone({
+      id: 22,
+      nome: 'Drone protegido',
+      preco: 3200,
+      imagens: [],
+    }));
+
+    expect(router.navigate).toHaveBeenCalledWith(
+      ['/login'],
+      { queryParams: { returnUrl: '/home' } },
+    );
+    expect(favoritoService.adicionar).not.toHaveBeenCalled();
   });
 });

@@ -1,12 +1,16 @@
 import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { EMPTY, Subject, catchError, forkJoin, map, switchMap, tap } from 'rxjs';
+import { EMPTY, Observable, Subject, catchError, expand, forkJoin, map, reduce, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 import { Drone, DroneImagem } from '../../../../core/models/drone/Drone';
 import { DroneCatalogFeature, DroneCatalogFilters } from '../../../../core/models/drone/DroneCatalogFilters';
+import { PagedResponse } from '../../../../core/models/PagedResponse';
+import { AuthService } from '../../../../core/services/auth/AuthService';
 import { DroneService } from '../../../../core/services/DroneService';
 import { EcommerceCatalogSearchService } from '../../../../core/services/EcommerceCatalogSearchService';
+import { FavoritoService } from '../../../../core/services/FavoritoService';
 
 interface FilterGroup {
   title: string;
@@ -67,6 +71,10 @@ export class Home implements OnInit {
   readonly carregandoDrones = signal(true);
   readonly mensagemErroDrones = signal('');
   readonly imagensComFalha = new Set<number>();
+  readonly favoritosIds = signal<ReadonlySet<number>>(new Set());
+  readonly favoritosEmAtualizacao = signal<ReadonlySet<number>>(new Set());
+  readonly mensagemErroFavoritos = signal('');
+  readonly mensagemSucessoFavoritos = signal('');
   precoMinimo: number | null = null;
   precoMaximo: number | null = null;
   private readonly formatadorMoeda = new Intl.NumberFormat('pt-BR', {
@@ -100,6 +108,18 @@ export class Home implements OnInit {
       )
       .subscribe();
 
+    if (this.authService.isAuthenticated()) {
+      this.listarTodosFavoritos()
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (favoritos) => this.favoritosIds.set(new Set(favoritos.map((drone) => drone.id))),
+          error: (error: unknown) => {
+            console.error('Erro ao carregar favoritos:', error);
+            this.mensagemErroFavoritos.set('Não foi possível carregar seu estado de favoritos.');
+          },
+        });
+    }
+
     this.catalogSearch.searchTerm$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((termo) => {
@@ -111,7 +131,71 @@ export class Home implements OnInit {
   constructor(
     private readonly droneService: DroneService,
     private readonly catalogSearch: EcommerceCatalogSearchService,
+    private readonly favoritoService: FavoritoService,
+    private readonly authService: AuthService,
+    private readonly router: Router,
   ) {}
+
+  private listarTodosFavoritos(): Observable<Drone[]> {
+    const pageSize = 100;
+    return this.favoritoService.listar(0, pageSize).pipe(
+      expand((resposta) =>
+        resposta.page + 1 < resposta.totalPages
+          ? this.favoritoService.listar(resposta.page + 1, pageSize)
+          : EMPTY,
+      ),
+      reduce((drones, resposta: PagedResponse<Drone>) => [...drones, ...resposta.items], [] as Drone[]),
+    );
+  }
+
+  alternarFavorito(drone: Drone): void {
+    if (!this.authService.isAuthenticated()) {
+      void this.router.navigate(['/login'], { queryParams: { returnUrl: '/home' } });
+      return;
+    }
+
+    if (this.favoritosEmAtualizacao().has(drone.id)) {
+      return;
+    }
+
+    const jaFavoritado = this.favoritosIds().has(drone.id);
+    this.atualizarFavoritosEmAtualizacao(drone.id, true);
+    this.mensagemErroFavoritos.set('');
+    this.mensagemSucessoFavoritos.set('');
+    const requisicao = jaFavoritado
+      ? this.favoritoService.remover(drone.id)
+      : this.favoritoService.adicionar(drone.id);
+
+    requisicao.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        const ids = new Set(this.favoritosIds());
+        if (jaFavoritado) {
+          ids.delete(drone.id);
+          this.mensagemSucessoFavoritos.set(`${drone.nome} foi removido dos favoritos.`);
+        } else {
+          ids.add(drone.id);
+          this.mensagemSucessoFavoritos.set(`${drone.nome} foi adicionado aos favoritos.`);
+        }
+        this.favoritosIds.set(ids);
+        this.atualizarFavoritosEmAtualizacao(drone.id, false);
+      },
+      error: (error: unknown) => {
+        console.error('Erro ao atualizar favorito:', error);
+        this.mensagemErroFavoritos.set('Não foi possível atualizar seus favoritos. Tente novamente.');
+        this.atualizarFavoritosEmAtualizacao(drone.id, false);
+      },
+    });
+  }
+
+  private atualizarFavoritosEmAtualizacao(droneId: number, emAtualizacao: boolean): void {
+    const ids = new Set(this.favoritosEmAtualizacao());
+    if (emAtualizacao) {
+      ids.add(droneId);
+    } else {
+      ids.delete(droneId);
+    }
+    this.favoritosEmAtualizacao.set(ids);
+  }
 
   private buscarCatalogo(filtros: DroneCatalogFilters) {
     if (!this.termoBusca) {

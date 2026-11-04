@@ -178,6 +178,7 @@ E-COMMERCE_DRONES/
 - [x] Painel Admin - Gestão de Promoções: Listagem de promoções vigentes, criação e edição com cálculo de datas.
 - [x] Painel Usuário: Página de Perfil, gerenciador de endereços e alteração de senha.
 - [x] Vitrine E-commerce: Página Home inicial exibindo catálogo de drones em cards com fotos, especificações e preços.
+- [x] Sistema de Favoritos no E-Commerce: adicionar/remover nos cards e página paginada "Meus Favoritos" integrada ao backend.
 
 ---
 
@@ -188,9 +189,7 @@ E-COMMERCE_DRONES/
    - Visualização da galeria completa de imagens do drone.
    - Exibição de ficha técnica completa (bateria, alcance, câmera, peso, tempo de voo).
    - Listagem de avaliações com notas e comentários de outros compradores.
-2. **Sistema de Favoritos no E-Commerce**:
-   - Botão de favoritar/desfavoritar nos cards da Home e na página de detalhes.
-   - Página "Meus Favoritos" no perfil do cliente.
+2. **Sistema de Favoritos no E-Commerce**: concluído na Home e na página paginada "Meus Favoritos".
 3. **Carrinho de Compras (Cart)**:
    - Estado gerenciado (Signals ou RxJS Subject) com persistência em `LocalStorage`.
    - Adição, remoção, alteração de quantidades e verificação prévia de estoque.

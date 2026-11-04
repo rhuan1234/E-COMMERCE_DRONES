@@ -1,0 +1,77 @@
+<section class="favorites-page" aria-labelledby="favorites-title">
+  <header class="favorites-heading">
+    <div>
+      <span class="favorites-eyebrow">SUA SELEÇÃO</span>
+      <h1 id="favorites-title">Meus favoritos</h1>
+      <p>Os drones que você guardou para escolher depois.</p>
+    </div>
+    <a class="back-to-store" routerLink="/home">
+      <mat-icon>storefront</mat-icon>
+      Voltar à loja
+    </a>
+  </header>
+
+  @if (mensagemSucesso()) {
+    <p class="favorites-notice" role="status">{{ mensagemSucesso() }}</p>
+  }
+
+  @if (carregando()) {
+    <p class="favorites-state" role="status">Carregando seus favoritos...</p>
+  } @else if (erro()) {
+    <div class="favorites-state favorites-error" role="alert">
+      <p>{{ erro() }}</p>
+      <button type="button" (click)="carregarPagina(pagina())">Tentar novamente</button>
+    </div>
+  } @else if (drones().length === 0) {
+    <div class="favorites-empty">
+      <mat-icon aria-hidden="true">favorite_border</mat-icon>
+      <h2>Você ainda não tem favoritos</h2>
+      <p>Use o coração nos cards para guardar drones nesta lista.</p>
+      <a routerLink="/home">Explorar drones</a>
+    </div>
+  } @else {
+    <div class="favorites-grid">
+      @for (drone of drones(); track drone.id) {
+        <article class="favorite-card">
+          <div class="favorite-visual">
+            @if (imagemPrincipal(drone); as imagem) {
+              <img [src]="obterUrlImagem(imagem)" [alt]="drone.nome">
+            } @else {
+              <mat-icon aria-hidden="true">flight</mat-icon>
+            }
+          </div>
+          <div class="favorite-details">
+            <h2>{{ drone.nome }}</h2>
+            @if (drone.modelo?.nome) {
+              <p class="favorite-model">{{ drone.modelo.nome }}</p>
+            }
+            <p class="favorite-price">{{ formatarPreco(drone.preco) }}</p>
+            <button
+              type="button"
+              [disabled]="dronesEmRemocao().has(drone.id)"
+              [attr.aria-label]="'Remover ' + drone.nome + ' dos favoritos'"
+              (click)="removerFavorito(drone)">
+              <mat-icon>favorite</mat-icon>
+              {{ dronesEmRemocao().has(drone.id) ? 'Removendo...' : 'Remover dos favoritos' }}
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+
+    @if (totalPaginas() > 1) {
+      <nav class="favorites-pagination" aria-label="Paginação dos favoritos">
+        <button type="button" [disabled]="pagina() === 0 || carregando()" (click)="carregarPagina(pagina() - 1)">
+          Anterior
+        </button>
+        <span>Página {{ pagina() + 1 }} de {{ totalPaginas() }}</span>
+        <button
+          type="button"
+          [disabled]="pagina() + 1 >= totalPaginas() || carregando()"
+          (click)="carregarPagina(pagina() + 1)">
+          Próxima
+        </button>
+      </nav>
+    }
+  }
+</section>

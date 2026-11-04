@@ -32,7 +32,11 @@ export class Login {
     })
     .subscribe({
       next: () =>{
-        this.router.navigate(['/drones']);
+        const returnUrl = this.router.routerState.snapshot.root.queryParamMap.get('returnUrl');
+        const destino = returnUrl?.startsWith('/') && !returnUrl.startsWith('//')
+          ? returnUrl
+          : '/drones';
+        this.router.navigateByUrl(destino);
       },
 
       error: (err) =>{

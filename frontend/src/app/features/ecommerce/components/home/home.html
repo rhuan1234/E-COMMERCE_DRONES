@@ -107,6 +107,12 @@
         </div>
       </header>
 
+      @if (mensagemErroFavoritos()) {
+        <p class="catalog-state catalog-error" role="alert">{{ mensagemErroFavoritos() }}</p>
+      } @else if (mensagemSucessoFavoritos()) {
+        <p class="catalog-notice" role="status">{{ mensagemSucessoFavoritos() }}</p>
+      }
+
       @if (carregandoDrones()) {
         <p class="catalog-state" role="status">Carregando drones...</p>
       } @else if (mensagemErroDrones()) {
@@ -118,8 +124,14 @@
           @for (drone of drones(); track drone.id) {
             <article class="drone-card">
               <div class="product-visual">
-                <button class="favorite-button" type="button" aria-label="Adicionar aos favoritos">
-                  <mat-icon>favorite_border</mat-icon>
+                <button
+                  class="favorite-button"
+                  type="button"
+                  [disabled]="favoritosEmAtualizacao().has(drone.id)"
+                  [attr.aria-label]="favoritosIds().has(drone.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'"
+                  [attr.aria-pressed]="favoritosIds().has(drone.id)"
+                  (click)="alternarFavorito(drone)">
+                  <mat-icon>{{ favoritosIds().has(drone.id) ? 'favorite' : 'favorite_border' }}</mat-icon>
                 </button>
 
                 @if (imagemPrincipal(drone); as imagem) {
