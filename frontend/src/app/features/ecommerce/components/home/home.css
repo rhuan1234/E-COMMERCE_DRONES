@@ -211,6 +211,31 @@
   font-weight: 600;
 }
 
+.apply-filters {
+  width: 100%;
+  min-height: 40px;
+  margin-top: 18px;
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 7px;
+  background: var(--store-green-dark, #426d20);
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 120ms ease, opacity 120ms ease;
+}
+
+.apply-filters:hover:not(:disabled) {
+  background: var(--store-green, #7fbd35);
+}
+
+.apply-filters:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
 .products-area {
   min-width: 0;
 }

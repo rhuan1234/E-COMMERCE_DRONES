@@ -49,19 +49,19 @@
         <section class="filter-group" [attr.aria-labelledby]="'home-filter-' + index">
           <h3 [id]="'home-filter-' + index">{{ group.title }}</h3>
           <div class="filter-options">
-            @for (option of group.options; track option) {
+            @for (option of group.options; track option.value) {
               <button
                 class="filter-option"
-                [class.selected]="selectedFilters.has(option)"
+                [class.selected]="selectedFilters.has(group.key + ':' + option.value)"
                 type="button"
-                [attr.aria-pressed]="selectedFilters.has(option)"
-                (click)="alternarFiltro(option)">
+                [attr.aria-pressed]="selectedFilters.has(group.key + ':' + option.value)"
+                (click)="alternarFiltro(group.key, option.value)">
                 <span class="filter-check" aria-hidden="true">
-                  @if (selectedFilters.has(option)) {
+                  @if (selectedFilters.has(group.key + ':' + option.value)) {
                     <mat-icon>check</mat-icon>
                   }
                 </span>
-                {{ option }}
+                {{ option.label }}
               </button>
             }
           </div>
@@ -71,13 +71,13 @@
       <section class="filter-group" aria-labelledby="features-filter-title">
         <h3 id="features-filter-title">Recursos</h3>
         <div class="feature-options">
-          @for (feature of featureFilters; track feature) {
+          @for (feature of featureFilters; track feature.value) {
             <label class="feature-option">
               <input
                 type="checkbox"
-                [checked]="selectedFeatures.has(feature)"
-                (change)="aoAlterarRecurso(feature, $event)">
-              <span>{{ feature }}</span>
+                [checked]="selectedFeatures.has(feature.value)"
+                (change)="aoAlterarRecurso(feature.value, $event)">
+              <span>{{ feature.label }}</span>
             </label>
           }
         </div>
@@ -88,6 +88,14 @@
           {{ totalSelectedFilters }} {{ totalSelectedFilters === 1 ? 'filtro selecionado' : 'filtros selecionados' }}
         </p>
       }
+
+      <button
+        class="apply-filters"
+        type="button"
+        [disabled]="carregandoDrones()"
+        (click)="aplicarFiltros()">
+        Aplicar filtros
+      </button>
     </aside>
 
     <div class="products-area">
@@ -99,15 +107,15 @@
         </div>
       </header>
 
-      @if (carregandoDrones) {
+      @if (carregandoDrones()) {
         <p class="catalog-state" role="status">Carregando drones...</p>
-      } @else if (mensagemErroDrones) {
-        <p class="catalog-state catalog-error" role="alert">{{ mensagemErroDrones }}</p>
-      } @else if (drones.length === 0) {
+      } @else if (mensagemErroDrones()) {
+        <p class="catalog-state catalog-error" role="alert">{{ mensagemErroDrones() }}</p>
+      } @else if (drones().length === 0) {
         <p class="catalog-state">Nenhum drone disponível no momento.</p>
       } @else {
         <div class="drone-grid">
-          @for (drone of drones; track drone.id) {
+          @for (drone of drones(); track drone.id) {
             <article class="drone-card">
               <div class="product-visual">
                 <button class="favorite-button" type="button" aria-label="Adicionar aos favoritos">

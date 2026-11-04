@@ -1,8 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { Drone } from '../../../../core/models/drone/Drone';
 import { DroneService } from '../../../../core/services/DroneService';
 import { Home } from './home';
+
+function criarDrone(dados: Pick<Drone, 'id' | 'nome' | 'preco' | 'imagens'>): Drone {
+  return Object.assign(new Drone(), dados);
+}
 
 describe('Home', () => {
   let component: Home;
@@ -12,6 +16,7 @@ describe('Home', () => {
   };
 
   beforeEach(async () => {
+    droneService.findAllEcommerce.mockClear();
     await TestBed.configureTestingModule({
       imports: [Home],
       providers: [{ provide: DroneService, useValue: droneService }],
@@ -28,17 +33,35 @@ describe('Home', () => {
   });
 
   it('renders a card for each drone in the response', () => {
-    component.drones = [
-      {
-        id: 1,
-        nome: 'Drone de teste',
-        preco: 1200,
-        imagens: [],
-      } as unknown as Drone,
-    ];
+    component.drones.set([criarDrone({
+      id: 1,
+      nome: 'Drone de teste',
+      preco: 1200,
+      imagens: [],
+    })]);
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelectorAll('.drone-card')).toHaveLength(1);
+  });
+
+  it('renders drones when the request completes without user interaction', async () => {
+    const response$ = new Subject<{ items: Drone[]; totalPages: number }>();
+    droneService.findAllEcommerce.mockReturnValueOnce(response$);
+
+    const asyncFixture = TestBed.createComponent(Home);
+    asyncFixture.autoDetectChanges();
+    response$.next({
+      items: [criarDrone({
+        id: 2,
+        nome: 'Drone carregado',
+        preco: 1500,
+        imagens: [],
+      })],
+      totalPages: 1,
+    });
+
+    await asyncFixture.whenStable();
+    expect(asyncFixture.nativeElement.querySelectorAll('.drone-card')).toHaveLength(1);
   });
 
   it('renders the filters next to the product catalog in the home', () => {
@@ -46,5 +69,34 @@ describe('Home', () => {
 
     expect(fixture.nativeElement.querySelector('.filters-panel')).not.toBeNull();
     expect(fixture.nativeElement.querySelector('.products-area')).not.toBeNull();
+  });
+
+  it('only requests the combined filters after clicking apply', () => {
+    const buttons = fixture.nativeElement.querySelectorAll('.filter-option') as NodeListOf<HTMLButtonElement>;
+    const alcance = Array.from(buttons)
+      .find((button) => button.textContent?.includes('Acima de 50m até 10km'));
+    const gps = fixture.nativeElement.querySelector('.feature-option input') as HTMLInputElement | null;
+    const applyButton = fixture.nativeElement.querySelector('.apply-filters') as HTMLButtonElement | null;
+    expect(alcance).toBeDefined();
+    expect(gps).not.toBeNull();
+    expect(applyButton).not.toBeNull();
+
+    alcance?.click();
+    if (gps) {
+      gps.checked = true;
+      gps.dispatchEvent(new Event('change'));
+    }
+
+    expect(droneService.findAllEcommerce).toHaveBeenCalledTimes(1);
+    applyButton?.click();
+
+    expect(droneService.findAllEcommerce).toHaveBeenLastCalledWith(
+      0,
+      12,
+      expect.objectContaining({
+        alcance: ['ATE_10KM'],
+        possuiGPS: true,
+      }),
+    );
   });
 });

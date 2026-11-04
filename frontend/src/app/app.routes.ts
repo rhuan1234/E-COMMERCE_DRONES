@@ -102,5 +102,5 @@ export const routes: Routes = [
   },
 
   // Fallback
-  { path: '**', redirectTo: 'drones' }
+  { path: '**', redirectTo: 'home' }
 ];

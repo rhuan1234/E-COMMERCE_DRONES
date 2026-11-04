@@ -4,6 +4,7 @@ import java.util.List;
 
 import drones.dto.PageResponse;
 
+import drones.dto.drones.DroneCatalogFilters;
 import drones.dto.drones.DroneRequestDTO;
 import drones.dto.drones.DroneResponseDTO;
 import drones.dto.drones.DroneResponseEcommerceDTO;
@@ -12,7 +13,7 @@ import drones.mapper.DroneMapper;
 import drones.model.drones.Drone;
 import drones.model.drones.DroneImage;
 import drones.services.DroneImageStorageService;
-import drones.services.DroneService;
+import drones.services.DroneServiceInterface;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -44,7 +45,7 @@ import java.nio.file.Files;
 public class DroneController {
 
     @Inject
-    DroneService droneService;
+    DroneServiceInterface droneService;
     @Inject
     DroneImageStorageService droneImageStorageService;
 
@@ -141,9 +142,18 @@ public class DroneController {
             @QueryParam("marca") String marca,
             @QueryParam("modelo") String modelo,
             @QueryParam("min") Double precoMin,
-            @QueryParam("max") Double precoMax){
-        List<Drone> drones = droneService.buscarComFiltros(page, pageSize, nome, marca, modelo, precoMin, precoMax);
-        long totalItems = droneService.countComFiltros(nome, marca, modelo, precoMin, precoMax);
+            @QueryParam("max") Double precoMax,
+            @QueryParam("alcance") List<String> alcances,
+            @QueryParam("autonomia") List<String> autonomias,
+            @QueryParam("camera") List<String> cameras,
+            @QueryParam("possuiGPS") Boolean possuiGPS,
+            @QueryParam("comControleRemoto") Boolean comControleRemoto,
+            @QueryParam("controladoPorAplicativo") Boolean controladoPorAplicativo){
+        DroneCatalogFilters filtros = new DroneCatalogFilters(
+                nome, marca, modelo, precoMin, precoMax, alcances, autonomias, cameras,
+                possuiGPS, comControleRemoto, controladoPorAplicativo);
+        List<Drone> drones = droneService.buscarCatalogo(page, pageSize, filtros);
+        long totalItems = droneService.countCatalogo(filtros);
         return PageResponse.of(drones, page, pageSize, totalItems, DroneMapper::toResponseEcommerceDTO);
     }
 

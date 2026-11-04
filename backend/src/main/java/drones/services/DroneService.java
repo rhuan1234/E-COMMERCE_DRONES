@@ -1,7 +1,9 @@
 package drones.services;
 
 import java.util.List;
+import java.util.Set;
 
+import drones.dto.drones.DroneCatalogFilters;
 import drones.exception.ValidationException;
 import drones.model.drones.Drone;
 import drones.model.drones.DroneImage;
@@ -17,6 +19,12 @@ import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class DroneService implements DroneServiceInterface {
+    private static final Set<String> ALCANCES_VALIDOS = Set.of(
+            "ATE_10KM", "DE_10_A_20KM", "DE_20_A_50KM", "ACIMA_50KM");
+    private static final Set<String> AUTONOMIAS_VALIDAS = Set.of(
+            "ATE_20_MIN", "DE_20_A_40_MIN", "ACIMA_40_MIN");
+    private static final Set<String> CAMERAS_VALIDAS = Set.of("FULL_HD", "4K", "ESTABILIZACAO");
+
     @Inject
     DroneRepository droneRepository;
     @Inject
@@ -304,5 +312,42 @@ public class DroneService implements DroneServiceInterface {
     @Override
     public Long countComFiltros(String nome, String marca, String modelo, Double precoMin, Double precoMax) {
         return droneRepository.findByFiltros(nome, marca, modelo, precoMin, precoMax).count();
+    }
+
+    @Override
+    public List<Drone> buscarCatalogo(int page, int pageSize, DroneCatalogFilters filtros) {
+        validarFiltrosCatalogo(filtros);
+        return droneRepository.findByCatalogoFiltros(filtros)
+                .page(page, pageSize)
+                .list();
+    }
+
+    @Override
+    public Long countCatalogo(DroneCatalogFilters filtros) {
+        validarFiltrosCatalogo(filtros);
+        return droneRepository.findByCatalogoFiltros(filtros).count();
+    }
+
+    private void validarFiltrosCatalogo(DroneCatalogFilters filtros) {
+        if (filtros == null) {
+            throw new ValidationException("Os filtros do catálogo são inválidos");
+        }
+        validarOpcoes(filtros.alcances(), ALCANCES_VALIDOS, "alcance");
+        validarOpcoes(filtros.autonomias(), AUTONOMIAS_VALIDAS, "autonomia");
+        validarOpcoes(filtros.cameras(), CAMERAS_VALIDAS, "camera");
+
+        if ((filtros.min() != null && (!Double.isFinite(filtros.min()) || filtros.min() < 0))
+                || (filtros.max() != null && (!Double.isFinite(filtros.max()) || filtros.max() < 0))) {
+            throw new ValidationException("Preço mínimo e máximo devem ser positivos", "min/max");
+        }
+        if (filtros.min() != null && filtros.max() != null && filtros.min() > filtros.max()) {
+            throw new ValidationException("Preço mínimo não pode ser maior que o preço máximo", "min/max");
+        }
+    }
+
+    private void validarOpcoes(List<String> opcoes, Set<String> permitidas, String campo) {
+        if (opcoes != null && opcoes.stream().anyMatch(opcao -> opcao == null || !permitidas.contains(opcao))) {
+            throw new ValidationException("Uma ou mais opções de filtro são inválidas", campo);
+        }
     }
 }

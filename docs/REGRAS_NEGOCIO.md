@@ -129,6 +129,12 @@ O domínio do sistema é particionado nos seguintes pacotes e entidades:
    - Ao remover uma imagem do banco de dados, o arquivo correspondente na pasta de uploads é excluído fisicamente. Se a imagem removida era a principal e ainda restarem imagens, a primeira remanescente assume o papel de imagem principal.
 4. **Visibilidade do Produto (`ativa`)**:
    - Drones marcados com `ativa = false` não são exibidos na vitrine pública do e-commerce, permanecendo visíveis apenas para consulta e reativação no painel administrativo.
+5. **Filtros da Vitrine Pública**:
+   - As opções de alcance usam as faixas: acima de 50 m até 10 km, acima de 10 km até 20 km, acima de 20 km até 50 km e acima de 50 km.
+   - As opções de autonomia usam as faixas: até 20 min, de 20 a 40 min e acima de 40 min.
+   - Os filtros de câmera aceitam Full HD, 4K e estabilização de imagem; os recursos aceitam GPS, controle remoto e controle por aplicativo.
+   - Quando várias opções da mesma categoria são selecionadas, basta o drone atender a uma delas (OU). Categorias diferentes e os limites de preço são combinados (E).
+   - A listagem pública retorna somente drones ativos e aplica os filtros antes da paginação.
 
 ### 2.4 Fluxo de Campanhas Promocionais
 1. Uma promoção possui `percentualDesconto`, `dataInicio` e `dataFim`.

@@ -2,6 +2,7 @@ package drones.services;
 
 import drones.model.drones.Drone;
 import drones.model.drones.DroneImage;
+import drones.dto.drones.DroneCatalogFilters;
 import java.util.List;
 
 public interface DroneServiceInterface {
@@ -19,9 +20,11 @@ public interface DroneServiceInterface {
     List<Drone> buscarPorModelo(int page, int pageSize, String modelo);
     List<Drone> buscarPorPreco(int page, int pageSize, double precoMin, double precoMax);
     List<Drone> buscarComFiltros(int page, int pageSize, String nome, String marca, String modelo, Double precoMin, Double precoMax);
+    List<Drone> buscarCatalogo(int page, int pageSize, DroneCatalogFilters filtros);
     Long count();
     Long countModelos(String modelo);
     Long countMarcas(String marca);
     Long countPreco(double precoMin, double precoMax);
     Long countComFiltros(String nome, String marca, String modelo, Double precoMin, Double precoMax);
+    Long countCatalogo(DroneCatalogFilters filtros);
 }

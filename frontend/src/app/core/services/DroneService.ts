@@ -5,6 +5,7 @@ import { Observable, map } from 'rxjs';
 
 import { PagedResponse } from '../models/PagedResponse';
 import { DroneImagem } from '../models/drone/Drone';
+import { DroneCatalogFilters } from '../models/drone/DroneCatalogFilters';
 
 export type { PagedResponse };
 
@@ -56,26 +57,35 @@ export class DroneService {
   findAllEcommerce(
     page: number = 0,
     pageSize: number = 10,
-    filtros?: DroneFiltroParams,
+    filtros?: DroneCatalogFilters,
   ): Observable<PagedResponse<Drone>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('pageSize', pageSize.toString());
 
     if (filtros) {
-      if (filtros.nome && filtros.nome.trim()) {
-        params = params.set('nome', filtros.nome.trim());
+      filtros.alcance?.forEach((alcance) => {
+        params = params.append('alcance', alcance);
+      });
+      filtros.autonomia?.forEach((autonomia) => {
+        params = params.append('autonomia', autonomia);
+      });
+      filtros.camera?.forEach((camera) => {
+        params = params.append('camera', camera);
+      });
+      if (filtros.possuiGPS !== undefined) {
+        params = params.set('possuiGPS', filtros.possuiGPS.toString());
       }
-      if (filtros.marca && filtros.marca.trim()) {
-        params = params.set('marca', filtros.marca.trim());
+      if (filtros.comControleRemoto !== undefined) {
+        params = params.set('comControleRemoto', filtros.comControleRemoto.toString());
       }
-      if (filtros.modelo && filtros.modelo.trim()) {
-        params = params.set('modelo', filtros.modelo.trim());
+      if (filtros.controladoPorAplicativo !== undefined) {
+        params = params.set('controladoPorAplicativo', filtros.controladoPorAplicativo.toString());
       }
-      if (filtros.min !== null && filtros.min !== undefined && !Number.isNaN(filtros.min)) {
+      if (filtros.min !== undefined && !Number.isNaN(filtros.min)) {
         params = params.set('min', filtros.min.toString());
       }
-      if (filtros.max !== null && filtros.max !== undefined && !Number.isNaN(filtros.max)) {
+      if (filtros.max !== undefined && !Number.isNaN(filtros.max)) {
         params = params.set('max', filtros.max.toString());
       }
     }
