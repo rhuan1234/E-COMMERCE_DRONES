@@ -22,6 +22,7 @@ import { cameraResolver } from './core/resolvers/CameraResolver';
 import { EcommerceLayout } from './features/ecommerce/layout/ecommerce-layout/ecommerce-layout';
 import { Home } from './features/ecommerce/components/home/home';
 import { Favoritos } from './features/ecommerce/components/favoritos/favoritos';
+import { DroneInfo } from './features/ecommerce/components/drone-info/drone-info';
 import { ModeloList } from './features/admin/components/modelo-list/modelo-list';
 import { ModeloForm } from './features/admin/components/modelo-form/modelo-form';
 import { MarcaList } from './features/admin/components/marca-list/marca-list';
@@ -100,6 +101,7 @@ export const routes: Routes = [
         //Pagina principal ecommerce
         {path: 'home', component: Home, title: 'Página Inicial'},
         {path: 'favoritos', component: Favoritos, title: 'Meus Favoritos'},
+        {path: 'drone-info/:id', component: DroneInfo, title: 'Detalhes do Drone'},
     ]
   },
 

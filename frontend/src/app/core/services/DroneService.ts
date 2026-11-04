@@ -133,6 +133,10 @@ export class DroneService {
     return this.http.get<Drone>(`${this.apiUrl}/${id}`);
   }
 
+  findByIdEcommerce(id: number): Observable<Drone> {
+    return this.http.get<Drone>(`${this.apiUrlEcommerce}/${id}`);
+  }
+
   create(droneRequest: Drone): Observable<Drone> {
     return this.http.post<Drone>(this.apiUrl, droneRequest);
   }

@@ -1,0 +1,197 @@
+<main class="drone-info-page">
+  <a class="back-link" routerLink="/home">
+    <mat-icon>arrow_back</mat-icon>
+    Voltar para a loja
+  </a>
+
+  @if (carregando()) {
+    <p class="product-state" role="status">Carregando detalhes do drone...</p>
+  } @else if (erro()) {
+    <section class="product-state product-error" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <h1>Não foi possível exibir este produto</h1>
+      <p>{{ erro() }}</p>
+      <button type="button" (click)="carregarDrone()">Tentar novamente</button>
+    </section>
+  } @else if (drone(); as produto) {
+    <div class="product-page">
+      <section class="product-gallery" aria-label="Imagens do produto">
+        <div class="main-image">
+          @if (imagemPrincipal(); as imagem) {
+            @if (!imagensComFalha().has(imagem.id)) {
+              <img
+                [src]="obterUrlImagem(imagem)"
+                [alt]="produto.nome"
+                (error)="marcarImagemComFalha(imagem.id)">
+            } @else {
+              <div class="image-fallback" role="img" [attr.aria-label]="'Imagem indisponível para ' + produto.nome">
+                <mat-icon>broken_image</mat-icon>
+                <span>Imagem indisponível</span>
+              </div>
+            }
+          } @else {
+            <div class="image-fallback" role="img" [attr.aria-label]="'Nenhuma imagem disponível para ' + produto.nome">
+              <mat-icon>photo_camera</mat-icon>
+              <span>Este produto não possui imagens</span>
+            </div>
+          }
+        </div>
+
+        @if (imagensOrdenadas().length > 1) {
+          <div class="image-thumbnails" aria-label="Escolher imagem do drone">
+            @for (imagem of imagensOrdenadas(); track imagem.id; let indice = $index) {
+              <button
+                type="button"
+                [class.selected]="imagemPrincipal()?.id === imagem.id"
+                [attr.aria-label]="'Exibir imagem ' + (indice + 1) + ' de ' + imagensOrdenadas().length"
+                [attr.aria-pressed]="imagemPrincipal()?.id === imagem.id"
+                (click)="selecionarImagem(imagem)">
+                @if (!imagensComFalha().has(imagem.id)) {
+                  <img
+                    [src]="obterUrlImagem(imagem)"
+                    [alt]="produto.nome + ' - imagem ' + (indice + 1)"
+                    (error)="marcarImagemComFalha(imagem.id)">
+                } @else {
+                  <mat-icon aria-hidden="true">broken_image</mat-icon>
+                }
+              </button>
+            }
+          </div>
+        }
+      </section>
+
+      <section class="product-purchase" aria-labelledby="product-name">
+        <div class="product-breadcrumb">
+          <a routerLink="/home">Loja</a>
+          <mat-icon>chevron_right</mat-icon>
+          <span>{{ produto.marca?.nome || 'Drone' }}</span>
+        </div>
+
+        <p class="product-brand">{{ produto.marca?.nome || 'Skyline Drones' }}</p>
+        <h1 id="product-name">{{ produto.nome }}</h1>
+        @if (produto.modelo?.nome) {
+          <p class="product-model">{{ produto.modelo.nome }}</p>
+        }
+
+        <p class="product-price">{{ formatarPreco(produto.preco) }}</p>
+        <p class="installment-info">Consulte as opções de pagamento ao finalizar sua compra.</p>
+
+        <p class="stock-status" [class.out-of-stock]="produto.quantidadeDisponivel <= 0">
+          <mat-icon>{{ produto.quantidadeDisponivel > 0 ? 'check_circle' : 'error' }}</mat-icon>
+          @if (produto.quantidadeDisponivel > 0) {
+            Em estoque: {{ produto.quantidadeDisponivel }} disponível(is)
+          } @else {
+            Produto indisponível no momento
+          }
+        </p>
+
+        <div class="purchase-actions">
+          <button
+            class="favorite-action"
+            type="button"
+            [disabled]="!favoritoPodeSerExibido() || atualizandoFavorito() || !!erroFavorito()"
+            [attr.aria-pressed]="favorito()"
+            (click)="alternarFavorito()">
+            <mat-icon>{{ favorito() ? 'favorite' : 'favorite_border' }}</mat-icon>
+            @if (carregandoFavorito()) {
+              Carregando favoritos...
+            } @else if (atualizandoFavorito()) {
+              Atualizando...
+            } @else {
+              {{ favorito() ? 'Remover dos favoritos' : 'Adicionar aos favoritos' }}
+            }
+          </button>
+          <button
+            class="cart-action"
+            type="button"
+            [disabled]="produto.quantidadeDisponivel <= 0"
+            (click)="adicionarAoCarrinho()">
+            <mat-icon>shopping_cart</mat-icon>
+            Adicionar ao carrinho
+          </button>
+        </div>
+
+        @if (erroFavorito()) {
+          <div class="inline-error" role="alert">
+            <p>{{ erroFavorito() }}</p>
+            <button type="button" (click)="recarregarEstadoFavorito()">Tentar novamente</button>
+          </div>
+        } @else if (mensagemFavorito()) {
+          <p class="inline-success" role="status">{{ mensagemFavorito() }}</p>
+        }
+        @if (mensagemCarrinho()) {
+          <p class="inline-notice" role="status">{{ mensagemCarrinho() }}</p>
+        }
+
+        <div class="delivery-note">
+          <mat-icon>local_shipping</mat-icon>
+          <div>
+            <strong>Entrega</strong>
+            <p>As opções de entrega serão apresentadas durante a finalização do pedido.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="technical-section" aria-labelledby="technical-title">
+      <div class="section-heading">
+        <span>INFORMAÇÕES DO PRODUTO</span>
+        <h2 id="technical-title">Ficha técnica</h2>
+        <p>Confira os detalhes e recursos deste drone.</p>
+      </div>
+
+      <div class="technical-grid">
+        <article class="technical-card">
+          <h3>Identificação</h3>
+          <dl>
+            <div><dt>Nome</dt><dd>{{ produto.nome }}</dd></div>
+            <div><dt>Marca</dt><dd>{{ produto.marca?.nome || 'Não informado' }}</dd></div>
+            <div><dt>Modelo</dt><dd>{{ produto.modelo?.nome || 'Não informado' }}</dd></div>
+            <div><dt>Produto ativo</dt><dd>{{ produto.ativa ? 'Sim' : 'Não' }}</dd></div>
+          </dl>
+        </article>
+
+        <article class="technical-card">
+          <h3>Desempenho de voo</h3>
+          <dl>
+            <div><dt>Tempo de voo prático</dt><dd>{{ produto.tempoVooPratico }} min</dd></div>
+            <div><dt>Alcance de transmissão</dt><dd>{{ formatarNumero(produto.alcanceTransmissao) }} m</dd></div>
+            <div><dt>Altitude máxima</dt><dd>{{ formatarNumero(produto.altitudeMaxima) }} m</dd></div>
+            <div><dt>Velocidade máxima</dt><dd>{{ formatarNumero(produto.velocidadeMaxima) }} km/h</dd></div>
+            <div><dt>Peso de decolagem</dt><dd>{{ formatarNumero(produto.pesoDecolagem) }} g</dd></div>
+          </dl>
+        </article>
+
+        <article class="technical-card">
+          <h3>Câmera e conectividade</h3>
+          <dl>
+            <div><dt>Possui câmera</dt><dd>{{ produto.possuiCamera ? 'Sim' : 'Não' }}</dd></div>
+            @if (produto.camera; as camera) {
+              <div><dt>Resolução</dt><dd>{{ camera.resolucao }}</dd></div>
+              <div><dt>Zoom</dt><dd>{{ camera.zoom }}x</dd></div>
+              <div><dt>Estabilização</dt><dd>{{ camera.estabilizacao ? 'Sim' : 'Não' }}</dd></div>
+              <div><dt>Taxa de quadros</dt><dd>{{ camera.fps }}</dd></div>
+              <div><dt>Marca da câmera</dt><dd>{{ camera.marca?.nome || 'Não informado' }}</dd></div>
+              <div><dt>Modelo da câmera</dt><dd>{{ camera.modelo?.nome || 'Não informado' }}</dd></div>
+            } @else if (produto.possuiCamera) {
+              <div><dt>Detalhes da câmera</dt><dd>Não informados</dd></div>
+            }
+            <div><dt>GPS</dt><dd>{{ produto.possuiGPS ? 'Possui' : 'Não possui' }}</dd></div>
+            <div><dt>Frequência Wi-Fi</dt><dd>{{ produto.frequenciaWifi || 'Não informado' }}</dd></div>
+          </dl>
+        </article>
+
+        <article class="technical-card">
+          <h3>Controle e bateria</h3>
+          <dl>
+            <div><dt>Quantidade de motores</dt><dd>{{ produto.quantidadeMotores }}</dd></div>
+            <div><dt>Controle remoto</dt><dd>{{ produto.comControleRemoto ? 'Incluído' : 'Não incluído' }}</dd></div>
+            <div><dt>Controle por aplicativo</dt><dd>{{ produto.controladoPorAplicativo ? 'Sim' : 'Não' }}</dd></div>
+            <div><dt>Quantidade de baterias</dt><dd>{{ produto.quantidadeBaterias }}</dd></div>
+            <div><dt>Duração da bateria</dt><dd>{{ produto.duracaoBateria || 'Não informado' }}</dd></div>
+          </dl>
+        </article>
+      </div>
+    </section>
+  }
+</main>

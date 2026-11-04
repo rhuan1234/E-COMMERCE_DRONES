@@ -1,5 +1,6 @@
 import { Marca } from "../marca/Marca";
 import { Modelo } from "../modelo/Modelo";
+import { Camera } from "../camera/Camera";
 
 export interface DroneImagem {
   id: number;
@@ -29,6 +30,7 @@ export class Drone {
   duracaoBateria!: string;
   frequenciaWifi!: string;
   possuiGPS!: boolean;
+  camera?: Camera;
   cameraId!: number;
   fornecedorId!: number;
   imagens?: DroneImagem[];

@@ -123,6 +123,11 @@
         <div class="drone-grid">
           @for (drone of drones(); track drone.id) {
             <article class="drone-card">
+              <a
+                class="drone-card-link"
+                [routerLink]="['/drone-info', drone.id]"
+                [attr.aria-label]="'Ver detalhes de ' + drone.nome">
+              </a>
               <div class="product-visual">
                 <button
                   class="favorite-button"
@@ -130,7 +135,7 @@
                   [disabled]="favoritosEmAtualizacao().has(drone.id)"
                   [attr.aria-label]="favoritosIds().has(drone.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'"
                   [attr.aria-pressed]="favoritosIds().has(drone.id)"
-                  (click)="alternarFavorito(drone)">
+                  (click)="$event.stopPropagation(); alternarFavorito(drone)">
                   <mat-icon>{{ favoritosIds().has(drone.id) ? 'favorite' : 'favorite_border' }}</mat-icon>
                 </button>
 
@@ -149,7 +154,11 @@
                   <div class="image-placeholder" role="img" [attr.aria-label]="'Imagem indisponível para ' + drone.nome"></div>
                 }
 
-                <button class="cart-button" type="button" [attr.aria-label]="'Adicionar ' + drone.nome + ' ao carrinho'">
+                <button
+                  class="cart-button"
+                  type="button"
+                  [attr.aria-label]="'Adicionar ' + drone.nome + ' ao carrinho'"
+                  (click)="$event.stopPropagation()">
                   <mat-icon>shopping_cart</mat-icon>
                   <span>Adicionar ao carrinho</span>
                 </button>

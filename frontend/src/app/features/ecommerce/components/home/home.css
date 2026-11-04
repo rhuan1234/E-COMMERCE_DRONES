@@ -272,6 +272,7 @@
 }
 
 .drone-card {
+  position: relative;
   display: flex;
   min-width: 0;
   flex-direction: column;
@@ -290,8 +291,22 @@
   box-shadow: 0 14px 32px rgb(20 36 63 / 12%);
 }
 
+.drone-card-link {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.drone-card-link:focus-visible {
+  outline: 3px solid #7fbd35;
+  outline-offset: 3px;
+}
+
 .product-visual {
   position: relative;
+  z-index: 2;
+  pointer-events: none;
   display: flex;
   min-height: 250px;
   align-items: center;
@@ -308,8 +323,8 @@
 
 .product-image {
   display: block;
-  object-fit: contain;
-  padding: 18px;
+  object-fit: cover;
+  padding: 0;
 }
 
 .image-placeholder {
@@ -332,6 +347,7 @@
   background: rgb(255 255 255 / 92%);
   color: #39465a;
   cursor: pointer;
+  pointer-events: auto;
 }
 
 .favorite-button:hover {
@@ -349,6 +365,7 @@
 
 .cart-button {
   position: absolute;
+  z-index: 3;
   right: 14px;
   bottom: 14px;
   left: 14px;
@@ -365,6 +382,7 @@
   font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
+  pointer-events: auto;
   opacity: 0;
   transform: translateY(6px);
   transition:
@@ -377,17 +395,20 @@
   background: #104ac4;
 }
 
-.product-visual:hover .cart-button,
+.drone-card:hover .cart-button,
 .cart-button:focus-visible {
   opacity: 1;
   transform: translateY(0);
 }
 
 .product-details {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex: 1;
   flex-direction: column;
   padding: 16px;
+  pointer-events: none;
 }
 
 .product-name {

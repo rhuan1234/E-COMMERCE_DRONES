@@ -58,4 +58,12 @@ describe('DroneService', () => {
     expect(modelRequest.request.params.has('nome')).toBe(false);
     modelRequest.flush({ items: [], page: 0, pageSize: 12, totalItems: 0, totalPages: 0 });
   });
+
+  it('loads one drone from the public ecommerce detail endpoint', () => {
+    service.findByIdEcommerce(17).subscribe();
+
+    const request = httpTestingController.expectOne('http://localhost:8080/drones/17');
+    expect(request.request.method).toBe('GET');
+    request.flush({ id: 17, nome: 'Drone de detalhes', imagens: [] });
+  });
 });

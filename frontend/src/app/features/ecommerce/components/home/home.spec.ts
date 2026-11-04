@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, Subject } from 'rxjs';
+import { provideRouter, Router } from '@angular/router';
 import { Drone } from '../../../../core/models/drone/Drone';
 import { DroneService } from '../../../../core/services/DroneService';
 import { EcommerceCatalogSearchService } from '../../../../core/services/EcommerceCatalogSearchService';
 import { FavoritoService } from '../../../../core/services/FavoritoService';
 import { AuthService } from '../../../../core/services/auth/AuthService';
-import { Router } from '@angular/router';
 import { Home } from './home';
 
 function criarDrone(dados: Pick<Drone, 'id' | 'nome' | 'preco' | 'imagens'>): Drone {
@@ -30,7 +30,7 @@ describe('Home', () => {
     remover: vi.fn().mockReturnValue(of('ok')),
   };
   const authService = { isAuthenticated: vi.fn().mockReturnValue(true) };
-  const router = { navigate: vi.fn() };
+  let router: Router;
 
   beforeEach(async () => {
     droneService.findAllEcommerce.mockClear();
@@ -38,17 +38,18 @@ describe('Home', () => {
     favoritoService.adicionar.mockClear();
     favoritoService.remover.mockClear();
     authService.isAuthenticated.mockReturnValue(true);
-    router.navigate.mockClear();
     await TestBed.configureTestingModule({
       imports: [Home],
       providers: [
+        provideRouter([]),
         { provide: DroneService, useValue: droneService },
         { provide: FavoritoService, useValue: favoritoService },
         { provide: AuthService, useValue: authService },
-        { provide: Router, useValue: router },
       ],
     }).compileComponents();
 
+    router = TestBed.inject(Router);
+    vi.spyOn(router, 'navigate').mockResolvedValue(true);
     fixture = TestBed.createComponent(Home);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -197,5 +198,19 @@ describe('Home', () => {
       { queryParams: { returnUrl: '/home' } },
     );
     expect(favoritoService.adicionar).not.toHaveBeenCalled();
+  });
+
+  it('links each drone card to its product detail page', () => {
+    component.drones.set([criarDrone({
+      id: 23,
+      nome: 'Drone detalhado',
+      preco: 4500,
+      imagens: [],
+    })]);
+    fixture.detectChanges();
+
+    const detailLink = fixture.nativeElement.querySelector('.drone-card-link') as HTMLAnchorElement;
+    expect(detailLink.getAttribute('href')).toBe('/drone-info/23');
+    expect(detailLink.getAttribute('aria-label')).toBe('Ver detalhes de Drone detalhado');
   });
 });

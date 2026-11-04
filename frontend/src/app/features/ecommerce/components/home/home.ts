@@ -1,6 +1,7 @@
 import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
 import { EMPTY, Observable, Subject, catchError, expand, forkJoin, map, reduce, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
@@ -19,7 +20,7 @@ interface FilterGroup {
 }
 
 @Component({
-  imports: [FormsModule, MatIconModule],
+  imports: [FormsModule, MatIconModule, RouterLink],
   selector: 'app-home',
   styleUrl: './home.css',
   templateUrl: './home.html',
