@@ -1,4 +1,6 @@
 export interface DroneCatalogFilters {
+  nome?: string;
+  modelo?: string;
   min?: number;
   max?: number;
   alcance?: string[];

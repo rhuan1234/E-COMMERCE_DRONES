@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, Subject } from 'rxjs';
 import { Drone } from '../../../../core/models/drone/Drone';
 import { DroneService } from '../../../../core/services/DroneService';
+import { EcommerceCatalogSearchService } from '../../../../core/services/EcommerceCatalogSearchService';
 import { Home } from './home';
 
 function criarDrone(dados: Pick<Drone, 'id' | 'nome' | 'preco' | 'imagens'>): Drone {
@@ -98,5 +99,41 @@ describe('Home', () => {
         possuiGPS: true,
       }),
     );
+  });
+
+  it('searches both drone name and model and displays unique results', async () => {
+    const namedDrone = criarDrone({
+      id: 3,
+      nome: 'Drone encontrado pelo nome',
+      preco: 2000,
+      imagens: [],
+    });
+    const modelDrone = criarDrone({
+      id: 4,
+      nome: 'Drone encontrado pelo modelo',
+      preco: 2500,
+      imagens: [],
+    });
+    droneService.findAllEcommerce
+      .mockReturnValueOnce(of({ items: [namedDrone], totalPages: 1 }))
+      .mockReturnValueOnce(of({ items: [modelDrone], totalPages: 1 }));
+
+    TestBed.inject(EcommerceCatalogSearchService).search('Mavic');
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(droneService.findAllEcommerce).toHaveBeenNthCalledWith(
+      2,
+      0,
+      12,
+      expect.objectContaining({ nome: 'Mavic' }),
+    );
+    expect(droneService.findAllEcommerce).toHaveBeenNthCalledWith(
+      3,
+      0,
+      12,
+      expect.objectContaining({ modelo: 'Mavic' }),
+    );
+    expect(fixture.nativeElement.querySelectorAll('.drone-card')).toHaveLength(2);
   });
 });

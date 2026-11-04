@@ -44,4 +44,18 @@ describe('DroneService', () => {
 
     request.flush({ items: [], page: 0, pageSize: 12, totalItems: 0, totalPages: 0 });
   });
+
+  it('sends name or model search terms to the matching API query parameter', () => {
+    service.findAllEcommerce(0, 12, { nome: 'Mavic' }).subscribe();
+    const nameRequest = httpTestingController.expectOne((req) => req.url === 'http://localhost:8080/drones');
+    expect(nameRequest.request.params.get('nome')).toBe('Mavic');
+    expect(nameRequest.request.params.has('modelo')).toBe(false);
+    nameRequest.flush({ items: [], page: 0, pageSize: 12, totalItems: 0, totalPages: 0 });
+
+    service.findAllEcommerce(0, 12, { modelo: 'Mavic' }).subscribe();
+    const modelRequest = httpTestingController.expectOne((req) => req.url === 'http://localhost:8080/drones');
+    expect(modelRequest.request.params.get('modelo')).toBe('Mavic');
+    expect(modelRequest.request.params.has('nome')).toBe(false);
+    modelRequest.flush({ items: [], page: 0, pageSize: 12, totalItems: 0, totalPages: 0 });
+  });
 });

@@ -64,6 +64,12 @@ export class DroneService {
       .set('pageSize', pageSize.toString());
 
     if (filtros) {
+      if (filtros.nome?.trim()) {
+        params = params.set('nome', filtros.nome.trim());
+      }
+      if (filtros.modelo?.trim()) {
+        params = params.set('modelo', filtros.modelo.trim());
+      }
       filtros.alcance?.forEach((alcance) => {
         params = params.append('alcance', alcance);
       });

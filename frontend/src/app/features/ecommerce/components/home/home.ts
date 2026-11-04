@@ -1,11 +1,12 @@
 import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { EMPTY, Subject, catchError, switchMap, tap } from 'rxjs';
+import { EMPTY, Subject, catchError, forkJoin, map, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Drone, DroneImagem } from '../../../../core/models/drone/Drone';
 import { DroneCatalogFeature, DroneCatalogFilters } from '../../../../core/models/drone/DroneCatalogFilters';
 import { DroneService } from '../../../../core/services/DroneService';
+import { EcommerceCatalogSearchService } from '../../../../core/services/EcommerceCatalogSearchService';
 
 interface FilterGroup {
   title: string;
@@ -22,6 +23,8 @@ interface FilterGroup {
 export class Home implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly filtros$ = new Subject<DroneCatalogFilters>();
+  private filtrosAplicados: DroneCatalogFilters = {};
+  private termoBusca = '';
   readonly dronesPorPagina = 12;
   readonly filterGroups: FilterGroup[] = [
     {
@@ -71,8 +74,6 @@ export class Home implements OnInit {
     currency: 'BRL',
   });
 
-  constructor(private readonly droneService: DroneService) {}
-
   ngOnInit(): void {
     this.filtros$
       .pipe(
@@ -81,7 +82,7 @@ export class Home implements OnInit {
           this.mensagemErroDrones.set('');
         }),
         switchMap((filtros) =>
-          this.droneService.findAllEcommerce(0, this.dronesPorPagina, filtros).pipe(
+          this.buscarCatalogo(filtros).pipe(
             tap((response) => {
               this.drones.set(response.items ?? []);
               this.imagensComFalha.clear();
@@ -99,7 +100,46 @@ export class Home implements OnInit {
       )
       .subscribe();
 
-    this.aplicarFiltros();
+    this.catalogSearch.searchTerm$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((termo) => {
+        this.termoBusca = termo;
+        this.filtros$.next(this.filtrosAplicados);
+      });
+  }
+
+  constructor(
+    private readonly droneService: DroneService,
+    private readonly catalogSearch: EcommerceCatalogSearchService,
+  ) {}
+
+  private buscarCatalogo(filtros: DroneCatalogFilters) {
+    if (!this.termoBusca) {
+      return this.droneService.findAllEcommerce(0, this.dronesPorPagina, filtros);
+    }
+
+    return forkJoin([
+      this.droneService.findAllEcommerce(0, this.dronesPorPagina, {
+        ...filtros,
+        nome: this.termoBusca,
+      }),
+      this.droneService.findAllEcommerce(0, this.dronesPorPagina, {
+        ...filtros,
+        modelo: this.termoBusca,
+      }),
+    ]).pipe(
+      map(([porNome, porModelo]) => {
+        const items = [...new Map(
+          [...porNome.items, ...porModelo.items].map((drone) => [drone.id, drone]),
+        ).values()];
+        return {
+          ...porNome,
+          items,
+          totalItems: items.length,
+          totalPages: Math.ceil(items.length / this.dronesPorPagina),
+        };
+      }),
+    );
   }
 
   private filtrosSelecionados(key: FilterGroup['key']): string[] {
@@ -121,7 +161,7 @@ export class Home implements OnInit {
   }
 
   aplicarFiltros(): void {
-    this.filtros$.next({
+    this.filtrosAplicados = {
       min: this.valorNumerico(this.precoMinimo),
       max: this.valorNumerico(this.precoMaximo),
       alcance: this.filtrosSelecionados('alcance'),
@@ -130,7 +170,8 @@ export class Home implements OnInit {
       possuiGPS: this.selectedFeatures.has('possuiGPS') ? true : undefined,
       comControleRemoto: this.selectedFeatures.has('comControleRemoto') ? true : undefined,
       controladoPorAplicativo: this.selectedFeatures.has('controladoPorAplicativo') ? true : undefined,
-    });
+    };
+    this.filtros$.next(this.filtrosAplicados);
   }
 
   imagemPrincipal(drone: Drone): DroneImagem | undefined {

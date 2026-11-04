@@ -5,9 +5,14 @@
       <span class="brand-name">SKYLINE<span>DRONES</span></span>
     </a>
 
-    <form class="search-form" role="search" (submit)="$event.preventDefault()">
+    <form class="search-form" role="search" (submit)="$event.preventDefault(); pesquisar()">
       <label class="visually-hidden" for="store-search">Buscar drones</label>
-      <input id="store-search" type="search" placeholder="O que você está procurando?">
+      <input
+        id="store-search"
+        name="termoBusca"
+        type="search"
+        placeholder="O que você está procurando?"
+        [(ngModel)]="termoBusca">
       <button type="submit" aria-label="Buscar">
         <mat-icon>search</mat-icon>
       </button>
