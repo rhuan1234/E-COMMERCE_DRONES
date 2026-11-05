@@ -33,9 +33,9 @@ export class Login {
     .subscribe({
       next: () =>{
         const returnUrl = this.router.routerState.snapshot.root.queryParamMap.get('returnUrl');
-        const destino = returnUrl?.startsWith('/') && !returnUrl.startsWith('//')
+        const destino = returnUrl?.startsWith('/') && !returnUrl.startsWith('//') && !returnUrl.startsWith('/login')
           ? returnUrl
-          : '/drones';
+          : this.authService.destinoPadrao();
         this.router.navigateByUrl(destino);
       },
 
