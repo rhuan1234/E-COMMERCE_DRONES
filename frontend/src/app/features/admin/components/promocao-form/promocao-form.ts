@@ -255,7 +255,7 @@ export class PromocaoForm implements OnInit {
         );
 
         this.router.navigate([
-          '/promocoes'
+          '/admin/promocoes'
         ]);
       },
 
@@ -297,7 +297,7 @@ export class PromocaoForm implements OnInit {
           );
 
           this.router.navigate([
-            '/promocoes'
+            '/admin/promocoes'
           ]);
         },
 

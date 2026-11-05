@@ -74,7 +74,7 @@ export class MarcaForm implements OnInit {
     resultado.subscribe({
       next: () => {
         this.exibirMensagem('Marca salva com sucesso!');
-        this.router.navigate(['/marcas']);
+        this.router.navigate(['/admin/marcas']);
       },
       error: (error) => {
         console.error('Erro ao salvar marca:', error);
@@ -104,7 +104,7 @@ export class MarcaForm implements OnInit {
       this.marcaService.delete(marca.id).subscribe({
         next: () => {
           this.exibirMensagem('Marca excluída com sucesso!');
-          this.router.navigate(['/marcas']);
+          this.router.navigate(['/admin/marcas']);
         },
         error: (error) => {
           console.error('Erro ao excluir marca:', error);
@@ -127,6 +127,6 @@ export class MarcaForm implements OnInit {
   }
 
   voltar(): void {
-    this.router.navigate(['/marcas']);
+    this.router.navigate(['/admin/marcas']);
   }
 }

@@ -108,7 +108,7 @@ describe('DroneList', () => {
     component.precoMax = 6000;
     component.aplicarFiltro();
     expect(component.menuFiltrosAberto).toBe(false);
-    expect(router.navigate).toHaveBeenCalledWith(['/drones'], {
+    expect(router.navigate).toHaveBeenCalledWith(['/admin/drones'], {
       queryParams: {
         marca: 'DJI',
         modelo: 'Air 3',
@@ -121,7 +121,7 @@ describe('DroneList', () => {
     queryParams$.next({ marca: 'DJI', modelo: 'Mavic' });
     expect(component.quantidadeFiltrosAtivos).toBe(2);
     component.removerFiltroIndividual('marca');
-    expect(router.navigate).toHaveBeenLastCalledWith(['/drones'], {
+    expect(router.navigate).toHaveBeenLastCalledWith(['/admin/drones'], {
       queryParams: {
         modelo: 'Mavic',
       },

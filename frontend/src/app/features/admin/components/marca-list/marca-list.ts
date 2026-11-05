@@ -91,9 +91,9 @@ export class MarcaList implements OnInit {
     const termo = (nome || '').trim();
     this.pageIndex = 0;
     if (termo) {
-      this.router.navigate(['/marcas/filtro/nome', termo]);
+      this.router.navigate(['/admin/marcas/filtro/nome', termo]);
     } else {
-      this.router.navigate(['/marcas']);
+      this.router.navigate(['/admin/marcas']);
     }
   }
 
@@ -103,15 +103,15 @@ export class MarcaList implements OnInit {
     }
     this.filtroNome = '';
     this.pageIndex = 0;
-    this.router.navigate(['/marcas']);
+    this.router.navigate(['/admin/marcas']);
   }
 
   novaMarca(): void {
-    this.router.navigate(['/marcas/new']);
+    this.router.navigate(['/admin/marcas/new']);
   }
 
   editarMarca(marca: Marca): void {
-    this.router.navigate(['/marcas', marca.id, 'edit']);
+    this.router.navigate(['/admin/marcas', marca.id, 'edit']);
   }
 
   abrirDetalhes(marca: Marca): void {

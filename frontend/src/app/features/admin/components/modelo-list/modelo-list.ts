@@ -91,9 +91,9 @@ export class ModeloList implements OnInit {
     const termo = (nome || '').trim();
     this.pageIndex = 0;
     if (termo) {
-      this.router.navigate(['/modelos/filtro/nome', termo]);
+      this.router.navigate(['/admin/modelos/filtro/nome', termo]);
     } else {
-      this.router.navigate(['/modelos']);
+      this.router.navigate(['/admin/modelos']);
     }
   }
 
@@ -103,15 +103,15 @@ export class ModeloList implements OnInit {
     }
     this.filtroNome = '';
     this.pageIndex = 0;
-    this.router.navigate(['/modelos']);
+    this.router.navigate(['/admin/modelos']);
   }
 
   novoModelo(): void {
-    this.router.navigate(['/modelos/new']);
+    this.router.navigate(['/admin/modelos/new']);
   }
 
   editarModelo(modelo: Modelo): void {
-    this.router.navigate(['/modelos', modelo.id, 'edit']);
+    this.router.navigate(['/admin/modelos', modelo.id, 'edit']);
   }
 
   abrirDetalhes(modelo: Modelo): void {

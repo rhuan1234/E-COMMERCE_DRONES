@@ -2,7 +2,7 @@
 <mat-toolbar class="toolbar">
   <span class="toolbar-title"> Controle de Drones </span>
 
-  <button mat-fab color="accent" routerLink="/drones/new" aria-label="Adicionar drone">
+  <button mat-fab color="accent" routerLink="/admin/drones/new" aria-label="Adicionar drone">
     <mat-icon>add</mat-icon>
   </button>
 </mat-toolbar>
@@ -317,7 +317,7 @@
         <button
           mat-icon-button
           color="primary"
-          routerLink="/drones/{{ drone.id }}/edit"
+          routerLink="/admin/drones/{{ drone.id }}/edit"
           aria-label="Editar drone"
           (click)="$event.stopPropagation()"
           (keydown)="$event.stopPropagation()"

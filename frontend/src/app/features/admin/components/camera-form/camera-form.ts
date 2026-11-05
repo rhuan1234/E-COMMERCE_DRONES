@@ -151,7 +151,7 @@ export class CameraForm implements OnInit {
     resultado.subscribe({
       next: () => {
         this.exibirMensagem('Câmera salva com sucesso!');
-        this.router.navigate(['/cameras']);
+        this.router.navigate(['/admin/cameras']);
       },
       error: (error) => {
         console.error('Erro ao salvar câmera:', error);
@@ -182,7 +182,7 @@ export class CameraForm implements OnInit {
       this.cameraService.delete(camera.id).subscribe({
         next: () => {
           this.exibirMensagem('Câmera excluída com sucesso!');
-          this.router.navigate(['/cameras']);
+          this.router.navigate(['/admin/cameras']);
         },
         error: (error) => {
           console.error('Erro ao excluir câmera:', error);
@@ -201,6 +201,6 @@ export class CameraForm implements OnInit {
   }
 
   voltar(): void {
-    this.router.navigate(['/cameras']);
+    this.router.navigate(['/admin/cameras']);
   }
 }

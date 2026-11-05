@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/services/auth/AuthGuard';
+import { adminGuard, authGuard } from './core/services/auth/AuthGuard';
 import { Login } from './features/auth/login/login';
 import { Register } from './features/auth/register/register';
 import { CameraList } from './features/admin/components/camera-list/camera-list';
@@ -21,8 +21,11 @@ import { CameraForm } from './features/admin/components/camera-form/camera-form'
 import { cameraResolver } from './core/resolvers/CameraResolver';
 import { EcommerceLayout } from './features/ecommerce/layout/ecommerce-layout/ecommerce-layout';
 import { Home } from './features/ecommerce/components/home/home';
+import { Landing } from './features/ecommerce/components/landing/landing';
 import { Favoritos } from './features/ecommerce/components/favoritos/favoritos';
 import { DroneInfo } from './features/ecommerce/components/drone-info/drone-info';
+import { Comparar } from './features/ecommerce/components/comparar/comparar';
+import { MinhaConta } from './features/ecommerce/components/minha-conta/minha-conta';
 import { ModeloList } from './features/admin/components/modelo-list/modelo-list';
 import { ModeloForm } from './features/admin/components/modelo-form/modelo-form';
 import { MarcaList } from './features/admin/components/marca-list/marca-list';
@@ -36,11 +39,47 @@ export const routes: Routes = [
   { path: 'login', component: Login, title: 'Login' },
   { path: 'register', component: Register, title: 'Cadastro' },
 
-  // Rotas administrativas 
+  // Loja (vitrine e área do cliente)
   {
     path: '',
+    component: EcommerceLayout,
+    children: [
+        // Página de apresentação (raiz do sistema)
+        {path: '', pathMatch: 'full', component: Landing, title: 'Skyline Drones'},
+        // Catálogo da loja
+        {path: 'home', component: Home, title: 'Catálogo de drones'},
+        {path: 'comparar', component: Comparar, title: 'Comparar drones'},
+        {path: 'favoritos', component: Favoritos, title: 'Meus Favoritos'},
+        {path: 'drone-info/:id', component: DroneInfo, title: 'Detalhes do Drone'},
+
+        // Minha conta: dados pessoais, endereços e senha de qualquer usuário autenticado
+        {
+          path: 'minha-conta',
+          component: MinhaConta,
+          canActivate: [authGuard],
+          children: [
+            {path: '', redirectTo: 'dados', pathMatch: 'full'},
+            {path: 'dados', component: PerfilPage, title: 'Meus dados'},
+            {path: 'enderecos', component: EnderecosPage, title: 'Meus endereços'},
+            {path: 'seguranca', component: AlterarSenhaPage, title: 'Segurança da conta'},
+          ]
+        },
+    ]
+  },
+
+  // Endereços antigos da área do usuário
+  { path: 'perfil/alterar-senha', redirectTo: 'minha-conta/seguranca' },
+  { path: 'perfil', redirectTo: 'minha-conta/dados' },
+  { path: 'enderecos', redirectTo: 'minha-conta/enderecos' },
+  // Telas administrativas que antes ficavam na raiz
+  ...['drones', 'marcas', 'modelos', 'cameras', 'fornecedores', 'administradores', 'promocoes']
+    .map((secao) => ({ path: secao, redirectTo: `admin/${secao}` })),
+
+  // Painel administrativo (somente perfil ADMIN)
+  {
+    path: 'admin',
     component: AdminLayoutComponent,
-    canActivate: [authGuard],
+    canActivate: [adminGuard],
     children: [
       { path: '', redirectTo: 'drones', pathMatch: 'full' },
 
@@ -83,28 +122,8 @@ export const routes: Routes = [
       { path: 'promocoes/new', component: PromocaoForm, title: 'Nova Promoção' },
       { path: 'promocoes/:id/edit', component: PromocaoForm, title: 'Editar Promoção' },
 
-      //Perfil
-      {path: 'perfil', component: PerfilPage, title: 'Perfil do Usuário'},
-
-      //Alterar Senha
-      {path: 'perfil/alterar-senha', component: AlterarSenhaPage, title: 'Alterar Senha'},
-
-      //Endereco
-      {path: 'enderecos', component: EnderecosPage, title: 'Lista de Endereços'},
     ]
   },
-  // Rotas do ecommerce
-  {
-    path: '',
-    component: EcommerceLayout,
-    children: [
-        //Pagina principal ecommerce
-        {path: 'home', component: Home, title: 'Página Inicial'},
-        {path: 'favoritos', component: Favoritos, title: 'Meus Favoritos'},
-        {path: 'drone-info/:id', component: DroneInfo, title: 'Detalhes do Drone'},
-    ]
-  },
-
   // Fallback
   { path: '**', redirectTo: 'home' }
 ];

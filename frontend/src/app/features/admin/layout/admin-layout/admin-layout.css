@@ -115,6 +115,7 @@
 }
 
 :host ::ng-deep .admin-sidenav.collapsed .nav-list .mdc-list-item__start,
+:host ::ng-deep .admin-sidenav.collapsed .store-link .mat-icon,
 :host ::ng-deep .admin-sidenav.collapsed .profile-link .mat-icon,
 :host ::ng-deep .admin-sidenav.collapsed .logout-btn .mat-icon {
   margin: 0 !important;
@@ -150,6 +151,7 @@
   position: relative;
 }
 
+.store-link,
 .profile-link,
 .logout-btn {
   width: 100%;
@@ -161,10 +163,16 @@
   gap: 12px;
 }
 
+.store-link {
+  margin-bottom: 4px;
+}
+
+.store-link,
 .profile-link {
   color: var(--mat-sys-on-surface-variant, #454b42) !important;
 }
 
+.store-link:hover,
 .profile-link:hover {
   background-color: var(--mat-sys-surface-container-high, #eef1eb) !important;
   color: var(--mat-sys-on-surface, #1b1f18) !important;
@@ -188,6 +196,7 @@
   transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
 }
 
+.admin-sidenav.collapsed .store-link,
 .admin-sidenav.collapsed .profile-link,
 .admin-sidenav.collapsed .logout-btn {
   justify-content: center !important;

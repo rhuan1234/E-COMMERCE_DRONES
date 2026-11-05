@@ -226,7 +226,7 @@ export class DroneForm implements OnInit {
     resultado.subscribe({
       next: () => {
         this.exibirMensagem('Drone salvo com sucesso!');
-        this.router.navigate(['/drones']);
+        this.router.navigate(['/admin/drones']);
       },
       error: (error) => {
         console.error('Erro ao salvar drone:', error);
@@ -256,7 +256,7 @@ export class DroneForm implements OnInit {
       this.droneService.delete(drone.id).subscribe({
         next: () => {
           this.exibirMensagem('Drone excluído com sucesso!');
-          this.router.navigate(['/drones']);
+          this.router.navigate(['/admin/drones']);
         },
         error: (error) => {
           this.exibirMensagem('Erro ao excluir o drone.');

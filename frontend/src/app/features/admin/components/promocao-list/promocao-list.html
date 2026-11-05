@@ -1,7 +1,7 @@
 <mat-toolbar class="mat-toolbar">
     <div class="flex-container" color="primary">
         <span class="toolbar-title">Controle de Promoções</span>
-        <button mat-fab class="accent" routerLink="/promocoes/new">
+        <button mat-fab class="accent" routerLink="/admin/promocoes/new">
             <mat-icon>add</mat-icon>
         </button>
     </div>
@@ -70,7 +70,7 @@
             <button
                 mat-icon-button
                 color="primary"
-                routerLink="/promocoes/{{obj.id}}/edit"
+                routerLink="/admin/promocoes/{{obj.id}}/edit"
                 (click)="$event.stopPropagation()"
                 (keydown)="$event.stopPropagation()">
                 <mat-icon>edit</mat-icon>

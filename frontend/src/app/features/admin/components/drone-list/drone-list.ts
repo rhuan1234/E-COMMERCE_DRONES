@@ -178,7 +178,7 @@ export class DroneList implements OnInit {
     }
 
     this.menuFiltrosAberto = false;
-    this.router.navigate(['/drones'], { queryParams });
+    this.router.navigate(['/admin/drones'], { queryParams });
   }
 
   removerFiltroIndividual(campo: CampoFiltroDrone): void {
@@ -211,7 +211,7 @@ export class DroneList implements OnInit {
     this.filtroAtivo = false;
     this.menuFiltrosAberto = false;
     this.pageIndex = 0;
-    this.router.navigate(['/drones']);
+    this.router.navigate(['/admin/drones']);
   }
 
   carregarDrones(): void {

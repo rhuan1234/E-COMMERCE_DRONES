@@ -85,9 +85,9 @@ export class CameraList implements OnInit {
     const termo = (modelo || '').trim();
     this.pageIndex = 0;
     if (termo) {
-      this.router.navigate(['/cameras/filtro/modelo', termo]);
+      this.router.navigate(['/admin/cameras/filtro/modelo', termo]);
     } else {
-      this.router.navigate(['/cameras']);
+      this.router.navigate(['/admin/cameras']);
     }
   }
 
@@ -97,15 +97,15 @@ export class CameraList implements OnInit {
     }
     this.filtroModelo = '';
     this.pageIndex = 0;
-    this.router.navigate(['/cameras']);
+    this.router.navigate(['/admin/cameras']);
   }
 
   novaCamera(): void {
-    this.router.navigate(['/cameras/new']);
+    this.router.navigate(['/admin/cameras/new']);
   }
 
   editarCamera(camera: Camera): void {
-    this.router.navigate(['/cameras', camera.id, 'edit']);
+    this.router.navigate(['/admin/cameras', camera.id, 'edit']);
   }
 
   abrirDetalhes(camera: Camera): void {

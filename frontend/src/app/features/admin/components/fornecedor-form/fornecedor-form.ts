@@ -142,7 +142,7 @@ export class FornecedorForm implements OnInit {
     resultado.subscribe({
       next: () => {
         this.exibirMensagem('Fornecedor salvo com sucesso!');
-        this.router.navigate(['/fornecedores']);
+        this.router.navigate(['/admin/fornecedores']);
       }
   });
   }
@@ -169,7 +169,7 @@ export class FornecedorForm implements OnInit {
       this.fornecedorService.delete(fornecedor.id).subscribe({
         next: () => {
           this.exibirMensagem('Fornecedor excluído com sucesso!');
-          this.router.navigate(['/fornecedores']);
+          this.router.navigate(['/admin/fornecedores']);
         },
         error: (error) => {
           this.exibirMensagem('Erro ao excluir o fornecedor: ');

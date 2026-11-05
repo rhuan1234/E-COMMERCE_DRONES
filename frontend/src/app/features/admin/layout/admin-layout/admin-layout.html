@@ -54,12 +54,26 @@
 
     <!-- Atalho do perfil e logout -->
     <div class="sidenav-footer">
+      <a
+        mat-button
+        class="store-link"
+        routerLink="/"
+        aria-label="Ver loja"
+        [matTooltip]="isCollapsed() ? 'Ver loja' : ''"
+        matTooltipPosition="right"
+      >
+        <mat-icon>storefront</mat-icon>
+        @if (!isCollapsed()) {
+          <span>Ver loja</span>
+        }
+      </a>
+
       <div class="profile-menu">
         <a
           mat-button
           class="profile-link"
-          routerLink="/perfil"
-          aria-label="Abrir perfil do usuário"
+          routerLink="/minha-conta"
+          aria-label="Abrir minha conta"
           [matTooltip]="isCollapsed() ? (emailUsuario || 'Perfil do usuário') : ''"
           matTooltipPosition="right"
         >

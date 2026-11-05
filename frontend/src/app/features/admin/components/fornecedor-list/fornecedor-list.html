@@ -1,7 +1,7 @@
 <mat-toolbar class="mat-toolbar">
     <div class="flex-container" color="primary">
         <span class="toolbar-title">Controle de Fornecedores</span>
-        <button mat-fab class="accent" routerLink="/fornecedores/new">
+        <button mat-fab class="accent" routerLink="/admin/fornecedores/new">
             <mat-icon>add</mat-icon>
         </button>
     </div>
@@ -66,7 +66,7 @@
             <button
                 mat-icon-button
                 color="primary"
-                routerLink="/fornecedores/{{obj.id}}/edit"
+                routerLink="/admin/fornecedores/{{obj.id}}/edit"
                 (click)="$event.stopPropagation()"
                 (keydown)="$event.stopPropagation()">
                 <mat-icon>edit</mat-icon>

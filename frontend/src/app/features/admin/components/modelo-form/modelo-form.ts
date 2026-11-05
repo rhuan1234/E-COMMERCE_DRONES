@@ -99,7 +99,7 @@ export class ModeloForm implements OnInit {
     resultado.subscribe({
       next: () => {
         this.exibirMensagem('Modelo salvo com sucesso!');
-        this.router.navigate(['/modelos']);
+        this.router.navigate(['/admin/modelos']);
       },
       error: (error) => {
         console.error('Erro ao salvar modelo:', error);
@@ -129,7 +129,7 @@ export class ModeloForm implements OnInit {
       this.modeloService.delete(modelo.id).subscribe({
         next: () => {
           this.exibirMensagem('Modelo excluído com sucesso!');
-          this.router.navigate(['/modelos']);
+          this.router.navigate(['/admin/modelos']);
         },
         error: (error) => {
           console.error('Erro ao excluir modelo:', error);
@@ -152,6 +152,6 @@ export class ModeloForm implements OnInit {
   }
 
   voltar(): void {
-    this.router.navigate(['/modelos']);
+    this.router.navigate(['/admin/modelos']);
   }
 }

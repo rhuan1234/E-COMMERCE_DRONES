@@ -85,9 +85,9 @@ export class FornecedorList implements OnInit {
     const termo = (nome || '').trim();
     this.pageIndex = 0;
     if (termo) {
-      this.router.navigate(['/fornecedores/filtro/nome', termo]);
+      this.router.navigate(['/admin/fornecedores/filtro/nome', termo]);
     } else {
-      this.router.navigate(['/fornecedores']);
+      this.router.navigate(['/admin/fornecedores']);
     }
   }
 
@@ -97,7 +97,7 @@ export class FornecedorList implements OnInit {
     }
     this.filtroNome = '';
     this.pageIndex = 0;
-    this.router.navigate(['/fornecedores']);
+    this.router.navigate(['/admin/fornecedores']);
   }
 
   abrirDetalhes(fornecedor: Fornecedor): void {

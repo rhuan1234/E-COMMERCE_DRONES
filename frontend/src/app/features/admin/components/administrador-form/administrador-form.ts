@@ -78,7 +78,7 @@ export class AdministradorForm implements OnInit {
     resultado.subscribe({
       next: () => {
         this.exibirMensagem('Administrador salvo com sucesso!');
-        this.router.navigate(['/administradores']);
+        this.router.navigate(['/admin/administradores']);
       },
       error: (error) => {
         this.exibirMensagem('Erro ao salvar o administrador.');
@@ -109,7 +109,7 @@ export class AdministradorForm implements OnInit {
       this.administradorService.delete(administrador.id).subscribe({
         next: () => {
           this.exibirMensagem('Administrador excluído com sucesso!');
-          this.router.navigate(['/administradores']);
+          this.router.navigate(['/admin/administradores']);
         },
         error: (error) => {
           this.exibirMensagem('Erro ao excluir o administrador.');

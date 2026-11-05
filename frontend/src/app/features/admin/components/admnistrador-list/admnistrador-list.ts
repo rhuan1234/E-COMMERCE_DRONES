@@ -84,9 +84,9 @@ export class AdmnistradorList implements OnInit {
     const termo = (login || '').trim();
     this.pageIndex = 0;
     if (termo) {
-      this.router.navigate(['/administradores/filtro/login', termo]);
+      this.router.navigate(['/admin/administradores/filtro/login', termo]);
     } else {
-      this.router.navigate(['/administradores']);
+      this.router.navigate(['/admin/administradores']);
     }
   }
 
@@ -96,7 +96,7 @@ export class AdmnistradorList implements OnInit {
     }
     this.filtroLogin = '';
     this.pageIndex = 0;
-    this.router.navigate(['/administradores']);
+    this.router.navigate(['/admin/administradores']);
   }
 
   excluirAdministrador(administrador: Administrador): void {

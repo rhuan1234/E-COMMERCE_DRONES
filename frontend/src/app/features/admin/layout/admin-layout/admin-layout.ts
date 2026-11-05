@@ -44,14 +44,13 @@ export class AdminLayoutComponent implements OnInit {
   isCollapsed = signal(false);
 
   navItems: NavItem[] = [
-    { label: 'Drones', route: '/drones', icon: 'flight_takeoff' },
-    { label: 'Marcas', route: '/marcas', icon: 'branding_watermark' },
-    { label: 'Modelos', route: '/modelos', icon: 'category' },
-    { label: 'Câmeras', route: '/cameras', icon: 'videocam' },
-    { label: 'Fornecedores', route: '/fornecedores', icon: 'business' },
-    { label: 'Administradores', route: '/administradores', icon: 'admin_panel_settings' },
-    { label: 'Promoções', route: '/promocoes', icon: 'local_offer' },
-    { label: 'Endereços', route: '/enderecos', icon: 'location_on' },
+    { label: 'Drones', route: '/admin/drones', icon: 'flight_takeoff' },
+    { label: 'Marcas', route: '/admin/marcas', icon: 'branding_watermark' },
+    { label: 'Modelos', route: '/admin/modelos', icon: 'category' },
+    { label: 'Câmeras', route: '/admin/cameras', icon: 'videocam' },
+    { label: 'Fornecedores', route: '/admin/fornecedores', icon: 'business' },
+    { label: 'Administradores', route: '/admin/administradores', icon: 'admin_panel_settings' },
+    { label: 'Promoções', route: '/admin/promocoes', icon: 'local_offer' },
   ];
 
   ngOnInit(): void {
@@ -72,6 +71,6 @@ export class AdminLayoutComponent implements OnInit {
 
   logout() {
     this.authService.logout();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/']);
   }
 }
