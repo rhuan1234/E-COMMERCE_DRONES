@@ -42,3 +42,197 @@ body {
   margin: 0;
   height: 100%;
 }
+
+// Diálogos (painel e loja): cantos e sombra da identidade Skyline.
+html {
+  @include mat.dialog-overrides(
+    (
+      container-shape: 20px,
+      container-color: #ffffff,
+      headline-padding: 0,
+      content-padding: 0,
+      with-actions-content-padding: 0,
+      actions-padding: 0,
+    )
+  );
+}
+
+// Painel administrativo: componentes Material com os tokens da loja
+// (ink #17211b, leaf #3f6a1e, lime #8cc63f, line #e3e9e3, paper #f7f9f6).
+.admin-shell {
+  $fonte-painel: #{"'Roboto Flex', Roboto, 'Segoe UI', system-ui, sans-serif"};
+
+  @include mat.table-overrides(
+    (
+      row-item-label-text-font: $fonte-painel,
+      background-color: #ffffff,
+      header-container-height: 46px,
+      header-headline-color: #5e6b62,
+      header-headline-size: 11px,
+      header-headline-weight: 600,
+      header-headline-tracking: 1.2px,
+      header-headline-font: #{'JetBrains Mono', ui-monospace, monospace},
+      row-item-container-height: 60px,
+      row-item-label-text-color: #17211b,
+      row-item-label-text-size: 14px,
+      row-item-outline-color: #e3e9e3,
+    )
+  );
+
+  @include mat.paginator-overrides(
+    (
+      container-background-color: #ffffff,
+      container-text-color: #4a574e,
+      container-text-font: $fonte-painel,
+      enabled-icon-color: #17211b,
+      disabled-icon-color: #c9d3c8,
+    )
+  );
+
+  @include mat.form-field-overrides(
+    (
+      outlined-container-shape: 12px,
+      container-text-font: $fonte-painel,
+      outlined-label-text-font: $fonte-painel,
+      subscript-text-font: $fonte-painel,
+      outlined-outline-color: #c9d3c8,
+      outlined-hover-outline-color: #4a574e,
+      outlined-focus-outline-color: #3f6a1e,
+      outlined-focus-label-text-color: #3f6a1e,
+      outlined-caret-color: #3f6a1e,
+      outlined-label-text-color: #4a574e,
+      leading-icon-color: #5e6b62,
+      trailing-icon-color: #5e6b62,
+      focus-select-arrow-color: #3f6a1e,
+    )
+  );
+
+  @include mat.button-overrides(
+    (
+      filled-container-color: #17211b,
+      filled-label-text-color: #ffffff,
+      filled-container-shape: 12px,
+      filled-container-height: 44px,
+      filled-horizontal-padding: 20px,
+      protected-container-color: #17211b,
+      protected-label-text-color: #ffffff,
+      protected-container-shape: 12px,
+      protected-container-height: 44px,
+      protected-container-elevation-shadow: none,
+      protected-hover-container-elevation-shadow: none,
+      outlined-container-shape: 12px,
+      outlined-container-height: 44px,
+      outlined-outline-color: #c9d3c8,
+      outlined-label-text-color: #17211b,
+      text-container-shape: 12px,
+      text-container-height: 44px,
+      text-label-text-color: #17211b,
+    )
+  );
+
+  @include mat.icon-button-overrides(
+    (
+      icon-color: #4a574e,
+    )
+  );
+
+  @include mat.stepper-overrides(
+    (
+      container-text-font: $fonte-painel,
+      header-label-text-font: $fonte-painel,
+      container-color: transparent,
+      header-height: 64px,
+      header-icon-background-color: #e3e9e3,
+      header-icon-foreground-color: #4a574e,
+      header-selected-state-icon-background-color: #17211b,
+      header-selected-state-icon-foreground-color: #b7ee75,
+      header-done-state-icon-background-color: #3f6a1e,
+      header-done-state-icon-foreground-color: #ffffff,
+      header-edit-state-icon-background-color: #3f6a1e,
+      header-edit-state-icon-foreground-color: #ffffff,
+      header-label-text-color: #5e6b62,
+      header-selected-state-label-text-color: #17211b,
+      header-selected-state-label-text-weight: 600,
+      header-hover-state-layer-shape: 12px,
+      header-focus-state-layer-shape: 12px,
+      line-color: #e3e9e3,
+    )
+  );
+
+  @include mat.chips-overrides(
+    (
+      label-text-font: $fonte-painel,
+      container-shape-radius: 999px,
+      outline-color: #c9d3c8,
+      label-text-color: #17211b,
+    )
+  );
+
+  @include mat.checkbox-overrides(
+    (
+      label-text-font: $fonte-painel,
+      selected-icon-color: #3f6a1e,
+      selected-hover-icon-color: #3f6a1e,
+      selected-focus-icon-color: #3f6a1e,
+      selected-pressed-icon-color: #3f6a1e,
+      selected-checkmark-color: #ffffff,
+    )
+  );
+
+  @include mat.progress-bar-overrides(
+    (
+      active-indicator-color: #8cc63f,
+      track-color: #eef5e6,
+    )
+  );
+}
+
+// Tabelas do painel: cabeçalho em caixa alta sobre fundo "paper",
+// linhas clicáveis com destaque suave e foco visível para teclado.
+.admin-shell .admin-table {
+  width: 100%;
+
+  .mat-mdc-header-row {
+    background-color: #f7f9f6;
+  }
+
+  .mat-mdc-header-cell {
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .mat-mdc-header-cell:first-child,
+  .mat-mdc-cell:first-child {
+    padding-left: 24px;
+  }
+
+  .mat-mdc-header-cell:last-child,
+  .mat-mdc-cell:last-child {
+    padding-right: 16px;
+  }
+
+  tr.mat-mdc-row {
+    transition: background-color 0.15s ease;
+  }
+
+  tr.mat-mdc-row.linha-clicavel {
+    cursor: pointer;
+  }
+
+  tr.mat-mdc-row:hover {
+    background-color: #f4f7f1;
+  }
+
+  tr.mat-mdc-row:focus-visible {
+    outline: 2px solid #8cc63f;
+    outline-offset: -2px;
+  }
+
+  tr.mat-mdc-row:last-of-type .mat-mdc-cell {
+    border-bottom: 0;
+  }
+}
+
+.admin-shell .mat-mdc-paginator {
+  border-top: 1px solid #e3e9e3;
+}

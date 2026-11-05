@@ -22,6 +22,11 @@
   --color-lime-glow: #b7ee75;
   --color-leaf: #3f6a1e;
   --color-leaf-deep: #2e5114;
+  --color-amber: #e0a526;
+  --color-amber-soft: #fff6e0;
+  --color-amber-ink: #7a5300;
+  --color-danger: #9b2c20;
+  --color-danger-soft: #fdf0ee;
 
   --font-display: 'Archivo', 'Roboto Flex', Roboto, system-ui, sans-serif;
   --font-body: 'Roboto Flex', Roboto, 'Segoe UI', system-ui, sans-serif;
