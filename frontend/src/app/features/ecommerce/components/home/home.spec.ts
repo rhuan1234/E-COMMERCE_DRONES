@@ -1,14 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, Subject } from 'rxjs';
-import { provideRouter, Router } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 import { Drone } from '../../../../core/models/drone/Drone';
 import { DroneService } from '../../../../core/services/DroneService';
 import { EcommerceCatalogSearchService } from '../../../../core/services/EcommerceCatalogSearchService';
 import { FavoritoService } from '../../../../core/services/FavoritoService';
 import { AuthService } from '../../../../core/services/auth/AuthService';
+import { ComparacaoService } from '../../../../core/services/ComparacaoService';
 import { Home } from './home';
 
-function criarDrone(dados: Pick<Drone, 'id' | 'nome' | 'preco' | 'imagens'>): Drone {
+function criarDrone(dados: Pick<Drone, 'id' | 'nome' | 'preco' | 'imagens'> & Partial<Drone>): Drone {
   return Object.assign(new Drone(), dados);
 }
 
@@ -33,6 +34,7 @@ describe('Home', () => {
   let router: Router;
 
   beforeEach(async () => {
+    sessionStorage.clear();
     droneService.findAllEcommerce.mockClear();
     favoritoService.listar.mockClear();
     favoritoService.adicionar.mockClear();
@@ -212,5 +214,107 @@ describe('Home', () => {
     const detailLink = fixture.nativeElement.querySelector('.drone-card-link') as HTMLAnchorElement;
     expect(detailLink.getAttribute('href')).toBe('/drone-info/23');
     expect(detailLink.getAttribute('aria-label')).toBe('Ver detalhes de Drone detalhado');
+  });
+
+  it('applies a flight-type shortcut as catalog filters and marks it as active', () => {
+    const cinema = component.tiposDeVoo.find((tipo) => tipo.id === 'cinema');
+    expect(cinema).toBeDefined();
+    const botao = Array.from(fixture.nativeElement.querySelectorAll('.flight-type') as NodeListOf<HTMLButtonElement>)
+      .find((button) => button.textContent?.includes('Fotografia e cinema'));
+
+    botao?.click();
+    fixture.detectChanges();
+
+    expect(droneService.findAllEcommerce).toHaveBeenLastCalledWith(
+      0,
+      12,
+      expect.objectContaining({
+        camera: ['4K', 'ESTABILIZACAO'],
+        autonomia: ['ACIMA_40_MIN'],
+      }),
+    );
+    expect(botao?.getAttribute('aria-pressed')).toBe('true');
+
+    component.limparFiltros();
+    fixture.detectChanges();
+    expect(botao?.getAttribute('aria-pressed')).toBe('false');
+  });
+
+  it('opens the catalog with a flight-type shortcut from the query string', async () => {
+    TestBed.resetTestingModule();
+    droneService.findAllEcommerce.mockClear();
+    await TestBed.configureTestingModule({
+      imports: [Home],
+      providers: [
+        provideRouter([]),
+        { provide: DroneService, useValue: droneService },
+        { provide: FavoritoService, useValue: favoritoService },
+        { provide: AuthService, useValue: authService },
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { queryParamMap: convertToParamMap({ tipo: 'longo-alcance' }) } },
+        },
+      ],
+    }).compileComponents();
+
+    const atalhoFixture = TestBed.createComponent(Home);
+    atalhoFixture.detectChanges();
+    await atalhoFixture.whenStable();
+    atalhoFixture.detectChanges();
+
+    expect(droneService.findAllEcommerce).toHaveBeenCalledTimes(1);
+    expect(droneService.findAllEcommerce).toHaveBeenCalledWith(
+      0,
+      12,
+      expect.objectContaining({ alcance: ['DE_20_A_50KM', 'ACIMA_50KM'] }),
+    );
+    const ativo = atalhoFixture.nativeElement.querySelector('.flight-type[aria-pressed="true"]') as HTMLButtonElement;
+    expect(ativo.textContent).toContain('Longo alcance');
+  });
+
+  it('no longer renders the comparison table inside the catalog', () => {
+    component.drones.set([
+      criarDrone({ id: 41, nome: 'Leve', preco: 5000, imagens: [] }),
+      criarDrone({ id: 42, nome: 'Autonomo', preco: 9000, imagens: [] }),
+    ]);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.comparison-table')).toBeNull();
+    expect(fixture.nativeElement.querySelector('#comparar')).toBeNull();
+  });
+
+  it('selects drones for comparison and shows a tray linking to the comparison page', () => {
+    component.drones.set([
+      criarDrone({ id: 41, nome: 'Leve', preco: 5000, imagens: [] }),
+      criarDrone({ id: 42, nome: 'Autonomo', preco: 9000, imagens: [] }),
+    ]);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.compare-tray')).toBeNull();
+
+    const toggles = fixture.nativeElement.querySelectorAll('.compare-toggle') as NodeListOf<HTMLButtonElement>;
+    toggles[0].click();
+    toggles[1].click();
+    fixture.detectChanges();
+
+    expect(TestBed.inject(ComparacaoService).itens().map((item) => item.id)).toEqual([41, 42]);
+    expect(toggles[0].getAttribute('aria-pressed')).toBe('true');
+    const tray = fixture.nativeElement.querySelector('.compare-tray') as HTMLElement;
+    expect(tray.textContent).toContain('Leve');
+    expect(tray.textContent).toContain('2/3');
+    expect((tray.querySelector('.compare-now') as HTMLAnchorElement).getAttribute('href')).toBe('/comparar');
+
+    toggles[0].click();
+    fixture.detectChanges();
+    expect(toggles[0].getAttribute('aria-pressed')).toBe('false');
+    expect(TestBed.inject(ComparacaoService).quantidade()).toBe(1);
+  });
+
+  it('explains the limit instead of adding a fourth drone', () => {
+    const drones = [51, 52, 53, 54].map((id) => criarDrone({ id, nome: `Drone ${id}`, preco: 1000, imagens: [] }));
+    drones.forEach((drone) => component.alternarComparacao(drone));
+    fixture.detectChanges();
+
+    expect(TestBed.inject(ComparacaoService).quantidade()).toBe(3);
+    expect(component.mensagemComparacao()).toContain('Remova um para incluir Drone 54');
   });
 });

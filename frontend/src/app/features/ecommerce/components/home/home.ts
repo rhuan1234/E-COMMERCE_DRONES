@@ -1,26 +1,29 @@
-import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { EMPTY, Observable, Subject, catchError, expand, forkJoin, map, reduce, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { Drone, DroneImagem } from '../../../../core/models/drone/Drone';
 import { DroneCatalogFeature, DroneCatalogFilters } from '../../../../core/models/drone/DroneCatalogFilters';
+import { CatalogFilterKey, TIPOS_DE_VOO, TipoDeVoo } from '../../../../core/models/drone/TipoDeVoo';
 import { PagedResponse } from '../../../../core/models/PagedResponse';
 import { AuthService } from '../../../../core/services/auth/AuthService';
+import { ComparacaoService } from '../../../../core/services/ComparacaoService';
 import { DroneService } from '../../../../core/services/DroneService';
 import { EcommerceCatalogSearchService } from '../../../../core/services/EcommerceCatalogSearchService';
 import { FavoritoService } from '../../../../core/services/FavoritoService';
 
 interface FilterGroup {
   title: string;
-  key: 'alcance' | 'autonomia' | 'camera';
+  key: CatalogFilterKey;
   options: { label: string; value: string }[];
 }
 
 @Component({
-  imports: [FormsModule, MatIconModule, RouterLink],
+  imports: [FormsModule, MatIconModule, NgTemplateOutlet, RouterLink],
   selector: 'app-home',
   styleUrl: './home.css',
   templateUrl: './home.html',
@@ -66,6 +69,8 @@ export class Home implements OnInit {
     { label: 'Possui controle remoto', value: 'comControleRemoto' },
     { label: 'Controlado por aplicativo', value: 'controladoPorAplicativo' },
   ];
+  readonly tiposDeVoo = TIPOS_DE_VOO;
+  readonly tipoDeVooAtivo = signal<string | null>(null);
   readonly selectedFilters = new Set<string>();
   readonly selectedFeatures = new Set<DroneCatalogFeature>();
   readonly drones = signal<Drone[]>([]);
@@ -81,6 +86,15 @@ export class Home implements OnInit {
   private readonly formatadorMoeda = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
+  });
+
+  /** Maiores valores do catálogo carregado: base das barras de autonomia e alcance. */
+  readonly maximos = computed(() => {
+    const drones = this.drones();
+    return {
+      autonomia: Math.max(0, ...drones.map((drone) => drone.tempoVooPratico ?? 0)),
+      alcance: Math.max(0, ...drones.map((drone) => drone.alcanceTransmissao ?? 0)),
+    };
   });
 
   ngOnInit(): void {
@@ -121,6 +135,13 @@ export class Home implements OnInit {
         });
     }
 
+    const tipoInicial = this.tiposDeVoo.find(
+      (tipo) => tipo.id === this.route.snapshot.queryParamMap.get('tipo'),
+    );
+    if (tipoInicial) {
+      this.selecionarTipoDeVoo(tipoInicial);
+    }
+
     this.catalogSearch.searchTerm$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((termo) => {
@@ -136,6 +157,23 @@ export class Home implements OnInit {
     private readonly authService: AuthService,
     private readonly router: Router,
   ) {}
+
+  private readonly route = inject(ActivatedRoute);
+  readonly comparacao = inject(ComparacaoService);
+  readonly mensagemComparacao = signal('');
+
+  alternarComparacao(drone: Drone): void {
+    const adicionou = !this.comparacao.contem(drone.id);
+    if (!this.comparacao.alternar({ id: drone.id, nome: drone.nome })) {
+      this.mensagemComparacao.set(
+        `Você já escolheu ${this.comparacao.limite} drones. Remova um para incluir ${drone.nome}.`,
+      );
+      return;
+    }
+    this.mensagemComparacao.set(
+      adicionou ? `${drone.nome} entrou na comparação.` : `${drone.nome} saiu da comparação.`,
+    );
+  }
 
   private listarTodosFavoritos(): Observable<Drone[]> {
     const pageSize = 100;
@@ -246,6 +284,11 @@ export class Home implements OnInit {
   }
 
   aplicarFiltros(): void {
+    this.montarFiltros();
+    this.filtros$.next(this.filtrosAplicados);
+  }
+
+  private montarFiltros(): void {
     this.filtrosAplicados = {
       min: this.valorNumerico(this.precoMinimo),
       max: this.valorNumerico(this.precoMaximo),
@@ -256,7 +299,6 @@ export class Home implements OnInit {
       comControleRemoto: this.selectedFeatures.has('comControleRemoto') ? true : undefined,
       controladoPorAplicativo: this.selectedFeatures.has('controladoPorAplicativo') ? true : undefined,
     };
-    this.filtros$.next(this.filtrosAplicados);
   }
 
   imagemPrincipal(drone: Drone): DroneImagem | undefined {
@@ -285,6 +327,7 @@ export class Home implements OnInit {
   }
 
   alternarFiltro(group: FilterGroup['key'], option: string): void {
+    this.tipoDeVooAtivo.set(null);
     const key = this.chaveFiltro(group, option);
     if (this.selectedFilters.has(key)) {
       this.selectedFilters.delete(key);
@@ -303,6 +346,7 @@ export class Home implements OnInit {
   }
 
   aoAlterarRecurso(feature: DroneCatalogFeature, event: Event): void {
+    this.tipoDeVooAtivo.set(null);
     const checkbox = event.target;
     if (checkbox instanceof HTMLInputElement) {
       this.alternarRecurso(feature, checkbox.checked);
@@ -310,9 +354,52 @@ export class Home implements OnInit {
   }
 
   limparFiltros(): void {
+    this.tipoDeVooAtivo.set(null);
     this.selectedFilters.clear();
     this.selectedFeatures.clear();
     this.precoMinimo = null;
     this.precoMaximo = null;
   }
+
+  aplicarTipoDeVoo(tipo: TipoDeVoo): void {
+    this.selecionarTipoDeVoo(tipo);
+    this.filtros$.next(this.filtrosAplicados);
+  }
+
+  /** Marca os filtros do atalho e monta os parâmetros, sem disparar a busca. */
+  private selecionarTipoDeVoo(tipo: TipoDeVoo): void {
+    this.limparFiltros();
+    for (const [grupo, valores] of Object.entries(tipo.filtros) as [CatalogFilterKey, string[]][]) {
+      valores.forEach((valor) => this.selectedFilters.add(this.chaveFiltro(grupo, valor)));
+    }
+    tipo.recursos.forEach((recurso) => this.selectedFeatures.add(recurso));
+    this.montarFiltros();
+    this.tipoDeVooAtivo.set(tipo.id);
+  }
+
+  percentual(valor: number | undefined, maximo: number): number {
+    if (!valor || !maximo) {
+      return 0;
+    }
+    return Math.min(100, Math.round((valor / maximo) * 100));
+  }
+
+  formatarAlcance(metros: number | undefined): string {
+    if (typeof metros !== 'number' || !Number.isFinite(metros)) {
+      return '—';
+    }
+    if (metros >= 1000) {
+      return `${this.formatarNumero(metros / 1000)} km`;
+    }
+    return `${this.formatarNumero(metros)} m`;
+  }
+
+  formatarNumero(valor: number | undefined): string {
+    if (typeof valor !== 'number' || !Number.isFinite(valor)) {
+      return '—';
+    }
+    return this.formatadorNumero.format(valor);
+  }
+
+  private readonly formatadorNumero = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 });
 }

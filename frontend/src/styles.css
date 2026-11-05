@@ -2,13 +2,48 @@
 
 @import 'tailwindcss';
 
+/*
+ * Tokens da identidade Skyline Drones (refinamento do visual original).
+ * Geram utilitários Tailwind: bg-ink, text-leaf, border-line, font-display etc.
+ */
+@theme {
+  --color-ink: #17211b;
+  --color-ink-soft: #2a362e;
+  --color-night: #121a15;
+  --color-paper: #f7f9f6;
+  --color-mist: #eef3ea;
+  --color-mist-green: #eef5e6;
+  --color-line: #e3e9e3;
+  --color-line-strong: #c9d3c8;
+  --color-muted: #4a574e;
+  --color-subtle: #5e6b62;
+  --color-lime: #8cc63f;
+  --color-lime-hover: #9fd650;
+  --color-lime-glow: #b7ee75;
+  --color-leaf: #3f6a1e;
+  --color-leaf-deep: #2e5114;
+
+  --font-display: 'Archivo', 'Roboto Flex', Roboto, system-ui, sans-serif;
+  --font-body: 'Roboto Flex', Roboto, 'Segoe UI', system-ui, sans-serif;
+  --font-data: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+}
+
+/* Archivo em largura expandida, coerente com o wordmark SKYLINE */
+@utility font-wide {
+  font-stretch: 112%;
+}
+
+@utility font-extra-wide {
+  font-stretch: 120%;
+}
+
 :root {
-  --color-brand-primary: #84cc16;
-  --color-brand-primary-hover: #a3e635;
-  --color-brand-bg: #f5f6f4;
+  --color-brand-primary: #8cc63f;
+  --color-brand-primary-hover: #9fd650;
+  --color-brand-bg: #f7f9f6;
   --color-brand-sidebar: #ffffff;
   --color-brand-card: #ffffff;
-  --color-brand-border: #d4d9d0;
+  --color-brand-border: #e3e9e3;
   color-scheme: light;
 }
 
@@ -17,4 +52,14 @@ html, body {
   color: var(--mat-sys-on-surface, #1b1f18);
   font-family: Roboto, 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
   min-height: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }

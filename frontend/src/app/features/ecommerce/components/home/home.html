@@ -1,194 +1,315 @@
-<section class="home-catalog" aria-labelledby="catalog-title">
-  <div class="home-content">
-    <aside class="filters-panel" aria-labelledby="filters-title">
-      <div class="filters-heading">
-        <div>
-          <span class="eyebrow">ENCONTRE O SEU VOO</span>
-          <h2 id="filters-title">Filtros</h2>
+<div class="home-page text-ink" [class.pb-28]="comparacao.quantidade() > 0">
+  <!-- Catálogo -->
+  <section id="catalogo" class="home-catalog scroll-mt-28 mx-auto max-w-[1240px] px-5 pb-16 pt-10 md:px-8" aria-labelledby="catalog-title">
+    <div class="home-content grid items-start gap-8 lg:grid-cols-[272px_minmax(0,1fr)] lg:gap-10">
+      <aside class="filters-panel self-start rounded-[20px] border border-line bg-white px-5 py-6" aria-labelledby="filters-title">
+        <div class="flex items-end justify-between gap-3">
+          <h2 id="filters-title" class="m-0 font-display font-wide text-[22px] font-bold">Filtros</h2>
+          @if (hasActiveFilters) {
+            <button class="clear-filters cursor-pointer rounded-md border-0 bg-transparent px-1 py-1 text-sm font-semibold text-leaf hover:underline" type="button" (click)="limparFiltros()">Limpar</button>
+          }
         </div>
-        @if (hasActiveFilters) {
-          <button class="clear-filters" type="button" (click)="limparFiltros()">Limpar</button>
+
+        <section class="filter-group border-b border-[#edf0ed] py-5" aria-labelledby="price-filter-title">
+          <h3 id="price-filter-title" class="m-0 mb-3 text-sm font-bold text-ink-soft">Preço</h3>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="grid gap-1.5 text-[13px] text-subtle">
+              <span>Mínimo</span>
+              <span class="price-input flex h-10 items-center gap-1.5 rounded-lg border border-[#dce4dc] bg-white px-2.5 text-[13px] focus-within:border-lime focus-within:ring-2 focus-within:ring-lime/20">
+                <span aria-hidden="true">R$</span>
+                <input
+                  class="w-full min-w-0 border-0 bg-transparent p-0 font-data text-[13px] text-ink outline-none"
+                  type="number"
+                  name="precoMinimo"
+                  min="0"
+                  step="0.01"
+                  placeholder="0,00"
+                  aria-label="Preço mínimo"
+                  [(ngModel)]="precoMinimo">
+              </span>
+            </label>
+            <label class="grid gap-1.5 text-[13px] text-subtle">
+              <span>Máximo</span>
+              <span class="price-input flex h-10 items-center gap-1.5 rounded-lg border border-[#dce4dc] bg-white px-2.5 text-[13px] focus-within:border-lime focus-within:ring-2 focus-within:ring-lime/20">
+                <span aria-hidden="true">R$</span>
+                <input
+                  class="w-full min-w-0 border-0 bg-transparent p-0 font-data text-[13px] text-ink outline-none"
+                  type="number"
+                  name="precoMaximo"
+                  min="0"
+                  step="0.01"
+                  placeholder="0,00"
+                  aria-label="Preço máximo"
+                  [(ngModel)]="precoMaximo">
+              </span>
+            </label>
+          </div>
+        </section>
+
+        @for (group of filterGroups; track group.title; let index = $index) {
+          <section class="filter-group border-b border-[#edf0ed] py-5" [attr.aria-labelledby]="'home-filter-' + index">
+            <h3 class="m-0 mb-2 text-sm font-bold text-ink-soft" [id]="'home-filter-' + index">{{ group.title }}</h3>
+            <div class="grid gap-0.5">
+              @for (option of group.options; track option.value) {
+                <button
+                  class="filter-option flex min-h-9 w-full cursor-pointer items-center gap-2.5 rounded-lg border-0 bg-transparent px-1 py-1.5 text-left text-sm text-muted transition-colors hover:bg-mist hover:text-ink"
+                  [class.selected]="selectedFilters.has(group.key + ':' + option.value)"
+                  [class.font-semibold]="selectedFilters.has(group.key + ':' + option.value)"
+                  [class.text-leaf-deep]="selectedFilters.has(group.key + ':' + option.value)"
+                  type="button"
+                  [attr.aria-pressed]="selectedFilters.has(group.key + ':' + option.value)"
+                  (click)="alternarFiltro(group.key, option.value)">
+                  <span
+                    class="filter-check grid size-[18px] shrink-0 place-items-center rounded border"
+                    [class.border-line-strong]="!selectedFilters.has(group.key + ':' + option.value)"
+                    [class.bg-white]="!selectedFilters.has(group.key + ':' + option.value)"
+                    [class.border-ink]="selectedFilters.has(group.key + ':' + option.value)"
+                    [class.bg-ink]="selectedFilters.has(group.key + ':' + option.value)"
+                    [class.text-lime-glow]="selectedFilters.has(group.key + ':' + option.value)"
+                    aria-hidden="true">
+                    @if (selectedFilters.has(group.key + ':' + option.value)) {
+                      <mat-icon>check</mat-icon>
+                    }
+                  </span>
+                  {{ option.label }}
+                </button>
+              }
+            </div>
+          </section>
         }
-      </div>
 
-      <section class="filter-group" aria-labelledby="price-filter-title">
-        <h3 id="price-filter-title">Preço</h3>
-        <div class="price-range">
-          <label class="price-field">
-            <span>Mínimo</span>
-            <span class="price-input">
-              <span aria-hidden="true">R$</span>
-              <input
-                type="number"
-                name="precoMinimo"
-                min="0"
-                step="0.01"
-                placeholder="0,00"
-                aria-label="Preço mínimo"
-                [(ngModel)]="precoMinimo">
-            </span>
-          </label>
-          <label class="price-field">
-            <span>Máximo</span>
-            <span class="price-input">
-              <span aria-hidden="true">R$</span>
-              <input
-                type="number"
-                name="precoMaximo"
-                min="0"
-                step="0.01"
-                placeholder="0,00"
-                aria-label="Preço máximo"
-                [(ngModel)]="precoMaximo">
-            </span>
-          </label>
-        </div>
-      </section>
-
-      @for (group of filterGroups; track group.title; let index = $index) {
-        <section class="filter-group" [attr.aria-labelledby]="'home-filter-' + index">
-          <h3 [id]="'home-filter-' + index">{{ group.title }}</h3>
-          <div class="filter-options">
-            @for (option of group.options; track option.value) {
-              <button
-                class="filter-option"
-                [class.selected]="selectedFilters.has(group.key + ':' + option.value)"
-                type="button"
-                [attr.aria-pressed]="selectedFilters.has(group.key + ':' + option.value)"
-                (click)="alternarFiltro(group.key, option.value)">
-                <span class="filter-check" aria-hidden="true">
-                  @if (selectedFilters.has(group.key + ':' + option.value)) {
-                    <mat-icon>check</mat-icon>
-                  }
-                </span>
-                {{ option.label }}
-              </button>
+        <section class="filter-group py-5" aria-labelledby="features-filter-title">
+          <h3 id="features-filter-title" class="m-0 mb-3 text-sm font-bold text-ink-soft">Recursos</h3>
+          <div class="grid gap-3">
+            @for (feature of featureFilters; track feature.value) {
+              <label class="feature-option flex cursor-pointer items-center gap-2.5 text-sm text-muted">
+                <input
+                  class="size-[18px] cursor-pointer accent-ink"
+                  type="checkbox"
+                  [checked]="selectedFeatures.has(feature.value)"
+                  (change)="aoAlterarRecurso(feature.value, $event)">
+                <span>{{ feature.label }}</span>
+              </label>
             }
           </div>
         </section>
-      }
 
-      <section class="filter-group" aria-labelledby="features-filter-title">
-        <h3 id="features-filter-title">Recursos</h3>
-        <div class="feature-options">
-          @for (feature of featureFilters; track feature.value) {
-            <label class="feature-option">
-              <input
-                type="checkbox"
-                [checked]="selectedFeatures.has(feature.value)"
-                (change)="aoAlterarRecurso(feature.value, $event)">
-              <span>{{ feature.label }}</span>
-            </label>
-          }
-        </div>
-      </section>
+        @if (hasActiveFilters) {
+          <p class="m-0 mb-3 text-[13px] text-subtle" aria-live="polite">
+            {{ totalSelectedFilters }} {{ totalSelectedFilters === 1 ? 'filtro selecionado' : 'filtros selecionados' }}
+          </p>
+        }
 
-      @if (hasActiveFilters) {
-        <p class="filter-summary" aria-live="polite">
-          {{ totalSelectedFilters }} {{ totalSelectedFilters === 1 ? 'filtro selecionado' : 'filtros selecionados' }}
-        </p>
-      }
+        <button
+          class="apply-filters h-12 w-full cursor-pointer rounded-xl border-0 bg-ink text-[15px] font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:opacity-50"
+          type="button"
+          [disabled]="carregandoDrones()"
+          (click)="aplicarFiltros()">
+          Aplicar filtros
+        </button>
+      </aside>
 
-      <button
-        class="apply-filters"
-        type="button"
-        [disabled]="carregandoDrones()"
-        (click)="aplicarFiltros()">
-        Aplicar filtros
-      </button>
-    </aside>
+      <div class="products-area min-w-0">
+        <header class="mb-7">
+          <h1 id="catalog-title" class="m-0 font-display font-wide text-[32px] font-extrabold leading-tight tracking-[-0.6px] md:text-[40px]">Catálogo de drones</h1>
+          <p class="m-0 mt-2.5 text-[17px] text-muted">As barras comparam cada modelo ao maior valor entre os drones listados.</p>
+          <div class="mt-5 flex flex-wrap gap-2" role="group" aria-label="Atalhos por tipo de voo">
+            @for (tipo of tiposDeVoo; track tipo.id) {
+              <button
+                class="flight-type inline-flex h-10 cursor-pointer items-center gap-2 rounded-full border px-3.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                [class.border-line-strong]="tipoDeVooAtivo() !== tipo.id"
+                [class.bg-white]="tipoDeVooAtivo() !== tipo.id"
+                [class.text-ink]="tipoDeVooAtivo() !== tipo.id"
+                [class.border-ink]="tipoDeVooAtivo() === tipo.id"
+                [class.bg-ink]="tipoDeVooAtivo() === tipo.id"
+                [class.text-white]="tipoDeVooAtivo() === tipo.id"
+                type="button"
+                [attr.aria-pressed]="tipoDeVooAtivo() === tipo.id"
+                [disabled]="carregandoDrones()"
+                (click)="aplicarTipoDeVoo(tipo)">
+                <mat-icon class="!size-[18px] !text-[18px]" aria-hidden="true">{{ tipo.icone }}</mat-icon>
+                {{ tipo.titulo }}
+              </button>
+            }
+          </div>
+        </header>
 
-    <div class="products-area">
-      <header class="catalog-heading">
-        <div>
-          <span class="catalog-eyebrow">SKYLINE DRONES</span>
-          <h1 id="catalog-title">Drones em destaque</h1>
-          <p>Encontre o equipamento ideal para o seu próximo voo.</p>
-        </div>
-      </header>
+        @if (mensagemErroFavoritos()) {
+          <p class="catalog-state catalog-error mb-5 rounded-xl border border-[#f3c4bf] bg-[#fdf0ee] px-4 py-3 text-sm text-[#9b2c20]" role="alert">{{ mensagemErroFavoritos() }}</p>
+        } @else if (mensagemSucessoFavoritos()) {
+          <p class="catalog-notice mb-5 rounded-xl border border-[#cfe3bd] bg-mist-green px-4 py-3 text-sm text-leaf-deep" role="status">{{ mensagemSucessoFavoritos() }}</p>
+        }
 
-      @if (mensagemErroFavoritos()) {
-        <p class="catalog-state catalog-error" role="alert">{{ mensagemErroFavoritos() }}</p>
-      } @else if (mensagemSucessoFavoritos()) {
-        <p class="catalog-notice" role="status">{{ mensagemSucessoFavoritos() }}</p>
-      }
-
-      @if (carregandoDrones()) {
-        <p class="catalog-state" role="status">Carregando drones...</p>
-      } @else if (mensagemErroDrones()) {
-        <p class="catalog-state catalog-error" role="alert">{{ mensagemErroDrones() }}</p>
-      } @else if (drones().length === 0) {
-        <p class="catalog-state">Nenhum drone disponível no momento.</p>
-      } @else {
-        <div class="drone-grid">
-          @for (drone of drones(); track drone.id) {
-            <article class="drone-card">
-              <a
-                class="drone-card-link"
-                [routerLink]="['/drone-info', drone.id]"
-                [attr.aria-label]="'Ver detalhes de ' + drone.nome">
-              </a>
-              <div class="product-visual">
-                <button
-                  class="favorite-button"
-                  type="button"
-                  [disabled]="favoritosEmAtualizacao().has(drone.id)"
-                  [attr.aria-label]="favoritosIds().has(drone.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'"
-                  [attr.aria-pressed]="favoritosIds().has(drone.id)"
-                  (click)="$event.stopPropagation(); alternarFavorito(drone)">
-                  <mat-icon>{{ favoritosIds().has(drone.id) ? 'favorite' : 'favorite_border' }}</mat-icon>
-                </button>
-
-                @if (imagemPrincipal(drone); as imagem) {
-                  @if (!imagensComFalha.has(drone.id)) {
-                    <img
-                      class="product-image"
-                      [src]="obterUrlImagem(imagem)"
-                      [alt]="drone.nome"
-                      (error)="marcarImagemComFalha(drone.id)"
-                    >
+        @if (carregandoDrones()) {
+          <div class="drone-grid grid gap-5 sm:grid-cols-2 xl:grid-cols-3" role="status" aria-label="Carregando drones">
+            @for (item of [1, 2, 3]; track item) {
+              <div class="h-[440px] animate-pulse rounded-[20px] border border-line bg-white"></div>
+            }
+          </div>
+        } @else if (mensagemErroDrones()) {
+          <div class="catalog-state catalog-error flex flex-col items-start gap-3 rounded-[20px] border border-[#f3c4bf] bg-[#fdf0ee] p-6 text-[#9b2c20]" role="alert">
+            <p class="m-0 font-semibold">{{ mensagemErroDrones() }}</p>
+            <button class="h-11 cursor-pointer rounded-xl border border-[#9b2c20] bg-white px-4 text-sm font-semibold text-[#9b2c20]" type="button" (click)="aplicarFiltros()">Tentar novamente</button>
+          </div>
+        } @else if (drones().length === 0) {
+          <div class="catalog-state flex flex-col items-start gap-3 rounded-[20px] border border-line bg-white p-6">
+            <p class="m-0 font-semibold">Nenhum drone encontrado com esses filtros.</p>
+            @if (hasActiveFilters) {
+              <button class="h-11 cursor-pointer rounded-xl border border-line-strong bg-white px-4 text-sm font-semibold text-ink hover:border-ink" type="button" (click)="limparFiltros(); aplicarFiltros()">Limpar filtros</button>
+            }
+          </div>
+        } @else {
+          <div class="drone-grid grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            @for (drone of drones(); track drone.id) {
+              <article class="drone-card relative flex flex-col overflow-hidden rounded-[20px] border border-line bg-white transition-[border-color,box-shadow] duration-200 hover:border-line-strong hover:shadow-[0_18px_40px_rgb(23_33_27/8%)]">
+                <a
+                  class="drone-card-link absolute inset-0 z-[1] rounded-[20px]"
+                  [routerLink]="['/drone-info', drone.id]"
+                  [attr.aria-label]="'Ver detalhes de ' + drone.nome">
+                </a>
+                <div class="product-visual relative grid aspect-[4/3] place-items-center bg-mist">
+                  @if (imagemPrincipal(drone); as imagem) {
+                    @if (!imagensComFalha.has(drone.id)) {
+                      <img
+                        class="product-image size-full object-contain p-6"
+                        loading="lazy"
+                        [src]="obterUrlImagem(imagem)"
+                        [alt]="drone.nome"
+                        (error)="marcarImagemComFalha(drone.id)"
+                      >
+                    } @else {
+                      <div class="image-placeholder grid size-full place-items-center" role="img" [attr.aria-label]="'Imagem indisponível para ' + drone.nome">
+                        <ng-container [ngTemplateOutlet]="droneMiniatura"></ng-container>
+                      </div>
+                    }
                   } @else {
-                    <div class="image-placeholder" role="img" [attr.aria-label]="'Imagem indisponível para ' + drone.nome"></div>
+                    <div class="image-placeholder grid size-full place-items-center" role="img" [attr.aria-label]="'Imagem indisponível para ' + drone.nome">
+                      <ng-container [ngTemplateOutlet]="droneMiniatura"></ng-container>
+                    </div>
                   }
-                } @else {
-                  <div class="image-placeholder" role="img" [attr.aria-label]="'Imagem indisponível para ' + drone.nome"></div>
-                }
 
-                <button
-                  class="cart-button"
-                  type="button"
-                  [attr.aria-label]="'Adicionar ' + drone.nome + ' ao carrinho'"
-                  (click)="$event.stopPropagation()">
-                  <mat-icon>shopping_cart</mat-icon>
-                  <span>Adicionar ao carrinho</span>
-                </button>
-              </div>
+                  <button
+                    class="compare-toggle absolute left-2.5 top-2.5 z-[2] inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-lg border-0 px-2.5 text-[13px] font-semibold shadow-sm transition-shadow hover:shadow-md"
+                    type="button"
+                    [class.bg-white]="!comparacao.contem(drone.id)"
+                    [class.text-ink]="!comparacao.contem(drone.id)"
+                    [class.bg-ink]="comparacao.contem(drone.id)"
+                    [class.text-white]="comparacao.contem(drone.id)"
+                    [attr.aria-pressed]="comparacao.contem(drone.id)"
+                    [attr.aria-label]="(comparacao.contem(drone.id) ? 'Remover ' : 'Adicionar ') + drone.nome + (comparacao.contem(drone.id) ? ' da comparação' : ' à comparação')"
+                    (click)="$event.stopPropagation(); alternarComparacao(drone)">
+                    <mat-icon class="!size-[18px] !text-[18px]" aria-hidden="true">{{ comparacao.contem(drone.id) ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
+                    Comparar
+                  </button>
 
-              <div class="product-details">
-                <h2 class="product-name">
-                  <span>{{ drone.nome }}</span>
-                  @if (drone.modelo?.nome) {
-                    <span class="product-model">{{ drone.modelo.nome }}</span>
-                  }
-                </h2>
-
-                <div class="product-pricing">
-                  <span class="current-price">{{ formatarPreco(drone.preco) }}</span>
+                  <button
+                    class="favorite-button absolute right-2.5 top-2.5 z-[2] grid size-11 cursor-pointer place-items-center rounded-xl border-0 bg-white text-ink shadow-sm transition-colors hover:text-red-700 disabled:opacity-50"
+                    type="button"
+                    [class.text-red-700]="favoritosIds().has(drone.id)"
+                    [disabled]="favoritosEmAtualizacao().has(drone.id)"
+                    [attr.aria-label]="favoritosIds().has(drone.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'"
+                    [attr.aria-pressed]="favoritosIds().has(drone.id)"
+                    (click)="$event.stopPropagation(); alternarFavorito(drone)">
+                    <mat-icon aria-hidden="true">{{ favoritosIds().has(drone.id) ? 'favorite' : 'favorite_border' }}</mat-icon>
+                  </button>
                 </div>
 
-                <p class="installment-price">
-                  ou 12x de {{ formatarPreco(drone.preco / 12) }} sem juros
-                </p>
+                <div class="product-details flex flex-1 flex-col gap-3.5 p-5">
+                  <div>
+                    @if (drone.marca?.nome) {
+                      <p class="m-0 text-[13px] text-subtle">{{ drone.marca.nome }}</p>
+                    }
+                    <h2 class="product-name m-0 mt-0.5 font-display font-wide text-[19px] font-bold leading-snug">
+                      <span>{{ drone.nome }}</span>
+                      @if (drone.modelo?.nome) {
+                        <span class="product-model mt-0.5 block font-body text-[13px] font-normal text-subtle">{{ drone.modelo.nome }}</span>
+                      }
+                    </h2>
+                  </div>
 
-                <p class="shipping-label">
-                  <mat-icon>local_shipping</mat-icon>
-                  Frete grátis
-                </p>
-              </div>
-            </article>
-          }
-        </div>
-      }
+                  <dl class="m-0 flex flex-col gap-2.5">
+                    <div>
+                      <div class="flex justify-between text-[13px]"><dt class="text-subtle">Autonomia</dt><dd class="m-0 font-data font-semibold">{{ formatarNumero(drone.tempoVooPratico) }} min</dd></div>
+                      <div class="mt-1.5 h-1 rounded-sm bg-mist" aria-hidden="true"><div class="h-1 rounded-sm bg-ink" [style.width.%]="percentual(drone.tempoVooPratico, maximos().autonomia)"></div></div>
+                    </div>
+                    <div>
+                      <div class="flex justify-between text-[13px]"><dt class="text-subtle">Alcance</dt><dd class="m-0 font-data font-semibold">{{ formatarAlcance(drone.alcanceTransmissao) }}</dd></div>
+                      <div class="mt-1.5 h-1 rounded-sm bg-mist" aria-hidden="true"><div class="h-1 rounded-sm bg-ink" [style.width.%]="percentual(drone.alcanceTransmissao, maximos().alcance)"></div></div>
+                    </div>
+                  </dl>
+
+                  <div class="product-pricing mt-auto pt-1">
+                    <p class="current-price m-0 font-data text-[22px] font-semibold tracking-[-0.4px]">{{ formatarPreco(drone.preco) }}</p>
+                    <p class="installment-price m-0 mt-0.5 text-[13px] text-muted">ou 12x de {{ formatarPreco(drone.preco / 12) }} sem juros</p>
+                  </div>
+
+                  <button
+                    class="cart-button relative z-[2] inline-flex h-[46px] cursor-pointer items-center justify-center gap-2 rounded-xl border border-ink bg-white text-[15px] font-semibold text-ink transition-colors hover:bg-ink hover:text-white"
+                    type="button"
+                    [attr.aria-label]="'Adicionar ' + drone.nome + ' ao carrinho'"
+                    (click)="$event.stopPropagation()">
+                    <mat-icon aria-hidden="true">shopping_cart</mat-icon>
+                    <span>Adicionar ao carrinho</span>
+                  </button>
+                </div>
+              </article>
+            }
+          </div>
+        }
+      </div>
     </div>
-  </div>
-</section>
+  </section>
+
+  <!-- Seleção para comparar: a tabela fica na página /comparar -->
+  @if (comparacao.quantidade() > 0) {
+    <aside
+      class="compare-tray fixed inset-x-0 bottom-0 z-30 px-3 pb-3 md:px-6 md:pb-5"
+      aria-label="Drones selecionados para comparar">
+      <div class="mx-auto flex max-w-[1000px] flex-wrap items-center gap-x-4 gap-y-2.5 rounded-2xl bg-ink px-4 py-3 text-white shadow-[0_18px_40px_rgb(23_33_27/30%)] md:px-5">
+        <p class="m-0 shrink-0 text-sm font-semibold">
+          Comparar <span class="font-data text-lime-glow">{{ comparacao.quantidade() }}/{{ comparacao.limite }}</span>
+        </p>
+        <ul class="m-0 flex min-w-0 flex-1 list-none flex-wrap gap-2 p-0">
+          @for (item of comparacao.itens(); track item.id) {
+            <li class="inline-flex h-8 max-w-[220px] items-center gap-1 rounded-lg bg-white/10 pl-2.5 pr-1 text-[13px]">
+              <span class="truncate">{{ item.nome }}</span>
+              <button
+                class="grid size-6 shrink-0 cursor-pointer place-items-center rounded-md border-0 bg-transparent text-white/80 hover:bg-white/15 hover:text-white"
+                type="button"
+                [attr.aria-label]="'Remover ' + item.nome + ' da comparação'"
+                (click)="comparacao.remover(item.id)">
+                <mat-icon class="!size-4 !text-[16px]" aria-hidden="true">close</mat-icon>
+              </button>
+            </li>
+          }
+        </ul>
+        <div class="flex shrink-0 items-center gap-2">
+          <button
+            class="h-10 cursor-pointer rounded-lg border-0 bg-transparent px-3 text-sm font-semibold text-white/80 hover:text-white hover:underline"
+            type="button"
+            (click)="comparacao.limpar(); mensagemComparacao.set('')">
+            Limpar
+          </button>
+          <a
+            class="compare-now inline-flex h-10 items-center gap-1.5 rounded-lg bg-lime px-4 text-sm font-bold text-ink no-underline transition-colors hover:bg-lime-hover"
+            routerLink="/comparar">
+            {{ comparacao.quantidade() >= 2 ? 'Comparar agora' : 'Ver comparação' }}
+            <mat-icon class="!size-[18px] !text-[18px]" aria-hidden="true">arrow_forward</mat-icon>
+          </a>
+        </div>
+        @if (mensagemComparacao()) {
+          <p class="m-0 w-full text-[13px] text-white/75">{{ mensagemComparacao() }}</p>
+        }
+      </div>
+    </aside>
+  }
+</div>
+
+<ng-template #droneMiniatura>
+  <svg class="w-[42%]" viewBox="0 0 400 400" aria-hidden="true">
+    <g stroke="#17211b" stroke-width="16" stroke-linecap="round"><line x1="200" y1="200" x2="98" y2="98"></line><line x1="200" y1="200" x2="302" y2="98"></line><line x1="200" y1="200" x2="98" y2="302"></line><line x1="200" y1="200" x2="302" y2="302"></line></g>
+    <g fill="#17211b" fill-opacity="0.07" stroke="#17211b" stroke-opacity="0.3" stroke-width="2"><circle cx="98" cy="98" r="66"></circle><circle cx="302" cy="98" r="66"></circle><circle cx="98" cy="302" r="66"></circle><circle cx="302" cy="302" r="66"></circle></g>
+    <rect x="148" y="132" width="104" height="132" rx="36" fill="#17211b"></rect>
+    <rect x="188" y="228" width="24" height="6" rx="3" fill="#b7ee75"></rect>
+  </svg>
+</ng-template>

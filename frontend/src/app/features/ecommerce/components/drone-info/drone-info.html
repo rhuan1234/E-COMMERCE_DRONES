@@ -111,6 +111,25 @@
           </button>
         </div>
 
+        <div class="compare-actions mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+          <button
+            class="compare-toggle inline-flex h-10 cursor-pointer items-center gap-2 rounded-lg border border-line-strong bg-white px-3 font-semibold text-ink transition-colors hover:border-ink"
+            type="button"
+            [attr.aria-pressed]="comparacao.contem(produto.id)"
+            (click)="alternarComparacao(produto)">
+            <mat-icon aria-hidden="true">{{ comparacao.contem(produto.id) ? 'check_box' : 'compare_arrows' }}</mat-icon>
+            {{ comparacao.contem(produto.id) ? 'Na comparação' : 'Comparar com outros' }}
+          </button>
+          @if (comparacao.quantidade() > 0) {
+            <a class="font-semibold text-leaf underline-offset-2 hover:underline" routerLink="/comparar">
+              Ver comparação ({{ comparacao.quantidade() }}/{{ comparacao.limite }})
+            </a>
+          }
+          @if (mensagemComparacao()) {
+            <span class="w-full text-[13px] text-muted" role="status">{{ mensagemComparacao() }}</span>
+          }
+        </div>
+
         @if (erroFavorito()) {
           <div class="inline-error" role="alert">
             <p>{{ erroFavorito() }}</p>

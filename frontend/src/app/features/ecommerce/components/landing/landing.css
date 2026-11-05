@@ -1,0 +1,10 @@
+/* Página de apresentação estilizada com utilitários Tailwind (tokens em src/styles.css). */
+
+:host {
+  display: block;
+}
+
+a:focus-visible {
+  outline: 3px solid #8cc63f;
+  outline-offset: 3px;
+}

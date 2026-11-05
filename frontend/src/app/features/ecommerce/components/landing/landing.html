@@ -1,0 +1,190 @@
+<div class="landing text-ink">
+  <!-- Hero -->
+  <section class="mx-auto max-w-[1240px] px-5 pb-16 pt-12 md:px-8 lg:pb-24 lg:pt-16" aria-labelledby="hero-title">
+    <div class="grid items-center gap-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(0,1fr)] lg:gap-14">
+      <div class="flex flex-col gap-7">
+        <span class="inline-flex w-fit items-center gap-2.5 rounded-full border border-line bg-white py-1.5 pl-2 pr-3.5 text-sm text-muted">
+          <span class="rounded-full bg-ink px-2 py-0.5 font-data text-xs font-semibold text-lime-glow">SKYLINE</span>
+          Loja especializada em drones
+        </span>
+        <h1 id="hero-title" class="m-0 font-display font-wide text-[44px] font-extrabold leading-[0.98] tracking-[-1.5px] sm:text-[56px] xl:text-[64px]">
+          Voe mais longe.<br>
+          <span class="text-leaf">Escolha com precisão.</span>
+        </h1>
+        <p class="m-0 max-w-[520px] text-lg leading-relaxed text-muted sm:text-[19px]">
+          Compare autonomia, alcance e câmera dos drones antes de decidir, com pagamento por PIX ou cartão.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a class="landing-cta inline-flex h-[54px] items-center gap-2.5 rounded-[14px] bg-lime px-6 text-base font-bold text-ink no-underline transition-colors hover:bg-lime-hover" routerLink="/home">
+            Ver catálogo
+            <mat-icon aria-hidden="true">arrow_forward</mat-icon>
+          </a>
+          <a class="inline-flex h-[54px] items-center rounded-[14px] border border-line-strong px-6 text-base font-semibold text-ink no-underline transition-colors hover:border-ink hover:bg-white" routerLink="/" fragment="tipos-de-voo">
+            Escolher pelo tipo de voo
+          </a>
+        </div>
+        <ul class="m-0 mt-1 flex list-none flex-wrap gap-x-6 gap-y-2.5 p-0 text-sm text-muted">
+          <li class="inline-flex items-center gap-2"><mat-icon class="text-leaf" aria-hidden="true">check</mat-icon>Pagamento via PIX</li>
+          <li class="inline-flex items-center gap-2"><mat-icon class="text-leaf" aria-hidden="true">check</mat-icon>Parcelamento no cartão</li>
+          <li class="inline-flex items-center gap-2"><mat-icon class="text-leaf" aria-hidden="true">check</mat-icon>Garantia nacional</li>
+        </ul>
+      </div>
+
+      <!-- Visor de voo: a única menção a produto na apresentação -->
+      <figure class="flight-visor relative m-0 aspect-square overflow-hidden rounded-[28px] border border-[#d6e1d1] bg-[#e8f0e3]" aria-label="Drone em destaque">
+        <svg class="absolute inset-0 size-full" viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <g fill="none" stroke="#17211b" stroke-opacity="0.07" stroke-width="1.2">
+            <path d="M-20 120 C 120 60, 260 170, 420 110 S 640 70, 660 130"></path>
+            <path d="M-20 190 C 140 130, 270 240, 430 180 S 640 140, 660 200"></path>
+            <path d="M-20 420 C 110 360, 280 470, 440 400 S 630 380, 660 430"></path>
+            <path d="M-20 490 C 130 430, 290 540, 450 470 S 640 450, 660 500"></path>
+          </g>
+          <g stroke="#17211b" stroke-opacity="0.18">
+            <line x1="300" y1="40" x2="300" y2="70"></line><line x1="300" y1="530" x2="300" y2="560"></line>
+            <line x1="40" y1="300" x2="70" y2="300"></line><line x1="530" y1="300" x2="560" y2="300"></line>
+          </g>
+        </svg>
+
+        @if (destaque(); as drone) {
+          @if (imagemPrincipal(drone); as imagem) {
+            @if (!imagemComFalha()) {
+              <img
+                class="absolute left-1/2 top-[42%] h-[58%] w-[78%] -translate-x-1/2 -translate-y-1/2 object-contain"
+                [src]="obterUrlImagem(imagem)"
+                [alt]="drone.nome"
+                (error)="imagemComFalha.set(true)">
+            } @else {
+              <ng-container [ngTemplateOutlet]="ilustracaoDrone"></ng-container>
+            }
+          } @else {
+            <ng-container [ngTemplateOutlet]="ilustracaoDrone"></ng-container>
+          }
+
+          <div class="absolute inset-x-5 top-5 flex justify-between gap-3 font-data text-xs font-medium tracking-wide">
+            <span class="rounded-lg bg-white/85 px-2.5 py-1.5">EM DESTAQUE</span>
+            @if (drone.possuiGPS) {
+              <span class="inline-flex items-center gap-2 rounded-lg bg-white/85 px-2.5 py-1.5">
+                <span class="size-[7px] rounded-full bg-leaf" aria-hidden="true"></span>GPS
+              </span>
+            }
+          </div>
+
+          <figcaption class="featured-drone absolute inset-x-5 bottom-5 flex flex-col gap-3.5 rounded-[18px] bg-ink px-5 py-4 text-white">
+            <div class="flex items-start justify-between gap-4">
+              <div class="min-w-0">
+                <p class="m-0 truncate text-[13px] text-[#a9b7ac]">
+                  {{ drone.marca?.nome }}@if (drone.marca?.nome && drone.modelo?.nome) { · }{{ drone.modelo?.nome }}
+                </p>
+                <a class="featured-link mt-0.5 block font-display font-wide text-xl font-bold text-white no-underline hover:underline" [routerLink]="['/drone-info', drone.id]">{{ drone.nome }}</a>
+              </div>
+              <p class="m-0 shrink-0 font-data text-xl font-semibold text-lime-glow">{{ formatarPreco(drone.preco) }}</p>
+            </div>
+            <dl class="m-0 grid grid-cols-3 gap-3 border-t border-[#34413a] pt-3.5">
+              <div><dt class="text-xs text-[#a9b7ac]">Autonomia</dt><dd class="m-0 mt-0.5 font-data font-semibold">{{ formatarNumero(drone.tempoVooPratico) }} min</dd></div>
+              <div><dt class="text-xs text-[#a9b7ac]">Alcance</dt><dd class="m-0 mt-0.5 font-data font-semibold">{{ formatarAlcance(drone.alcanceTransmissao) }}</dd></div>
+              <div><dt class="text-xs text-[#a9b7ac]">Peso</dt><dd class="m-0 mt-0.5 font-data font-semibold">{{ formatarNumero(drone.pesoDecolagem) }} g</dd></div>
+            </dl>
+          </figcaption>
+        } @else {
+          <ng-container [ngTemplateOutlet]="ilustracaoDrone"></ng-container>
+          @if (carregandoDestaque()) {
+            <div class="absolute inset-x-5 bottom-5 h-[118px] animate-pulse rounded-[18px] bg-ink/90" role="status">
+              <span class="sr-only">Carregando drone em destaque</span>
+            </div>
+          }
+        }
+      </figure>
+    </div>
+  </section>
+
+  <!-- Tipos de voo: levam ao catálogo já filtrado -->
+  <section id="tipos-de-voo" class="scroll-mt-28 border-y border-line bg-white" aria-labelledby="tipos-title">
+    <div class="mx-auto max-w-[1240px] px-5 py-16 md:px-8 lg:py-20">
+      <h2 id="tipos-title" class="m-0 font-display font-wide text-[32px] font-extrabold leading-tight tracking-[-0.6px] md:text-[40px]">Escolha pelo seu tipo de voo</h2>
+      <p class="m-0 mt-2.5 max-w-[560px] text-[17px] text-muted">Cada atalho abre o catálogo com os filtros de autonomia, alcance, câmera e recursos já aplicados.</p>
+      <ul class="m-0 mt-9 grid list-none gap-5 p-0 sm:grid-cols-2 lg:grid-cols-4">
+        @for (tipo of tiposDeVoo; track tipo.id) {
+          <li class="flex">
+            <a
+              class="flight-type-link flex w-full flex-col items-start gap-3.5 rounded-[20px] border border-line bg-white p-6 text-ink no-underline transition-colors hover:border-ink"
+              routerLink="/home"
+              [queryParams]="{ tipo: tipo.id }">
+              <span class="grid size-12 place-items-center rounded-[14px] bg-mist-green text-leaf"><mat-icon aria-hidden="true">{{ tipo.icone }}</mat-icon></span>
+              <span class="font-display font-wide text-xl font-bold">{{ tipo.titulo }}</span>
+              <span class="text-[15px] leading-normal text-muted">{{ tipo.descricao }}</span>
+              <span class="mt-auto flex w-full items-center justify-between border-t border-dashed border-[#dce4dc] pt-2.5 font-data text-[13px] text-ink-soft">
+                {{ tipo.resumo }}
+                <mat-icon class="text-leaf" aria-hidden="true">arrow_forward</mat-icon>
+              </span>
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Como a compra funciona -->
+  <section class="mx-auto max-w-[1240px] px-5 py-16 md:px-8 lg:py-20" aria-labelledby="como-funciona-title">
+    <h2 id="como-funciona-title" class="m-0 font-display font-wide text-[32px] font-extrabold leading-tight tracking-[-0.6px] md:text-[40px]">Da escolha ao voo</h2>
+    <ol class="m-0 mt-9 grid list-none gap-5 p-0 md:grid-cols-3">
+      <li class="flex flex-col gap-3 rounded-[20px] border border-line bg-white p-6">
+        <span class="font-data text-sm font-semibold text-leaf">1 · Compare</span>
+        <p class="m-0 text-lg font-bold">Ficha técnica de cada modelo</p>
+        <p class="m-0 text-[15px] leading-normal text-muted">Autonomia, alcance, peso, câmera e recursos lado a lado no catálogo.</p>
+      </li>
+      <li class="flex flex-col gap-3 rounded-[20px] border border-line bg-white p-6">
+        <span class="font-data text-sm font-semibold text-leaf">2 · Salve</span>
+        <p class="m-0 text-lg font-bold">Favoritos na sua conta</p>
+        <p class="m-0 text-[15px] leading-normal text-muted">Guarde os modelos que mais combinam com você e volte quando quiser.</p>
+      </li>
+      <li class="flex flex-col gap-3 rounded-[20px] border border-line bg-white p-6">
+        <span class="font-data text-sm font-semibold text-leaf">3 · Pague</span>
+        <p class="m-0 text-lg font-bold">PIX ou cartão de crédito</p>
+        <p class="m-0 text-[15px] leading-normal text-muted">Entrega no endereço que você escolher entre os cadastrados.</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- Chamada final -->
+  <section class="mx-auto max-w-[1240px] px-5 pb-20 md:px-8" aria-labelledby="cta-title">
+    <div class="relative flex flex-wrap items-center justify-between gap-7 overflow-hidden rounded-[28px] bg-ink p-8 text-white md:p-14">
+      <svg class="pointer-events-none absolute inset-0 size-full" viewBox="0 0 800 300" preserveAspectRatio="none" aria-hidden="true">
+        <g fill="none" stroke="#b7ee75" stroke-opacity="0.08" stroke-width="1.2">
+          <path d="M0 220 C 160 160, 320 260, 480 200 S 760 170, 800 210"></path>
+          <path d="M0 260 C 170 200, 330 300, 490 240 S 770 210, 800 250"></path>
+        </g>
+      </svg>
+      <div class="relative max-w-[620px]">
+        <h2 id="cta-title" class="m-0 font-display font-wide text-[30px] font-extrabold leading-tight tracking-[-0.6px] md:text-[40px]">Encontre o drone certo para o seu próximo voo.</h2>
+        @if (usuarioAutenticado) {
+          <p class="m-0 mt-3.5 text-[17px] text-[#c3cfc6]">Seus favoritos ficam salvos para comparar quando quiser.</p>
+        } @else {
+          <p class="m-0 mt-3.5 text-[17px] text-[#c3cfc6]">Crie sua conta para salvar favoritos e cadastrar seus endereços de entrega.</p>
+        }
+      </div>
+      <div class="relative flex flex-wrap gap-3">
+        <a class="inline-flex h-[54px] items-center rounded-[14px] bg-lime-glow px-6 font-bold text-ink no-underline transition-colors hover:bg-[#c6f28c]" routerLink="/home">Explorar catálogo</a>
+        @if (usuarioAutenticado) {
+          <a class="inline-flex h-[54px] items-center rounded-[14px] border border-[#4a584f] px-6 font-semibold text-white no-underline hover:border-white" routerLink="/favoritos">Ver favoritos</a>
+        } @else {
+          <a class="inline-flex h-[54px] items-center rounded-[14px] border border-[#4a584f] px-6 font-semibold text-white no-underline hover:border-white" routerLink="/register">Criar conta</a>
+        }
+      </div>
+    </div>
+  </section>
+</div>
+
+<ng-template #ilustracaoDrone>
+  <svg class="absolute left-1/2 top-[44%] w-[64%] -translate-x-1/2 -translate-y-1/2" viewBox="0 0 400 400" aria-hidden="true">
+    <g stroke="#17211b" stroke-width="14" stroke-linecap="round"><line x1="200" y1="200" x2="98" y2="98"></line><line x1="200" y1="200" x2="302" y2="98"></line><line x1="200" y1="200" x2="98" y2="302"></line><line x1="200" y1="200" x2="302" y2="302"></line></g>
+    <g fill="#17211b" fill-opacity="0.06" stroke="#17211b" stroke-opacity="0.35" stroke-width="1.5"><circle cx="98" cy="98" r="66"></circle><circle cx="302" cy="98" r="66"></circle><circle cx="98" cy="302" r="66"></circle><circle cx="302" cy="302" r="66"></circle></g>
+    <g stroke="#17211b" stroke-opacity="0.55" stroke-width="5" stroke-linecap="round"><line x1="52" y1="120" x2="144" y2="76"></line><line x1="256" y1="76" x2="348" y2="120"></line><line x1="52" y1="280" x2="144" y2="324"></line><line x1="256" y1="324" x2="348" y2="280"></line></g>
+    <g fill="#17211b"><circle cx="98" cy="98" r="13"></circle><circle cx="302" cy="98" r="13"></circle><circle cx="98" cy="302" r="13"></circle><circle cx="302" cy="302" r="13"></circle></g>
+    <g fill="#b7ee75"><circle cx="98" cy="98" r="4"></circle><circle cx="302" cy="98" r="4"></circle><circle cx="98" cy="302" r="4"></circle><circle cx="302" cy="302" r="4"></circle></g>
+    <rect x="148" y="132" width="104" height="132" rx="36" fill="#17211b"></rect>
+    <rect x="164" y="150" width="72" height="64" rx="22" fill="#2a362e"></rect>
+    <rect x="188" y="228" width="24" height="5" rx="2.5" fill="#b7ee75"></rect>
+    <rect x="178" y="262" width="44" height="30" rx="10" fill="#2a362e"></rect>
+    <circle cx="200" cy="277" r="9" fill="#0e1410" stroke="#b7ee75" stroke-width="2"></circle>
+  </svg>
+</ng-template>

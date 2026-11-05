@@ -6,6 +6,7 @@ import { EMPTY, Observable, catchError, expand, reduce, switchMap, tap } from 'r
 import { Drone, DroneImagem } from '../../../../core/models/drone/Drone';
 import { PagedResponse } from '../../../../core/models/PagedResponse';
 import { AuthService } from '../../../../core/services/auth/AuthService';
+import { ComparacaoService } from '../../../../core/services/ComparacaoService';
 import { DroneService } from '../../../../core/services/DroneService';
 import { FavoritoService } from '../../../../core/services/FavoritoService';
 
@@ -17,6 +18,8 @@ import { FavoritoService } from '../../../../core/services/FavoritoService';
 })
 export class DroneInfo implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
+  readonly comparacao = inject(ComparacaoService);
+  readonly mensagemComparacao = signal('');
   private readonly moeda = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
@@ -55,6 +58,17 @@ export class DroneInfo implements OnInit {
     private readonly favoritoService: FavoritoService,
     private readonly authService: AuthService,
   ) {}
+
+  alternarComparacao(produto: Drone): void {
+    const adicionou = !this.comparacao.contem(produto.id);
+    if (!this.comparacao.alternar({ id: produto.id, nome: produto.nome })) {
+      this.mensagemComparacao.set(
+        `A comparação já tem ${this.comparacao.limite} drones. Remova um na página de comparação.`,
+      );
+      return;
+    }
+    this.mensagemComparacao.set(adicionou ? 'Drone adicionado à comparação.' : 'Drone removido da comparação.');
+  }
 
   ngOnInit(): void {
     this.route.paramMap
