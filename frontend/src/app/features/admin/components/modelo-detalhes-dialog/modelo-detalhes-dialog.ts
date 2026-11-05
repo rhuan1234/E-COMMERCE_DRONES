@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,6 +14,9 @@ import { ModeloService } from '../../../../core/services/ModeloService';
   templateUrl: './modelo-detalhes-dialog.html',
 })
 export class ModeloDetalhesDialog implements OnInit {
+  /** O app roda sem Zone.js: avisa o Angular quando uma resposta assíncrona muda o estado. */
+  private readonly cdr = inject(ChangeDetectorRef);
+
   modelo: Modelo;
   carregando = true;
   erro = '';
@@ -31,11 +34,13 @@ export class ModeloDetalhesDialog implements OnInit {
       next: (modelo) => {
         this.modelo = modelo;
         this.carregando = false;
+        this.cdr.markForCheck();
       },
       error: (error) => {
         console.error('Erro ao carregar detalhes do modelo:', error);
         this.erro = 'Não foi possível carregar os detalhes do modelo.';
         this.carregando = false;
+        this.cdr.markForCheck();
       },
     });
   }

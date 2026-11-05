@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,6 +18,9 @@ type CameraDetalhada = Camera & {
   templateUrl: './camera-detalhes-dialog.html',
 })
 export class CameraDetalhesDialog implements OnInit {
+  /** O app roda sem Zone.js: avisa o Angular quando uma resposta assíncrona muda o estado. */
+  private readonly cdr = inject(ChangeDetectorRef);
+
   camera: CameraDetalhada;
   carregando = true;
   erro = '';
@@ -35,11 +38,13 @@ export class CameraDetalhesDialog implements OnInit {
       next: (camera) => {
         this.camera = camera;
         this.carregando = false;
+        this.cdr.markForCheck();
       },
       error: (error) => {
         console.error('Erro ao carregar detalhes da câmera:', error);
         this.erro = 'Não foi possível carregar os detalhes da câmera.';
         this.carregando = false;
+        this.cdr.markForCheck();
       },
     });
   }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,6 +14,9 @@ import { PromocaoService } from '../../../../core/services/PromocaoService';
   templateUrl: './promocao-detalhes-dialog.html',
 })
 export class PromocaoDetalhesDialog implements OnInit {
+  /** O app roda sem Zone.js: avisa o Angular quando uma resposta assíncrona muda o estado. */
+  private readonly cdr = inject(ChangeDetectorRef);
+
   promocao: PromocaoRequest;
   carregando = true;
   erro = '';
@@ -31,11 +34,13 @@ export class PromocaoDetalhesDialog implements OnInit {
       next: (promocao) => {
         this.promocao = promocao;
         this.carregando = false;
+        this.cdr.markForCheck();
       },
       error: (error) => {
         console.error('Erro ao carregar detalhes da promoção:', error);
         this.erro = 'Não foi possível carregar os detalhes da promoção.';
         this.carregando = false;
+        this.cdr.markForCheck();
       },
     });
   }

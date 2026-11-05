@@ -1,5 +1,6 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MoedaBrlPipe } from '../../../../shared/pipes/moeda-brl.pipe';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,12 +14,15 @@ type DroneDetalhado = Drone & {
 };
 
 @Component({
-  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [CommonModule, MoedaBrlPipe, MatDialogModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   selector: 'app-drone-detalhes-dialog',
   styleUrl: './drone-detalhes-dialog.css',
   templateUrl: './drone-detalhes-dialog.html',
 })
 export class DroneDetalhesDialog implements OnInit {
+  /** O app roda sem Zone.js: avisa o Angular quando uma resposta assíncrona muda o estado. */
+  private readonly cdr = inject(ChangeDetectorRef);
+
   drone: DroneDetalhado;
   carregando = true;
   erro = '';
@@ -36,11 +40,13 @@ export class DroneDetalhesDialog implements OnInit {
       next: (drone) => {
         this.drone = drone;
         this.carregando = false;
+        this.cdr.markForCheck();
       },
       error: (error) => {
         console.error('Erro ao carregar detalhes do drone:', error);
         this.erro = 'Não foi possível carregar os detalhes do drone.';
         this.carregando = false;
+        this.cdr.markForCheck();
       },
     });
   }
