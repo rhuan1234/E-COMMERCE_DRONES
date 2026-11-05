@@ -1,14 +1,18 @@
 
-<mat-toolbar class="toolbar-title" color="primary">
-  <mat-icon>business</mat-icon>
-  Controle de Fornecedores
-</mat-toolbar>
+<app-admin-page-header
+  secao="Comercial"
+  [titulo]="form.value.id ? 'Editar fornecedor' : 'Novo fornecedor'"
+  descricao="Cadastre a empresa parceira em duas etapas: dados cadastrais e endereço.">
+  <button actions type="button" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-transparent px-3 text-sm font-semibold text-muted transition-colors hover:bg-mist hover:text-ink" (click)="voltar()">
+    <mat-icon aria-hidden="true">arrow_back</mat-icon>
+    Voltar
+  </button>
+</app-admin-page-header>
 
-<mat-card class="fornecedor-card">
-  <mat-card-content>
+<section class="max-w-[960px] rounded-[20px] border border-line bg-white px-2 pb-4 pt-2 sm:px-4" aria-label="Cadastro de fornecedor">
     <form class="form" [formGroup]="form">
 
-      <mat-stepper #stepper>
+      <mat-stepper #stepper class="admin-stepper">
 
         <!-- ETAPA 1: DADOS DO FORNECEDOR -->
         <mat-step>
@@ -16,24 +20,19 @@
             Dados do fornecedor
           </ng-template>
 
-          <section class="step-content">
-            <div class="section-heading">
-              <div class="section-icon">
-                <mat-icon>business</mat-icon>
-              </div>
-
+          <section class="px-1 pb-2 pt-4 sm:px-3">
+            <div class="mb-6 flex items-start gap-3">
+              <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-mist text-leaf" aria-hidden="true"><mat-icon>business</mat-icon></span>
               <div>
-                <h2>Dados do fornecedor</h2>
-                <p>
-                  Informe os dados cadastrais e os contatos da empresa.
-                </p>
+                <h2 class="m-0 font-display text-xl font-bold text-ink">Dados do fornecedor</h2>
+                <p class="m-0 mt-1 text-sm text-muted">Informe os dados cadastrais e os contatos da empresa.</p>
               </div>
             </div>
 
-            <div class="form-grid">
+            <div class="grid grid-cols-1 gap-x-5 md:grid-cols-2 *:w-full *:min-w-0">
 
               <!-- Nome -->
-              <mat-form-field appearance="outline" class="full-width">
+              <mat-form-field appearance="outline" class="md:col-span-2">
                 <mat-label>Nome do fornecedor</mat-label>
                 <input
                   matInput
@@ -95,7 +94,7 @@
               </mat-form-field>
 
               <!-- E-mail -->
-              <mat-form-field appearance="outline" class="full-width">
+              <mat-form-field appearance="outline" class="md:col-span-2">
                 <mat-label>E-mail</mat-label>
                 <input
                   matInput
@@ -119,10 +118,9 @@
 
             </div>
 
-            <div class="step-actions">
+            <div class="mt-6 flex flex-wrap items-center justify-end gap-3 border-t border-line pt-5">
               <button
-                mat-raised-button
-                color="primary"
+                class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:bg-line-strong"
                 type="button"
                 matStepperNext
               >
@@ -139,27 +137,21 @@
             Endereço
           </ng-template>
 
-          <section class="step-content">
+          <section class="px-1 pb-2 pt-4 sm:px-3">
 
-            <div class="section-heading">
-              <div class="section-icon">
-                <mat-icon>location_on</mat-icon>
-              </div>
-
+            <div class="mb-6 flex items-start gap-3">
+              <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-mist text-leaf" aria-hidden="true"><mat-icon>location_on</mat-icon></span>
               <div>
-                <h2>Endereço do fornecedor</h2>
-                <p>
-                  Informe a localização da empresa. Você pode consultar
-                  o CEP para facilitar o preenchimento.
-                </p>
+                <h2 class="m-0 font-display text-xl font-bold text-ink">Endereço do fornecedor</h2>
+                <p class="m-0 mt-1 text-sm text-muted">Informe a localização da empresa. Você pode consultar o CEP para facilitar o preenchimento.</p>
               </div>
             </div>
 
             <div formGroupName="endereco">
 
               <!-- Consulta de CEP -->
-              <div class="cep-section">
-                <mat-form-field appearance="outline" class="cep-field">
+              <div class="flex flex-col gap-x-3 sm:flex-row sm:items-start">
+                <mat-form-field appearance="outline" class="w-full sm:max-w-[260px]">
                   <mat-label>CEP</mat-label>
                   <input
                     matInput
@@ -180,10 +172,9 @@
                 </mat-form-field>
 
                 <button
-                  mat-stroked-button
-                  color="primary"
+                  class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-white px-4 text-sm font-semibold text-ink transition-colors hover:bg-mist disabled:cursor-not-allowed disabled:opacity-50"
                   type="button"
-                  class="cep-button"
+                  class="sm:mt-1"
                   (click)="buscarCep(true)"
                   [disabled]="carregandoCep"
                   aria-label="Consultar CEP"
@@ -197,14 +188,12 @@
                 </button>
               </div>
 
-              <mat-divider></mat-divider>
+              <h3 class="m-0 mb-4 mt-2 border-t border-line pt-5 font-data text-[11px] font-semibold uppercase tracking-[2px] text-leaf">Localização</h3>
 
-              <h3 class="subsection-title">Localização</h3>
-
-              <div class="form-grid">
+              <div class="grid grid-cols-1 gap-x-5 md:grid-cols-2 *:w-full *:min-w-0">
 
                 <!-- Rua -->
-                <mat-form-field appearance="outline" class="full-width">
+                <mat-form-field appearance="outline" class="md:col-span-2">
                   <mat-label>Rua / Logradouro</mat-label>
                   <input
                     matInput
@@ -247,7 +236,7 @@
 
                 <!-- Cidade -->
                 <div formGroupName="cidade">
-                  <mat-form-field appearance="outline" class="full-width">
+                  <mat-form-field appearance="outline" class="w-full">
                     <mat-label>Cidade</mat-label>
                     <input
                       matInput
@@ -280,7 +269,7 @@
                 <!-- Estado -->
                 <div formGroupName="cidade">
                   <div formGroupName="estado">
-                    <mat-form-field appearance="outline" class="full-width">
+                    <mat-form-field appearance="outline" class="w-full">
                       <mat-label>UF</mat-label>
                       <input
                         matInput
@@ -310,13 +299,11 @@
               </div>
             </div>
 
-            <mat-divider></mat-divider>
-
             <!-- Ações -->
-            <div class="step-actions final-actions">
+            <div class="mt-6 flex flex-col-reverse gap-3 border-t border-line pt-5 sm:flex-row sm:items-center">
 
               <button
-                mat-button
+                class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-transparent px-3 text-sm font-semibold text-muted transition-colors hover:bg-mist hover:text-ink"
                 type="button"
                 matStepperPrevious
               >
@@ -324,21 +311,19 @@
                 Voltar
               </button>
 
-              <span class="actions-spacer"></span>
+              <span class="hidden flex-1 sm:block"></span>
 
-              <button
-                mat-raised-button
-                color="warn"
-                type="button"
-                (click)="excluir()"
-                [disabled]="!form.value.id"
-              >
+              @if (form.value.id) {
+
+                <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#f1c9c2] bg-white px-4 text-sm font-semibold text-danger transition-colors hover:bg-danger-soft disabled:cursor-not-allowed disabled:opacity-40" type="button" (click)="excluir()">
                 <mat-icon>delete</mat-icon>
                 Excluir
               </button>
 
+              }
+
               <button
-                mat-stroked-button
+                class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-white px-4 text-sm font-semibold text-ink transition-colors hover:bg-mist disabled:cursor-not-allowed disabled:opacity-50"
                 type="button"
                 (click)="voltar()"
               >
@@ -346,8 +331,7 @@
               </button>
 
               <button
-                mat-raised-button
-                color="primary"
+                class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:bg-line-strong"
                 type="button"
                 (click)="salvar()"
                 [disabled]="form.invalid"
@@ -362,5 +346,4 @@
 
       </mat-stepper>
     </form>
-  </mat-card-content>
-</mat-card>
+</section>

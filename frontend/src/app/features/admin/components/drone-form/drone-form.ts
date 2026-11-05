@@ -3,11 +3,10 @@ import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { AdminPageHeader } from '../admin-page-header/admin-page-header';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -24,7 +23,6 @@ import { Camera } from '../../../../core/models/camera/Camera';
 import { Fornecedor } from '../../../../core/models/fornecedor/FornecedorRequest';
 import { Marca } from '../../../../core/models/marca/Marca';
 import { Modelo } from '../../../../core/models/modelo/Modelo';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatStepperModule } from '@angular/material/stepper';
 
 
@@ -32,9 +30,17 @@ import { MatStepperModule } from '@angular/material/stepper';
 
   imports: [
     CommonModule,
-    ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule,
-    MatButtonModule, MatToolbarModule, MatSelectModule, MatIconModule, MatSnackBarModule,
-    MatCheckboxModule, MatDialogModule, MatDividerModule, MatStepperModule
+    ReactiveFormsModule,
+    AdminPageHeader,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatIconModule,
+    MatSnackBarModule,
+    MatCheckboxModule,
+    MatDialogModule,
+    MatStepperModule,
   ],
   selector: 'app-drone-form',
   styleUrl: './drone-form.css',

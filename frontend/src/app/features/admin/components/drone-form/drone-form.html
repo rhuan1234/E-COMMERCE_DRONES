@@ -1,14 +1,18 @@
-<mat-toolbar class="toolbar-title" color="primary">
-  <mat-icon>flight</mat-icon>
-  Controle de Drones
-</mat-toolbar>
+<app-admin-page-header
+  secao="Catálogo"
+  [titulo]="form.value.id ? 'Editar drone' : 'Novo drone'"
+  descricao="Cadastre o produto em quatro etapas: dados comerciais, desempenho, componentes e recursos.">
+  <button actions type="button" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-transparent px-3 text-sm font-semibold text-muted transition-colors hover:bg-mist hover:text-ink" (click)="voltar()">
+    <mat-icon aria-hidden="true">arrow_back</mat-icon>
+    Voltar
+  </button>
+</app-admin-page-header>
 
-<mat-card class="drone-card">
-  <mat-card-content>
+<section class="rounded-[20px] border border-line bg-white px-2 pb-4 pt-2 sm:px-4" aria-label="Cadastro de drone">
 
     <form class="form" [formGroup]="form">
 
-      <mat-stepper linear #stepper>
+      <mat-stepper linear #stepper class="admin-stepper">
 
         <!-- ETAPA 1: INFORMAÇÕES BÁSICAS -->
         <mat-step>
@@ -16,13 +20,13 @@
             Informações básicas
           </ng-template>
 
-          <div class="step-content">
-            <h2>Informações básicas</h2>
-            <p class="step-description">
+          <div class="px-1 pb-2 pt-4 sm:px-3">
+            <h2 class="m-0 font-display text-xl font-bold text-ink">Informações básicas</h2>
+            <p class="m-0 mb-6 mt-1 text-sm text-muted">
               Informe os dados comerciais e a identificação do drone.
             </p>
 
-            <div class="form-grid">
+            <div class="grid grid-cols-1 gap-x-5 md:grid-cols-2 *:w-full *:min-w-0">
               <mat-form-field appearance="outline">
                 <mat-label>Nome</mat-label>
                 <input matInput formControlName="nome"
@@ -120,8 +124,8 @@
               </mat-form-field>
             </div>
 
-            <div class="step-actions">
-              <button mat-raised-button color="primary"
+            <div class="mt-6 flex flex-wrap items-center justify-end gap-3 border-t border-line pt-5">
+              <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:bg-line-strong"
                 type="button" matStepperNext>
                 Próximo
                 <mat-icon>arrow_forward</mat-icon>
@@ -136,13 +140,13 @@
             Desempenho de voo
           </ng-template>
 
-          <div class="step-content">
-            <h2>Desempenho de voo</h2>
-            <p class="step-description">
+          <div class="px-1 pb-2 pt-4 sm:px-3">
+            <h2 class="m-0 font-display text-xl font-bold text-ink">Desempenho de voo</h2>
+            <p class="m-0 mb-6 mt-1 text-sm text-muted">
               Informe os limites e a capacidade de voo do drone.
             </p>
 
-            <div class="form-grid">
+            <div class="grid grid-cols-1 gap-x-5 md:grid-cols-2 *:w-full *:min-w-0">
               <mat-form-field appearance="outline">
                 <mat-label>Tempo de voo prático (min)</mat-label>
                 <input matInput type="number" min="1"
@@ -219,12 +223,12 @@
               </mat-form-field>
             </div>
 
-            <div class="step-actions">
-              <button mat-button type="button" matStepperPrevious>
+            <div class="mt-6 flex flex-wrap items-center justify-end gap-3 border-t border-line pt-5">
+              <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-transparent px-3 text-sm font-semibold text-muted transition-colors hover:bg-mist hover:text-ink" type="button" matStepperPrevious>
                 <mat-icon>arrow_back</mat-icon>
                 Voltar
               </button>
-              <button mat-raised-button color="primary"
+              <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:bg-line-strong"
                 type="button" matStepperNext>
                 Próximo
                 <mat-icon>arrow_forward</mat-icon>
@@ -239,13 +243,13 @@
             Componentes
           </ng-template>
 
-          <div class="step-content">
-            <h2>Componentes e conectividade</h2>
-            <p class="step-description">
+          <div class="px-1 pb-2 pt-4 sm:px-3">
+            <h2 class="m-0 font-display text-xl font-bold text-ink">Componentes e conectividade</h2>
+            <p class="m-0 mb-6 mt-1 text-sm text-muted">
               Configure os componentes instalados e a conectividade.
             </p>
 
-            <div class="form-grid">
+            <div class="grid grid-cols-1 gap-x-5 md:grid-cols-2 *:w-full *:min-w-0">
               <mat-form-field appearance="outline">
                 <mat-label>Câmera</mat-label>
                 <mat-select formControlName="cameraId">
@@ -326,12 +330,12 @@
               </mat-form-field>
             </div>
 
-            <div class="step-actions">
-              <button mat-button type="button" matStepperPrevious>
+            <div class="mt-6 flex flex-wrap items-center justify-end gap-3 border-t border-line pt-5">
+              <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-transparent px-3 text-sm font-semibold text-muted transition-colors hover:bg-mist hover:text-ink" type="button" matStepperPrevious>
                 <mat-icon>arrow_back</mat-icon>
                 Voltar
               </button>
-              <button mat-raised-button color="primary"
+              <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:bg-line-strong"
                 type="button" matStepperNext>
                 Próximo
                 <mat-icon>arrow_forward</mat-icon>
@@ -346,13 +350,13 @@
             Recursos e revisão
           </ng-template>
 
-          <div class="step-content">
-            <h2>Recursos e revisão</h2>
-            <p class="step-description">
+          <div class="px-1 pb-2 pt-4 sm:px-3">
+            <h2 class="m-0 font-display text-xl font-bold text-ink">Recursos e revisão</h2>
+            <p class="m-0 mb-6 mt-1 text-sm text-muted">
               Marque os recursos disponíveis e revise o cadastro.
             </p>
 
-            <div class="feature-list">
+            <div class="grid grid-cols-1 gap-3 pb-2 sm:grid-cols-2 *:rounded-xl *:border *:border-line *:bg-paper *:py-1.5 *:pl-1 *:pr-3">
               <mat-checkbox formControlName="possuiGPS">
                 Possui GPS
               </mat-checkbox>
@@ -370,29 +374,29 @@
               </mat-checkbox>
             </div>
 
-            <mat-divider></mat-divider>
-
-            <div class="step-actions final-actions">
-              <button mat-button type="button" matStepperPrevious>
+            <div class="mt-6 flex flex-col-reverse gap-3 border-t border-line pt-5 sm:flex-row sm:items-center">
+              <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-transparent px-3 text-sm font-semibold text-muted transition-colors hover:bg-mist hover:text-ink" type="button" matStepperPrevious>
                 <mat-icon>arrow_back</mat-icon>
                 Voltar
               </button>
 
-              <span class="actions-spacer"></span>
+              <span class="hidden flex-1 sm:block"></span>
 
-              <button mat-raised-button color="warn"
-                type="button" (click)="excluir()"
-                [disabled]="!form.value.id">
+              @if (form.value.id) {
+
+                <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#f1c9c2] bg-white px-4 text-sm font-semibold text-danger transition-colors hover:bg-danger-soft disabled:cursor-not-allowed disabled:opacity-40" type="button" (click)="excluir()">
                 <mat-icon>delete</mat-icon>
                 Excluir
               </button>
 
-              <button mat-stroked-button type="button"
+              }
+
+              <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-white px-4 text-sm font-semibold text-ink transition-colors hover:bg-mist disabled:cursor-not-allowed disabled:opacity-50" type="button"
                 (click)="voltar()">
                 Cancelar
               </button>
 
-              <button mat-raised-button color="primary"
+              <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:bg-line-strong"
                 type="button" (click)="salvar()"
                 [disabled]="form.invalid">
                 <mat-icon>save</mat-icon>
@@ -406,5 +410,4 @@
 
     </form>
 
-  </mat-card-content>
-</mat-card>
+</section>

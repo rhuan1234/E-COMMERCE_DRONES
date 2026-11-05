@@ -2,33 +2,29 @@ import { Location } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { AdminPageHeader } from '../admin-page-header/admin-page-header';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Administrador } from '../../../../core/models/administrador/Administrado';
 import { AdministradorService } from '../../../../core/services/AdministradorService';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
-import { MatDivider } from '@angular/material/divider';
 
 @Component({
   imports: [
     ReactiveFormsModule,
-    MatCardModule,
+    AdminPageHeader,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatToolbarModule,
     MatSelectModule,
     MatIconModule,
     MatSnackBarModule,
     MatDialogModule,
-    MatDivider
 ],
   selector: 'app-administrador-form',
   styleUrl: './administrador-form.css',

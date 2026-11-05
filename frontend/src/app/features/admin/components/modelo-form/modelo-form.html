@@ -1,25 +1,26 @@
-<main class="modelo-form-container">
-  <header class="pagina-header">
-    <div>
-      <h1>{{ form.controls['id'].value ? 'Editar modelo' : 'Novo modelo' }}</h1>
-      <p>Preencha os dados do modelo e vincule-o à marca correspondente.</p>
-    </div>
-  </header>
+<app-admin-page-header
+  secao="Catálogo"
+  [titulo]="form.controls['id'].value ? 'Editar modelo' : 'Novo modelo'"
+  descricao="Preencha os dados do modelo e vincule-o à marca correspondente.">
+  <button actions type="button" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-transparent px-3 text-sm font-semibold text-muted transition-colors hover:bg-mist hover:text-ink" (click)="voltar()">
+    <mat-icon aria-hidden="true">arrow_back</mat-icon>
+    Voltar
+  </button>
+</app-admin-page-header>
 
-  <mat-card class="modelo-card">
-    <div class="card-heading">
-      <div class="heading-icon">
-        <mat-icon>category</mat-icon>
-      </div>
-      <div>
-        <h2>Dados do modelo</h2>
-        <p>Selecione a marca e informe o nome do modelo.</p>
-      </div>
+<section class="max-w-[760px] rounded-[20px] border border-line bg-white" aria-label="Dados do modelo">
+  <div class="flex items-center gap-3.5 border-b border-line px-5 py-5 sm:px-7">
+    <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-mist text-leaf" aria-hidden="true">
+      <mat-icon>category</mat-icon>
+    </span>
+    <div class="min-w-0">
+      <h2 class="m-0 text-[17px] font-bold text-ink">Dados do modelo</h2>
+      <p class="m-0 mt-0.5 text-sm text-muted">Selecione a marca e informe o nome do modelo.</p>
     </div>
+  </div>
 
-    <mat-card-content>
-      <form [formGroup]="form" (ngSubmit)="salvar()">
-        <div class="form-grid">
+  <form class="px-5 pb-6 pt-6 sm:px-7" [formGroup]="form" (ngSubmit)="salvar()">
+    <div class="grid grid-cols-1 gap-x-5 md:grid-cols-2 *:w-full *:min-w-0">
           <mat-form-field appearance="outline">
             <mat-label>Marca</mat-label>
             <mat-select formControlName="marcaId" placeholder="Selecione uma marca">
@@ -43,26 +44,21 @@
               <mat-error>O nome do modelo deve ter entre 2 e 50 caracteres.</mat-error>
             }
           </mat-form-field>
-        </div>
+    </div>
 
-        <div class="form-actions">
-          <button mat-stroked-button type="button" (click)="voltar()">
-            Cancelar
-          </button>
-
-          @if (form.controls['id'].value) {
-            <button mat-stroked-button color="warn" type="button" (click)="excluir()">
-              <mat-icon>delete</mat-icon>
-              Excluir
-            </button>
-          }
-
-          <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">
-            <mat-icon>save</mat-icon>
-            Salvar modelo
-          </button>
-        </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
-</main>
+    <div class="mt-2 flex flex-col-reverse gap-3 border-t border-line pt-5 sm:flex-row sm:items-center">
+      @if (form.controls['id'].value) {
+        <button type="button" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#f1c9c2] bg-white px-4 text-sm font-semibold text-danger transition-colors hover:bg-danger-soft disabled:cursor-not-allowed disabled:opacity-40" (click)="excluir()">
+          <mat-icon aria-hidden="true">delete</mat-icon>
+          Excluir
+        </button>
+      }
+      <span class="hidden flex-1 sm:block"></span>
+      <button type="button" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-white px-4 text-sm font-semibold text-ink transition-colors hover:bg-mist disabled:cursor-not-allowed disabled:opacity-50" (click)="voltar()">Cancelar</button>
+      <button type="submit" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:bg-line-strong" [disabled]="form.invalid">
+        <mat-icon class="!text-lime-glow" aria-hidden="true">check</mat-icon>
+        Salvar modelo
+      </button>
+    </div>
+  </form>
+</section>

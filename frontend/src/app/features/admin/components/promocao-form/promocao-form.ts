@@ -3,11 +3,10 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { AdminPageHeader } from '../admin-page-header/admin-page-header';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import {
@@ -23,7 +22,6 @@ import { Drone } from '../../../../core/models/drone/Drone';
 import { DroneService } from '../../../../core/services/DroneService';
 import { PromocaoRequest } from '../../../../core/models/promocao/PromocaoRequest';
 import { PromocaoService } from '../../../../core/services/PromocaoService';
-import { MatDivider } from '@angular/material/divider';
 
 function validarIntervaloPromocao(control: AbstractControl): ValidationErrors | null {
   const inicio = control.get('dataInicio')?.value;
@@ -37,9 +35,9 @@ function validarIntervaloPromocao(control: AbstractControl): ValidationErrors | 
 }
 
 @Component({
-  imports: [ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule,
-    MatButtonModule, MatToolbarModule, MatSelectModule, MatIconModule, MatSnackBarModule,
-    MatCheckboxModule, MatDialogModule, MatDivider],
+  imports: [ReactiveFormsModule, AdminPageHeader, MatFormFieldModule, MatInputModule,
+    MatButtonModule, MatSelectModule, MatIconModule, MatSnackBarModule,
+    MatCheckboxModule, MatDialogModule],
   selector: 'app-promocao-form',
   styleUrl: './promocao-form.css',
   templateUrl: './promocao-form.html',
