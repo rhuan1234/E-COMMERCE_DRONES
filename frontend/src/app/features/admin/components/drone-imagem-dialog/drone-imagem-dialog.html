@@ -34,8 +34,6 @@
           >
         </label>
         <button
-          mat-flat-button
-          color="primary"
           type="button"
           [disabled]="!arquivoSelecionado || enviando || imagens.length >= 5"
           (click)="enviarImagem()"
@@ -76,7 +74,6 @@
                 <span>{{ imagem.principal ? 'Imagem principal' : 'Imagem ' + (imagem.ordem + 1) }}</span>
                 <button
                   mat-icon-button
-                  color="warn"
                   type="button"
                   [attr.aria-label]="'Remover imagem ' + (imagem.ordem + 1)"
                   [disabled]="imagemExcluindoId !== null || enviando"
@@ -98,5 +95,5 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-flat-button color="primary" type="button" (click)="fechar()">Fechar</button>
+  <button type="button" (click)="fechar()">Fechar</button>
 </mat-dialog-actions>
