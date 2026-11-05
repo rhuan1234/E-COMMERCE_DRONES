@@ -52,4 +52,50 @@ describe('AdminLayoutComponent', () => {
     expect(component.isCollapsed()).toBe(false);
     expect(fixture.nativeElement.querySelector('.admin-sidenav.collapsed')).toBeFalsy();
   });
+
+  it('agrupa a navegação em Catálogo, Comercial e Acesso com todos os destinos do painel', () => {
+    const el: HTMLElement = fixture.nativeElement;
+    const titulos = Array.from(el.querySelectorAll('.nav-list p')).map((p) => p.textContent?.trim());
+    expect(titulos).toEqual(['Catálogo', 'Comercial', 'Acesso']);
+    expect(el.querySelectorAll('.nav-list a.nav-link').length).toBe(7);
+  });
+
+  it('mostra o e-mail do administrador carregado do perfil', () => {
+    expect(fixture.nativeElement.querySelector('.profile-email')?.textContent).toContain('admin@skyline.com');
+  });
+
+  it('abre a gaveta no celular e fecha com Esc', () => {
+    const el: HTMLElement = fixture.nativeElement;
+    el.querySelector<HTMLButtonElement>('.mobile-menu-btn')?.click();
+    fixture.detectChanges();
+
+    expect(component.menuMobileAberto()).toBe(true);
+    expect(el.querySelector('.admin-sidenav.open')).toBeTruthy();
+    expect(el.querySelector('.admin-backdrop')).toBeTruthy();
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    fixture.detectChanges();
+
+    expect(component.menuMobileAberto()).toBe(false);
+    expect(el.querySelector('.admin-sidenav.open')).toBeNull();
+    expect(el.querySelector('.admin-backdrop')).toBeNull();
+  });
+
+  it('fecha a gaveta ao tocar no fundo escurecido', () => {
+    component.abrirMenuMobile();
+    fixture.detectChanges();
+
+    fixture.nativeElement.querySelector('.admin-backdrop')?.click();
+    fixture.detectChanges();
+
+    expect(component.menuMobileAberto()).toBe(false);
+  });
+
+  it('mantém os rótulos visíveis na gaveta mesmo com a barra recolhida no desktop', () => {
+    component.toggleSidebar();
+    expect(component.mostrarRotulos()).toBe(false);
+
+    component.abrirMenuMobile();
+    expect(component.mostrarRotulos()).toBe(true);
+  });
 });

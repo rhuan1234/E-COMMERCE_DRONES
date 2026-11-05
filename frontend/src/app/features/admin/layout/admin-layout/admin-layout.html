@@ -1,119 +1,182 @@
-<mat-sidenav-container class="admin-container">
-  
-  <!-- Sidebar Administrativa -->
-  <mat-sidenav mode="side" opened class="admin-sidenav" [class.collapsed]="isCollapsed()">
-    
-    <!-- Topo da Sidebar: Logo / Brand + Botão Retrátil -->
-    <div class="sidenav-header">
-      @if (!isCollapsed()) {
-        <div class="brand-badge">S</div>
-        <div class="brand-text">
-          <span class="brand-title">SKYLINE ADMIN</span>
-          <span class="brand-subtitle">Gestão da Loja</span>
-        </div>
+<div class="admin-shell min-h-screen bg-paper font-body text-ink antialiased">
+  <a
+    class="sr-only z-[60] rounded-xl bg-ink px-4 py-3 text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+    href="#conteudo-admin">
+    Pular para o conteúdo
+  </a>
+
+  <!-- Barra superior (somente telas menores que lg) -->
+  <header class="sticky top-0 z-30 flex items-center gap-3 border-b border-line bg-white/95 px-4 py-3 backdrop-blur lg:hidden">
+    <button
+      type="button"
+      class="mobile-menu-btn grid size-11 cursor-pointer place-items-center rounded-xl border-0 bg-transparent text-ink transition-colors hover:bg-mist"
+      aria-label="Abrir menu do painel"
+      aria-controls="admin-sidenav"
+      [attr.aria-expanded]="menuMobileAberto()"
+      (click)="abrirMenuMobile()">
+      <mat-icon aria-hidden="true">menu</mat-icon>
+    </button>
+    <a class="inline-flex items-center gap-2.5 text-ink no-underline" routerLink="/admin" aria-label="Skyline Admin - início do painel">
+      <span class="grid size-9 place-items-center rounded-[11px] bg-ink" aria-hidden="true">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#b7ee75" stroke-width="1.8" stroke-linecap="round">
+          <circle cx="5" cy="5" r="3"></circle><circle cx="19" cy="5" r="3"></circle>
+          <circle cx="5" cy="19" r="3"></circle><circle cx="19" cy="19" r="3"></circle>
+          <path d="M7.2 7.2l2.6 2.6M16.8 7.2l-2.6 2.6M7.2 16.8l2.6-2.6M16.8 16.8l-2.6-2.6"></path>
+          <rect x="9.5" y="9.5" width="5" height="5" rx="1.6" fill="#b7ee75" stroke="none"></rect>
+        </svg>
+      </span>
+      <span class="font-display font-extra-wide text-[15px] font-extrabold tracking-[1.4px]">SKYLINE</span>
+      <span class="rounded-md bg-mist-green px-1.5 py-0.5 font-data text-[10px] font-semibold tracking-[1.5px] text-leaf">ADMIN</span>
+    </a>
+    <a class="ml-auto inline-flex h-10 items-center gap-1.5 rounded-xl px-3 text-sm font-semibold text-ink no-underline transition-colors hover:bg-mist" routerLink="/">
+      <mat-icon class="!text-leaf" aria-hidden="true">storefront</mat-icon>
+      <span class="hidden sm:inline">Ver loja</span>
+    </a>
+  </header>
+
+  <!-- Fundo escurecido da gaveta no celular -->
+  @if (menuMobileAberto()) {
+    <div class="admin-backdrop fixed inset-0 z-40 bg-night/50 backdrop-blur-[2px] lg:hidden" (click)="fecharMenuMobile()" aria-hidden="true"></div>
+  }
+
+  <!-- Barra lateral -->
+  <aside
+    id="admin-sidenav"
+    class="admin-sidenav fixed inset-y-0 left-0 z-50 flex flex-col bg-night text-[#c3cfc6]"
+    [class.collapsed]="isCollapsed()"
+    [class.open]="menuMobileAberto()"
+    aria-label="Navegação do painel">
+
+    <!-- Marca + recolher -->
+    <div class="flex min-h-[84px] items-center gap-3 px-4" [class.justify-center]="!mostrarRotulos()">
+      @if (mostrarRotulos()) {
+        <a class="flex min-w-0 flex-1 items-center gap-3 rounded-xl text-white no-underline" routerLink="/admin" aria-label="Skyline Admin - início do painel">
+          <span class="grid size-11 shrink-0 place-items-center rounded-[13px] bg-[#223029]" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#b7ee75" stroke-width="1.8" stroke-linecap="round">
+              <circle cx="5" cy="5" r="3"></circle><circle cx="19" cy="5" r="3"></circle>
+              <circle cx="5" cy="19" r="3"></circle><circle cx="19" cy="19" r="3"></circle>
+              <path d="M7.2 7.2l2.6 2.6M16.8 7.2l-2.6 2.6M7.2 16.8l2.6-2.6M16.8 16.8l-2.6-2.6"></path>
+              <rect x="9.5" y="9.5" width="5" height="5" rx="1.6" fill="#b7ee75" stroke="none"></rect>
+            </svg>
+          </span>
+          <span class="flex min-w-0 flex-col leading-none">
+            <span class="font-display font-extra-wide text-[16px] font-extrabold tracking-[1.6px]">SKYLINE</span>
+            <span class="mt-1.5 font-data text-[10px] font-semibold tracking-[2.5px] text-lime-glow">PAINEL ADMIN</span>
+          </span>
+        </a>
       }
+
       <button
-        mat-icon-button
         type="button"
-        class="toggle-sidebar-btn"
+        class="toggle-sidebar-btn hidden size-10 shrink-0 cursor-pointer place-items-center rounded-xl border-0 bg-transparent text-[#c3cfc6] transition-colors hover:bg-white/8 hover:text-white lg:grid"
         (click)="toggleSidebar()"
         [attr.aria-label]="isCollapsed() ? 'Expandir menu lateral' : 'Recolher menu lateral'"
         [attr.aria-expanded]="!isCollapsed()"
         [matTooltip]="isCollapsed() ? 'Expandir menu' : 'Recolher menu'"
-        matTooltipPosition="right"
-      >
-        <mat-icon>menu</mat-icon>
+        matTooltipPosition="right">
+        <mat-icon aria-hidden="true">{{ isCollapsed() ? 'keyboard_double_arrow_right' : 'keyboard_double_arrow_left' }}</mat-icon>
+      </button>
+
+      <button
+        type="button"
+        class="grid size-10 shrink-0 cursor-pointer place-items-center rounded-xl border-0 bg-transparent text-[#c3cfc6] transition-colors hover:bg-white/8 hover:text-white lg:hidden"
+        aria-label="Fechar menu do painel"
+        (click)="fecharMenuMobile()">
+        <mat-icon aria-hidden="true">close</mat-icon>
       </button>
     </div>
 
-    <mat-divider></mat-divider>
-
-    <!-- Lista de Navegação (Angular Material Nav List) -->
-    <mat-nav-list class="nav-list">
-      @for (item of navItems; track item.route) {
-        <a
-          mat-list-item
-          [routerLink]="item.route"
-          routerLinkActive="active-nav-item"
-          #rla="routerLinkActive"
-          [activated]="rla.isActive"
-          [matTooltip]="isCollapsed() ? item.label : ''"
-          matTooltipPosition="right"
-        >
-          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-          @if (!isCollapsed()) {
-            <span matListItemTitle>{{ item.label }}</span>
+    <!-- Navegação -->
+    <nav class="nav-list flex-1 overflow-y-auto px-3 pb-4" aria-label="Seções do painel">
+      @for (grupo of navGroups; track grupo.titulo) {
+        <div class="mt-4 first:mt-1">
+          @if (mostrarRotulos()) {
+            <p class="m-0 mb-1.5 px-3 font-data text-[10px] font-semibold tracking-[2px] text-[#7f8d84] uppercase">{{ grupo.titulo }}</p>
+          } @else {
+            <div class="mx-auto mb-2 h-px w-8 bg-white/10" aria-hidden="true"></div>
           }
-        </a>
+          <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
+            @for (item of grupo.itens; track item.route) {
+              <li>
+                <a
+                  class="nav-link group relative flex h-11 items-center gap-3 rounded-xl px-3 text-[14.5px] font-medium text-[#c3cfc6] no-underline transition-colors hover:bg-white/6 hover:text-white"
+                  [class.justify-center]="!mostrarRotulos()"
+                  [routerLink]="item.route"
+                  routerLinkActive="active-nav-item"
+                  ariaCurrentWhenActive="page"
+                  [attr.aria-label]="mostrarRotulos() ? null : item.label"
+                  [matTooltip]="mostrarRotulos() ? '' : item.label"
+                  matTooltipPosition="right">
+                  <mat-icon class="nav-icon shrink-0 !text-[#8a9a8f] transition-colors group-hover:!text-white" aria-hidden="true">{{ item.icon }}</mat-icon>
+                  @if (mostrarRotulos()) {
+                    <span class="truncate">{{ item.label }}</span>
+                  }
+                </a>
+              </li>
+            }
+          </ul>
+        </div>
       }
-    </mat-nav-list>
+    </nav>
 
-    <div class="sidenav-spacer"></div>
-
-    <mat-divider></mat-divider>
-
-    <!-- Atalho do perfil e logout -->
-    <div class="sidenav-footer">
+    <!-- Rodapé: loja, conta e sair -->
+    <div class="border-t border-white/8 p-3">
       <a
-        mat-button
-        class="store-link"
+        class="store-link mb-1 flex h-11 items-center gap-3 rounded-xl px-3 text-[14.5px] font-medium text-[#c3cfc6] no-underline transition-colors hover:bg-white/6 hover:text-white"
+        [class.justify-center]="!mostrarRotulos()"
         routerLink="/"
         aria-label="Ver loja"
-        [matTooltip]="isCollapsed() ? 'Ver loja' : ''"
-        matTooltipPosition="right"
-      >
-        <mat-icon>storefront</mat-icon>
-        @if (!isCollapsed()) {
+        [matTooltip]="mostrarRotulos() ? '' : 'Ver loja'"
+        matTooltipPosition="right">
+        <mat-icon class="shrink-0 !text-[#8a9a8f]" aria-hidden="true">storefront</mat-icon>
+        @if (mostrarRotulos()) {
           <span>Ver loja</span>
+          <mat-icon class="ml-auto !size-4 !text-[16px] !text-[#7f8d84]" aria-hidden="true">north_east</mat-icon>
         }
       </a>
 
-      <div class="profile-menu">
+      <div class="profile-menu flex items-center gap-2 rounded-2xl bg-white/5 p-2" [class.flex-col]="!mostrarRotulos()">
         <a
-          mat-button
-          class="profile-link"
+          class="profile-link flex min-w-0 flex-1 items-center gap-3 rounded-xl p-1 text-white no-underline transition-colors hover:bg-white/6"
+          [class.justify-center]="!mostrarRotulos()"
           routerLink="/minha-conta"
           aria-label="Abrir minha conta"
-          [matTooltip]="isCollapsed() ? (emailUsuario || 'Perfil do usuário') : ''"
-          matTooltipPosition="right"
-        >
-          <mat-icon>account_circle</mat-icon>
-          @if (!isCollapsed()) {
-            <span class="profile-email">
-              @if (emailUsuario) {
-                {{ emailUsuario }}
-              } @else if (erroCarregamentoEmail) {
-                E-mail indisponível
-              } @else {
-                Carregando e-mail...
-              }
+          [matTooltip]="mostrarRotulos() ? '' : (emailUsuario || 'Minha conta')"
+          matTooltipPosition="right">
+          <span class="grid size-9 shrink-0 place-items-center rounded-[10px] bg-lime font-data text-[12px] font-bold text-ink" aria-hidden="true">{{ iniciais }}</span>
+          @if (mostrarRotulos()) {
+            <span class="flex min-w-0 flex-col">
+              <span class="text-[13px] font-semibold">Minha conta</span>
+              <span class="profile-email truncate text-[12px] text-[#9aa89e]">
+                @if (emailUsuario) {
+                  {{ emailUsuario }}
+                } @else if (erroCarregamentoEmail) {
+                  E-mail indisponível
+                } @else {
+                  Carregando e-mail...
+                }
+              </span>
             </span>
           }
         </a>
 
         <button
-          mat-button
-          class="logout-btn"
+          type="button"
+          class="logout-btn grid size-9 shrink-0 cursor-pointer place-items-center rounded-[10px] border-0 bg-transparent text-[#c3cfc6] transition-colors hover:bg-[#3a1f1b] hover:text-[#ffb4a8]"
           (click)="logout()"
           aria-label="Sair do sistema"
-          [matTooltip]="isCollapsed() ? 'Sair do sistema' : ''"
-          matTooltipPosition="right"
-        >
-          <mat-icon>logout</mat-icon>
-          @if (!isCollapsed()) {
-            <span>Sair do sistema</span>
-          }
+          matTooltip="Sair do sistema"
+          matTooltipPosition="right">
+          <mat-icon aria-hidden="true">logout</mat-icon>
         </button>
       </div>
     </div>
+  </aside>
 
-  </mat-sidenav>
-
-  <!-- Área Principal de Conteúdo -->
-  <mat-sidenav-content class="admin-content" [class.collapsed]="isCollapsed()">
-    <div class="content-wrapper">
+  <!-- Conteúdo -->
+  <main id="conteudo-admin" class="admin-main min-w-0" [class.collapsed]="isCollapsed()" tabindex="-1">
+    <div class="mx-auto w-full max-w-[1280px] px-4 pb-16 pt-6 sm:px-6 lg:px-10 lg:pt-10">
       <router-outlet></router-outlet>
     </div>
-  </mat-sidenav-content>
-
-</mat-sidenav-container>
+  </main>
+</div>
