@@ -1,88 +1,145 @@
-<mat-toolbar class="mat-toolbar">
-  <div class="flex-container" color="primary">
-    <span class="toolbar-title">Controle de Marcas</span>
-    <button mat-fab class="accent" (click)="novaMarca()" aria-label="Nova marca">
-      <mat-icon>add</mat-icon>
-    </button>
+<app-admin-page-header
+  secao="Catálogo"
+  titulo="Marcas"
+  descricao="Fabricantes de drones e câmeras disponíveis no catálogo.">
+  <button actions type="button" class="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl border-0 bg-ink px-4 text-sm font-semibold text-white transition-colors hover:bg-ink-soft" (click)="novaMarca()">
+    <mat-icon class="!text-lime-glow" aria-hidden="true">add</mat-icon>
+    Nova marca
+  </button>
+</app-admin-page-header>
+
+<section class="overflow-hidden rounded-[20px] border border-line bg-white" aria-label="Lista de marcas">
+  <!-- Busca e filtro ativo -->
+  <div class="flex flex-wrap items-center gap-3 border-b border-line p-4 sm:px-5">
+    <form
+      class="flex h-11 w-full min-w-0 items-center gap-2 rounded-xl border border-[#dce4dc] bg-paper pl-3.5 pr-1.5 transition focus-within:border-lime focus-within:ring-4 focus-within:ring-lime/20 sm:w-[420px]"
+      role="search"
+      (submit)="$event.preventDefault(); filtrarPorNome(input.value)">
+      <label class="sr-only" for="marcas-busca">Buscar marcas por nome</label>
+      <mat-icon class="shrink-0 !text-subtle" aria-hidden="true">search</mat-icon>
+      <input
+        #input
+        id="marcas-busca"
+        class="h-full min-w-0 flex-1 border-0 bg-transparent text-[15px] text-ink outline-none placeholder:text-[#7c887f]"
+        type="search"
+        [value]="filtroNome"
+        placeholder="Buscar por nome, ex.: DJI" />
+      <button
+        type="submit"
+        class="h-8 shrink-0 cursor-pointer rounded-lg border-0 bg-ink px-3.5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft">
+        Buscar
+      </button>
+    </form>
+
+    @if (filtroNome) {
+      <span class="filtro-ativo inline-flex items-center gap-1.5 rounded-full bg-mist-green py-1 pl-3 pr-1 text-sm text-ink">
+        Nome: <strong class="font-semibold">{{ filtroNome }}</strong>
+        <button
+          type="button"
+          class="grid size-6 cursor-pointer place-items-center rounded-full border-0 bg-transparent text-muted transition-colors hover:bg-white hover:text-ink"
+          aria-label="Limpar filtro"
+          (click)="limparFiltro(input)">
+          <mat-icon class="!size-4 !text-[16px]" aria-hidden="true">close</mat-icon>
+        </button>
+      </span>
+    }
+
+    <span class="ml-auto font-data text-xs text-subtle" aria-live="polite">
+      {{ totalItems }} {{ totalItems === 1 ? 'marca' : 'marcas' }}
+    </span>
   </div>
-</mat-toolbar>
 
-<div class="filter-container">
-  <mat-form-field appearance="outline">
-    <mat-label>Filtro por Nome</mat-label>
-    <input
-      matInput
-      [value]="filtroNome"
-      (keyup.enter)="filtrarPorNome(input.value)"
-      placeholder="Ex: DJI"
-      #input
-    />
-  </mat-form-field>
+  <div class="h-1" aria-hidden="true">
+    @if (carregando) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+  </div>
 
-  <button mat-raised-button color="primary" (click)="filtrarPorNome(input.value)">
-    Buscar
-  </button>
+  <div class="overflow-x-auto">
+    <table mat-table [dataSource]="dataSource" class="admin-table min-w-[420px]" [attr.aria-busy]="carregando">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef class="w-[72px]">#</th>
+        <td mat-cell *matCellDef="let item" class="w-[72px] font-data text-[13px] text-subtle">{{ item.id }}</td>
+      </ng-container>
 
-  <button mat-button color="warn" (click)="limparFiltro(input)">
-    Limpar Filtro
-  </button>
-</div>
+      <ng-container matColumnDef="nome">
+        <th mat-header-cell *matHeaderCellDef>Nome</th>
+        <td mat-cell *matCellDef="let item"><span class="font-semibold">{{ item.nome }}</span></td>
+      </ng-container>
 
-<table mat-table [dataSource]="dataSource" class="marca-table mat-elevation-z8">
-  <!-- ID Column -->
-  <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef>ID</th>
-    <td mat-cell *matCellDef="let marca">{{ marca.id }}</td>
-  </ng-container>
+      <ng-container matColumnDef="acao">
+        <th mat-header-cell *matHeaderCellDef class="w-[1%]"><span class="sr-only">Ações</span></th>
+        <td mat-cell *matCellDef="let item" class="w-[1%]">
+          <div class="flex items-center justify-end gap-1">
+            <button type="button"
+              class="grid size-9 cursor-pointer place-items-center rounded-lg border-0 bg-transparent text-muted no-underline transition-colors hover:bg-mist hover:text-ink"
+              (click)="$event.stopPropagation(); editarMarca(item)"
+              (keydown)="$event.stopPropagation()"
+              [attr.aria-label]="'Editar ' + item.nome"
+              matTooltip="Editar">
+              <mat-icon aria-hidden="true">edit</mat-icon>
+            </button>
+            <button
+              type="button"
+              class="grid size-9 cursor-pointer place-items-center rounded-lg border-0 bg-transparent text-muted transition-colors hover:bg-danger-soft hover:text-danger"
+              (click)="$event.stopPropagation(); excluirMarca(item)"
+              (keydown)="$event.stopPropagation()"
+              [attr.aria-label]="'Excluir ' + item.nome"
+              matTooltip="Excluir">
+              <mat-icon aria-hidden="true">delete</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
 
-  <!-- Nome Column -->
-  <ng-container matColumnDef="nome">
-    <th mat-header-cell *matHeaderCellDef>Nome</th>
-    <td mat-cell *matCellDef="let marca">{{ marca.nome }}</td>
-  </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        class="linha-clicavel"
+        tabindex="0"
+        [attr.aria-label]="'Ver detalhes de ' + row.nome"
+        (click)="abrirDetalhes(row)"
+        (keydown.enter)="abrirDetalhes(row)"
+        (keydown.space)="$event.preventDefault(); abrirDetalhes(row)"
+      ></tr>
 
-  <!-- Acao Column -->
-  <ng-container matColumnDef="acao">
-    <th mat-header-cell *matHeaderCellDef>Ação</th>
-    <td mat-cell *matCellDef="let obj">
-      <button
-        mat-icon-button
-        color="primary"
-        aria-label="Editar marca"
-        (click)="$event.stopPropagation(); editarMarca(obj)"
-        (keydown)="$event.stopPropagation()"
-      >
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button
-        mat-icon-button
-        color="warn"
-        aria-label="Excluir marca"
-        (click)="$event.stopPropagation(); excluirMarca(obj)"
-        (keydown)="$event.stopPropagation()"
-      >
-        <mat-icon>delete</mat-icon>
-      </button>
-    </td>
-  </ng-container>
+      <tr class="mat-mdc-row" *matNoDataRow>
+        <td class="mat-mdc-cell" [attr.colspan]="displayedColumns.length">
+          <div class="flex flex-col items-center gap-2 px-6 py-14 text-center">
+            @if (carregando) {
+              <p class="m-0 text-sm text-muted">Carregando marcas...</p>
+            } @else if (erroCarregamento) {
+              <span class="grid size-12 place-items-center rounded-2xl bg-danger-soft text-danger"><mat-icon aria-hidden="true">cloud_off</mat-icon></span>
+              <p class="m-0 font-semibold text-ink">Não foi possível carregar as marcas</p>
+              <p class="m-0 text-sm text-muted">Verifique a conexão com o servidor e tente novamente.</p>
+            } @else {
+              <span class="grid size-12 place-items-center rounded-2xl bg-mist text-leaf"><mat-icon aria-hidden="true">branding_watermark</mat-icon></span>
+              <p class="m-0 font-semibold text-ink">Nenhuma marca encontrada</p>
+              <p class="m-0 text-sm text-muted">
+                {{ filtroNome ? 'Ajuste a busca ou limpe o filtro para ver todos os registros.' : 'Cadastre a primeira marca para começar.' }}
+              </p>
+              @if (filtroNome) {
+                <button
+                  type="button"
+                  class="mt-2 inline-flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-line-strong bg-white px-4 text-sm font-semibold text-ink transition-colors hover:bg-mist"
+                  (click)="limparFiltro(input)">
+                  Limpar filtro
+                </button>
+              }
+            }
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr
-    mat-row
-    *matRowDef="let row; columns: displayedColumns"
-    tabindex="0"
-    [attr.aria-label]="'Ver detalhes de ' + row.nome"
-    (click)="abrirDetalhes(row)"
-    (keydown.enter)="abrirDetalhes(row)"
-    (keydown.space)="$event.preventDefault(); abrirDetalhes(row)"
-  ></tr>
-</table>
-
-<mat-paginator
-  [length]="totalItems"
-  [pageIndex]="pageIndex"
-  [pageSize]="pageSize"
-  [pageSizeOptions]="[5, 10, 20]"
-  (page)="onPageChange($event)"
->
-</mat-paginator>
+  <mat-paginator
+    [length]="totalItems"
+    [pageIndex]="pageIndex"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="[5, 10, 20]"
+    (page)="onPageChange($event)"
+    aria-label="Paginação de marcas">
+  </mat-paginator>
+</section>

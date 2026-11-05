@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { AdminPageHeader } from '../admin-page-header/admin-page-header';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Administrador } from '../../../../core/models/administrador/Administrado';
 import { AdministradorService } from '../../../../core/services/AdministradorService';
@@ -15,10 +15,10 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 @Component({
   imports: [
     MatTableModule,
-    MatInputModule,
-    MatFormFieldModule,
     MatPaginatorModule,
-    MatToolbarModule,
+    MatTooltipModule,
+    MatProgressBarModule,
+    AdminPageHeader,
     MatButtonModule,
     MatIconModule,
     RouterLink,
@@ -29,11 +29,16 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
   templateUrl: './admnistrador-list.html',
 })
 export class AdmnistradorList implements OnInit {
+  /** O app roda sem Zone.js: avisa o Angular quando uma resposta assíncrona muda o estado. */
+  private readonly cdr = inject(ChangeDetectorRef);
+
   displayedColumns: string[] = ['id', 'login', 'email', 'acao'];
   dataSource = new MatTableDataSource<Administrador>();
   pageIndex = 0;
   pageSize = 10;
   totalItems = 0;
+  carregando = false;
+  erroCarregamento = false;
   filtroLogin = '';
 
   constructor(
@@ -57,26 +62,44 @@ export class AdmnistradorList implements OnInit {
   }
 
   carregarAdministradores(): void {
+    this.carregando = true;
+    this.erroCarregamento = false;
     this.administradorService.findAll(this.pageIndex, this.pageSize).subscribe({
       next: (response) => {
+        this.carregando = false;
+        this.cdr.markForCheck();
         this.dataSource.data = response.items;
         this.pageIndex = response.page;
         this.pageSize = response.pageSize;
         this.totalItems = response.totalItems;
       },
-      error: (err) => console.error('Erro ao carregar administradores', err),
+      error: (err) => {
+        this.carregando = false;
+        this.cdr.markForCheck();
+        this.erroCarregamento = true;
+        console.error('Erro ao carregar administradores', err);
+      },
     });
   }
 
   carregarAdministradorPorLogin(login: string): void {
+    this.carregando = true;
+    this.erroCarregamento = false;
     this.administradorService.findByLogin(this.pageIndex, this.pageSize, login).subscribe({
       next: (response) => {
+        this.carregando = false;
+        this.cdr.markForCheck();
         this.dataSource.data = response.items;
         this.pageIndex = response.page;
         this.pageSize = response.pageSize;
         this.totalItems = response.totalItems;
       },
-      error: (err) => console.error('Erro ao carregar administradores por login', err),
+      error: (err) => {
+        this.carregando = false;
+        this.cdr.markForCheck();
+        this.erroCarregamento = true;
+        console.error('Erro ao carregar administradores por login', err);
+      },
     });
   }
 

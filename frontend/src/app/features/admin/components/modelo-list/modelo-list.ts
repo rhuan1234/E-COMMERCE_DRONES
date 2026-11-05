@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { AdminPageHeader } from '../admin-page-header/admin-page-header';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
@@ -17,10 +17,10 @@ import { ModeloDetalhesDialog } from '../modelo-detalhes-dialog/modelo-detalhes-
 @Component({
   imports: [
     MatTableModule,
-    MatInputModule,
-    MatFormFieldModule,
     MatPaginatorModule,
-    MatToolbarModule,
+    MatTooltipModule,
+    MatProgressBarModule,
+    AdminPageHeader,
     MatButtonModule,
     MatIconModule,
     MatDialogModule,
@@ -31,11 +31,16 @@ import { ModeloDetalhesDialog } from '../modelo-detalhes-dialog/modelo-detalhes-
   templateUrl: './modelo-list.html',
 })
 export class ModeloList implements OnInit {
+  /** O app roda sem Zone.js: avisa o Angular quando uma resposta assíncrona muda o estado. */
+  private readonly cdr = inject(ChangeDetectorRef);
+
   displayedColumns: string[] = ['id', 'nome', 'marca', 'acao'];
   dataSource = new MatTableDataSource<Modelo>();
   pageIndex = 0;
   pageSize = 10;
   totalItems = 0;
+  carregando = false;
+  erroCarregamento = false;
   filtroNome = '';
 
   constructor(
@@ -60,26 +65,42 @@ export class ModeloList implements OnInit {
   }
 
   carregarModelos(): void {
+    this.carregando = true;
+    this.erroCarregamento = false;
     this.modeloService.findAll(this.pageIndex, this.pageSize).subscribe({
       next: (response) => {
-        this.dataSource.data = response.items;
-        this.pageIndex = response.page;
-        this.pageSize = response.pageSize;
-        this.totalItems = response.totalItems;
-      },
-      error: (err) => console.error('Erro ao carregar modelos', err),
-    });
-  }
-
-  carregarModeloPorNome(nome: string): void {
-    this.modeloService.findByNome(this.pageIndex, this.pageSize, nome).subscribe({
-      next: (response) => {
+        this.carregando = false;
+        this.cdr.markForCheck();
         this.dataSource.data = response.items;
         this.pageIndex = response.page;
         this.pageSize = response.pageSize;
         this.totalItems = response.totalItems;
       },
       error: (err) => {
+        this.carregando = false;
+        this.cdr.markForCheck();
+        this.erroCarregamento = true;
+        console.error('Erro ao carregar modelos', err);
+      },
+    });
+  }
+
+  carregarModeloPorNome(nome: string): void {
+    this.carregando = true;
+    this.erroCarregamento = false;
+    this.modeloService.findByNome(this.pageIndex, this.pageSize, nome).subscribe({
+      next: (response) => {
+        this.carregando = false;
+        this.cdr.markForCheck();
+        this.dataSource.data = response.items;
+        this.pageIndex = response.page;
+        this.pageSize = response.pageSize;
+        this.totalItems = response.totalItems;
+      },
+      error: (err) => {
+        this.carregando = false;
+        this.cdr.markForCheck();
+        this.erroCarregamento = true;
         this.dataSource.data = [];
         this.totalItems = 0;
         console.error('Erro ao carregar modelos por nome', err);

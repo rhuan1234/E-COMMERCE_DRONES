@@ -1,109 +1,180 @@
-<mat-toolbar class="mat-toolbar">
-    <div class="flex-container" color="primary">
-        <span class="toolbar-title">Controle de Promoções</span>
-        <button mat-fab class="accent" routerLink="/admin/promocoes/new">
-            <mat-icon>add</mat-icon>
-        </button>
-    </div>
-</mat-toolbar>
+<app-admin-page-header
+  secao="Comercial"
+  titulo="Promoções"
+  descricao="Campanhas de desconto com período de vigência e drones participantes.">
+  <a actions class="inline-flex h-11 items-center gap-2 rounded-xl bg-ink px-4 text-sm font-semibold text-white no-underline transition-colors hover:bg-ink-soft" routerLink="/admin/promocoes/new">
+    <mat-icon class="!text-lime-glow" aria-hidden="true">add</mat-icon>
+    Nova promoção
+  </a>
+</app-admin-page-header>
 
-<div class="filter-container">
-    <mat-form-field appearance="outline">
-        <mat-label>Filtro por Nome</mat-label>
-        <input
-            matInput
-            [value]="filtroNome"
-            (keyup.enter)="filtrarPorNome(input.value)"
-            placeholder="Ex: Black Friday"
-            #input
-        >
-    </mat-form-field>
-
-    <button mat-raised-button color="primary" (click)="filtrarPorNome(input.value)">
+<section class="overflow-hidden rounded-[20px] border border-line bg-white" aria-label="Lista de promoções">
+  <!-- Busca e filtro ativo -->
+  <div class="flex flex-wrap items-center gap-3 border-b border-line p-4 sm:px-5">
+    <form
+      class="flex h-11 w-full min-w-0 items-center gap-2 rounded-xl border border-[#dce4dc] bg-paper pl-3.5 pr-1.5 transition focus-within:border-lime focus-within:ring-4 focus-within:ring-lime/20 sm:w-[420px]"
+      role="search"
+      (submit)="$event.preventDefault(); filtrarPorNome(input.value)">
+      <label class="sr-only" for="promocoes-busca">Buscar promoções por nome</label>
+      <mat-icon class="shrink-0 !text-subtle" aria-hidden="true">search</mat-icon>
+      <input
+        #input
+        id="promocoes-busca"
+        class="h-full min-w-0 flex-1 border-0 bg-transparent text-[15px] text-ink outline-none placeholder:text-[#7c887f]"
+        type="search"
+        [value]="filtroNome"
+        placeholder="Buscar por nome, ex.: Black Friday" />
+      <button
+        type="submit"
+        class="h-8 shrink-0 cursor-pointer rounded-lg border-0 bg-ink px-3.5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft">
         Buscar
-    </button>
+      </button>
+    </form>
 
-    <button mat-button color="warn" (click)="limparFiltro(input)">
-        Limpar Filtro
-    </button>
-</div>
+    @if (filtroNome) {
+      <span class="filtro-ativo inline-flex items-center gap-1.5 rounded-full bg-mist-green py-1 pl-3 pr-1 text-sm text-ink">
+        Nome: <strong class="font-semibold">{{ filtroNome }}</strong>
+        <button
+          type="button"
+          class="grid size-6 cursor-pointer place-items-center rounded-full border-0 bg-transparent text-muted transition-colors hover:bg-white hover:text-ink"
+          aria-label="Limpar filtro"
+          (click)="limparFiltro(input)">
+          <mat-icon class="!size-4 !text-[16px]" aria-hidden="true">close</mat-icon>
+        </button>
+      </span>
+    }
 
-<table mat-table [dataSource]="dataSource" class="promocoes-table mat-elevation-z8">
+    <span class="ml-auto font-data text-xs text-subtle" aria-live="polite">
+      {{ totalItems }} {{ totalItems === 1 ? 'promoção' : 'promoções' }}
+    </span>
+  </div>
 
-    <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef> ID </th>
-        <td mat-cell *matCellDef="let promocao"> {{promocao.id}} </td>
-    </ng-container>
+  <div class="h-1" aria-hidden="true">
+    @if (carregando) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+  </div>
 
-    <ng-container matColumnDef="nome">
-        <th mat-header-cell *matHeaderCellDef> Nome </th>
-        <td mat-cell *matCellDef="let promocao"> {{promocao.nome}} </td>
-    </ng-container>
+  <div class="overflow-x-auto">
+    <table mat-table [dataSource]="dataSource" class="admin-table min-w-[900px]" [attr.aria-busy]="carregando">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef class="w-[72px]">#</th>
+        <td mat-cell *matCellDef="let item" class="w-[72px] font-data text-[13px] text-subtle">{{ item.id }}</td>
+      </ng-container>
 
+      <ng-container matColumnDef="nome">
+        <th mat-header-cell *matHeaderCellDef>Promoção</th>
+        <td mat-cell *matCellDef="let item"><span class="font-semibold">{{ item.nome }}</span></td>
+      </ng-container>
 
-    <ng-container matColumnDef="desconto">
-        <th mat-header-cell *matHeaderCellDef> Percentual de Desconto </th>
-        <td mat-cell *matCellDef="let promocao"> {{promocao.percentualDesconto}} </td>
-    </ng-container>
+      <ng-container matColumnDef="desconto">
+        <th mat-header-cell *matHeaderCellDef>Desconto</th>
+        <td mat-cell *matCellDef="let item"><span class="rounded-md bg-lime px-2 py-0.5 font-data text-xs font-bold text-ink">−{{ item.percentualDesconto }}%</span></td>
+      </ng-container>
 
-  
-    <ng-container matColumnDef="inicio">
-        <th mat-header-cell *matHeaderCellDef> Início </th>
-        <td mat-cell *matCellDef="let promocao"> {{promocao.dataInicio}} </td>
-    </ng-container>
+      <ng-container matColumnDef="inicio">
+        <th mat-header-cell *matHeaderCellDef>Início</th>
+        <td mat-cell *matCellDef="let item"><span class="whitespace-nowrap font-data text-[13px] text-muted">{{ item.dataInicio | date: 'dd/MM/yyyy HH:mm' }}</span></td>
+      </ng-container>
 
-   
-    <ng-container matColumnDef="fim">
-        <th mat-header-cell *matHeaderCellDef> Fim </th>
-        <td mat-cell *matCellDef="let promocao"> {{promocao.dataFim}} </td>
-    </ng-container>
+      <ng-container matColumnDef="fim">
+        <th mat-header-cell *matHeaderCellDef>Fim</th>
+        <td mat-cell *matCellDef="let item"><span class="whitespace-nowrap font-data text-[13px] text-muted">{{ item.dataFim | date: 'dd/MM/yyyy HH:mm' }}</span></td>
+      </ng-container>
 
-    <ng-container matColumnDef="drones">
-        <th mat-header-cell *matHeaderCellDef> Drones Qtd </th>
-        <td mat-cell *matCellDef="let promocao"> {{promocao.droneIds.length}} </td>
-    </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let item">@switch (statusPromocao(item)) {
+            @case ('vigente') {
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-mist-green px-2.5 py-1 text-xs font-semibold text-leaf"><span class="size-1.5 rounded-full bg-lime"></span>Vigente</span>
+            }
+            @case ('agendada') {
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-soft px-2.5 py-1 text-xs font-semibold text-amber-ink"><span class="size-1.5 rounded-full bg-amber"></span>Agendada</span>
+            }
+            @default {
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-mist px-2.5 py-1 text-xs font-semibold text-subtle"><span class="size-1.5 rounded-full bg-line-strong"></span>Encerrada</span>
+            }
+          }</td>
+      </ng-container>
 
+      <ng-container matColumnDef="drones">
+        <th mat-header-cell *matHeaderCellDef>Drones</th>
+        <td mat-cell *matCellDef="let item"><span class="font-data text-[13px]">{{ item.droneIds?.length || 0 }}</span></td>
+      </ng-container>
 
-    <ng-container matColumnDef="acao">
-        <th mat-header-cell *matHeaderCellDef> Ação </th>
-        <td mat-cell *matCellDef="let obj">
+      <ng-container matColumnDef="acao">
+        <th mat-header-cell *matHeaderCellDef class="w-[1%]"><span class="sr-only">Ações</span></th>
+        <td mat-cell *matCellDef="let item" class="w-[1%]">
+          <div class="flex items-center justify-end gap-1">
+            <a
+              class="grid size-9 cursor-pointer place-items-center rounded-lg border-0 bg-transparent text-muted no-underline transition-colors hover:bg-mist hover:text-ink"
+              [routerLink]="['/admin/promocoes', item.id, 'edit']" (click)="$event.stopPropagation()"
+              (keydown)="$event.stopPropagation()"
+              [attr.aria-label]="'Editar ' + item.nome"
+              matTooltip="Editar">
+              <mat-icon aria-hidden="true">edit</mat-icon>
+            </a>
             <button
-                mat-icon-button
-                color="primary"
-                routerLink="/admin/promocoes/{{obj.id}}/edit"
-                (click)="$event.stopPropagation()"
-                (keydown)="$event.stopPropagation()">
-                <mat-icon>edit</mat-icon>
+              type="button"
+              class="grid size-9 cursor-pointer place-items-center rounded-lg border-0 bg-transparent text-muted transition-colors hover:bg-danger-soft hover:text-danger"
+              (click)="$event.stopPropagation(); excluirPromocao(item)"
+              (keydown)="$event.stopPropagation()"
+              [attr.aria-label]="'Excluir ' + item.nome"
+              matTooltip="Excluir">
+              <mat-icon aria-hidden="true">delete</mat-icon>
             </button>
-            <button
-                mat-icon-button
-                color="warn"
-                (click)="$event.stopPropagation(); excluirPromocao(obj)"
-                (keydown)="$event.stopPropagation()">
-                <mat-icon>delete</mat-icon>
-            </button>
+          </div>
         </td>
-    </ng-container>
+      </ng-container>
 
-    
-    
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
         mat-row
-        *matRowDef="let row; columns: displayedColumns;"
+        *matRowDef="let row; columns: displayedColumns"
+        class="linha-clicavel"
         tabindex="0"
         [attr.aria-label]="'Ver detalhes de ' + row.nome"
         (click)="abrirDetalhes(row)"
         (keydown.enter)="abrirDetalhes(row)"
-        (keydown.space)="$event.preventDefault(); abrirDetalhes(row)">
-    </tr>
-</table>
+        (keydown.space)="$event.preventDefault(); abrirDetalhes(row)"
+      ></tr>
 
-<mat-paginator
+      <tr class="mat-mdc-row" *matNoDataRow>
+        <td class="mat-mdc-cell" [attr.colspan]="displayedColumns.length">
+          <div class="flex flex-col items-center gap-2 px-6 py-14 text-center">
+            @if (carregando) {
+              <p class="m-0 text-sm text-muted">Carregando promoções...</p>
+            } @else if (erroCarregamento) {
+              <span class="grid size-12 place-items-center rounded-2xl bg-danger-soft text-danger"><mat-icon aria-hidden="true">cloud_off</mat-icon></span>
+              <p class="m-0 font-semibold text-ink">Não foi possível carregar as promoções</p>
+              <p class="m-0 text-sm text-muted">Verifique a conexão com o servidor e tente novamente.</p>
+            } @else {
+              <span class="grid size-12 place-items-center rounded-2xl bg-mist text-leaf"><mat-icon aria-hidden="true">local_offer</mat-icon></span>
+              <p class="m-0 font-semibold text-ink">Nenhuma promoção encontrada</p>
+              <p class="m-0 text-sm text-muted">
+                {{ filtroNome ? 'Ajuste a busca ou limpe o filtro para ver todos os registros.' : 'Crie a primeira campanha para começar.' }}
+              </p>
+              @if (filtroNome) {
+                <button
+                  type="button"
+                  class="mt-2 inline-flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-line-strong bg-white px-4 text-sm font-semibold text-ink transition-colors hover:bg-mist"
+                  (click)="limparFiltro(input)">
+                  Limpar filtro
+                </button>
+              }
+            }
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <mat-paginator
     [length]="totalItems"
     [pageIndex]="pageIndex"
     [pageSize]="pageSize"
     [pageSizeOptions]="[5, 10, 20]"
-    (page)="onPageChange($event)">
-</mat-paginator>
-
+    (page)="onPageChange($event)"
+    aria-label="Paginação de promoções">
+  </mat-paginator>
+</section>
