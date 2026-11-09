@@ -26,6 +26,7 @@ import { Favoritos } from './features/ecommerce/components/favoritos/favoritos';
 import { DroneInfo } from './features/ecommerce/components/drone-info/drone-info';
 import { Comparar } from './features/ecommerce/components/comparar/comparar';
 import { MinhaConta } from './features/ecommerce/components/minha-conta/minha-conta';
+import { Carrinho } from './features/ecommerce/components/carrinho/carrinho';
 import { ModeloList } from './features/admin/components/modelo-list/modelo-list';
 import { ModeloForm } from './features/admin/components/modelo-form/modelo-form';
 import { MarcaList } from './features/admin/components/marca-list/marca-list';
@@ -50,6 +51,7 @@ export const routes: Routes = [
         {path: 'home', component: Home, title: 'Catálogo de drones'},
         {path: 'comparar', component: Comparar, title: 'Comparar drones'},
         {path: 'favoritos', component: Favoritos, title: 'Meus Favoritos'},
+        {path: 'carrinho', component: Carrinho, title: 'Carrinho de compras'},
         {path: 'drone-info/:id', component: DroneInfo, title: 'Detalhes do Drone'},
 
         // Minha conta: dados pessoais, endereços e senha de qualquer usuário autenticado

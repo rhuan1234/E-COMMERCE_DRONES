@@ -12,6 +12,7 @@ import { CatalogFilterKey, TIPOS_DE_VOO, TipoDeVoo } from '../../../../core/mode
 import { PagedResponse } from '../../../../core/models/PagedResponse';
 import { AuthService } from '../../../../core/services/auth/AuthService';
 import { ComparacaoService } from '../../../../core/services/ComparacaoService';
+import { CarrinhoService, ResultadoAdicaoCarrinho } from '../../../../core/services/CarrinhoService';
 import { DroneService } from '../../../../core/services/DroneService';
 import { EcommerceCatalogSearchService } from '../../../../core/services/EcommerceCatalogSearchService';
 import { FavoritoService } from '../../../../core/services/FavoritoService';
@@ -79,6 +80,7 @@ export class Home implements OnInit {
   readonly imagensComFalha = new Set<number>();
   readonly favoritosIds = signal<ReadonlySet<number>>(new Set());
   readonly favoritosEmAtualizacao = signal<ReadonlySet<number>>(new Set());
+  readonly mensagensCarrinho = signal<Readonly<Record<number, string>>>({});
   readonly mensagemErroFavoritos = signal('');
   readonly mensagemSucessoFavoritos = signal('');
   precoMinimo: number | null = null;
@@ -160,7 +162,29 @@ export class Home implements OnInit {
 
   private readonly route = inject(ActivatedRoute);
   readonly comparacao = inject(ComparacaoService);
+  readonly carrinho = inject(CarrinhoService);
   readonly mensagemComparacao = signal('');
+
+  adicionarAoCarrinho(drone: Drone): void {
+    const resultado = this.carrinho.adicionar(drone);
+    this.mensagensCarrinho.update((mensagens) => ({
+      ...mensagens,
+      [drone.id]: this.mensagemResultadoCarrinho(drone.nome, resultado),
+    }));
+  }
+
+  private mensagemResultadoCarrinho(nome: string, resultado: ResultadoAdicaoCarrinho): string {
+    switch (resultado) {
+      case 'adicionado':
+        return `${nome} foi adicionado ao carrinho.`;
+      case 'indisponivel':
+        return `${nome} está sem estoque disponível.`;
+      case 'limite-estoque':
+        return `Você já adicionou ao carrinho todas as unidades disponíveis de ${nome}.`;
+      case 'produto-invalido':
+        return 'Não foi possível adicionar este drone ao carrinho.';
+    }
+  }
 
   alternarComparacao(drone: Drone): void {
     const adicionou = !this.comparacao.contem(drone.id);

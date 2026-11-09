@@ -11,6 +11,7 @@ import { Drone, DroneImagem } from '../../../../core/models/drone/Drone';
 import { PagedResponse } from '../../../../core/models/PagedResponse';
 import { AvaliacaoService } from '../../../../core/services/AvaliacaoService';
 import { AuthService } from '../../../../core/services/auth/AuthService';
+import { CarrinhoService, ResultadoAdicaoCarrinho } from '../../../../core/services/CarrinhoService';
 import { ComparacaoService } from '../../../../core/services/ComparacaoService';
 import { DroneService } from '../../../../core/services/DroneService';
 import { FavoritoService } from '../../../../core/services/FavoritoService';
@@ -24,6 +25,7 @@ import { FavoritoService } from '../../../../core/services/FavoritoService';
 export class DroneInfo implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   readonly comparacao = inject(ComparacaoService);
+  readonly carrinho = inject(CarrinhoService);
   readonly mensagemComparacao = signal('');
   private readonly moeda = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -202,7 +204,26 @@ export class DroneInfo implements OnInit {
   }
 
   adicionarAoCarrinho(): void {
-    this.mensagemCarrinho.set('O carrinho ainda não está disponível.');
+    const drone = this.drone();
+    if (!drone) {
+      return;
+    }
+
+    const resultado = this.carrinho.adicionar(drone);
+    this.mensagemCarrinho.set(this.mensagemResultadoCarrinho(drone.nome, resultado));
+  }
+
+  private mensagemResultadoCarrinho(nome: string, resultado: ResultadoAdicaoCarrinho): string {
+    switch (resultado) {
+      case 'adicionado':
+        return `${nome} foi adicionado ao carrinho.`;
+      case 'indisponivel':
+        return `${nome} está sem estoque disponível.`;
+      case 'limite-estoque':
+        return `Você já adicionou ao carrinho todas as unidades disponíveis de ${nome}.`;
+      case 'produto-invalido':
+        return 'Não foi possível adicionar este drone ao carrinho.';
+    }
   }
 
   selecionarNota(nota: number): void {

@@ -139,7 +139,12 @@
           <p class="inline-success" role="status">{{ mensagemFavorito() }}</p>
         }
         @if (mensagemCarrinho()) {
-          <p class="inline-notice" role="status">{{ mensagemCarrinho() }}</p>
+          <p class="inline-notice" role="status">
+            {{ mensagemCarrinho() }}
+            @if (carrinho.quantidadeItens() > 0) {
+              <a class="ml-1 font-semibold underline" routerLink="/carrinho">Ver carrinho</a>
+            }
+          </p>
         }
 
         <div class="delivery-note">

@@ -4,6 +4,7 @@ import { of, throwError } from 'rxjs';
 import { AvaliacaoService } from '../../../../core/services/AvaliacaoService';
 import { Drone } from '../../../../core/models/drone/Drone';
 import { AuthService } from '../../../../core/services/auth/AuthService';
+import { CarrinhoService } from '../../../../core/services/CarrinhoService';
 import { DroneService } from '../../../../core/services/DroneService';
 import { FavoritoService } from '../../../../core/services/FavoritoService';
 import { DroneInfo } from './drone-info';
@@ -83,6 +84,7 @@ describe('DroneInfo', () => {
   const authService = { isAuthenticated: vi.fn().mockReturnValue(true) };
 
   beforeEach(async () => {
+    localStorage.removeItem('skyline.carrinho');
     droneService.findByIdEcommerce.mockReturnValue(of(drone));
     favoritoService.listar.mockReturnValue(of({
       items: [],
@@ -259,12 +261,15 @@ describe('DroneInfo', () => {
     expect(favoritoService.adicionar).not.toHaveBeenCalled();
   });
 
-  it('shows an explicit message when the cart action is not available yet', () => {
+  it('adds the current drone to the shared cart', () => {
     const cartButton = fixture.nativeElement.querySelector('.cart-action') as HTMLButtonElement;
     cartButton.click();
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent).toContain('O carrinho ainda não está disponível.');
+    expect(TestBed.inject(CarrinhoService).itens()).toHaveLength(1);
+    expect(TestBed.inject(CarrinhoService).itens()[0].droneId).toBe(17);
+    expect(fixture.nativeElement.textContent).toContain('foi adicionado ao carrinho.');
+    expect(fixture.nativeElement.querySelector('.inline-notice a')?.getAttribute('href')).toBe('/carrinho');
   });
 
   it('shows a not-found state when the public detail endpoint returns 404', () => {

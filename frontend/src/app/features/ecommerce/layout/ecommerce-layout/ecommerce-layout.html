@@ -91,10 +91,18 @@
           <mat-icon class="text-leaf" aria-hidden="true">favorite_border</mat-icon>
           <span class="hidden md:inline">Favoritos</span>
         </a>
-        <button class="header-action cart-action inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl border-0 bg-transparent px-2.5 text-sm font-semibold text-ink transition-colors hover:bg-mist" type="button" aria-label="Carrinho de compras">
+        <a
+          class="header-action cart-action relative inline-flex h-11 items-center gap-2 rounded-xl px-2.5 text-sm font-semibold text-ink no-underline transition-colors hover:bg-mist"
+          routerLink="/carrinho"
+          [attr.aria-label]="'Carrinho de compras, ' + carrinho.quantidadeItens() + ' itens'">
           <mat-icon class="text-leaf" aria-hidden="true">shopping_cart</mat-icon>
           <span class="hidden md:inline">Carrinho</span>
-        </button>
+          @if (carrinho.quantidadeItens() > 0) {
+            <span class="absolute right-0.5 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-ink px-1 font-data text-[10px] font-semibold text-lime-glow" aria-hidden="true">
+              {{ carrinho.quantidadeItens() }}
+            </span>
+          }
+        </a>
       </nav>
     </div>
   </header>

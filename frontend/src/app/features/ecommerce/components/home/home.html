@@ -246,11 +246,20 @@
                   <button
                     class="cart-button relative z-[2] inline-flex h-[46px] cursor-pointer items-center justify-center gap-2 rounded-xl border border-ink bg-white text-[15px] font-semibold text-ink transition-colors hover:bg-ink hover:text-white"
                     type="button"
+                    [disabled]="drone.quantidadeDisponivel <= 0"
                     [attr.aria-label]="'Adicionar ' + drone.nome + ' ao carrinho'"
-                    (click)="$event.stopPropagation()">
+                    (click)="$event.stopPropagation(); adicionarAoCarrinho(drone)">
                     <mat-icon aria-hidden="true">shopping_cart</mat-icon>
                     <span>Adicionar ao carrinho</span>
                   </button>
+                  @if (mensagensCarrinho()[drone.id]) {
+                    <p class="m-0 text-xs text-muted" role="status">
+                      {{ mensagensCarrinho()[drone.id] }}
+                      @if (carrinho.quantidadeItens() > 0) {
+                        <a class="font-semibold underline" routerLink="/carrinho">Ver carrinho</a>
+                      }
+                    </p>
+                  }
                 </div>
               </article>
             }

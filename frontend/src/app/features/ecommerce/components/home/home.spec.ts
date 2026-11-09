@@ -7,6 +7,7 @@ import { EcommerceCatalogSearchService } from '../../../../core/services/Ecommer
 import { FavoritoService } from '../../../../core/services/FavoritoService';
 import { AuthService } from '../../../../core/services/auth/AuthService';
 import { ComparacaoService } from '../../../../core/services/ComparacaoService';
+import { CarrinhoService } from '../../../../core/services/CarrinhoService';
 import { Home } from './home';
 
 function criarDrone(dados: Pick<Drone, 'id' | 'nome' | 'preco' | 'imagens'> & Partial<Drone>): Drone {
@@ -35,6 +36,7 @@ describe('Home', () => {
 
   beforeEach(async () => {
     sessionStorage.clear();
+    localStorage.removeItem('skyline.carrinho');
     droneService.findAllEcommerce.mockClear();
     favoritoService.listar.mockClear();
     favoritoService.adicionar.mockClear();
@@ -72,6 +74,33 @@ describe('Home', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelectorAll('.drone-card')).toHaveLength(1);
+  });
+
+  it('adds a catalog drone to the shared cart and reports success', () => {
+    component.drones.set([criarDrone({
+      id: 25,
+      nome: 'Drone para o carrinho',
+      preco: 2400,
+      quantidadeDisponivel: 2,
+      imagens: [],
+    })]);
+    fixture.detectChanges();
+
+    const addButton = fixture.nativeElement.querySelector('.cart-button') as HTMLButtonElement;
+    addButton.click();
+    fixture.detectChanges();
+
+    expect(TestBed.inject(CarrinhoService).itens()).toEqual([{
+      droneId: 25,
+      nome: 'Drone para o carrinho',
+      preco: 2400,
+      quantidade: 1,
+      estoqueDisponivel: 2,
+      imagem: null,
+    }]);
+    expect(fixture.nativeElement.textContent).toContain('foi adicionado ao carrinho.');
+    expect(fixture.nativeElement.querySelector('.cart-button').getAttribute('aria-label'))
+      .toBe('Adicionar Drone para o carrinho ao carrinho');
   });
 
   it('renders drones when the request completes without user interaction', async () => {

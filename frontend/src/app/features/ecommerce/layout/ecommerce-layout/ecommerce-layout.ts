@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth/AuthService';
+import { CarrinhoService } from '../../../../core/services/CarrinhoService';
 import { ComparacaoService } from '../../../../core/services/ComparacaoService';
 import { EcommerceCatalogSearchService } from '../../../../core/services/EcommerceCatalogSearchService';
 
@@ -16,6 +17,7 @@ import { EcommerceCatalogSearchService } from '../../../../core/services/Ecommer
 })
 export class EcommerceLayout {
   readonly auth = inject(AuthService);
+  readonly carrinho = inject(CarrinhoService);
   readonly comparacao = inject(ComparacaoService);
   termoBusca = '';
 

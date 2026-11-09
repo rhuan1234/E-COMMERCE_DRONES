@@ -145,7 +145,13 @@ O domínio do sistema é particionado nos seguintes pacotes e entidades:
    $$\text{precoFinal} = \text{precoOriginal} \times \left(1 - \frac{\text{percentualDesconto}}{100}\right)$$
 4. Drones podem ser vinculados ou desvinculados de promoções pela administração a qualquer momento.
 
-### 2.5 Fluxo de Montagem e Criação do Pedido
+### 2.5 Carrinho de Compras (Frontend)
+1. O carrinho é compartilhado entre catálogo, detalhes do drone e página `/carrinho`, e persiste no `localStorage` do navegador.
+2. Cada drone aparece uma única vez no carrinho; adicionar novamente incrementa a quantidade e atualiza os dados do catálogo.
+3. A quantidade deve ser inteira, positiva e não pode superar o estoque informado pelo catálogo no momento da adição. Produtos sem estoque não podem ser adicionados.
+4. O subtotal é a soma de `preco * quantidade` dos itens. O carrinho não reserva estoque e não cria pedidos; estoque e preços deverão ser revalidados no futuro fluxo de checkout.
+
+### 2.6 Fluxo de Montagem e Criação do Pedido
 1. **Pré-requisitos do Cliente**:
    - O cliente deve estar autenticado (`Role: CLIENTE` ou `ADMIN`).
    - O cliente deve possuir `nomeCompleto`, `cpf` preenchido e pelo menos um endereço cadastrado.
@@ -168,7 +174,7 @@ O domínio do sistema é particionado nos seguintes pacotes e entidades:
    - O pedido é gravado com status inicial `StatusPedido.PENDENTE`.
    - A data/hora da compra é registrada (`dataPedido = LocalDateTime.now()`).
 
-### 2.6 Fluxo de Pagamento e Liquidação
+### 2.7 Fluxo de Pagamento e Liquidação
 1. **Exclusividade de Pagamento**:
    - Cada pedido só pode possuir uma tentativa de pagamento ativa (ou PIX ou Cartão). Não é permitida a duplicação de pagamentos para o mesmo pedido.
 2. **Validação de Valor**:
@@ -189,7 +195,7 @@ O domínio do sistema é particionado nos seguintes pacotes e entidades:
    - Não é permitido pagar um pedido cujo status já seja `PAGO`.
    - Não é permitido pagar um pedido cujo status seja `CANCELADO`.
 
-### 2.7 Fluxo de Cancelamento e Estorno de Estoque
+### 2.8 Fluxo de Cancelamento e Estorno de Estoque
 1. **Regras de Cancelamento**:
    - O cliente só pode solicitar cancelamento de seus próprios pedidos.
    - O administrador pode cancelar pedidos de qualquer cliente.
@@ -201,7 +207,7 @@ O domínio do sistema é particionado nos seguintes pacotes e entidades:
      $$\text{drone.quantidadeDisponivel}_{\text{novo}} = \text{drone.quantidadeDisponivel} + \text{item.quantidade}$$
    - A operação é executada sob `@Transactional`, garantindo atomicidade total.
 
-### 2.8 Fluxo de Avaliações e Favoritos
+### 2.9 Fluxo de Avaliações e Favoritos
 1. **Avaliações**:
    - O cliente deve estar autenticado.
    - A `nota` é de preenchimento obrigatório e deve ser um número inteiro no intervalo $[1, 5]$.
