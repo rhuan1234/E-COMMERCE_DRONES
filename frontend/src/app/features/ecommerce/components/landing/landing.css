@@ -1,10 +1,422 @@
-/* Página de apresentação estilizada com utilitários Tailwind (tokens em src/styles.css). */
+/*
+ * Apresentação "primeiro voo". Layout e cores em utilitários Tailwind (tokens em src/styles.css);
+ * aqui fica só o que depende do motor de rolagem (fx-scroll) e do movimento-assinatura.
+ */
 
 :host {
   display: block;
+  --topo: 80px;
+}
+
+/* Fundo que viaja: o motor publica --fx-fundo/--fx-tinta no host conforme a cena dominante */
+.landing {
+  background: var(--fx-fundo, var(--color-paper));
+  color: var(--fx-tinta, var(--color-ink));
+  transition: background-color 0.7s ease, color 0.7s ease;
 }
 
 a:focus-visible {
-  outline: 3px solid #8cc63f;
+  outline: 3px solid var(--color-lime);
   outline-offset: 3px;
+}
+
+/* Cenas fixas param logo abaixo do cabeçalho da loja */
+.fx-palco {
+  top: var(--topo);
+  height: calc(100vh - var(--topo));
+  height: calc(100dvh - var(--topo));
+}
+
+.cena-chao {
+  min-height: calc(100dvh - var(--topo));
+}
+
+/* Foto panorâmica do chão: enquadra o sol nascendo e a grama nas molduras verticais */
+.foto-chao {
+  object-position: 30% 62%;
+}
+
+/* ---------- Cena 2 · decolagem ---------- */
+
+.pico-mundo {
+  border-radius: 28px;
+  transform-origin: 50% 55%;
+}
+
+.pico-drone svg {
+  filter: drop-shadow(0 0 1.5px rgb(247 249 246 / 0.75)) drop-shadow(0 18px 26px rgb(0 0 0 / 0.28));
+}
+
+.rotor {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.pico-frases {
+  bottom: 7%;
+}
+
+@media (max-width: 639px) {
+  .pico-frases {
+    bottom: 5%;
+  }
+}
+
+.pico-frases .fx-etapa {
+  grid-area: 1 / 1;
+  justify-self: start;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 22px 18px;
+  border-radius: 18px;
+  background: rgb(18 26 21 / 0.78);
+  backdrop-filter: blur(6px);
+  color: var(--color-paper);
+  font-family: var(--font-display);
+  font-stretch: 112%;
+  font-weight: 800;
+  font-size: clamp(26px, 4.4vw, 56px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  transform: translateY(14px);
+  transition: opacity 0.45s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pico-rotulo {
+  font-family: var(--font-data);
+  font-stretch: 100%;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--color-lime-glow);
+}
+
+.cena-pico[data-etapa='1'] .fx-etapa:nth-of-type(1),
+.cena-pico[data-etapa='2'] .fx-etapa:nth-of-type(2),
+.cena-pico[data-etapa='3'] .fx-etapa:nth-of-type(3),
+.cena-pico[data-etapa='4'] .fx-etapa:nth-of-type(4) {
+  transform: none;
+}
+
+/* ---------- Cena 3 · ficha ---------- */
+
+.ficha-linha {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  align-items: baseline;
+  gap: 8px 28px;
+  padding: 22px 0;
+  border-top: 1px solid rgb(247 249 246 / 0.14);
+}
+
+.ficha-numero {
+  order: -1;
+  margin: 0;
+  min-width: 3ch;
+  font-family: var(--font-data);
+  font-weight: 600;
+  font-size: clamp(64px, 11vw, 132px);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--color-lime-glow);
+  font-variant-numeric: tabular-nums;
+}
+
+.ficha-legenda {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 15px;
+  color: rgb(247 249 246 / 0.68);
+}
+
+.ficha-legenda strong {
+  font-family: var(--font-display);
+  font-stretch: 112%;
+  font-size: clamp(20px, 2.2vw, 28px);
+  font-weight: 700;
+  color: var(--color-paper);
+}
+
+/* ---------- Cena 4 · trilho ---------- */
+
+.palco-tipos {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.trilho-tipos {
+  padding-inline: max(20px, calc((100vw - 1240px) / 2 + 32px));
+}
+
+/* ---------- Cena 6 · passos ---------- */
+
+.passos-pilha .passo {
+  grid-area: 1 / 1;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto 1fr;
+  gap: 6px 20px;
+  padding: 32px;
+  border-radius: 28px;
+  background: #fff;
+  border: 1px solid var(--color-line);
+  transform: translateY(24px) scale(0.98);
+  transition: opacity 0.45s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cena-passos[data-etapa='1'] .passo:nth-of-type(1),
+.cena-passos[data-etapa='2'] .passo:nth-of-type(2),
+.cena-passos[data-etapa='3'] .passo:nth-of-type(3) {
+  transform: none;
+}
+
+.passo-numero {
+  grid-column: 1 / -1;
+  font-family: var(--font-data);
+  font-size: clamp(56px, 8vw, 96px);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--color-leaf);
+  letter-spacing: -0.04em;
+}
+
+.passo-icone {
+  grid-row: 2 / 4;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-top: 6px;
+  border-radius: 14px;
+  background: var(--color-mist-green);
+  color: var(--color-leaf);
+}
+
+.passo h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-stretch: 112%;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.passo p {
+  margin: 0;
+  max-width: 32ch;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+.passos-indice li {
+  width: 40px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-line-strong);
+  transition: background-color 0.3s ease, width 0.3s ease;
+}
+
+.cena-passos[data-etapa='1'] .passos-indice li:nth-child(1),
+.cena-passos[data-etapa='2'] .passos-indice li:nth-child(-n + 2),
+.cena-passos[data-etapa='3'] .passos-indice li {
+  background: var(--color-ink);
+}
+
+/* ---------- Cena 7 · pouso: sombra só atrás do texto ---------- */
+
+.pouso-protecao {
+  position: relative;
+}
+
+.pouso-protecao::before {
+  content: '';
+  position: absolute;
+  inset: -80px -120px -80px -160px;
+  z-index: -1;
+  background: radial-gradient(closest-side, rgb(18 26 21 / 0.82), rgb(18 26 21 / 0));
+  pointer-events: none;
+}
+
+/* ---------- Movimento-assinatura: altímetro ---------- */
+
+/* Celular e telas médias: leitura compacta no alto, à direita, logo abaixo do cabeçalho */
+.altimetro {
+  position: fixed;
+  top: calc(var(--topo) + 12px);
+  right: 12px;
+  z-index: 30;
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  padding: 8px 12px 8px 8px;
+  border-radius: 14px;
+  background: rgb(18 26 21 / 0.92);
+  color: var(--color-paper);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.18);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.altimetro.alt-oculto {
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+}
+
+.alt-trilho {
+  position: relative;
+  width: 5px;
+  border-radius: 999px;
+  background: rgb(247 249 246 / 0.16);
+  overflow: hidden;
+}
+
+.alt-marcador {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--color-lime-glow);
+  transform: scaleY(0);
+  transform-origin: bottom;
+}
+
+.alt-rotulo {
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgb(247 249 246 / 0.6);
+}
+
+.alt-teto {
+  display: none;
+}
+
+.alt-leitura {
+  margin-top: 3px;
+  font-family: var(--font-data);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-lime-glow);
+  font-variant-numeric: tabular-nums;
+}
+
+.alt-leitura small {
+  margin-left: 3px;
+  font-size: 12px;
+  color: var(--color-paper);
+}
+
+/* Telas largas: instrumento vertical na margem esquerda, fora da coluna de conteúdo */
+@media (min-width: 1360px) {
+  .altimetro {
+    top: calc(50% + var(--topo) / 2);
+    right: auto;
+    left: 24px;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 10px;
+    translate: 0 -50%;
+  }
+
+  .altimetro .flex {
+    align-items: center;
+    order: -1;
+  }
+
+  .alt-trilho {
+    width: 6px;
+    height: 140px;
+    order: 1;
+  }
+
+  .alt-teto {
+    display: block;
+    margin-top: 6px;
+    font-size: 9px;
+  }
+
+  .alt-leitura {
+    font-size: 22px;
+  }
+
+  .alt-leitura small {
+    display: block;
+    margin: 2px 0 0;
+    text-align: center;
+  }
+}
+
+/* ---------- Movimento reduzido: tudo legível, parado ---------- */
+
+/* Sem fundo que viaja, cada cena carrega a própria cor (a mesma do data-fx-fundo) */
+:host-context(.fx-reduzido) [data-fx-fundo] {
+  background: var(--cena-fundo);
+  color: var(--cena-tinta);
+}
+:host-context(.fx-reduzido) .cena-pico { --cena-fundo: #121a15; --cena-tinta: #f7f9f6; }
+:host-context(.fx-reduzido) .cena-depoimento { --cena-fundo: #eef3ea; --cena-tinta: #17211b; }
+:host-context(.fx-reduzido) .cena-pouso { --cena-fundo: #121a15; --cena-tinta: #f7f9f6; }
+:host-context(.fx-reduzido) .cena-ficha { --cena-fundo: #17211b; --cena-tinta: #f7f9f6; }
+:host-context(.fx-reduzido) .cena-tipos,
+:host-context(.fx-reduzido) .cena-passos { --cena-fundo: #f7f9f6; --cena-tinta: #17211b; }
+
+:host-context(.fx-reduzido) .fx-palco {
+  height: auto;
+}
+
+:host-context(.fx-reduzido) .pico-mundo,
+:host-context(.fx-reduzido) .pico-drone {
+  position: relative;
+}
+
+:host-context(.fx-reduzido) .cena-pico .fx-palco {
+  display: flex;
+  flex-direction: column;
+  min-height: 80vh;
+}
+
+:host-context(.fx-reduzido) .pico-mundo {
+  position: absolute;
+}
+
+:host-context(.fx-reduzido) .pico-drone {
+  position: relative;
+  padding-top: 64px;
+}
+
+:host-context(.fx-reduzido) .pico-frases {
+  position: relative;
+  left: auto;
+  bottom: auto;
+  translate: none;
+  margin: 24px auto 48px;
+  gap: 12px;
+}
+
+:host-context(.fx-reduzido) .pico-frases .fx-etapa,
+:host-context(.fx-reduzido) .passos-pilha .passo {
+  transform: none;
+  margin: 0;
+}
+
+:host-context(.fx-reduzido) .cena-tipos .fx-palco,
+:host-context(.fx-reduzido) .cena-passos .fx-palco {
+  padding-block: 96px;
+}
+
+:host-context(.fx-reduzido) .passos-pilha {
+  gap: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing,
+  .altimetro {
+    transition: none;
+  }
 }

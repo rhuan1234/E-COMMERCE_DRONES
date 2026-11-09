@@ -21,7 +21,6 @@ import { CameraForm } from './features/admin/components/camera-form/camera-form'
 import { cameraResolver } from './core/resolvers/CameraResolver';
 import { EcommerceLayout } from './features/ecommerce/layout/ecommerce-layout/ecommerce-layout';
 import { Home } from './features/ecommerce/components/home/home';
-import { Landing } from './features/ecommerce/components/landing/landing';
 import { Favoritos } from './features/ecommerce/components/favoritos/favoritos';
 import { DroneInfo } from './features/ecommerce/components/drone-info/drone-info';
 import { Comparar } from './features/ecommerce/components/comparar/comparar';
@@ -46,7 +45,13 @@ export const routes: Routes = [
     component: EcommerceLayout,
     children: [
         // Página de apresentação (raiz do sistema)
-        {path: '', pathMatch: 'full', component: Landing, title: 'Skyline Drones'},
+        {
+          path: '',
+          pathMatch: 'full',
+          // Carregada sob demanda: a apresentação animada não pesa no bundle inicial da loja
+          loadComponent: () => import('./features/ecommerce/components/landing/landing').then((m) => m.Landing),
+          title: 'Skyline Drones',
+        },
         // Catálogo da loja
         {path: 'home', component: Home, title: 'Catálogo de drones'},
         {path: 'comparar', component: Comparar, title: 'Comparar drones'},
