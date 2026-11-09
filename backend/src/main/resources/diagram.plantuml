@@ -149,10 +149,6 @@ abstract Pagamento{
 }
 
 class PagamentoCartao{
-    - numeroCartao: String
-    - nomeTitular: String
-    - dataValidade: String
-    - codigoSeguranca: String
 }
 
 class PagamentoPix{

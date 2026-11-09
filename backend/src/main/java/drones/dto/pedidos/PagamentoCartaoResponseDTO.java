@@ -7,7 +7,6 @@ public record PagamentoCartaoResponseDTO(
     Long id,
     Long pedidoId,
     double valor,
-    String statusPagamento,
-    String numeroCartaoUltimosDigitos
+    String statusPagamento
 ) {
 }

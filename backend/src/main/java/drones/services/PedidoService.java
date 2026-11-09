@@ -5,9 +5,14 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeSet;
 
 import drones.exception.ValidationException;
+import drones.model.drones.Drone;
 import drones.model.fornecedor.Endereco;
 import drones.model.pedido.ItemPedido;
 import drones.model.pedido.PagamentoCartao;
@@ -19,12 +24,16 @@ import drones.model.usuario.Usuario;
 import drones.repository.PagamentoCartaoRepository;
 import drones.repository.PagamentoPixRepository;
 import drones.repository.PedidoRepository;
+import drones.repository.DroneRepository;
 
 @ApplicationScoped
 public class PedidoService implements PedidoServiceInterface {
 
     @Inject
     PedidoRepository pedidoRepository;
+
+    @Inject
+    DroneRepository droneRepository;
 
     @Inject
     AdminServiceInterface usuarioService;
@@ -41,6 +50,16 @@ public class PedidoService implements PedidoServiceInterface {
     @Override
     @Transactional
     public Pedido criar(Usuario usuario,Pedido pedido) {
+        return criarComEndereco(usuario, pedido, null);
+    }
+
+    @Override
+    @Transactional
+    public Pedido criar(Usuario usuario, Pedido pedido, Long enderecoId) {
+        return criarComEndereco(usuario, pedido, enderecoId);
+    }
+
+    private Pedido criarComEndereco(Usuario usuario, Pedido pedido, Long enderecoId) {
         if(usuario.getNomeCompleto() == null ||
        usuario.getNomeCompleto().isBlank()) {
 
@@ -71,7 +90,26 @@ public class PedidoService implements PedidoServiceInterface {
             );
         }
 
+        Endereco enderecoEntrega = usuario.getEnderecos().stream()
+            .filter(endereco -> enderecoId != null
+                ? Objects.equals(endereco.getId(), enderecoId)
+                : endereco.isPrincipal())
+            .findFirst()
+            .orElseThrow(() -> new ValidationException(
+                enderecoId == null
+                    ? "O cliente precisa possuir um endereço principal"
+                    : "O endereço selecionado não pertence ao cliente",
+                "enderecoId"
+            ));
+
+        bloquearDronesDoPedido(pedido);
         for(ItemPedido item : pedido.getItens()) {
+            if (item.getDrone() == null) {
+                throw new ValidationException("Drone do item não foi encontrado", "droneId");
+            }
+            if (item.getQuantidade() <= 0) {
+                throw new ValidationException("A quantidade deve ser maior que zero", "quantidade");
+            }
             if(item.getDrone().getQuantidadeDisponivel() - item.getQuantidade() < 0) {
                 throw new ValidationException(
                     "Quantidade solicitada para o drone id: " + item.getDrone().getId() + " excede a quantidade disponível em estoque (disponível: " + item.getDrone().getQuantidadeDisponivel() +")"
@@ -87,19 +125,38 @@ public class PedidoService implements PedidoServiceInterface {
         pedido.getItens().forEach(item -> item.setPedido(pedido));
         pedido.setStatusPedido(StatusPedido.PENDENTE);
         pedido.setDataPedido(LocalDateTime.now());
-        for(Endereco endereco : usuario.getEnderecos()) {
-            if(endereco.isPrincipal()) {
-                pedido.setRuaEntrega(endereco.getRua());
-                pedido.setBairroEntrega(endereco.getBairro());
-                pedido.setCidadeEntrega(endereco.getCidade().getNome());
-                pedido.setEstadoEntrega(endereco.getCidade().getEstado().getNome());
-                pedido.setCepEntrega(endereco.getCep());
-                break;
-            }
-        }
+        pedido.setRuaEntrega(enderecoEntrega.getRua());
+        pedido.setBairroEntrega(enderecoEntrega.getBairro());
+        pedido.setCidadeEntrega(enderecoEntrega.getCidade().getNome());
+        pedido.setEstadoEntrega(enderecoEntrega.getCidade().getEstado().getNome());
+        pedido.setCepEntrega(enderecoEntrega.getCep());
         pedidoRepository.persist(pedido);
 
         return pedido;
+    }
+
+    private void bloquearDronesDoPedido(Pedido pedido) {
+        TreeSet<Long> droneIds = new TreeSet<>();
+        for (ItemPedido item : pedido.getItens()) {
+            if (item.getDrone() != null && item.getDrone().getId() != null) {
+                droneIds.add(item.getDrone().getId());
+            }
+        }
+
+        Map<Long, Drone> dronesBloqueados = new HashMap<>();
+        for (Long droneId : droneIds) {
+            Drone drone = droneRepository.findByIdForUpdate(droneId);
+            if (drone == null) {
+                throw new ValidationException("Drone não encontrado", "droneId");
+            }
+            dronesBloqueados.put(droneId, drone);
+        }
+
+        for (ItemPedido item : pedido.getItens()) {
+            if (item.getDrone() != null && item.getDrone().getId() != null) {
+                item.setDrone(dronesBloqueados.get(item.getDrone().getId()));
+            }
+        }
     }
 
     private void aplicarPromocao(ItemPedido item, LocalDateTime agora) {

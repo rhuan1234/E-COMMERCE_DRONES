@@ -5,7 +5,6 @@ import java.util.List;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import drones.dto.PageResponse;
-import drones.dto.pedidos.PagamentoCartaoRequestDTO;
 import drones.dto.pedidos.PagamentoCartaoResponseDTO;
 import drones.dto.pedidos.PagamentoPixResponseDTO;
 import drones.exception.ValidationException;
@@ -19,7 +18,6 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
@@ -52,18 +50,12 @@ public class PagamentoController {
     @Path("/{pedidoId}/pagamento/cartao")
     @Transactional
     @RolesAllowed({"CLIENTE", "ADMIN"})
-    public Response criarPagamentoCartao(@PathParam("pedidoId") Long pedidoId, @Valid PagamentoCartaoRequestDTO dto) {
+    public Response criarPagamentoCartao(@PathParam("pedidoId") Long pedidoId) {
 
         if (pedidoId == null || pedidoId <= 0) {
             throw new ValidationException(
                 "Id do pedido inválido",
                 "pedidoId"
-            );
-        }
-
-        if (dto == null) {
-            throw new ValidationException(
-                "Dados do pagamento são obrigatórios"
             );
         }
 
@@ -77,7 +69,6 @@ public class PagamentoController {
 
         PagamentoCartao pagamentoCartao =
             pagamentoCartaoService.criar(
-                PagamentoCartaoMapper.toEntity(dto),
                 pedidoId,
                 login
             );

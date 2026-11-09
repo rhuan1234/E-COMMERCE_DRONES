@@ -24,6 +24,7 @@ import java.util.List;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import drones.dto.PageResponse;
+import drones.dto.pedidos.CheckoutRequestDTO;
 import drones.dto.pedidos.PedidoRequestDTO;
 import drones.dto.pedidos.PedidoResponseAnaliseAdminDTO;
 import drones.dto.pedidos.PedidoResponseDTO;
@@ -32,6 +33,7 @@ import drones.mapper.PedidoMapper;
 import drones.model.pedido.Pedido;
 import drones.model.usuario.Usuario;
 import drones.services.AdminServiceInterface;
+import drones.services.CheckoutServiceInterface;
 import drones.services.PedidoService;
 
 @ApplicationScoped
@@ -44,10 +46,23 @@ public class PedidoController {
     PedidoService pedidoService;
 
     @Inject
+    CheckoutServiceInterface checkoutService;
+
+    @Inject
     JsonWebToken jwt;
 
     @Inject
     AdminServiceInterface usuarioService;
+
+    @POST
+    @Path("/checkout")
+    @RolesAllowed({"CLIENTE", "ADMIN"})
+    public Response finalizarCheckout(@Valid CheckoutRequestDTO dados) {
+        String login = jwt.getName();
+        return Response.status(Response.Status.CREATED)
+            .entity(checkoutService.finalizar(dados, login))
+            .build();
+    }
 
     @POST
     @RolesAllowed({"CLIENTE", "ADMIN"})

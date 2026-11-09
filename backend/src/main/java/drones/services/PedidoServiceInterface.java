@@ -7,6 +7,7 @@ import drones.model.usuario.Usuario;
 
 public interface PedidoServiceInterface {
     Pedido criar(Usuario usuario, Pedido pedido);
+    Pedido criar(Usuario usuario, Pedido pedido, Long enderecoId);
     Pedido buscarPorId(Long id);
     List<Pedido> buscarTodos();
     List<Pedido> buscarTodos(int page, int pageSize);

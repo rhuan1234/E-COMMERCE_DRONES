@@ -84,6 +84,10 @@ export class CarrinhoService {
     this.atualizar(this.estado().filter((item) => item.droneId !== droneId));
   }
 
+  limpar(): void {
+    this.atualizar([]);
+  }
+
   private atualizar(itens: readonly ItemCarrinho[]): void {
     this.estado.set(itens);
     try {

@@ -204,10 +204,6 @@ package "drones.model.pedido" {
     }
 
     class PagamentoCartao {
-        - numeroCartao: String
-        - nomeTitular: String
-        - dataValidade: String
-        - codigoSeguranca: String
     }
 }
 

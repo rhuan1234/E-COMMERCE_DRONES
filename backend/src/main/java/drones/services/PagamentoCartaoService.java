@@ -6,8 +6,6 @@ import jakarta.transaction.Transactional;
 
 import java.util.List;
 
-import org.eclipse.microprofile.jwt.JsonWebToken;
-
 import drones.exception.ValidationException;
 import drones.model.pedido.PagamentoCartao;
 import drones.model.pedido.PagamentoPix;
@@ -30,9 +28,6 @@ public class PagamentoCartaoService implements PagamentoCartaoServiceInterface {
     PedidoRepository pedidoRepository;
 
     @Inject
-    JsonWebToken jwt;
-
-    @Inject
     UsuarioRepository usuarioRepository;
 
     @Inject
@@ -43,7 +38,7 @@ public class PagamentoCartaoService implements PagamentoCartaoServiceInterface {
 
     @Override
     @Transactional
-    public PagamentoCartao criar(PagamentoCartao pagamentoCartao, Long pedidoId, String login) {
+    public PagamentoCartao criar(Long pedidoId, String login) {
         
         if (pedidoId == null) {
             throw new ValidationException("Pedido é obrigatório", "pedidoId");
@@ -73,6 +68,7 @@ public class PagamentoCartaoService implements PagamentoCartaoServiceInterface {
         if (pagamentoCartaoExistente != null) {
             throw new ValidationException("Pagamento já existe para este pedido", "pedidoId");
         }
+        PagamentoCartao pagamentoCartao = new PagamentoCartao();
         pagamentoCartao.setValor(pedido.getValorTotal());
         pagamentoCartao.setPedido(pedido);
         pagamentoCartao.setStatusPagamento(StatusPagamento.PENDENTE);

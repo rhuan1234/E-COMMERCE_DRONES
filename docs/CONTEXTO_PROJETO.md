@@ -111,7 +111,7 @@ E-COMMERCE_DRONES/
    - Ao cadastrar um `Drone` ou `Camera`, valida-se no service se o `Modelo` selecionado pertence de fato à `Marca` informada.
 
 6. **Snapshot Imutável de Endereço no Pedido**:
-   - Quando um pedido é gerado, os dados do endereço principal do cliente no momento da compra são gravados diretamente nas colunas `ruaEntrega`, `bairroEntrega`, `cidadeEntrega`, `estadoEntrega` e `cepEntrega` da tabela `pedido`.
+   - Quando um pedido é gerado, os dados do endereço escolhido pelo cliente (ou o endereço principal no fluxo legado) são gravados diretamente nas colunas `ruaEntrega`, `bairroEntrega`, `cidadeEntrega`, `estadoEntrega` e `cepEntrega` da tabela `pedido`.
    - Isso garante que alterações posteriores no cadastro de endereços do cliente não distorçam o histórico fiscal e logístico de pedidos já realizados.
 
 7. **Estratégia de Herança para Pagamentos**:
@@ -161,6 +161,7 @@ E-COMMERCE_DRONES/
 - [x] Criação de Pedidos com validação de estoque, aplicação dinâmica de promoção e snapshot de entrega.
 - [x] Processamento de Pagamento polimórfico (PIX com chave UUID e Cartão de Crédito).
 - [x] Cancelamento de pedidos com cancelamento de pagamento e estorno automático de estoque.
+- [x] Checkout em etapas com seleção de endereço, validação de estoque e criação transacional do pedido e pagamento simulado; não solicita nem armazena dados reais de cartão.
 - [x] Módulo de Favoritos (adicionar, remover, listar favoritos por usuário).
 - [x] Módulo de Avaliações de produtos (nota de 1 a 5, comentário e snapshot do nome do cliente por produto).
 
@@ -180,7 +181,7 @@ E-COMMERCE_DRONES/
 - [x] Vitrine E-commerce: Página Home inicial exibindo catálogo de drones em cards com fotos, especificações e preços.
 - [x] Sistema de Favoritos no E-Commerce: adicionar/remover nos cards e página paginada "Meus Favoritos" integrada ao backend.
 - [x] Página de detalhes de drones com galeria de imagens, ficha técnica e favoritos integrados.
-- [x] Carrinho de compras (nov/2026): adição pelo catálogo e detalhes, ajuste de quantidade limitado ao estoque apresentado, remoção, subtotal e persistência em `localStorage`; não reserva estoque nem formaliza pedidos.
+- [x] Carrinho e checkout em etapas (nov/2026): adição pelo catálogo e detalhes, quantidades limitadas ao estoque apresentado, subtotal e persistência em `localStorage`; checkout autenticado para escolher endereço cadastrado e método de pagamento demonstrativo, com estoque/preço revalidados no backend. A confirmação é simulada e nenhum dado real de cartão é solicitado ou armazenado.
 - [x] Avaliações na página de detalhes (nov/2026): consulta pública ordenada da mais recente para a mais antiga em páginas de até 5, envio autenticado de nota de 1 a 5 e comentário de até 1000 caracteres; cada avaliação permanece associada diretamente a um drone, sem respostas ou encadeamento. A avaliação salva o snapshot do nome completo do perfil do cliente, usando `<desconhecido>` quando ausente, e exibe esse nome na listagem.
 - [x] Identidade visual refinada da loja (nov/2026): tokens no `@theme` do Tailwind em `src/styles.css` (cores `ink`, `paper`, `lime`, `lime-glow`, `leaf`, `line`, `mist`; fontes `font-display` Archivo, `font-body` Roboto Flex, `font-data` JetBrains Mono), cabeçalho/rodapé do `EcommerceLayout` reescritos em utilitários Tailwind e Home transformada em landing page: hero com visor do drone em destaque (primeiro item do catálogo, dados reais), atalhos "Escolha pelo seu tipo de voo" que aplicam os filtros existentes, catálogo com barras de autonomia/alcance relativas ao maior valor listado, tabela "Compare antes de decidir" (movida depois para a página `/comparar`, ver abaixo) e chamada final. Rolagem por âncora habilitada via `withInMemoryScrolling`. Protótipo de referência no Claude Design.
 - [x] Comparação de drones em página própria (`/comparar`): o cliente escolhe até 3 drones pelo botão "Comparar" dos cards do catálogo ou da página de detalhes; a seleção fica no `ComparacaoService` (signal persistido em `sessionStorage`), aparece numa barra flutuante no catálogo e num contador no cabeçalho. A página busca cada ficha por `GET /drones/{id}`, agrupa as linhas (desempenho, câmera e conectividade, controle e bateria), marca o melhor valor de cada linha numérica e retira da seleção drones que saíram do catálogo (404).
@@ -197,13 +198,7 @@ E-COMMERCE_DRONES/
 0. **Refinamento visual nas demais telas**: o painel administrativo já usa os tokens da loja; faltam Detalhes do Produto, Meus Favoritos, Login/Cadastro e as telas de Minha conta (Perfil, Endereços e Senha ainda usam o visual Material antigo; os componentes seguem em `features/admin/components` e podem migrar para `features/ecommerce`); definir parcelamento único na comunicação (hoje "até 10x" nas vantagens e "12x sem juros" nos cards); exibir preço promocional nos cards quando o DTO de drone do e-commerce expuser a promoção vigente.
 1. **Página de Detalhes do Produto**: galeria, ficha técnica, favorito e avaliações paginadas concluídos.
 2. **Sistema de Favoritos no E-Commerce**: concluído na Home e na página paginada "Meus Favoritos".
-3. **Carrinho de Compras (Cart)**: concluído na loja; permanece pendente apenas a integração com o checkout/formalização do pedido.
-4. **Fluxo de Checkout**:
-   - Seleção do endereço de entrega entre os cadastrados ou cadastro de um novo endereço.
-   - Escolha da forma de pagamento:
-     - **PIX**: exibição de QR Code e chave Pix Copia-e-Cola com botão de confirmação.
-     - **Cartão de Crédito**: formulário de dados do titular, número, validade e CVV.
-   - Finalização do pedido e direcionamento para página de sucesso.
+3. **Carrinho e Checkout**: checkout demonstrativo concluído; cadastro de endereço durante o fluxo, histórico de pedidos e integração real com gateway permanecem fora do escopo atual.
 5. **Histórico e Acompanhamento de Pedidos**:
    - Tela "Meus Pedidos" para o cliente autenticado acompanhar status (`PENDENTE`, `PAGO`, `CANCELADO`).
    - Botão para cancelar pedido pendente diretamente pelo cliente.

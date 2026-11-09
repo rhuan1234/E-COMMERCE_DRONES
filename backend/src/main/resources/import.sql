@@ -258,10 +258,9 @@ VALUES (2, 1, 10899.00, 2, 2);
 INSERT INTO pagamento (id, valor, statuspagamento, pedido_id)
 VALUES (2, 10899.00, 'APROVADO', 2);
 
-INSERT INTO pagamentocartao (id, numerocartao, nometitular, datavalidade, codigoseguranca)
-VALUES (2, '4111111111111111', 'LUCAS SILVA', '12/29', '123');
+INSERT INTO pagamentocartao (id)
+VALUES (2);
 
 ALTER SEQUENCE pedido_id_seq RESTART WITH 3;
 ALTER SEQUENCE itempedido_id_seq RESTART WITH 3;
 ALTER SEQUENCE pagamento_id_seq RESTART WITH 3;
-

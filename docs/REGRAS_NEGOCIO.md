@@ -75,7 +75,7 @@ O domínio do sistema é particionado nos seguintes pacotes e entidades:
 - **`PagamentoPix`**:
   - Especialização de `Pagamento` para transações instantâneas. Atributo adicional: `chavePix` (String UUID aleatória de pagamento).
 - **`PagamentoCartao`**:
-  - Especialização de `Pagamento` para transações de cartão de crédito. Atributos: `numeroCartao` (armazenado/mascarado), `nomeTitular`, `dataValidade` (MM/AA) e `codigoSeguranca` (CVV).
+  - Especialização de `Pagamento` para a simulação de pagamento por cartão; não possui nem persiste dados de cartão.
 - **`StatusPagamento` (Enum)**:
   - `PENDENTE`: Transação gerada aguardando confirmação bancária/cliente.
   - `APROVADO`: Transação autorizada com sucesso.
@@ -149,7 +149,8 @@ O domínio do sistema é particionado nos seguintes pacotes e entidades:
 1. O carrinho é compartilhado entre catálogo, detalhes do drone e página `/carrinho`, e persiste no `localStorage` do navegador.
 2. Cada drone aparece uma única vez no carrinho; adicionar novamente incrementa a quantidade e atualiza os dados do catálogo.
 3. A quantidade deve ser inteira, positiva e não pode superar o estoque informado pelo catálogo no momento da adição. Produtos sem estoque não podem ser adicionados.
-4. O subtotal é a soma de `preco * quantidade` dos itens. O carrinho não reserva estoque e não cria pedidos; estoque e preços deverão ser revalidados no futuro fluxo de checkout.
+4. O subtotal é a soma de `preco * quantidade` dos itens. O carrinho não reserva estoque nem cria pedidos até o cliente autenticado iniciar o checkout; estoque e preços são revalidados no servidor ao criar o pedido.
+5. A finalização é restrita a clientes autenticados; visitantes podem navegar e manter o carrinho local, mas precisam entrar para iniciar o checkout.
 
 ### 2.6 Fluxo de Montagem e Criação do Pedido
 1. **Pré-requisitos do Cliente**:
@@ -159,6 +160,7 @@ O domínio do sistema é particionado nos seguintes pacotes e entidades:
    - O pedido deve conter pelo menos 1 item (`itens.size() >= 1`).
    - A quantidade de cada item deve ser um número inteiro maior que zero.
 3. **Reserva e Baixa de Estoque**:
+   - Os drones do pedido são bloqueados para escrita em ordem crescente de ID antes da validação, evitando venda simultânea acima do estoque.
    - Para cada item, o sistema consulta a `quantidadeDisponivel` do Drone no banco de dados.
    - Se $(\text{quantidadeDisponivel} - \text{item.quantidade}) < 0$, a transação é abortada e uma exceção é lançada informando o estoque insuficiente para o produto.
    - Havendo disponibilidade, a quantidade solicitada é debitada imediatamente do estoque do drone:
@@ -167,7 +169,7 @@ O domínio do sistema é particionado nos seguintes pacotes e entidades:
    - O preço unitário do item é calculado aplicando-se a promoção ativa (se houver) e gravado em `ItemPedido.precoUnitario`.
    - O valor do item passa a ser imutável, protegendo a compra contra oscilações de preço posteriores no catálogo.
 5. **Snapshot do Endereço de Entrega**:
-   - O sistema localiza o endereço principal do cliente no momento da compra.
+   - O checkout recebe o identificador de um endereço cadastrado e valida que pertence ao cliente autenticado. O fluxo legado de criação de pedido sem endereço selecionado utiliza o endereço principal.
    - Os dados (`rua`, `bairro`, `cidade`, `estado`, `cep`) são copiados para as colunas de entrega da entidade `Pedido`.
    - Desta forma, mesmo que o cliente mude de residência no futuro, o endereço para onde o pedido foi despachado permanece fiel e auditável.
 6. **Status Inicial**:
@@ -181,17 +183,20 @@ O domínio do sistema é particionado nos seguintes pacotes e entidades:
    - O valor do pagamento gerado deve ser estritamente idêntico ao `valorTotal` calculado do pedido.
 3. **Pagamento via PIX**:
    - Gera uma instância de `PagamentoPix` com status inicial `StatusPagamento.PENDENTE`.
-   - Gera uma chave Pix aleatória no formato UUID (`UUID.randomUUID().toString()`) para simular a chave de transferência ou QR Code.
+   - No checkout da loja, o código Pix UUID é apenas demonstrativo; não representa uma cobrança ou transferência real.
    - Quando a confirmação de recebimento é disparada (`PATCH /pedidos/pagamentos/pix/{id}/pagar`):
      - `pagamentoPix.statusPagamento` passa para `StatusPagamento.APROVADO`.
      - `pedido.statusPedido` passa automaticamente para `StatusPedido.PAGO`.
 4. **Pagamento via Cartão de Crédito**:
-   - O cliente submete os dados do cartão (número, titular, validade, código de segurança).
-   - O sistema valida a presença e coerência dos dados e cria `PagamentoCartao` com status `PENDENTE`.
+   - No checkout da loja, a opção de cartão é inteiramente simulada: nenhum número, titular, validade ou CVV é solicitado, transmitido ou persistido.
+   - O backend cria `PagamentoCartao` sem dados financeiros e com status `PENDENTE`.
    - Ao processar a autorização (`PATCH /pedidos/pagamentos/cartao/{id}/pagar`):
      - `pagamentoCartao.statusPagamento` passa para `StatusPagamento.APROVADO`.
      - `pedido.statusPedido` passa para `StatusPedido.PAGO`.
-5. **Impedimentos de Pagamento**:
+5. **Atomicidade do Checkout**:
+   - `POST /pedidos/checkout` valida o endereço do próprio cliente, revalida os itens e o estoque, cria o pedido e o pagamento escolhido na mesma transação.
+   - A aprovação simulada é explícita pelo cliente e usa os endpoints de liquidação existentes; falhas não devem ser apresentadas como pagamento concluído.
+6. **Impedimentos de Pagamento**:
    - Não é permitido pagar um pedido cujo status já seja `PAGO`.
    - Não é permitido pagar um pedido cujo status seja `CANCELADO`.
 
