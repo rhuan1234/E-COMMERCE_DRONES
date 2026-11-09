@@ -6,6 +6,7 @@ public record AvaliacaoResponseDTO(
     Long id,
     Integer nota,
     String comentario,
+    String nomeCliente,
     LocalDateTime dataAvaliacao,
     Long usuarioId,
     Long droneId

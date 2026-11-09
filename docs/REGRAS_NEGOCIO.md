@@ -49,7 +49,8 @@ O domínio do sistema é particionado nos seguintes pacotes e entidades:
   - Atributos: `id`, `caminho` (nome do arquivo salvo em disco), `principal` (booleano indicando foto de capa), `ordem` (posição de ordenação) e `drone` (ManyToOne).
 - **`Avaliacao`**:
   - Feedback de compradores sobre o produto.
-  - Atributos: `id`, `nota` (inteiro de 1 a 5), `comentario` (texto de até 1000 caracteres), `dataAvaliacao` (timestamp), `usuario` (ManyToOne) e `drone` (ManyToOne).
+  - Atributos: `id`, `nota` (inteiro de 1 a 5), `comentario` (texto de até 1000 caracteres), `nomeCliente` (snapshot do nome completo cadastrado no perfil, ou `<desconhecido>` se vazio/ausente), `dataAvaliacao` (timestamp), `usuario` (ManyToOne) e `drone` (ManyToOne).
+  - Cada avaliação pertence diretamente a um drone e a um usuário autenticado; avaliações não respondem nem se associam a outras avaliações. Um usuário pode registrar no máximo uma avaliação por drone. A consulta pública exibe primeiro as mais recentes, em páginas de até 5 avaliações.
 - **`Favorito`**:
   - Marcador de item preferido pelo usuário (`id`, `usuario`, `drone`).
 

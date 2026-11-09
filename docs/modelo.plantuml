@@ -133,6 +133,7 @@ package "drones.model.drones" {
         - id: Long
         - nota: Integer
         - comentario: String
+        - nomeCliente: String
         - dataAvaliacao: LocalDateTime
         - usuario: Usuario
         - drone: Drone

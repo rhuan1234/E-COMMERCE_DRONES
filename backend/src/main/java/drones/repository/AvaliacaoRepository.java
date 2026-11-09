@@ -10,7 +10,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class AvaliacaoRepository implements PanacheRepository<Avaliacao> {
 
     public io.quarkus.hibernate.orm.panache.PanacheQuery<Avaliacao> findByDroneId(Long droneId) {
-        return find("drone.id", droneId);
+        return find("drone.id = ?1 order by dataAvaliacao desc, id desc", droneId);
     }
 
     public List<Avaliacao> findByUsuarioId(Long usuarioId) {

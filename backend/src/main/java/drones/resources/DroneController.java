@@ -18,6 +18,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -107,6 +108,7 @@ public class DroneController {
 
     @GET
     @Path("/imagens/{imagemId}/arquivo")
+    @PermitAll
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response buscarArquivoImagem(@PathParam("imagemId") Long imagemId) {
         DroneImage imagem = droneService.buscarImagem(imagemId);
@@ -135,6 +137,7 @@ public class DroneController {
     }
 
     @GET
+    @PermitAll
     public PageResponse<DroneResponseEcommerceDTO> buscarPorTodosEcommerce(
             @QueryParam("page") @DefaultValue("0") int page,
             @QueryParam("pageSize") @DefaultValue("10") int pageSize,
@@ -174,6 +177,7 @@ public class DroneController {
 
     @GET
     @Path("/{id}")
+    @PermitAll
     public Response buscarPorIdEcommerce(@PathParam("id") Long id){
         if (id == null || id <= 0) {
             throw new ValidationException("Id do drone é inválido", "id");
@@ -203,6 +207,7 @@ public class DroneController {
 
     @GET
     @Path("/nome/{nome}")
+    @PermitAll
     public Response buscarPorNomeEcommerce(@PathParam("nome") String nome){
         if (nome == null || nome.isBlank()) {
             throw new ValidationException("Nome do drone é obrigatório", "nome");
@@ -217,6 +222,7 @@ public class DroneController {
 
     @GET
     @Path("/marcas/{marca}")
+    @PermitAll
     public PageResponse<DroneResponseEcommerceDTO> buscarPorMarcaEcommerce(@QueryParam("page") @DefaultValue("0") int page,
                                     @QueryParam("pageSize") @DefaultValue("10") int pageSize, @PathParam("marca") String marca){
         if (marca == null || marca.isBlank()) {
@@ -229,6 +235,7 @@ public class DroneController {
 
     @GET
     @Path("/modelos/{modelo}")
+    @PermitAll
     public PageResponse<DroneResponseEcommerceDTO> buscarPorModeloEcommerce(@QueryParam("page") @DefaultValue("0") int page,
                                     @QueryParam("pageSize") @DefaultValue("10") int pageSize,@PathParam("modelo") String modelo){
         if (modelo == null || modelo.isBlank()) {
@@ -241,6 +248,7 @@ public class DroneController {
 
     @GET
     @Path("/preco/")
+    @PermitAll
     public PageResponse<DroneResponseEcommerceDTO> buscarPorPrecoEcommerce(@QueryParam("page") @DefaultValue("0") int page,
                                     @QueryParam("pageSize") @DefaultValue("10") int pageSize, @QueryParam("min") Double precoMin, @QueryParam("max") Double precoMax){
         if (precoMin == null || precoMax == null) {

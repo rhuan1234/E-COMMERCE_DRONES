@@ -212,5 +212,119 @@
         </article>
       </div>
     </section>
+
+    <section class="reviews-section" aria-labelledby="reviews-title">
+      <div class="section-heading">
+        <span>OPINIÕES DE CLIENTES</span>
+        <h2 id="reviews-title">Avaliações e comentários</h2>
+        <p>{{ totalAvaliacoes() }} {{ totalAvaliacoes() === 1 ? 'avaliação' : 'avaliações' }} para este drone.</p>
+      </div>
+
+      @if (usuarioAutenticado) {
+        <form class="review-form" [formGroup]="avaliacaoForm" (ngSubmit)="enviarAvaliacao()">
+          <h3>Deixe sua avaliação</h3>
+          <fieldset class="rating-field">
+            <legend>Sua nota</legend>
+            <div class="rating-selector" role="group" aria-label="Escolha uma nota de 1 a 5 estrelas">
+              @for (estrela of estrelas; track estrela) {
+                <button
+                  class="rating-option"
+                  type="button"
+                  [class.selected]="estrela <= (avaliacaoForm.controls.nota.value ?? 0)"
+                  [attr.aria-label]="estrela + (estrela === 1 ? ' estrela' : ' estrelas')"
+                  [attr.aria-pressed]="avaliacaoForm.controls.nota.value === estrela"
+                  (click)="selecionarNota(estrela)">
+                  <mat-icon aria-hidden="true">{{ estrela <= (avaliacaoForm.controls.nota.value ?? 0) ? 'star' : 'star_border' }}</mat-icon>
+                </button>
+              }
+            </div>
+            @if (avaliacaoForm.controls.nota.touched && avaliacaoForm.controls.nota.invalid) {
+              <span class="review-validation" role="alert">Selecione uma nota de 1 a 5 estrelas.</span>
+            }
+          </fieldset>
+
+          <label class="review-comment">
+            Comentário (opcional)
+            <textarea
+              formControlName="comentario"
+              rows="4"
+              maxlength="1000"
+              placeholder="Conte o que achou deste drone"></textarea>
+          </label>
+          <div class="review-form-footer">
+            <span>{{ avaliacaoForm.controls.comentario.value?.length ?? 0 }}/1000</span>
+            <button type="submit" [disabled]="enviandoAvaliacao()">
+              {{ enviandoAvaliacao() ? 'Enviando...' : 'Publicar avaliação' }}
+            </button>
+          </div>
+        </form>
+      } @else {
+        <div class="review-login">
+          <p>Entre na sua conta para avaliar este drone.</p>
+          <a
+            routerLink="/login"
+            [queryParams]="{ returnUrl: '/drone-info/' + produto.id }">
+            Entrar para avaliar
+          </a>
+        </div>
+      }
+
+      @if (mensagemAvaliacao()) {
+        <p class="review-feedback review-success" role="status">{{ mensagemAvaliacao() }}</p>
+      }
+      @if (erroAvaliacoes()) {
+        <div class="review-feedback review-error" role="alert">
+          <span>{{ erroAvaliacoes() }}</span>
+          <button type="button" (click)="carregarPaginaAvaliacoes(paginaAvaliacoes())">Tentar novamente</button>
+        </div>
+      }
+
+      @if (carregandoAvaliacoes()) {
+        <p class="review-state" role="status">Carregando avaliações...</p>
+      } @else if (!erroAvaliacoes() && avaliacoes().length === 0) {
+        <p class="review-state">Ainda não há avaliações para este drone. Seja a primeira pessoa a avaliar.</p>
+      } @else if (avaliacoes().length > 0) {
+        <div class="review-list" aria-live="polite">
+          @for (avaliacao of avaliacoes(); track avaliacao.id) {
+            <article class="review-card">
+              <header class="review-card-header">
+                <div>
+                  <h3>{{ avaliacao.nomeCliente }}</h3>
+                  <time>{{ formatarDataAvaliacao(avaliacao.dataAvaliacao) }}</time>
+                </div>
+                <div class="review-stars" [attr.aria-label]="avaliacao.nota + ' de 5 estrelas'">
+                  @for (estrela of estrelas; track estrela) {
+                    <mat-icon aria-hidden="true">{{ estrela <= avaliacao.nota ? 'star' : 'star_border' }}</mat-icon>
+                  }
+                </div>
+              </header>
+              @if (avaliacao.comentario) {
+                <p class="review-comment-text">{{ avaliacao.comentario }}</p>
+              } @else {
+                <p class="review-comment-empty">Sem comentário.</p>
+              }
+            </article>
+          }
+        </div>
+      }
+
+      @if (totalPaginasAvaliacoes() > 1) {
+        <nav class="review-pagination" aria-label="Paginação das avaliações">
+          <button
+            type="button"
+            [disabled]="paginaAvaliacoes() === 0 || carregandoAvaliacoes()"
+            (click)="carregarPaginaAvaliacoes(paginaAvaliacoes() - 1)">
+            Anterior
+          </button>
+          <span>Página {{ paginaAvaliacoes() + 1 }} de {{ totalPaginasAvaliacoes() }}</span>
+          <button
+            type="button"
+            [disabled]="paginaAvaliacoes() + 1 >= totalPaginasAvaliacoes() || carregandoAvaliacoes()"
+            (click)="carregarPaginaAvaliacoes(paginaAvaliacoes() + 1)">
+            Próximas 5
+          </button>
+        </nav>
+      }
+    </section>
   }
 </main>

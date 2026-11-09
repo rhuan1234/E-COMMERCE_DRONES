@@ -18,6 +18,7 @@ import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class AvaliacaoService implements AvaliacaoServiceInterface {
+    private static final int TAMANHO_MAXIMO_PAGINA = 5;
 
     @Inject
     AvaliacaoRepository avaliacaoRepository;
@@ -35,12 +36,18 @@ public class AvaliacaoService implements AvaliacaoServiceInterface {
 
     @Override
     public List<Avaliacao> buscarPorDrone(Long droneId) {
-        return buscarPorDrone(droneId, 0, 10);
+        return buscarPorDrone(droneId, 0, TAMANHO_MAXIMO_PAGINA);
     }
 
     @Override
     public List<Avaliacao> buscarPorDrone(Long droneId, int page, int pageSize) {
         validarId(droneId, "droneId", "Id do drone inválido");
+        if (page < 0) {
+            throw new ValidationException("A página não pode ser negativa", "page");
+        }
+        if (pageSize < 1 || pageSize > TAMANHO_MAXIMO_PAGINA) {
+            throw new ValidationException("Cada página pode conter de 1 a 5 avaliações", "pageSize");
+        }
         validarDrone(droneId);
         return avaliacaoRepository.findByDroneId(droneId).page(page, pageSize).list();
     }
@@ -72,6 +79,7 @@ public class AvaliacaoService implements AvaliacaoServiceInterface {
         Avaliacao avaliacao = new Avaliacao();
         preencher(avaliacao, dados);
         avaliacao.setUsuario(usuario);
+        avaliacao.setNomeCliente(nomeClienteParaExibicao(usuario.getNomeCompleto()));
         avaliacao.setDrone(drone);
         avaliacao.setDataAvaliacao(LocalDateTime.now());
         avaliacaoRepository.persist(avaliacao);
@@ -111,6 +119,13 @@ public class AvaliacaoService implements AvaliacaoServiceInterface {
     private void preencher(Avaliacao avaliacao, AvaliacaoRequestDTO dados) {
         avaliacao.setNota(dados.nota());
         avaliacao.setComentario(dados.comentario());
+    }
+
+    private String nomeClienteParaExibicao(String nomeCompleto) {
+        if (nomeCompleto == null || nomeCompleto.isBlank()) {
+            return "<desconhecido>";
+        }
+        return nomeCompleto.trim();
     }
 
     private Usuario buscarUsuario(String login) {

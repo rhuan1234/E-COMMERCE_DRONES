@@ -23,6 +23,9 @@ public class Avaliacao {
     @Column(length = 1000)
     private String comentario;
 
+    @Column(length = 255)
+    private String nomeCliente;
+
     private LocalDateTime dataAvaliacao;
 
     @ManyToOne
@@ -47,6 +50,14 @@ public class Avaliacao {
 
     public void setComentario(String comentario) {
         this.comentario = comentario;
+    }
+
+    public String getNomeCliente() {
+        return nomeCliente;
+    }
+
+    public void setNomeCliente(String nomeCliente) {
+        this.nomeCliente = nomeCliente;
     }
 
     public LocalDateTime getDataAvaliacao() {

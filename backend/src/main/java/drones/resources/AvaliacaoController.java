@@ -11,6 +11,7 @@ import drones.exception.UnauthorizedException;
 import drones.mapper.AvaliacaoMapper;
 import drones.model.drones.Avaliacao;
 import drones.services.AvaliacaoServiceInterface;
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -51,9 +52,10 @@ public class AvaliacaoController {
 
     @GET
     @Path("/drone/{droneId}")
+    @PermitAll
     public PageResponse<AvaliacaoResponseDTO> buscarPorDrone(
             @QueryParam("page") @DefaultValue("0") int page,
-            @QueryParam("pageSize") @DefaultValue("10") int pageSize,
+            @QueryParam("pageSize") @DefaultValue("5") int pageSize,
             @PathParam("droneId") Long droneId) {
         List<Avaliacao> avaliacoes = avaliacaoService.buscarPorDrone(droneId, page, pageSize);
         long totalItems = avaliacaoService.countPorDrone(droneId);
@@ -62,6 +64,7 @@ public class AvaliacaoController {
 
     @GET
     @Path("/{id}")
+    @PermitAll
     public Response buscarPorId(@PathParam("id") Long id) {
         Avaliacao avaliacao = avaliacaoService.buscarPorId(id);
         if (avaliacao == null) {

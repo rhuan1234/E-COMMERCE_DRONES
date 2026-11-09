@@ -222,11 +222,11 @@ INSERT INTO drone (
 ALTER SEQUENCE drone_id_seq RESTART WITH 10;
 
 -- 10. Avaliações
-INSERT INTO avaliacao (id, nota, comentario, dataavaliacao, usuario_id, drone_id)
-VALUES (1, 5, 'Drone excelente! Estabilidade impecável e qualidade de imagem profissional.', '2026-03-01 10:30:00', 2, 1);
+INSERT INTO avaliacao (id, nota, comentario, nomecliente, dataavaliacao, usuario_id, drone_id)
+VALUES (1, 5, 'Drone excelente! Estabilidade impecável e qualidade de imagem profissional.', 'Lucas Silva', '2026-03-01 10:30:00', 2, 1);
 
-INSERT INTO avaliacao (id, nota, comentario, dataavaliacao, usuario_id, drone_id)
-VALUES (2, 5, 'A teleobjetiva do Air 3 traz um diferencial absurdo para filmagens cinematográficas.', '2026-03-05 14:15:00', 2, 2);
+INSERT INTO avaliacao (id, nota, comentario, nomecliente, dataavaliacao, usuario_id, drone_id)
+VALUES (2, 5, 'A teleobjetiva do Air 3 traz um diferencial absurdo para filmagens cinematográficas.', 'Lucas Silva', '2026-03-05 14:15:00', 2, 2);
 ALTER SEQUENCE avaliacao_id_seq RESTART WITH 3;
 
 -- 11. Favoritos
@@ -264,5 +264,4 @@ VALUES (2, '4111111111111111', 'LUCAS SILVA', '12/29', '123');
 ALTER SEQUENCE pedido_id_seq RESTART WITH 3;
 ALTER SEQUENCE itempedido_id_seq RESTART WITH 3;
 ALTER SEQUENCE pagamento_id_seq RESTART WITH 3;
-
 
