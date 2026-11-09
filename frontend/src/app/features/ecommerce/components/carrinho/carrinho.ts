@@ -12,11 +12,12 @@ import { CheckoutApiService } from '../../../../core/services/CheckoutApiService
 import { DroneService } from '../../../../core/services/DroneService';
 import { EnderecoApiService } from '../../../../core/services/EnderecoApiService';
 import { PerfilService } from '../../../../core/services/PerfilService';
+import { TituloPagina } from '../../../../shared/components/titulo-pagina/titulo-pagina';
 
 type EtapaCheckout = 'carrinho' | 'endereco' | 'pagamento' | 'concluido';
 
 @Component({
-  imports: [MatIconModule, RouterLink],
+  imports: [MatIconModule, RouterLink, TituloPagina],
   selector: 'app-carrinho',
   standalone: true,
   templateUrl: './carrinho.html',

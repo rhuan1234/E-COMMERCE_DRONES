@@ -16,6 +16,7 @@ import { CarrinhoService, ResultadoAdicaoCarrinho } from '../../../../core/servi
 import { DroneService } from '../../../../core/services/DroneService';
 import { EcommerceCatalogSearchService } from '../../../../core/services/EcommerceCatalogSearchService';
 import { FavoritoService } from '../../../../core/services/FavoritoService';
+import { TituloPagina } from '../../../../shared/components/titulo-pagina/titulo-pagina';
 
 interface FilterGroup {
   title: string;
@@ -24,7 +25,7 @@ interface FilterGroup {
 }
 
 @Component({
-  imports: [FormsModule, MatIconModule, NgTemplateOutlet, RouterLink],
+  imports: [FormsModule, MatIconModule, NgTemplateOutlet, RouterLink, TituloPagina],
   selector: 'app-home',
   styleUrl: './home.css',
   templateUrl: './home.html',
@@ -307,7 +308,11 @@ export class Home implements OnInit {
     return Number.isFinite(valor) ? valor : undefined;
   }
 
+  /** Painel de filtros recolhido no celular (no desktop ele fica sempre aberto). */
+  readonly filtrosAbertos = signal(false);
+
   aplicarFiltros(): void {
+    this.filtrosAbertos.set(false);
     this.montarFiltros();
     this.filtros$.next(this.filtrosAplicados);
   }

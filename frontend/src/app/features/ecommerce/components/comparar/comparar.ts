@@ -6,6 +6,7 @@ import { Observable, catchError, forkJoin, map, of, switchMap } from 'rxjs';
 import { Drone, DroneImagem } from '../../../../core/models/drone/Drone';
 import { ComparacaoService } from '../../../../core/services/ComparacaoService';
 import { DroneService } from '../../../../core/services/DroneService';
+import { TituloPagina } from '../../../../shared/components/titulo-pagina/titulo-pagina';
 
 type Criterio = 'maior' | 'menor';
 
@@ -29,7 +30,7 @@ export interface GrupoComparacao {
 type Busca = { id: number; drone: Drone | null; falhou: boolean };
 
 @Component({
-  imports: [MatIconModule, RouterLink],
+  imports: [MatIconModule, RouterLink, TituloPagina],
   selector: 'app-comparar',
   styleUrl: './comparar.css',
   templateUrl: './comparar.html',

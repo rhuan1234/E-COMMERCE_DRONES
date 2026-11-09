@@ -1,15 +1,14 @@
 <section class="mx-auto max-w-[1080px] px-5 py-10 md:px-8" aria-labelledby="cart-title">
-  <header class="mb-8">
-    <p class="m-0 text-sm font-bold uppercase tracking-[0.14em] text-leaf">Sua seleção</p>
-    <h1 id="cart-title" class="m-0 mt-2 font-display text-3xl font-extrabold tracking-tight md:text-4xl">
+  <app-titulo-pagina class="mb-8" rotulo="Sua seleção" idTitulo="cart-title">
+    <span titulo>
       @switch (etapa()) {
         @case ('carrinho') { Carrinho de compras }
         @case ('endereco') { Endereço de entrega }
         @case ('pagamento') { Pagamento simulado }
         @case ('concluido') { Pedido confirmado }
       }
-    </h1>
-    <p class="m-0 mt-2 text-muted">
+    </span>
+    <p class="m-0 mt-3 max-w-[38rem] text-[17px] leading-relaxed text-muted">
       @switch (etapa()) {
         @case ('carrinho') { Revise os drones e ajuste as quantidades antes de continuar. }
         @case ('endereco') { Escolha para onde devemos enviar seu pedido. }
@@ -17,7 +16,7 @@
         @case ('concluido') { Seu pedido foi registrado e a simulação foi concluída. }
       }
     </p>
-  </header>
+  </app-titulo-pagina>
 
   @if (erro()) {
     <p class="mb-6 rounded-xl border border-[#f3c4bf] bg-[#fdf0ee] px-4 py-3 text-sm text-[#9b2c20]" role="alert">
