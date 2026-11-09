@@ -1,15 +1,15 @@
 <section class="favorites-page" aria-labelledby="favorites-title">
-  <header class="favorites-heading">
-    <div>
-      <span class="favorites-eyebrow">SUA SELEÇÃO</span>
-      <h1 id="favorites-title">Meus favoritos</h1>
-      <p>Os drones que você guardou para escolher depois.</p>
-    </div>
-    <a class="back-to-store" routerLink="/home">
-      <mat-icon>storefront</mat-icon>
+  <app-titulo-pagina
+    class="favorites-heading"
+    rotulo="Sua seleção"
+    titulo="Meus favoritos"
+    idTitulo="favorites-title"
+    descricao="Os drones que você guardou para escolher depois.">
+    <a class="back-to-store" routerLink="/home" acoes>
+      <mat-icon aria-hidden="true">storefront</mat-icon>
       Voltar à loja
     </a>
-  </header>
+  </app-titulo-pagina>
 
   @if (mensagemSucesso()) {
     <p class="favorites-notice" role="status">{{ mensagemSucesso() }}</p>
@@ -37,7 +37,12 @@
             @if (imagemPrincipal(drone); as imagem) {
               <img [src]="obterUrlImagem(imagem)" [alt]="drone.nome">
             } @else {
-              <mat-icon aria-hidden="true">flight</mat-icon>
+              <svg class="favorite-placeholder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+                <circle cx="5" cy="5" r="3"></circle><circle cx="19" cy="5" r="3"></circle>
+                <circle cx="5" cy="19" r="3"></circle><circle cx="19" cy="19" r="3"></circle>
+                <path d="M7.2 7.2l2.6 2.6M16.8 7.2l-2.6 2.6M7.2 16.8l2.6-2.6M16.8 16.8l-2.6-2.6"></path>
+                <rect x="9.5" y="9.5" width="5" height="5" rx="1.6" fill="currentColor" stroke="none"></rect>
+              </svg>
             }
           </div>
           <div class="favorite-details">

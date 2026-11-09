@@ -16,15 +16,20 @@
   margin-bottom: 24px;
 }
 
-.perfil-header h1 {
+.perfil-header h2 {
   margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-stretch: 112%;
   font-size: 28px;
-  font-weight: 600;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--color-ink);
 }
 
 .perfil-header p {
   margin: 0;
-  opacity: 0.7;
+  color: var(--color-muted);
 }
 
 .header-icon {
@@ -82,7 +87,7 @@
     grid-template-columns: 1fr;
   }
 
-  .perfil-header h1 {
+  .perfil-header h2 {
     font-size: 24px;
   }
 }

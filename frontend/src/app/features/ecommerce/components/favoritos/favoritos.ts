@@ -7,9 +7,10 @@ import { PagedResponse } from '../../../../core/models/PagedResponse';
 import { AuthService } from '../../../../core/services/auth/AuthService';
 import { DroneService } from '../../../../core/services/DroneService';
 import { FavoritoService } from '../../../../core/services/FavoritoService';
+import { TituloPagina } from '../../../../shared/components/titulo-pagina/titulo-pagina';
 
 @Component({
-  imports: [MatIconModule, RouterLink],
+  imports: [MatIconModule, RouterLink, TituloPagina],
   selector: 'app-favoritos',
   styleUrl: './favoritos.css',
   templateUrl: './favoritos.html',

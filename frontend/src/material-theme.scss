@@ -57,9 +57,10 @@ html {
   );
 }
 
-// Painel administrativo: componentes Material com os tokens da loja
-// (ink #17211b, leaf #3f6a1e, lime #8cc63f, line #e3e9e3, paper #f7f9f6).
-.admin-shell {
+// Painel administrativo e loja (Minha conta, diálogos de formulário): componentes Material
+// com os tokens da loja (ink #17211b, leaf #3f6a1e, lime #8cc63f, line #e3e9e3, paper #f7f9f6).
+.admin-shell,
+.storefront {
   $fonte-painel: #{"'Roboto Flex', Roboto, 'Segoe UI', system-ui, sans-serif"};
 
   @include mat.table-overrides(
@@ -235,4 +236,21 @@ html {
 
 .admin-shell .mat-mdc-paginator {
   border-top: 1px solid #e3e9e3;
+}
+
+// Loja: cartões Material planos (sem sombra), como os cartões em Tailwind da vitrine
+.storefront {
+  @include mat.card-overrides(
+    (
+      elevated-container-elevation: none,
+      elevated-container-color: #ffffff,
+      elevated-container-shape: 16px,
+      outlined-container-shape: 16px,
+      outlined-outline-color: #e3e9e3,
+    )
+  );
+
+  .mat-mdc-card:not(.mat-mdc-card-outlined) {
+    border: 1px solid #e3e9e3;
+  }
 }

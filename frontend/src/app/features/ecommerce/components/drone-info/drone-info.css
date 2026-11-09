@@ -44,8 +44,8 @@
   overflow: hidden;
   place-items: center;
   border: 1px solid #e3e9e3;
-  border-radius: 16px;
-  background: #f0f3ef;
+  border-radius: 24px;
+  background: var(--color-mist-green);
 }
 
 .main-image img {
@@ -70,6 +70,12 @@
   width: 48px;
   height: 48px;
   font-size: 48px;
+}
+
+.fallback-drone {
+  width: 140px;
+  height: 140px;
+  color: var(--color-ink);
 }
 
 .image-thumbnails {
@@ -130,16 +136,21 @@
 .product-brand {
   margin: 0 0 8px;
   color: #426d20;
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
+  font-family: var(--font-data);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
 .product-purchase h1 {
   margin: 0;
-  font-size: clamp(1.8rem, 3.4vw, 2.7rem);
-  line-height: 1.15;
+  font-family: var(--font-display);
+  font-stretch: 112%;
+  font-size: clamp(2rem, 3.6vw, 2.9rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
 }
 
 .product-model {
@@ -149,10 +160,13 @@
 }
 
 .product-price {
-  margin: 28px 0 4px;
+  margin: 28px 0 10px;
+  line-height: 1.1;
   color: #17211b;
+  font-family: var(--font-data);
   font-size: clamp(1.9rem, 3.5vw, 2.5rem);
-  font-weight: 850;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 .installment-info {
@@ -217,15 +231,16 @@
   background: #f4f8ef;
 }
 
+/* Ação principal em tinta, como na landing e no catálogo */
 .cart-action,
 .product-state button {
-  background: #426d20;
+  background: var(--color-ink);
   color: #fff;
 }
 
 .cart-action:hover:not(:disabled),
 .product-state button:hover {
-  background: #31531a;
+  background: var(--color-ink-soft);
 }
 
 .purchase-actions button mat-icon {
@@ -424,9 +439,9 @@
 .review-login a {
   min-height: 40px;
   border: 0;
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 9px 14px;
-  background: #426d20;
+  background: var(--color-ink);
   color: #fff;
   font: inherit;
   font-weight: 700;
@@ -529,14 +544,20 @@
 
 .section-heading > span {
   color: #426d20;
-  font-size: 0.72rem;
-  font-weight: 800;
+  font-family: var(--font-data);
+  font-size: 13px;
+  font-weight: 600;
   letter-spacing: 0.12em;
 }
 
 .section-heading h2 {
-  margin: 7px 0;
-  font-size: clamp(1.5rem, 2.8vw, 2rem);
+  margin: 10px 0 8px;
+  font-family: var(--font-display);
+  font-stretch: 112%;
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
 }
 
 .section-heading p {
