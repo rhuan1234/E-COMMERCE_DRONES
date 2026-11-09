@@ -1,6 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+/* Motor de rolagem Sites Incríveis (efeitos data-fx-*; usado pela landing) */
+@import './app/shared/fx/sites-incriveis.css';
 
 /*
  * Tokens da identidade Skyline Drones (refinamento do visual original).
