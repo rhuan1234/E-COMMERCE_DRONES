@@ -1,92 +1,70 @@
-<div class="min-h-screen flex items-center justify-center px-4 py-12">
+<app-auth-shell
+  foto="/landing/aerea.webp"
+  altitude="ALT 120 m · de volta ao céu"
+  frase="O seu próximo voo continua daqui."
+  rotulo="Entrar"
+  titulo="Bom ver você de novo."
+  subtitulo="Entre para ver seus favoritos, endereços e pedidos.">
 
-  <div class="w-full max-w-md bg-white border border-gray-200 rounded-2xl shadow-xl p-8">
+  <form class="flex flex-col gap-5" [formGroup]="form" (ngSubmit)="login()" novalidate>
+    @if (erro(); as mensagem) {
+      <p class="m-0 flex items-start gap-2.5 rounded-xl bg-danger-soft px-4 py-3 text-[15px] text-danger" role="alert">{{ mensagem }}</p>
+    }
 
-    <!-- Logo & Título -->
-    <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#84cc16] text-black font-extrabold text-2xl mb-4 shadow-lg shadow-[#84cc16]/20">
-        S
-      </div>
-      <h1 class="text-2xl font-bold text-gray-900 tracking-wide">
-        SKYLINE
-      </h1>
-      <p class="text-gray-600 text-sm mt-1">
-        Entre na sua conta para continuar
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-semibold" for="login">Login</label>
+      <input
+        id="login"
+        class="h-12 rounded-xl border border-line-strong bg-white px-4 text-[16px] text-ink outline-none transition placeholder:text-[#7c887f] focus:border-lime focus:ring-4 focus:ring-lime/20 aria-[invalid=true]:border-danger"
+        type="text"
+        autocomplete="username"
+        formControlName="login"
+        placeholder="Seu login"
+        [attr.aria-invalid]="form.controls.login.invalid && form.controls.login.touched"
+        aria-describedby="login-erro">
+      <p id="login-erro" class="m-0 text-sm text-danger" aria-live="polite">
+        @if (form.controls.login.touched) {
+          @if (form.controls.login.hasError('required')) {
+            Informe seu login.
+          } @else if (form.controls.login.hasError('minlength') || form.controls.login.hasError('maxlength')) {
+            O login deve ter entre 3 e 40 caracteres.
+          }
+        }
       </p>
     </div>
 
-    <!-- Formulário -->
-    <form [formGroup]="form" (ngSubmit)="login()" class="space-y-5">
-
-      <!-- Login -->
-      <div>
-        <label
-          for="login"
-          class="block text-sm font-medium text-gray-700 mb-2">
-          Login
-        </label>
-
-        <input
-          id="login"
-          type="text"
-          formControlName="login"
-          placeholder="Digite seu login"
-          class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg
-                 text-gray-900 placeholder-gray-500 outline-none transition
-                 focus:ring-2 focus:ring-[#84cc16] focus:border-[#84cc16]"
-        >
-        @if (form.controls.login.hasError('required') && form.controls.login.touched) {
-          <p class="mt-1 text-sm text-red-400">Informe seu login.</p>
-        } @else if (form.controls.login.hasError('minlength') || form.controls.login.hasError('maxlength')) {
-          <p class="mt-1 text-sm text-red-400">O login deve ter entre 3 e 40 caracteres.</p>
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-semibold" for="senha">Senha</label>
+      <input
+        id="senha"
+        class="h-12 rounded-xl border border-line-strong bg-white px-4 text-[16px] text-ink outline-none transition placeholder:text-[#7c887f] focus:border-lime focus:ring-4 focus:ring-lime/20 aria-[invalid=true]:border-danger"
+        type="password"
+        autocomplete="current-password"
+        formControlName="senha"
+        placeholder="Sua senha"
+        [attr.aria-invalid]="form.controls.senha.invalid && form.controls.senha.touched"
+        aria-describedby="senha-erro">
+      <p id="senha-erro" class="m-0 text-sm text-danger" aria-live="polite">
+        @if (form.controls.senha.touched) {
+          @if (form.controls.senha.hasError('required')) {
+            Informe sua senha.
+          } @else if (form.controls.senha.hasError('minlength')) {
+            A senha deve ter pelo menos 6 caracteres.
+          }
         }
-      </div>
+      </p>
+    </div>
 
-      <!-- Senha -->
-      <div>
-        <label
-          for="senha"
-          class="block text-sm font-medium text-gray-700 mb-2">
-          Senha
-        </label>
+    <button
+      class="mt-1 inline-flex h-[54px] cursor-pointer items-center justify-center gap-2.5 rounded-[14px] border-0 bg-ink px-6 text-base font-bold text-white transition-colors hover:bg-ink-soft disabled:cursor-wait disabled:opacity-70"
+      type="submit"
+      [disabled]="enviando()">
+      {{ enviando() ? 'Entrando…' : 'Entrar' }}
+    </button>
 
-        <input
-          id="senha"
-          type="password"
-          formControlName="senha"
-          placeholder="Digite sua senha"
-          class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg
-                 text-gray-900 placeholder-gray-500 outline-none transition
-                 focus:ring-2 focus:ring-[#84cc16] focus:border-[#84cc16]"
-        >
-        @if (form.controls.senha.hasError('required') && form.controls.senha.touched) {
-          <p class="mt-1 text-sm text-red-400">Informe sua senha.</p>
-        } @else if (form.controls.senha.hasError('minlength')) {
-          <p class="mt-1 text-sm text-red-400">A senha deve ter pelo menos 6 caracteres.</p>
-        }
-      </div>
-
-      <!-- Botão -->
-      <button
-        type="submit"
-        [disabled]="form.invalid"
-        class="w-full py-3 px-4
-               bg-[#84cc16] hover:bg-[#a3e635]
-               text-black font-bold
-               rounded-lg
-               transition duration-200
-               cursor-pointer shadow-md shadow-[#84cc16]/20 disabled:opacity-50 disabled:cursor-not-allowed">
-        Entrar
-      </button>
-
-      <div class="text-center pt-2">
-        <a routerLink="/register" class="text-sm text-gray-600 hover:text-[#416900] transition-colors">
-          Não tem uma conta? <span class="text-[#84cc16] font-medium">Cadastre-se</span>
-        </a>
-      </div>
-
-    </form>
-
-  </div>
-
-</div>
+    <p class="m-0 border-t border-line pt-5 text-[15px] text-muted">
+      Ainda não tem conta?
+      <a class="font-semibold text-leaf underline-offset-4 hover:underline" routerLink="/register">Crie a sua em um minuto</a>
+    </p>
+  </form>
+</app-auth-shell>

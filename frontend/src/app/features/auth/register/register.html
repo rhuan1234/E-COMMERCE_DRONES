@@ -1,122 +1,104 @@
-<div class="min-h-screen flex items-center justify-center px-4 py-12">
+<app-auth-shell
+  foto="/landing/chao.webp"
+  altitude="ALT 000 m · antes da decolagem"
+  frase="Todo voo começa no chão."
+  rotulo="Criar conta"
+  titulo="Seu primeiro voo começa aqui."
+  subtitulo="Com a conta você salva favoritos, cadastra endereços e finaliza compras com PIX ou cartão.">
 
-  <div class="w-full max-w-md bg-white border border-gray-200 rounded-2xl shadow-xl p-8">
+  <form class="flex flex-col gap-5" [formGroup]="form" (ngSubmit)="register()" novalidate>
+    @if (erro(); as mensagem) {
+      <p class="m-0 rounded-xl bg-danger-soft px-4 py-3 text-[15px] text-danger" role="alert">{{ mensagem }}</p>
+    }
 
-    <!-- Logo & Título -->
-    <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#84cc16] text-black font-extrabold text-2xl mb-4 shadow-lg shadow-[#84cc16]/20">
-        S
-      </div>
-      <h1 class="text-2xl font-bold text-gray-900 tracking-wide">
-        Criar Conta
-      </h1>
-      <p class="text-gray-600 text-sm mt-1">
-        Preencha os dados abaixo para se cadastrar
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-semibold" for="login">Login</label>
+      <input
+        id="login"
+        class="h-12 rounded-xl border border-line-strong bg-white px-4 text-[16px] text-ink outline-none transition placeholder:text-[#7c887f] focus:border-lime focus:ring-4 focus:ring-lime/20 aria-[invalid=true]:border-danger"
+        type="text"
+        autocomplete="username"
+        formControlName="login"
+        placeholder="Como você quer entrar"
+        [attr.aria-invalid]="form.controls.login.invalid && form.controls.login.touched"
+        aria-describedby="login-erro">
+      <p id="login-erro" class="m-0 text-sm text-danger" aria-live="polite">
+        @if (form.controls.login.touched) {
+          @if (form.controls.login.hasError('serverError')) {
+            {{ form.controls.login.getError('serverError') }}
+          } @else if (form.controls.login.hasError('required')) {
+            Escolha um login.
+          } @else if (form.controls.login.hasError('pattern')) {
+            O login não pode conter espaços.
+          } @else if (form.controls.login.hasError('minlength') || form.controls.login.hasError('maxlength')) {
+            O login deve ter entre 3 e 40 caracteres.
+          }
+        }
       </p>
     </div>
 
-    <!-- Formulário -->
-    <form [formGroup]="form" (ngSubmit)="register()" class="space-y-5">
-
-      <!-- Login -->
-      <div>
-        <label
-          for="login"
-          class="block text-sm font-medium text-gray-700 mb-2">
-          Login
-        </label>
-
-        <input
-          id="login"
-          type="text"
-          formControlName="login"
-          placeholder="Digite seu login"
-          class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg
-                 text-gray-900 placeholder-gray-500 outline-none transition
-                 focus:ring-2 focus:ring-[#84cc16] focus:border-[#84cc16]"
-        >
-        @if (form.controls.login.hasError('required') && form.controls.login.touched) {
-          <p class="mt-1 text-sm text-red-400">Informe seu login.</p>
-        } @else if (form.controls.login.hasError('minlength') || form.controls.login.hasError('maxlength')) {
-          <p class="mt-1 text-sm text-red-400">O login deve ter entre 3 e 40 caracteres.</p>
-        } @else if (form.controls.login.hasError('pattern')) {
-          <p class="mt-1 text-sm text-red-400">O login não pode conter espaços.</p>
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-semibold" for="email">E-mail</label>
+      <input
+        id="email"
+        class="h-12 rounded-xl border border-line-strong bg-white px-4 text-[16px] text-ink outline-none transition placeholder:text-[#7c887f] focus:border-lime focus:ring-4 focus:ring-lime/20 aria-[invalid=true]:border-danger"
+        type="email"
+        autocomplete="email"
+        formControlName="email"
+        placeholder="voce@exemplo.com"
+        [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched"
+        aria-describedby="email-erro">
+      <p id="email-erro" class="m-0 text-sm text-danger" aria-live="polite">
+        @if (form.controls.email.touched) {
+          @if (form.controls.email.hasError('serverError')) {
+            {{ form.controls.email.getError('serverError') }}
+          } @else if (form.controls.email.hasError('required')) {
+            Informe seu e-mail.
+          } @else if (form.controls.email.hasError('email')) {
+            Informe um e-mail válido.
+          } @else if (form.controls.email.hasError('maxlength')) {
+            O e-mail deve ter no máximo 254 caracteres.
+          }
         }
-      </div>
+      </p>
+    </div>
 
-      <!-- Email -->
-      <div>
-        <label
-          for="email"
-          class="block text-sm font-medium text-gray-700 mb-2">
-          Email
-        </label>
-
-        <input
-          id="email"
-          type="email"
-          formControlName="email"
-          placeholder="Digite seu email"
-          class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg
-                 text-gray-900 placeholder-gray-500 outline-none transition
-                 focus:ring-2 focus:ring-[#84cc16] focus:border-[#84cc16]"
-        >
-        @if (form.controls.email.hasError('required') && form.controls.email.touched) {
-          <p class="mt-1 text-sm text-red-400">Informe seu e-mail.</p>
-        } @else if (form.controls.email.hasError('email')) {
-          <p class="mt-1 text-sm text-red-400">Informe um e-mail válido.</p>
-        } @else if (form.controls.email.hasError('maxlength')) {
-          <p class="mt-1 text-sm text-red-400">O e-mail deve ter no máximo 254 caracteres.</p>
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-semibold" for="senha">Senha</label>
+      <input
+        id="senha"
+        class="h-12 rounded-xl border border-line-strong bg-white px-4 text-[16px] text-ink outline-none transition placeholder:text-[#7c887f] focus:border-lime focus:ring-4 focus:ring-lime/20 aria-[invalid=true]:border-danger"
+        type="password"
+        autocomplete="new-password"
+        formControlName="senha"
+        placeholder="Pelo menos 6 caracteres"
+        [attr.aria-invalid]="form.controls.senha.invalid && form.controls.senha.touched"
+        aria-describedby="senha-erro">
+      <p id="senha-erro" class="m-0 text-sm text-danger" aria-live="polite">
+        @if (form.controls.senha.touched) {
+          @if (form.controls.senha.hasError('serverError')) {
+            {{ form.controls.senha.getError('serverError') }}
+          } @else if (form.controls.senha.hasError('required')) {
+            Crie uma senha.
+          } @else if (form.controls.senha.hasError('minlength')) {
+            A senha deve ter pelo menos 6 caracteres.
+          } @else if (form.controls.senha.hasError('maxlength')) {
+            A senha deve ter no máximo 100 caracteres.
+          }
         }
-      </div>
+      </p>
+    </div>
 
-      <!-- Senha -->
-      <div>
-        <label
-          for="senha"
-          class="block text-sm font-medium text-gray-700 mb-2">
-          Senha
-        </label>
+    <button
+      class="mt-1 inline-flex h-[54px] cursor-pointer items-center justify-center gap-2.5 rounded-[14px] border-0 bg-ink px-6 text-base font-bold text-white transition-colors hover:bg-ink-soft disabled:cursor-wait disabled:opacity-70"
+      type="submit"
+      [disabled]="enviando()">
+      {{ enviando() ? 'Criando sua conta…' : 'Criar conta' }}
+    </button>
 
-        <input
-          id="senha"
-          type="password"
-          formControlName="senha"
-          placeholder="Digite sua senha"
-          class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg
-                 text-gray-900 placeholder-gray-500 outline-none transition
-                 focus:ring-2 focus:ring-[#84cc16] focus:border-[#84cc16]"
-        >
-        @if (form.controls.senha.hasError('required') && form.controls.senha.touched) {
-          <p class="mt-1 text-sm text-red-400">Informe sua senha.</p>
-        } @else if (form.controls.senha.hasError('minlength')) {
-          <p class="mt-1 text-sm text-red-400">A senha deve ter pelo menos 6 caracteres.</p>
-        } @else if (form.controls.senha.hasError('maxlength')) {
-          <p class="mt-1 text-sm text-red-400">A senha deve ter no máximo 100 caracteres.</p>
-        }
-      </div>
-
-      <!-- Botão -->
-      <button
-        type="submit"
-        [disabled]="form.invalid"
-        class="w-full py-3 px-4
-               bg-[#84cc16] hover:bg-[#a3e635]
-               text-black font-bold
-               rounded-lg
-               transition duration-200
-               cursor-pointer shadow-md shadow-[#84cc16]/20 disabled:opacity-50 disabled:cursor-not-allowed">
-        Cadastrar
-      </button>
-
-      <div class="text-center pt-2">
-        <a routerLink="/login" class="text-sm text-gray-600 hover:text-[#416900] transition-colors">
-          Já possui uma conta? <span class="text-[#84cc16] font-medium">Faça login</span>
-        </a>
-      </div>
-
-    </form>
-
-  </div>
-
-</div>
+    <p class="m-0 border-t border-line pt-5 text-[15px] text-muted">
+      Já tem conta?
+      <a class="font-semibold text-leaf underline-offset-4 hover:underline" routerLink="/login">Entrar</a>
+    </p>
+  </form>
+</app-auth-shell>

@@ -1,58 +1,80 @@
-import { Component, inject, Injectable } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from '../../../core/services/auth/AuthService';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth/AuthService';
+import { AuthShell } from '../auth-shell/auth-shell';
+
+type CampoCadastro = 'login' | 'email' | 'senha';
 
 @Component({
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, AuthShell],
   selector: 'app-register',
   styleUrl: './register.css',
   templateUrl: './register.html',
 })
-
-@Injectable({providedIn: 'root'})
 export class Register {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  form = this.fb.group(
-    {
-      login: ['', [Validators.required, Validators.pattern(/^\S+$/), Validators.minLength(3), Validators.maxLength(40)]],
-      senha: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(100)]],
-      email: ['', [Validators.required, Validators.email, Validators.maxLength(254)]]
-    }
-  )
+  readonly enviando = signal(false);
+  readonly erro = signal<string | null>(null);
 
-  register(): void{
-    if(this.form.invalid){
+  form = this.fb.group({
+    login: ['', [Validators.required, Validators.pattern(/^\S+$/), Validators.minLength(3), Validators.maxLength(40)]],
+    senha: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(100)]],
+    email: ['', [Validators.required, Validators.email, Validators.maxLength(254)]],
+  });
+
+  register(): void {
+    if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
+    if (this.enviando()) return;
 
-    this.authService.register({
-      login: this.form.value.login!,
-      senha: this.form.value.senha!,
-      email: this.form.value.email!
-    })
-    .subscribe({
+    const { login, senha, email } = this.form.getRawValue();
+    this.enviando.set(true);
+    this.erro.set(null);
+
+    this.authService.register({ login: login!, senha: senha!, email: email! }).subscribe({
       next: () => {
-        this.authService.login({
-          login: this.form.value.login!,
-          senha: this.form.value.senha!
-        })
-        .subscribe({
+        // Conta criada: entra direto, sem pedir os dados de novo.
+        this.authService.login({ login: login!, senha: senha! }).subscribe({
           next: () => {
-            this.router.navigate(['/drones']);
+            this.enviando.set(false);
+            this.router.navigateByUrl(this.authService.destinoPadrao());
           },
-          error: (err) => {
-            console.error('Erro ao fazer o login após o cadastro', err);
-          }
-        })
+          error: () => {
+            this.enviando.set(false);
+            this.router.navigate(['/login']);
+          },
+        });
       },
-      error: (err) =>{
-        console.error('Erro ao tentar fazer o cadastro!', err)
-      }
-        })
-      }
+      error: (err: unknown) => {
+        this.enviando.set(false);
+        this.erro.set(this.aplicarErros(err));
+      },
+    });
+  }
+
+  /** Pinta nos campos os erros de validação da API e devolve a mensagem geral. */
+  private aplicarErros(err: unknown): string {
+    if (err instanceof HttpErrorResponse) {
+      if (err.status === 0) return 'Não foi possível falar com a loja. Verifique sua conexão e tente de novo.';
+      const detalhes: { field?: string; issue?: string }[] = err.error?.error?.details ?? [];
+      detalhes.forEach((detalhe) => {
+        const campo = detalhe.field?.split('.').pop() as CampoCadastro | undefined;
+        const controle = campo ? this.form.controls[campo] : undefined;
+        if (controle && detalhe.issue) {
+          controle.setErrors({ serverError: detalhe.issue });
+          controle.markAsTouched();
+        }
+      });
+      const mensagem = err.error?.message;
+      if (typeof mensagem === 'string' && mensagem.trim()) return mensagem;
     }
+    return 'Não foi possível criar sua conta agora. Tente de novo em instantes.';
+  }
+}
