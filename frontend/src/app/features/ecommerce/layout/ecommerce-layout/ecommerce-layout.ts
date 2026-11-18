@@ -8,9 +8,10 @@ import { AuthService } from '../../../../core/services/auth/AuthService';
 import { CarrinhoService } from '../../../../core/services/CarrinhoService';
 import { ComparacaoService } from '../../../../core/services/ComparacaoService';
 import { EcommerceCatalogSearchService } from '../../../../core/services/EcommerceCatalogSearchService';
+import { DroneMarkComponent } from '../../../../shared/components/drone-mark/drone-mark';
 
 @Component({
-  imports: [FormsModule, MatDividerModule, MatIconModule, MatMenuModule, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [DroneMarkComponent, FormsModule, MatDividerModule, MatIconModule, MatMenuModule, RouterLink, RouterLinkActive, RouterOutlet],
   selector: 'app-ecommerce-layout',
   styleUrl: './ecommerce-layout.css',
   templateUrl: './ecommerce-layout.html',

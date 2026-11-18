@@ -6,19 +6,14 @@
   </a>
 
   <header class="store-header sticky top-0 z-40 border-b border-line bg-white/95 backdrop-blur">
-    <div class="mx-auto grid max-w-[1240px] grid-cols-[auto_auto] items-center gap-x-6 gap-y-3 px-5 py-3.5 md:px-8 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-8">
+    <div class="mx-auto grid max-w-[1240px] grid-cols-[auto_auto] items-center gap-x-3 gap-y-3 px-4 py-3.5 sm:gap-x-6 sm:px-5 md:px-8 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-8">
       <a class="store-brand inline-flex w-fit items-center gap-3 rounded-xl text-ink no-underline" routerLink="/" aria-label="Skyline Drones - página inicial">
-        <span class="brand-mark grid size-11 place-items-center rounded-[13px] bg-ink" aria-hidden="true">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#b7ee75" stroke-width="1.8" stroke-linecap="round">
-            <circle cx="5" cy="5" r="3"></circle><circle cx="19" cy="5" r="3"></circle>
-            <circle cx="5" cy="19" r="3"></circle><circle cx="19" cy="19" r="3"></circle>
-            <path d="M7.2 7.2l2.6 2.6M16.8 7.2l-2.6 2.6M7.2 16.8l2.6-2.6M16.8 16.8l-2.6-2.6"></path>
-            <rect x="9.5" y="9.5" width="5" height="5" rx="1.6" fill="#b7ee75" stroke="none"></rect>
-          </svg>
+        <span class="brand-mark grid size-11 place-items-center rounded-[13px] bg-ink text-lime-glow" aria-hidden="true">
+          <app-drone-mark class="w-[26px]"></app-drone-mark>
         </span>
         <span class="flex flex-col leading-none">
           <span class="font-display font-extra-wide text-[17px] font-extrabold tracking-[1.6px]">SKYLINE</span>
-          <span class="font-display font-extra-wide mt-1 text-[10px] font-bold tracking-[4px] text-leaf">DRONES</span>
+          <span class="font-display font-extra-wide mt-1 text-[11px] font-bold tracking-[3.6px] text-leaf">DRONES</span>
         </span>
       </a>
 
@@ -35,14 +30,14 @@
         </nav>
 
         <form
-          class="search-form flex h-12 min-w-[240px] flex-1 items-center gap-2 rounded-xl border border-[#dce4dc] bg-paper pl-3.5 pr-1.5 transition focus-within:border-lime focus-within:ring-4 focus-within:ring-lime/20"
+          class="search-form flex h-12 min-w-0 flex-1 items-center gap-2 rounded-xl border border-[#dce4dc] bg-paper pl-3.5 pr-1.5 transition focus-within:border-lime focus-within:ring-4 focus-within:ring-lime/20"
           role="search"
           (submit)="$event.preventDefault(); pesquisar()">
           <label class="sr-only" for="store-search">Buscar drones</label>
           <mat-icon class="shrink-0 text-subtle" aria-hidden="true">search</mat-icon>
           <input
             id="store-search"
-            class="h-full min-w-0 flex-1 border-0 bg-transparent text-[15px] text-ink outline-none placeholder:text-[#7c887f]"
+            class="h-full min-w-0 flex-1 border-0 bg-transparent text-[15px] text-ink outline-none placeholder:text-placeholder"
             name="termoBusca"
             type="search"
             placeholder="Buscar drones"
@@ -56,12 +51,6 @@
       </div>
 
       <nav class="header-actions col-start-2 row-start-1 flex items-center justify-end gap-1 lg:col-start-3" aria-label="Acesso à conta e ao carrinho">
-        @if (comparacao.quantidade() > 0) {
-          <a class="header-action compare-shortcut relative inline-flex h-11 items-center rounded-xl px-2.5 text-ink no-underline transition-colors hover:bg-mist xl:hidden" routerLink="/comparar" [attr.aria-label]="'Comparar ' + comparacao.quantidade() + ' drones'">
-            <mat-icon class="text-leaf" aria-hidden="true">compare_arrows</mat-icon>
-            <span class="absolute right-0.5 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-ink px-1 font-data text-[10px] font-semibold text-lime-glow" aria-hidden="true">{{ comparacao.quantidade() }}</span>
-          </a>
-        }
         @if (auth.administrador()) {
           <a class="header-action admin-link inline-flex h-11 items-center gap-2 rounded-xl px-2.5 text-sm font-semibold text-ink no-underline transition-colors hover:bg-mist" routerLink="/admin" aria-label="Painel administrativo">
             <mat-icon class="text-leaf" aria-hidden="true">admin_panel_settings</mat-icon>
@@ -98,9 +87,20 @@
           <mat-icon class="text-leaf" aria-hidden="true">shopping_cart</mat-icon>
           <span class="hidden md:inline">Carrinho</span>
           @if (carrinho.quantidadeItens() > 0) {
-            <span class="absolute right-0.5 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-ink px-1 font-data text-[10px] font-semibold text-lime-glow" aria-hidden="true">
+            <span class="absolute right-0.5 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-ink px-1 font-data text-[11px] font-semibold text-lime-glow md:static md:h-5 md:min-w-5 md:px-1.5" aria-hidden="true">
               {{ carrinho.quantidadeItens() }}
             </span>
+          }
+        </a>
+      </nav>
+
+      <nav class="mobile-store-nav col-span-full flex items-center gap-1.5 overflow-x-auto border-t border-line/70 pt-2.5 xl:hidden" aria-label="Navegação rápida da loja">
+        <a class="inline-flex min-h-10 shrink-0 items-center rounded-[10px] px-3.5 py-2 text-sm font-semibold text-muted no-underline transition-colors hover:bg-mist hover:text-ink" routerLink="/" routerLinkActive="!bg-mist !text-ink" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page">Início</a>
+        <a class="inline-flex min-h-10 shrink-0 items-center rounded-[10px] px-3.5 py-2 text-sm font-semibold text-muted no-underline transition-colors hover:bg-mist hover:text-ink" routerLink="/home" routerLinkActive="!bg-mist !text-ink" ariaCurrentWhenActive="page">Catálogo</a>
+        <a class="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-[10px] px-3.5 py-2 text-sm font-semibold text-muted no-underline transition-colors hover:bg-mist hover:text-ink" routerLink="/comparar" routerLinkActive="!bg-mist !text-ink" ariaCurrentWhenActive="page">
+          Comparar
+          @if (comparacao.quantidade() > 0) {
+            <span class="grid h-5 min-w-5 place-items-center rounded-full bg-ink px-1.5 font-data text-[11px] font-semibold text-lime-glow" aria-hidden="true">{{ comparacao.quantidade() }}</span>
           }
         </a>
       </nav>
@@ -126,7 +126,7 @@
         <span class="benefit-icon grid size-11 shrink-0 place-items-center rounded-xl bg-ink text-lime-glow"><mat-icon aria-hidden="true">credit_card</mat-icon></span>
         <div>
           <h2 class="m-0 text-base font-bold">Pagamento facilitado</h2>
-          <p class="m-0 mt-0.5 text-sm text-muted">Parcele em até 10x</p>
+          <p class="m-0 mt-0.5 text-sm text-muted">Parcele em até 12x</p>
         </div>
       </li>
       <li class="benefit flex items-start gap-3.5">
@@ -151,17 +151,12 @@
       <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div class="flex flex-col gap-4">
           <a class="store-brand inline-flex w-fit items-center gap-3 rounded-xl text-white no-underline" routerLink="/" aria-label="Skyline Drones - página inicial">
-            <span class="grid size-11 place-items-center rounded-[13px] bg-[#223029]" aria-hidden="true">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#b7ee75" stroke-width="1.8" stroke-linecap="round">
-                <circle cx="5" cy="5" r="3"></circle><circle cx="19" cy="5" r="3"></circle>
-                <circle cx="5" cy="19" r="3"></circle><circle cx="19" cy="19" r="3"></circle>
-                <path d="M7.2 7.2l2.6 2.6M16.8 7.2l-2.6 2.6M7.2 16.8l2.6-2.6M16.8 16.8l-2.6-2.6"></path>
-                <rect x="9.5" y="9.5" width="5" height="5" rx="1.6" fill="#b7ee75" stroke="none"></rect>
-              </svg>
+            <span class="grid size-11 place-items-center rounded-[13px] bg-[#223029] text-lime-glow" aria-hidden="true">
+              <app-drone-mark class="w-[26px]"></app-drone-mark>
             </span>
             <span class="flex flex-col leading-none">
               <span class="font-display font-extra-wide text-[17px] font-extrabold tracking-[1.6px]">SKYLINE</span>
-              <span class="font-display font-extra-wide mt-1 text-[10px] font-bold tracking-[4px] text-lime-glow">DRONES</span>
+              <span class="font-display font-extra-wide mt-1 text-[11px] font-bold tracking-[3.6px] text-lime-glow">DRONES</span>
             </span>
           </a>
           <p class="m-0 max-w-[300px] text-[15px] leading-relaxed">Tecnologia e liberdade para você ir mais longe. Encontre o drone ideal para o seu próximo destino.</p>
