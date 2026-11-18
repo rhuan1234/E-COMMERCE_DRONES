@@ -1,5 +1,6 @@
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { DroneMarkComponent } from '../../../shared/components/drone-mark/drone-mark';
 
 /**
  * Moldura das telas de autenticação, na linguagem da landing "primeiro voo":
@@ -7,25 +8,20 @@ import { RouterLink } from '@angular/router';
  * e o formulário projetado no conteúdo à direita.
  */
 @Component({
-  imports: [RouterLink],
+  imports: [DroneMarkComponent, RouterLink],
   selector: 'app-auth-shell',
   template: `
     <div class="grid min-h-dvh bg-paper font-body text-ink antialiased lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
       <!-- Painel da paisagem: decorativo, o texto real está no formulário -->
       <aside class="auth-paisagem relative isolate flex min-h-[220px] flex-col justify-between overflow-hidden bg-night p-5 text-paper sm:min-h-[260px] md:p-8 lg:sticky lg:top-0 lg:h-dvh lg:p-12">
-        <img class="absolute inset-0 -z-10 size-full object-cover" [src]="foto()" alt="" (error)="esconder($event)">
-        <a class="inline-flex w-fit items-center gap-3 rounded-xl text-paper no-underline" routerLink="/" aria-label="Skyline Drones - página inicial">
-          <span class="grid size-11 place-items-center rounded-[13px] bg-ink" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#b7ee75" stroke-width="1.8" stroke-linecap="round">
-              <circle cx="5" cy="5" r="3"></circle><circle cx="19" cy="5" r="3"></circle>
-              <circle cx="5" cy="19" r="3"></circle><circle cx="19" cy="19" r="3"></circle>
-              <path d="M7.2 7.2l2.6 2.6M16.8 7.2l-2.6 2.6M7.2 16.8l2.6-2.6M16.8 16.8l-2.6-2.6"></path>
-              <rect x="9.5" y="9.5" width="5" height="5" rx="1.6" fill="#b7ee75" stroke="none"></rect>
-            </svg>
+        <img class="absolute inset-0 -z-20 size-full object-cover" [src]="foto()" alt="" (error)="esconder($event)">
+        <a class="relative inline-flex w-fit items-center gap-3 rounded-xl text-paper no-underline" routerLink="/" aria-label="Skyline Drones - página inicial">
+          <span class="grid size-11 place-items-center rounded-[13px] bg-ink text-lime-glow" aria-hidden="true">
+            <app-drone-mark class="w-[26px]"></app-drone-mark>
           </span>
           <span class="auth-sombra flex flex-col leading-none">
             <span class="font-display font-extra-wide text-[17px] font-extrabold tracking-[1.6px]">SKYLINE</span>
-            <span class="font-display font-extra-wide mt-1 text-[10px] font-bold tracking-[4px] text-lime-glow">DRONES</span>
+            <span class="font-display font-extra-wide mt-1 text-[11px] font-bold tracking-[3.6px] text-lime-glow">DRONES</span>
           </span>
         </a>
 
@@ -52,17 +48,28 @@ import { RouterLink } from '@angular/router';
       display: block;
     }
 
+    /* Degradê sutil no topo garante contraste do wordmark sobre céus claros */
+    .auth-paisagem::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 190px;
+      z-index: -1;
+      background: linear-gradient(to bottom, rgb(18 26 21 / 0.88), rgb(18 26 21 / 0.35) 60%, rgb(18 26 21 / 0));
+      pointer-events: none;
+    }
+
     /* Sombra só atrás do texto sobre a foto, nunca uma manta sobre a tela inteira */
     .auth-protecao::before {
       content: '';
       position: absolute;
       inset: -64px -96px -48px -96px;
       z-index: -1;
-      background: radial-gradient(closest-side, rgb(18 26 21 / 0.72), rgb(18 26 21 / 0));
+      background: radial-gradient(closest-side, rgb(18 26 21 / 0.78), rgb(18 26 21 / 0));
     }
 
     .auth-sombra {
-      text-shadow: 0 1px 12px rgb(18 26 21 / 0.55);
+      text-shadow: 0 1px 12px rgb(18 26 21 / 0.72);
     }
 
     a:focus-visible {
