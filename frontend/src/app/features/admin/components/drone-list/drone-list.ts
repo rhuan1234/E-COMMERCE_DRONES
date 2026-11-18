@@ -16,6 +16,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
+import { DroneMarkComponent } from '../../../../shared/components/drone-mark/drone-mark';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { DroneDetalhesDialog } from '../drone-detalhes-dialog/drone-detalhes-dialog';
 import { DroneImagemDialog } from '../drone-imagem-dialog/drone-imagem-dialog';
@@ -35,6 +36,7 @@ type CampoFiltroDrone = 'nome' | 'marca' | 'modelo' | 'min' | 'max';
     MatProgressBarModule,
     MoedaBrlPipe,
     AdminPageHeader,
+    DroneMarkComponent,
     MatButtonModule,
     MatIconModule,
     RouterLink,

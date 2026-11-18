@@ -1,6 +1,6 @@
 <header class="dialog-header">
   <div class="dialog-icon">
-    <mat-icon>flight</mat-icon>
+    <app-drone-mark class="w-6"></app-drone-mark>
   </div>
   <div class="dialog-heading">
     <h2 mat-dialog-title>{{ drone.nome }}</h2>
@@ -86,7 +86,7 @@
         </div>
         <div class="detail-item">
           <dt>Frequência Wi-Fi</dt>
-          <dd>{{ drone.frequenciaWifi || 'Não informado' }}</dd>
+          <dd>{{ formatarFrequencia(drone.frequenciaWifi) }}</dd>
         </div>
       </dl>
     </section>
@@ -100,7 +100,7 @@
             @if (drone.possuiCamera) {
               {{ drone.camera?.modelo?.nome || (drone.cameraId ? 'ID ' + drone.cameraId : 'Sim') }}
               @if (drone.camera?.resolucao) {
-                · {{ drone.camera?.resolucao }}
+                · {{ formatarResolucao(drone.camera?.resolucao) }}
               }
             } @else {
               Não possui
@@ -129,7 +129,7 @@
         </div>
         <div class="detail-item">
           <dt>Duração da bateria</dt>
-          <dd>{{ drone.duracaoBateria || 'Não informado' }}</dd>
+          <dd>{{ formatarDuracaoBateria(drone.duracaoBateria) }}</dd>
         </div>
       </dl>
     </section>

@@ -22,6 +22,7 @@ import { Drone } from '../../../../core/models/drone/Drone';
 import { DroneService } from '../../../../core/services/DroneService';
 import { PromocaoRequest } from '../../../../core/models/promocao/PromocaoRequest';
 import { PromocaoService } from '../../../../core/services/PromocaoService';
+import { DroneMarkComponent } from '../../../../shared/components/drone-mark/drone-mark';
 
 function validarIntervaloPromocao(control: AbstractControl): ValidationErrors | null {
   const inicio = control.get('dataInicio')?.value;
@@ -35,7 +36,7 @@ function validarIntervaloPromocao(control: AbstractControl): ValidationErrors | 
 }
 
 @Component({
-  imports: [ReactiveFormsModule, AdminPageHeader, MatFormFieldModule, MatInputModule,
+  imports: [ReactiveFormsModule, AdminPageHeader, DroneMarkComponent, MatFormFieldModule, MatInputModule,
     MatButtonModule, MatSelectModule, MatIconModule, MatSnackBarModule,
     MatCheckboxModule, MatDialogModule],
   selector: 'app-promocao-form',

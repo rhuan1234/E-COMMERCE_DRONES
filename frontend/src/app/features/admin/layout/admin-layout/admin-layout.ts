@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '../../../../core/services/auth/AuthService';
 import { PerfilService } from '../../../../core/services/PerfilService';
+import { DroneMarkComponent } from '../../../../shared/components/drone-mark/drone-mark';
 
 interface NavItem {
   label: string;
@@ -21,7 +22,7 @@ interface NavGroup {
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatIconModule, MatTooltipModule],
+  imports: [DroneMarkComponent, RouterOutlet, RouterLink, RouterLinkActive, MatIconModule, MatTooltipModule],
   templateUrl: './admin-layout.html',
   styleUrl: './admin-layout.css',
 })

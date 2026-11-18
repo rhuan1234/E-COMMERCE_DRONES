@@ -7,6 +7,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Drone } from '../../../../core/models/drone/Drone';
 import { DroneService } from '../../../../core/services/DroneService';
+import { DroneMarkComponent } from '../../../../shared/components/drone-mark/drone-mark';
+import {
+  formatarDuracaoBateria,
+  formatarFrequencia,
+  formatarResolucao,
+} from '../../../../shared/utils/drone-formatters';
 
 type DroneDetalhado = Drone & {
   camera?: { modelo?: { nome?: string }; resolucao?: string };
@@ -14,7 +20,7 @@ type DroneDetalhado = Drone & {
 };
 
 @Component({
-  imports: [CommonModule, MoedaBrlPipe, MatDialogModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [CommonModule, DroneMarkComponent, MoedaBrlPipe, MatDialogModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   selector: 'app-drone-detalhes-dialog',
   styleUrl: './drone-detalhes-dialog.css',
   templateUrl: './drone-detalhes-dialog.html',
@@ -26,6 +32,9 @@ export class DroneDetalhesDialog implements OnInit {
   drone: DroneDetalhado;
   carregando = true;
   erro = '';
+  readonly formatarResolucao = formatarResolucao;
+  readonly formatarFrequencia = formatarFrequencia;
+  readonly formatarDuracaoBateria = formatarDuracaoBateria;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) drone: Drone,

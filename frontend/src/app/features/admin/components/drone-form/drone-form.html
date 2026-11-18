@@ -12,7 +12,7 @@
 
     <form class="form" [formGroup]="form">
 
-      <mat-stepper linear #stepper class="admin-stepper">
+      <mat-stepper [linear]="!form.value.id" #stepper class="admin-stepper">
 
         <!-- ETAPA 1: INFORMAÇÕES BÁSICAS -->
         <mat-step>

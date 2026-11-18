@@ -17,16 +17,11 @@
       <mat-icon aria-hidden="true">menu</mat-icon>
     </button>
     <a class="inline-flex items-center gap-2.5 text-ink no-underline" routerLink="/admin" aria-label="Skyline Admin - início do painel">
-      <span class="grid size-9 place-items-center rounded-[11px] bg-ink" aria-hidden="true">
-        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#b7ee75" stroke-width="1.8" stroke-linecap="round">
-          <circle cx="5" cy="5" r="3"></circle><circle cx="19" cy="5" r="3"></circle>
-          <circle cx="5" cy="19" r="3"></circle><circle cx="19" cy="19" r="3"></circle>
-          <path d="M7.2 7.2l2.6 2.6M16.8 7.2l-2.6 2.6M7.2 16.8l2.6-2.6M16.8 16.8l-2.6-2.6"></path>
-          <rect x="9.5" y="9.5" width="5" height="5" rx="1.6" fill="#b7ee75" stroke="none"></rect>
-        </svg>
+      <span class="grid size-9 place-items-center rounded-[11px] bg-ink text-lime-glow" aria-hidden="true">
+        <app-drone-mark class="w-[21px]"></app-drone-mark>
       </span>
       <span class="font-display font-extra-wide text-[15px] font-extrabold tracking-[1.4px]">SKYLINE</span>
-      <span class="rounded-md bg-mist-green px-1.5 py-0.5 font-data text-[10px] font-semibold tracking-[1.5px] text-leaf">ADMIN</span>
+      <span class="rounded-md bg-mist-green px-1.5 py-0.5 font-data text-[11px] font-semibold tracking-[1.4px] text-leaf">ADMIN</span>
     </a>
     <a class="ml-auto inline-flex h-10 items-center gap-1.5 rounded-xl px-3 text-sm font-semibold text-ink no-underline transition-colors hover:bg-mist" routerLink="/">
       <mat-icon class="!text-leaf" aria-hidden="true">storefront</mat-icon>
@@ -51,17 +46,12 @@
     <div class="flex min-h-[84px] items-center gap-3 px-4" [class.justify-center]="!mostrarRotulos()">
       @if (mostrarRotulos()) {
         <a class="flex min-w-0 flex-1 items-center gap-3 rounded-xl text-white no-underline" routerLink="/admin" aria-label="Skyline Admin - início do painel">
-          <span class="grid size-11 shrink-0 place-items-center rounded-[13px] bg-[#223029]" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#b7ee75" stroke-width="1.8" stroke-linecap="round">
-              <circle cx="5" cy="5" r="3"></circle><circle cx="19" cy="5" r="3"></circle>
-              <circle cx="5" cy="19" r="3"></circle><circle cx="19" cy="19" r="3"></circle>
-              <path d="M7.2 7.2l2.6 2.6M16.8 7.2l-2.6 2.6M7.2 16.8l2.6-2.6M16.8 16.8l-2.6-2.6"></path>
-              <rect x="9.5" y="9.5" width="5" height="5" rx="1.6" fill="#b7ee75" stroke="none"></rect>
-            </svg>
+          <span class="grid size-11 shrink-0 place-items-center rounded-[13px] bg-[#223029] text-lime-glow" aria-hidden="true">
+            <app-drone-mark class="w-[26px]"></app-drone-mark>
           </span>
           <span class="flex min-w-0 flex-col leading-none">
             <span class="font-display font-extra-wide text-[16px] font-extrabold tracking-[1.6px]">SKYLINE</span>
-            <span class="mt-1.5 font-data text-[10px] font-semibold tracking-[2.5px] text-lime-glow">PAINEL ADMIN</span>
+            <span class="mt-1.5 font-data text-[11px] font-semibold tracking-[2px] text-lime-glow">PAINEL ADMIN</span>
           </span>
         </a>
       }
@@ -91,7 +81,7 @@
       @for (grupo of navGroups; track grupo.titulo) {
         <div class="mt-4 first:mt-1">
           @if (mostrarRotulos()) {
-            <p class="m-0 mb-1.5 px-3 font-data text-[10px] font-semibold tracking-[2px] text-[#7f8d84] uppercase">{{ grupo.titulo }}</p>
+            <p class="m-0 mb-1.5 px-3 font-data text-[11px] font-semibold tracking-[1.8px] text-[#95a49a] uppercase">{{ grupo.titulo }}</p>
           } @else {
             <div class="mx-auto mb-2 h-px w-8 bg-white/10" aria-hidden="true"></div>
           }
