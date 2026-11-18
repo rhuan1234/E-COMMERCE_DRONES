@@ -1,12 +1,10 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import {
   FormBuilder,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
 
-import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,9 +17,7 @@ import { PerfilService } from '../../../../core/services/PerfilService';
   selector: 'app-alterar-senha-page',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
-    MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
@@ -34,6 +30,7 @@ import { PerfilService } from '../../../../core/services/PerfilService';
 export class AlterarSenhaPage {
   private readonly fb = inject(FormBuilder);
   private readonly perfilService = inject(PerfilService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   mostrarSenhaAtual = false;
   mostrarNovaSenha = false;
@@ -117,6 +114,7 @@ export class AlterarSenhaPage {
         this.mostrarSenhaAtual = false;
         this.mostrarNovaSenha = false;
         this.mostrarConfirmacao = false;
+        this.cdr.markForCheck();
       },
 
       error: (erro) => {
@@ -127,6 +125,7 @@ export class AlterarSenhaPage {
           'Não foi possível alterar a senha. Verifique sua senha atual e tente novamente.';
 
         this.alterandoSenha = false;
+        this.cdr.markForCheck();
       }
     });
   }

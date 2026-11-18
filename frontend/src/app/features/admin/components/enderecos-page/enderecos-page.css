@@ -4,10 +4,8 @@
 }
 
 .enderecos-container {
-  width: min(100%, 1100px);
-  margin: 0 auto;
-  padding: 24px;
-  color: var(--mat-sys-on-surface, #1b1f18);
+  padding: 28px;
+  color: var(--color-ink);
 }
 
 .pagina-header,
@@ -21,10 +19,12 @@
 
 .pagina-header {
   margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--color-line);
 }
 
 .pagina-header h2 {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   font-family: var(--font-display);
   font-stretch: 112%;
   font-size: 28px;
@@ -37,7 +37,8 @@
 .pagina-header p,
 .formulario-header p {
   margin: 0;
-  color: var(--mat-sys-on-surface-variant, #454b42);
+  color: var(--color-muted);
+  font-size: 0.95rem;
 }
 
 .pagina-header button,
@@ -52,7 +53,8 @@
   margin: 0 0 16px;
   padding: 12px 16px;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: 12px;
+  font-size: 0.9rem;
   line-height: 1.5;
 }
 
@@ -61,15 +63,15 @@
 }
 
 .mensagem.sucesso {
-  border-color: color-mix(in srgb, var(--mat-sys-primary, #84cc16) 35%, transparent);
-  background: color-mix(in srgb, var(--mat-sys-primary, #84cc16) 12%, var(--mat-sys-surface, #f5f6f4));
-  color: var(--mat-sys-on-surface, #1b1f18);
+  border-color: #cfe3bd;
+  background: var(--color-mist-green);
+  color: var(--color-leaf-deep);
 }
 
 .mensagem.erro {
-  border-color: var(--mat-sys-error, #ba1a1a);
-  background: var(--mat-sys-error-container, #ffdad6);
-  color: var(--mat-sys-on-error-container, #410002);
+  border-color: #f3c4bf;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
 }
 
 .estado-carregamento,
@@ -79,21 +81,21 @@
   align-items: center;
   justify-content: center;
   padding: 40px 24px;
-  border: 1px solid var(--mat-sys-outline-variant, #d4d9d0);
-  border-radius: 12px;
-  background: var(--mat-sys-surface-container, #fff);
+  border: 1px dashed var(--color-line-strong);
+  border-radius: 16px;
+  background: var(--color-paper);
   text-align: center;
 }
 
 .estado-carregamento {
   gap: 12px;
-  color: var(--mat-sys-on-surface-variant, #454b42);
+  color: var(--color-muted);
 }
 
 .estado-carregamento p,
 .estado-vazio p {
   margin: 0;
-  color: var(--mat-sys-on-surface-variant, #454b42);
+  color: var(--color-muted);
   line-height: 1.6;
 }
 
@@ -104,8 +106,8 @@
   margin-bottom: 12px;
   place-items: center;
   border-radius: 14px;
-  background: var(--mat-sys-primary-container, #e8f5c9);
-  color: var(--mat-sys-on-primary-container, #253600);
+  background: var(--color-mist-green);
+  color: var(--color-leaf);
 }
 
 .vazio-icone mat-icon {
@@ -116,8 +118,10 @@
 
 .estado-vazio h2 {
   margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-stretch: 112%;
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .estado-vazio p {
@@ -137,20 +141,22 @@
 
 .lista-titulo h2 {
   margin: 0;
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-ink);
 }
 
 .lista-titulo span {
-  color: var(--mat-sys-on-surface-variant, #454b42);
-  font-size: 14px;
+  color: var(--color-subtle);
+  font-family: var(--font-data);
+  font-size: 13px;
 }
 
 .endereco-card,
 .formulario-card {
-  border: 1px solid var(--mat-sys-outline-variant, #d4d9d0);
-  border-radius: 12px;
-  background: var(--mat-sys-surface-container, #fff);
+  border: 1px solid var(--color-line);
+  border-radius: 16px;
+  background: var(--color-paper);
 }
 
 .endereco-card {
@@ -159,12 +165,11 @@
   justify-content: space-between;
   gap: 24px;
   padding: 20px;
-  transition: border-color 160ms ease, box-shadow 160ms ease;
+  transition: border-color 160ms ease;
 }
 
 .endereco-card:hover {
-  border-color: color-mix(in srgb, var(--mat-sys-primary, #84cc16) 55%, var(--mat-sys-outline-variant, #d4d9d0));
-  box-shadow: 0 4px 14px rgb(27 31 24 / 8%);
+  border-color: var(--color-line-strong);
 }
 
 .endereco-conteudo {
@@ -186,8 +191,8 @@
   flex: 0 0 auto;
   place-items: center;
   border-radius: 12px;
-  background: var(--mat-sys-primary-container, #e8f5c9);
-  color: var(--mat-sys-on-primary-container, #253600);
+  background: var(--color-mist-green);
+  color: var(--color-leaf);
 }
 
 .endereco-titulo h3 {
@@ -202,7 +207,10 @@
   align-items: center;
   gap: 4px;
   margin-top: 6px;
-  color: var(--mat-sys-primary, #4d6800);
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--color-mist-green);
+  color: var(--color-leaf-deep);
   font-size: 12px;
   font-weight: 600;
 }
@@ -223,14 +231,14 @@
 .endereco-detalhes p {
   min-width: 0;
   margin: 0;
-  color: var(--mat-sys-on-surface, #1b1f18);
+  color: var(--color-ink);
   overflow-wrap: anywhere;
 }
 
 .endereco-detalhes p span {
   display: block;
   margin-bottom: 4px;
-  color: var(--mat-sys-on-surface-variant, #454b42);
+  color: var(--color-subtle);
   font-size: 12px;
 }
 
@@ -247,12 +255,13 @@
 }
 
 .botao-excluir {
-  color: var(--mat-sys-error, #ba1a1a);
+  color: var(--color-danger);
 }
 
 .formulario-card {
   margin-top: 24px;
   padding: 24px;
+  background: #fff;
 }
 
 .formulario-header {
@@ -262,8 +271,10 @@
 
 .formulario-header h2 {
   margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-stretch: 112%;
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .form-grid {
@@ -296,7 +307,7 @@
   justify-content: flex-end;
   gap: 12px;
   padding-top: 16px;
-  border-top: 1px solid var(--mat-sys-outline-variant, #d4d9d0);
+  border-top: 1px solid var(--color-line);
 }
 
 .formulario-acoes button {
@@ -305,7 +316,7 @@
 
 @media (max-width: 700px) {
   .enderecos-container {
-    padding: 16px;
+    padding: 20px;
   }
 
   .pagina-header {
@@ -313,7 +324,7 @@
     flex-direction: column;
   }
 
-  .pagina-header h1 {
+  .pagina-header h2 {
     font-size: 24px;
   }
 
@@ -335,7 +346,7 @@
   .endereco-acoes {
     justify-content: flex-start;
     padding-top: 12px;
-    border-top: 1px solid var(--mat-sys-outline-variant, #d4d9d0);
+    border-top: 1px solid var(--color-line);
   }
 
   .formulario-card {

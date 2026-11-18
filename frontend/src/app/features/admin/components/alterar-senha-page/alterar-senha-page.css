@@ -1,25 +1,20 @@
 :host {
   display: block;
   width: 100%;
-  color: #212529;
+  color: var(--color-ink);
 }
 
 .senha-container {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 24px;
-  box-sizing: border-box;
+  padding: 28px;
 }
 
-/* Cabeçalho */
-
 .pagina-header {
-  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--color-line);
 }
 
 .pagina-titulo {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   font-family: var(--font-display);
   font-stretch: 112%;
   font-size: 28px;
@@ -36,56 +31,70 @@
   line-height: 1.5;
 }
 
-/* Cartão principal */
-
-.senha-card {
-  padding: 28px;
-  border: 1px solid #e9ecef;
-  border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 4px 16px rgb(0 0 0 / 4%);
+.senha-secao {
+  max-width: 600px;
+  padding-top: 24px;
 }
 
 .card-header {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 28px;
+  gap: 14px;
+  margin-bottom: 24px;
 }
 
 .card-icone {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  width: 44px;
+  height: 44px;
   flex-shrink: 0;
-  width: 52px;
-  height: 52px;
+  place-items: center;
   border-radius: 12px;
-  color: #198754;
-  background: #e8f5ee;
-}
-
-.card-icone mat-icon {
-  width: 28px;
-  height: 28px;
-  font-size: 28px;
+  background: var(--color-mist-green);
+  color: var(--color-leaf);
 }
 
 .card-titulo {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  color: #212529;
+  color: var(--color-ink);
 }
 
 .card-descricao {
-  margin: 6px 0 0;
-  color: #6c757d;
+  margin: 4px 0 0;
+  color: var(--color-muted);
   font-size: 0.9rem;
   line-height: 1.5;
 }
 
-/* Formulário */
+.mensagem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 20px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.mensagem mat-icon {
+  flex-shrink: 0;
+}
+
+.mensagem-sucesso {
+  border: 1px solid #cfe3bd;
+  background: var(--color-mist-green);
+  color: var(--color-leaf-deep);
+}
+
+.mensagem-erro {
+  border: 1px solid #f3c4bf;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
 
 .form-senha {
   display: flex;
@@ -99,11 +108,7 @@
 
 .campo-senha mat-icon[matPrefix] {
   margin-right: 8px;
-  color: #6c757d;
-}
-
-.campo-senha input {
-  letter-spacing: 0.2px;
+  color: var(--color-subtle);
 }
 
 .dica-senha {
@@ -111,7 +116,7 @@
   align-items: center;
   gap: 8px;
   margin: 0 0 12px;
-  color: #6c757d;
+  color: var(--color-muted);
   font-size: 0.85rem;
   line-height: 1.5;
 }
@@ -121,110 +126,38 @@
   width: 18px;
   height: 18px;
   font-size: 18px;
-  color: #198754;
+  color: var(--color-leaf);
 }
-
-/* Mensagens */
-
-.mensagem {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 20px;
-  padding: 14px 16px;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  overflow-wrap: anywhere;
-}
-
-.mensagem mat-icon {
-  flex-shrink: 0;
-}
-
-.mensagem-sucesso {
-  color: #146c43;
-  background: #d1e7dd;
-  border-color: #a3cfbb;
-}
-
-.mensagem-erro {
-  color: #842029;
-  background: #f8d7da;
-  border-color: #f1aeb5;
-}
-
-/* Botão */
 
 .form-acoes {
   display: flex;
   justify-content: flex-end;
-  padding-top: 20px;
-  border-top: 1px solid #e9ecef;
+  margin-top: 8px;
 }
 
 .botao-salvar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-width: 180px;
   min-height: 44px;
-  padding: 0 20px;
-  border-radius: 8px;
-  font-weight: 600;
 }
 
 .botao-salvar mat-spinner {
   display: inline-block;
+  margin-right: 8px;
 }
 
-/* Responsividade */
-
-@media (max-width: 600px) {
+@media (max-width: 700px) {
   .senha-container {
-    padding: 16px;
+    padding: 20px;
   }
 
   .pagina-titulo {
-    font-size: 1.5rem;
-  }
-
-  .senha-card {
-    padding: 20px 16px;
-    border-radius: 10px;
-  }
-
-  .card-header {
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-
-  .card-icone {
-    width: 44px;
-    height: 44px;
-  }
-
-  .card-titulo {
-    font-size: 1.05rem;
+    font-size: 24px;
   }
 
   .form-acoes {
-    padding-top: 16px;
+    justify-content: stretch;
   }
 
   .botao-salvar {
     width: 100%;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
   }
 }

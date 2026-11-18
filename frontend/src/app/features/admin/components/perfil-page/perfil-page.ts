@@ -1,16 +1,11 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import {FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { PerfilService } from '../../../../core/services/PerfilService';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
 
@@ -18,26 +13,21 @@ import { RouterLink } from '@angular/router';
   selector: 'app-perfil-page',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
-    MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatCheckboxModule,
-    MatDividerModule,
-    MatDialogModule,
     MatProgressSpinnerModule,
-    RouterLink
+    RouterLink,
   ],
   templateUrl: './perfil-page.html',
-  styleUrl: './perfil-page.css'
+  styleUrl: './perfil-page.css',
 })
 export class PerfilPage implements OnInit {
-
   private readonly fb = inject(FormBuilder);
   private readonly perfilService = inject(PerfilService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   carregando = false;
   erroCarregamento = '';
@@ -70,6 +60,7 @@ export class PerfilPage implements OnInit {
         });
 
         this.carregando = false;
+        this.cdr.markForCheck();
       },
       error: (erro) => {
         console.error('Erro ao carregar perfil:', erro);
@@ -78,6 +69,7 @@ export class PerfilPage implements OnInit {
           'Não foi possível carregar seus dados.';
 
         this.carregando = false;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -119,6 +111,7 @@ salvarPerfil(): void {
 
       this.mensagemSucesso = 'Dados atualizados com sucesso!';
       this.salvando = false;
+      this.cdr.markForCheck();
     },
 
     error: (erro) => {
@@ -129,6 +122,7 @@ salvarPerfil(): void {
         'Não foi possível salvar as alterações.';
 
       this.salvando = false;
+      this.cdr.markForCheck();
     }
   });
 }

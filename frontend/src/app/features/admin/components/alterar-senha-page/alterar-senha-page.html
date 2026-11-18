@@ -8,14 +8,14 @@
     </div>
   </header>
 
-  <mat-card class="senha-card">
+  <section class="senha-secao" aria-labelledby="senha-secao-titulo">
     <div class="card-header">
-      <div class="card-icone">
+      <div class="card-icone" aria-hidden="true">
         <mat-icon>lock</mat-icon>
       </div>
 
       <div>
-        <h2 class="card-titulo">Segurança da conta</h2>
+        <h3 id="senha-secao-titulo" class="card-titulo">Segurança da conta</h3>
         <p class="card-descricao">
           Informe sua senha atual e escolha uma nova senha.
         </p>
@@ -24,14 +24,14 @@
 
     @if (mensagemSenha) {
       <div class="mensagem mensagem-sucesso" role="status">
-        <mat-icon>check_circle</mat-icon>
+        <mat-icon aria-hidden="true">check_circle</mat-icon>
         <span>{{ mensagemSenha }}</span>
       </div>
     }
 
     @if (erroSenha) {
       <div class="mensagem mensagem-erro" role="alert">
-        <mat-icon>error</mat-icon>
+        <mat-icon aria-hidden="true">error</mat-icon>
         <span>{{ erroSenha }}</span>
       </div>
     }
@@ -42,11 +42,10 @@
       (ngSubmit)="alterarSenha()"
       (input)="limparMensagens()"
     >
-      <!-- Senha atual -->
       <mat-form-field appearance="outline" class="campo-senha">
         <mat-label>Senha atual</mat-label>
 
-        <mat-icon matPrefix>lock</mat-icon>
+        <mat-icon matPrefix aria-hidden="true">lock</mat-icon>
 
         <input
           matInput
@@ -63,7 +62,7 @@
           [attr.aria-label]="mostrarSenhaAtual ? 'Ocultar senha atual' : 'Mostrar senha atual'"
           (click)="mostrarSenhaAtual = !mostrarSenhaAtual"
         >
-          <mat-icon>
+          <mat-icon aria-hidden="true">
             {{ mostrarSenhaAtual ? 'visibility_off' : 'visibility' }}
           </mat-icon>
         </button>
@@ -85,11 +84,10 @@
         }
       </mat-form-field>
 
-      <!-- Nova senha -->
       <mat-form-field appearance="outline" class="campo-senha">
         <mat-label>Nova senha</mat-label>
 
-        <mat-icon matPrefix>key</mat-icon>
+        <mat-icon matPrefix aria-hidden="true">key</mat-icon>
 
         <input
           matInput
@@ -106,7 +104,7 @@
           [attr.aria-label]="mostrarNovaSenha ? 'Ocultar nova senha' : 'Mostrar nova senha'"
           (click)="mostrarNovaSenha = !mostrarNovaSenha"
         >
-          <mat-icon>
+          <mat-icon aria-hidden="true">
             {{ mostrarNovaSenha ? 'visibility_off' : 'visibility' }}
           </mat-icon>
         </button>
@@ -137,11 +135,10 @@
         }
       </mat-form-field>
 
-      <!-- Confirmação da nova senha -->
       <mat-form-field appearance="outline" class="campo-senha">
         <mat-label>Confirmar nova senha</mat-label>
 
-        <mat-icon matPrefix>verified_user</mat-icon>
+        <mat-icon matPrefix aria-hidden="true">verified_user</mat-icon>
 
         <input
           matInput
@@ -158,7 +155,7 @@
           [attr.aria-label]="mostrarConfirmacao ? 'Ocultar confirmação' : 'Mostrar confirmação'"
           (click)="mostrarConfirmacao = !mostrarConfirmacao"
         >
-          <mat-icon>
+          <mat-icon aria-hidden="true">
             {{ mostrarConfirmacao ? 'visibility_off' : 'visibility' }}
           </mat-icon>
         </button>
@@ -179,7 +176,7 @@
       </mat-form-field>
 
       <div class="dica-senha">
-        <mat-icon>info</mat-icon>
+        <mat-icon aria-hidden="true">info</mat-icon>
         <span>
           A nova senha deve ter pelo menos 6 caracteres.
         </span>
@@ -196,11 +193,11 @@
           @if (alterandoSenha) {
             <mat-spinner diameter="20"></mat-spinner>
           } @else {
-            <mat-icon>save</mat-icon>
+            <mat-icon aria-hidden="true">save</mat-icon>
           }
           <span>{{ alterandoSenha ? 'Alterando senha...' : 'Alterar senha' }}</span>
         </button>
       </div>
     </form>
-  </mat-card>
+  </section>
 </div>
