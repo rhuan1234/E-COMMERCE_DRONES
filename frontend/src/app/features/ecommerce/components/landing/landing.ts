@@ -16,6 +16,7 @@ import { Drone, DroneImagem } from '../../../../core/models/drone/Drone';
 import { TIPOS_DE_VOO } from '../../../../core/models/drone/TipoDeVoo';
 import { AuthService } from '../../../../core/services/auth/AuthService';
 import { DroneService } from '../../../../core/services/DroneService';
+import { DroneMarkComponent } from '../../../../shared/components/drone-mark/drone-mark';
 import { FxScroll } from '../../../../shared/fx/fx-scroll';
 
 /** Teto de voo recreativo da ANAC (RBAC-E nº 94): 120 m acima do solo. */
@@ -54,7 +55,7 @@ interface ValorFicha {
  * (altímetro de rolagem e hélices que respondem à velocidade) vive aqui.
  */
 @Component({
-  imports: [FxScroll, MatIconModule, NgTemplateOutlet, RouterLink],
+  imports: [DroneMarkComponent, FxScroll, MatIconModule, NgTemplateOutlet, RouterLink],
   selector: 'app-landing',
   styleUrl: './landing.css',
   templateUrl: './landing.html',
