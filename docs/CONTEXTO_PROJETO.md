@@ -32,6 +32,8 @@ O projeto é estruturado em um monorepo contendo backend e frontend desacoplados
 ```
 E-COMMERCE_DRONES/
 ├── AGENTS.md                 # Diretrizes para agentes de IA e desenvolvedores
+├── compose.yaml              # Orquestração local do AWS Emulator (S3)
+├── docker/                   # Dockerfiles de infraestrutura local (aws-emulator)
 ├── docs/                     # Documentação viva do projeto
 │   ├── CONTEXTO_PROJETO.md   # Visão, stack, arquitetura, progresso e roadmap
 │   ├── REGRAS_NEGOCIO.md     # Entidades, validações, fluxos e regras de negócio
@@ -42,7 +44,6 @@ E-COMMERCE_DRONES/
 │   │   │   ├── java/drones/  # Controllers, Services, Repositories, DTOs, Mappers, Models
 │   │   │   └── resources/    # application.properties, import.sql (seed), chaves JWT
 │   │   └── test/             # Testes automatizados (JUnit 5, RestAssured)
-│   ├── uploads/              # Armazenamento local de imagens de drones
 │   └── pom.xml               # Gerenciador de dependências Maven
 └── frontend/                 # SPA em Angular v22 com Tailwind CSS e Angular Material
     ├── src/
@@ -67,7 +68,7 @@ E-COMMERCE_DRONES/
 - **Segurança & Criptografia**: SmallRye JWT (`quarkus-smallrye-jwt`) com assinatura de chaves assimétricas RSA (`publicKey.pem` e `privateKey.pem`) e hash de senhas com BCrypt (`jbcrypt` 0.4).
 - **Comunicação / Notificações**: Quarkus Mailer (`quarkus-mailer`), configurado para envio de emails transacionais (recuperação de senhas via Mailtrap).
 - **Agendamento**: Quarkus Scheduler (`quarkus-scheduler`) para tarefas recorrentes de background.
-- **Armazenamento de Mídia**: Serviço local de upload com hash UUID em disco (`backend/uploads/`).
+- **Armazenamento de Mídia**: Object Storage compatível com Amazon S3 via `quarkus-amazon-s3` (AWS SDK v2), integrado ao **AWS Emulator** (`aws/aws-emulator`, HTTPS na porta `9297`) em desenvolvimento via container (`compose.yaml`).
 - **Testes**: JUnit 5, Quarkus Test Security, RestAssured e Mockito.
 
 ### Frontend
@@ -143,6 +144,12 @@ E-COMMERCE_DRONES/
     - Comportamento sob medida (ex.: o altímetro e as hélices da landing) fica no componente da página, nunca no motor. Telas de tarefa (catálogo, checkout, admin) não usam scrollytelling.
     - A landing é carregada sob demanda (`loadComponent`) para não pesar no bundle inicial. Brief e decisões de design em `frontend/docs/landing/BRIEF.md`.
 
+14. **Armazenamento de Imagens em Object Storage S3 (`DroneImageStorage`)**:
+    - O armazenamento local em disco (`backend/uploads/`) foi substituído pela interface `DroneImageStorage`, implementada em produção/desenvolvimento por `S3DroneImageStorage` usando `S3Client` (`quarkus-amazon-s3`).
+    - Em `%dev`, o backend aponta para o **AWS Emulator** (`https://127.0.0.1:9297`) com `path-style-access=true`, validando TLS pelo `truststore.p12` gerado no volume `./.aws-emulator/9297/` e garantindo criação automática do bucket (`drones-imagens`) na inicialização e sob demanda caso o emulador em memória seja reiniciado.
+    - A entrega das imagens para o frontend permanece via streaming/proxy pelo endpoint público `GET /drones/imagens/{id}/arquivo`, mantendo o bucket privado, preservando o contrato REST e evitando erros de certificado autoassinado no navegador.
+    - Nos testes automatizados (`%test`), `InMemoryDroneImageStorage` (`@Alternative @Priority(1)`) substitui o S3 real para manter `./mvnw test` independente de containers.
+
 ---
 
 ## 5. Estado Atual de Implementação
@@ -155,7 +162,7 @@ E-COMMERCE_DRONES/
 - [x] Banco de dados PostgreSQL com script de carga inicial completo (`import.sql`).
 - [x] Autenticação e Autorização via JWT (Login, geração e validação de token).
 - [x] CRUD completo de Drones com filtros (nome, marca, modelo, faixa de preço, câmera).
-- [x] Sistema de upload e gerenciamento de múltiplas imagens por drone (até 5 fotos, marcação de foto principal e ordenação).
+- [x] Sistema de upload e gerenciamento de múltiplas imagens por drone (até 5 fotos, marcação de foto principal e ordenação), persistidas em Object Storage S3 (`quarkus-amazon-s3` + AWS Emulator local em container) e entregues por streaming pelo backend.
 - [x] CRUD de Marcas e Modelos com validação de integridade.
 - [x] CRUD de Câmeras com especificações (resolução, zoom, fps, estabilização).
 - [x] CRUD de Fornecedores com validação de CNPJ e endereço.
@@ -219,7 +226,7 @@ E-COMMERCE_DRONES/
    - Criação de rotina agendada via `@Scheduled` para cancelar pedidos pendentes sem pagamento após prazo estipulado (ex: 24h a 48h), liberando o estoque automaticamente.
 2. **Integração Real com Gateway de Pagamento**:
    - Adição de webhook de notificação de pagamento para atualização em tempo real do status de transações bancárias.
-3. **Storage de Produção para Imagens**:
-   - Suporte a provedores de Object Storage (AWS S3, Google Cloud Storage ou MinIO) em substituição ao filesystem local.
+3. **Storage de Produção para Imagens (Provisionamento Cloud)**:
+   - Migração para S3 já implementada no código via `quarkus-amazon-s3` com AWS Emulator em desenvolvimento; resta apenas provisionar bucket e credenciais IAM reais para ambiente produtivo.
 4. **Ampliação da Cobertura de Testes Automatizados**:
    - Testes unitários e de integração adicionais para fluxos de checkout, concorrência de estoque e transações de pagamento.

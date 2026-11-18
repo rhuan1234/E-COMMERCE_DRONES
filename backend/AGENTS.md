@@ -25,6 +25,7 @@ A API atende a dois perfis principais de usuários:
 - **Segurança & Criptografia**: SmallRye JWT (`quarkus-smallrye-jwt`) com assinatura por chaves assimétricas RSA (`privateKey.pem` e `publicKey.pem`), e BCrypt (`jbcrypt` 0.4) para hash de senhas.
 - **E-mails Transacionais**: Quarkus Mailer (`quarkus-mailer`), configurado para Mailtrap em desenvolvimento.
 - **Agendamento de Tarefas**: Quarkus Scheduler (`quarkus-scheduler`).
+- **Armazenamento de Imagens**: Quarkus Amazon S3 (`quarkus-amazon-s3` + AWS SDK v2 `S3Client`) apontando para o **AWS Emulator** em desenvolvimento (`https://127.0.0.1:9297`).
 - **Testes**: JUnit 5, RestAssured, Quarkus Test Security e Mockito.
 
 ### 2.2 Estrutura e Organização de Pastas (`backend/src/main/`)
@@ -56,10 +57,9 @@ backend/
 │   │   ├── resources/            # Controllers REST JAX-RS (*Controller.java)
 │   │   └── services/             # Regras de negócio (*ServiceInterface.java e *Service.java)
 │   └── resources/
-│       ├── application.properties# Configuração de banco, JWT, mailer e CORS
+│       ├── application.properties# Configuração de banco, JWT, mailer, S3 e CORS
 │       ├── import.sql            # Carga inicial com dados semente para testes
 │       └── META-INF/resources/   # Chaves RSA (publicKey.pem e privateKey.pem)
-└── uploads/                      # Armazenamento físico de fotos de drones no servidor
 ```
 
 ---
@@ -74,7 +74,7 @@ Qualquer alteração nestes comportamentos exige aprovação formal e atualizaç
 2. **Gerenciamento de Imagens do Drone**:
    - Limite máximo de **5 imagens por drone**. Tentativas de exceder esse número devem ser rejeitadas.
    - Apenas uma imagem pode ser a capa principal (`principal = true`). Ao definir uma nova imagem como principal, todas as outras do mesmo drone devem ser setadas para `principal = false`.
-   - A exclusão de uma imagem do banco exige a remoção física do arquivo em `uploads/`. Se a imagem removida era a principal e restarem imagens, a primeira remanescente assume o posto de principal.
+   - A exclusão de uma imagem do banco (ou do drone) exige a remoção do objeto correspondente no bucket S3 via `DroneImageStorage`. Se a imagem removida era a principal e restarem imagens, a primeira remanescente assume o posto de principal.
 3. **Campanhas Promocionais**:
    - Uma promoção só tem efeito financeiro se a data corrente estiver dentro do intervalo de vigência: `agora >= dataInicio && agora <= dataFim`.
    - Cálculo do preço promocional: `precoFinal = precoOriginal * (1 - percentualDesconto / 100)`.

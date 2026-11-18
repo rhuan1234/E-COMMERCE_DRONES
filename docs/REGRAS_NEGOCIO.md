@@ -45,8 +45,8 @@ O domínio do sistema é particionado nos seguintes pacotes e entidades:
   - Especificações técnicas: `tempoVooPratico` (minutos), `pesoDecolagem` (gramas), `altitudeMaxima` (metros), `velocidadeMaxima` (km/h), `alcanceTransmissao` (metros), `possuiCamera` (booleano), `camera` (ManyToOne opcional), `quantidadeMotores` (inteiro), `comControleRemoto` (booleano), `controladoPorAplicativo` (booleano), `quantidadeBaterias` (inteiro), `duracaoBateria` (minutos/descrição), `frequenciaWifi` (GHz) e `possuiGPS` (booleano).
   - Mídias: `imagens` (lista de `DroneImage`, OneToMany cascade).
 - **`DroneImage`**:
-  - Imagem do produto armazenada no servidor.
-  - Atributos: `id`, `caminho` (nome do arquivo salvo em disco), `principal` (booleano indicando foto de capa), `ordem` (posição de ordenação) e `drone` (ManyToOne).
+  - Imagem do produto armazenada em Object Storage S3 e entregue via streaming pelo backend (`GET /drones/imagens/{id}/arquivo`).
+  - Atributos: `id`, `caminho` (chave do objeto no bucket S3 no formato `drones/{droneId}/{uuid}.{ext}`), `principal` (booleano indicando foto de capa), `ordem` (posição de ordenação) e `drone` (ManyToOne).
 - **`Avaliacao`**:
   - Feedback de compradores sobre o produto.
   - Atributos: `id`, `nota` (inteiro de 1 a 5), `comentario` (texto de até 1000 caracteres), `nomeCliente` (snapshot do nome completo cadastrado no perfil, ou `<desconhecido>` se vazio/ausente), `dataAvaliacao` (timestamp), `usuario` (ManyToOne) e `drone` (ManyToOne).
@@ -127,7 +127,7 @@ O domínio do sistema é particionado nos seguintes pacotes e entidades:
    - Cada drone pode possuir no máximo 5 imagens vinculadas. Tentativas de adicionar mais de 5 geram erro de validação.
    - Uma imagem pode ser definida como principal (`principal = true`).
    - Ao marcar uma imagem como principal, todas as outras imagens do drone são definidas como `principal = false`.
-   - Ao remover uma imagem do banco de dados, o arquivo correspondente na pasta de uploads é excluído fisicamente. Se a imagem removida era a principal e ainda restarem imagens, a primeira remanescente assume o papel de imagem principal.
+   - Ao remover uma imagem do banco de dados (ou excluir o drone), o objeto correspondente no bucket S3 é removido de forma idempotente. Se o objeto estiver ausente no storage (por exemplo, após reinício do AWS Emulator em memória), a remoção no banco segue normalmente e a leitura via endpoint retorna `404 Not Found`. Se a imagem removida era a principal e ainda restarem imagens, a primeira remanescente assume o papel de imagem principal.
 4. **Visibilidade do Produto (`ativa`)**:
    - Drones marcados com `ativa = false` não são exibidos na vitrine pública do e-commerce, permanecendo visíveis apenas para consulta e reativação no painel administrativo.
 5. **Filtros da Vitrine Pública**:

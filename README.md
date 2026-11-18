@@ -50,6 +50,7 @@ Este projeto resolve esses problemas entregando:
 
 ### Banco de Dados & Infraestrutura
 - **Banco de Dados**: [PostgreSQL 16](https://www.postgresql.org/)
+- **Armazenamento de Imagens (S3 Local)**: [AWS Emulator](https://github.com/aws/aws-emulator) em container via Compose (`compose.yaml`, porta `9297` HTTPS), integrado ao backend com `quarkus-amazon-s3`
 - **Carga Inicial**: Script SQL de semente de dados (`backend/src/main/resources/import.sql`)
 
 ---
@@ -60,12 +61,21 @@ Este projeto resolve esses problemas entregando:
 - **Java 25** (JDK) instalado e configurado no `PATH`.
 - **Node.js** (versão 20+) e **npm** instalados.
 - **PostgreSQL** instalado localmente ou via **Docker**.
+- **Podman** ou **Docker** com Compose para executar o **AWS Emulator** (serviço S3 local para imagens de drones).
 
 ---
 
-### 1. Banco de Dados (PostgreSQL)
+### 1. Banco de Dados (PostgreSQL) & AWS Emulator (S3)
 
 Certifique-se de que o PostgreSQL esteja em execução na porta `5432` com uma base de dados chamada `dronesDb`.
+
+**Subir o AWS Emulator (S3 local na porta `9297`):**
+```bash
+podman compose up -d --build aws-emulator
+# ou, com Docker:
+docker-compose up -d --build aws-emulator
+```
+> O emulador mantém buckets e objetos S3 em memória RAM e gera o truststore TLS local em `./.aws-emulator/9297/truststore.p12`. Inicie o container antes de rodar o backend em modo desenvolvimento.
 
 **Opção via Docker:**
 ```bash
