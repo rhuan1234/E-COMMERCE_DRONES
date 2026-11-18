@@ -7,6 +7,7 @@ import drones.dto.drones.DroneCatalogFilters;
 import drones.exception.ValidationException;
 import drones.model.drones.Drone;
 import drones.model.drones.DroneImage;
+import drones.model.drones.DroneImageStorage;
 import drones.model.drones.Marca;
 import drones.model.drones.Modelo;
 import drones.repository.DroneImageRepository;
@@ -30,7 +31,7 @@ public class DroneService implements DroneServiceInterface {
     @Inject
     DroneImageRepository droneImageRepository;
     @Inject
-    DroneImageStorageService droneImageStorageService;
+    DroneImageStorage droneImageStorage;
     @Inject
     FornecedorService fornecedorService;
     @Inject
@@ -83,6 +84,20 @@ public class DroneService implements DroneServiceInterface {
     }
 
     @Override
+    public void validarCapacidadeImagem(Long droneId) {
+        if (droneId == null || droneId <= 0) {
+            throw new ValidationException("Id do drone é inválido", "id");
+        }
+        Drone drone = droneRepository.findById(droneId);
+        if (drone == null) {
+            throw new ValidationException("Drone com id '" + droneId + "' não encontrado", "id");
+        }
+        if (droneImageRepository.count("drone.id", droneId) >= 5) {
+            throw new ValidationException("Um drone pode ter no máximo 5 imagens", "imagens");
+        }
+    }
+
+    @Override
     @Transactional
     public Drone adicionarImagem(Long droneId, DroneImage imagem) {
         if (droneId == null || droneId <= 0) {
@@ -120,8 +135,10 @@ public class DroneService implements DroneServiceInterface {
             throw new ValidationException("Imagem não encontrada para o drone informado", "imagemId");
         }
 
-        droneImageStorageService.deletar(imagem.getCaminho());
+        String chaveObjeto = imagem.getCaminho();
         droneImageRepository.delete(imagem);
+        droneImageRepository.flush();
+        droneImageStorage.deletar(chaveObjeto);
     }
 
     @Override
@@ -142,7 +159,19 @@ public class DroneService implements DroneServiceInterface {
         if (id == null) {
             throw new ValidationException("Id do drone é obrigatório", "id");
         }
-        return droneRepository.deleteById(id);
+        Drone drone = droneRepository.findById(id);
+        if (drone == null) {
+            return false;
+        }
+        List<String> chavesImagens = drone.getImagens().stream()
+                .map(DroneImage::getCaminho)
+                .toList();
+        boolean removido = droneRepository.deleteById(id);
+        if (removido) {
+            droneRepository.flush();
+            chavesImagens.forEach(droneImageStorage::deletar);
+        }
+        return removido;
     }
 
     @Override

@@ -1,27 +1,27 @@
 package drones.services;
 
-import drones.exception.ValidationException;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.jboss.resteasy.reactive.multipart.FileUpload;
-
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.UUID;
 
-@ApplicationScoped
-public class DroneImageStorageService {
+import drones.exception.ValidationException;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 
-    private static final long MAX_FILE_SIZE = 8 * 1024 * 1024;
+/**
+ * Utilitário compartilhado para validação de upload, chaves e tipos MIME de imagens.
+ */
+final class DroneImageValidator {
 
-    @Inject
-    @ConfigProperty(name = "app.uploads.directory", defaultValue = "uploads")
-    String uploadDirectory;
+    static final long MAX_FILE_SIZE = 8 * 1024 * 1024;
 
-    public Path salvar(FileUpload arquivo) {
+    record ValidatedImage(Path file, String extension, String contentType, long contentLength) {
+    }
+
+    private DroneImageValidator() {
+    }
+
+    static ValidatedImage validarUpload(FileUpload arquivo) {
         if (arquivo == null || arquivo.uploadedFile() == null) {
             throw new ValidationException("O arquivo da imagem é obrigatório", "arquivo");
         }
@@ -34,47 +34,52 @@ public class DroneImageStorageService {
             }
 
             String extensao = obterExtensao(arquivo.contentType(), temporario);
-            Path diretorio = diretorioUploads();
-            Files.createDirectories(diretorio);
-            Path destino = diretorio.resolve(UUID.randomUUID() + extensao);
-            Files.copy(temporario, destino);
-            return destino;
+            return new ValidatedImage(temporario, extensao, tipoConteudoPorExtensao(extensao), tamanho);
         } catch (IOException e) {
-            throw new UncheckedIOException("Não foi possível salvar a imagem enviada", e);
+            throw new UncheckedIOException("Não foi possível ler a imagem enviada", e);
         }
     }
 
-    public void deletar(String nomeArquivo) {
-        Path caminho = resolverArquivo(nomeArquivo);
-        try {
-            Files.deleteIfExists(caminho);
-        } catch (IOException e) {
-            throw new UncheckedIOException("Não foi possível excluir o arquivo da imagem", e);
+    static void validarChave(String chave) {
+        if (chave == null || chave.isBlank() || chave.startsWith("/") || chave.contains("\\")) {
+            throw new ValidationException("Caminho de imagem inválido", "caminho");
+        }
+        for (int i = 0; i < chave.length(); i++) {
+            if (chave.charAt(i) < 32) {
+                throw new ValidationException("Caminho de imagem inválido", "caminho");
+            }
+        }
+        for (String segmento : chave.split("/", -1)) {
+            if (segmento.isEmpty() || "..".equals(segmento) || ".".equals(segmento)) {
+                throw new ValidationException("Caminho de imagem inválido", "caminho");
+            }
         }
     }
 
-    public Path buscar(String nomeArquivo) {
-        Path caminho = resolverArquivo(nomeArquivo);
-        if (!Files.isRegularFile(caminho)) {
-            throw new jakarta.ws.rs.NotFoundException("Arquivo da imagem não encontrado");
-        }
-        return caminho;
-    }
-
-    public String obterTipoConteudo(String nomeArquivo) {
-        if (nomeArquivo.endsWith(".jpg")) {
+    static String obterTipoConteudo(String chave) {
+        validarChave(chave);
+        if (chave.endsWith(".jpg") || chave.endsWith(".jpeg")) {
             return "image/jpeg";
         }
-        if (nomeArquivo.endsWith(".png")) {
+        if (chave.endsWith(".png")) {
             return "image/png";
         }
-        if (nomeArquivo.endsWith(".gif")) {
+        if (chave.endsWith(".gif")) {
             return "image/gif";
         }
         return "image/webp";
     }
 
-    private String obterExtensao(String tipoConteudo, Path arquivo) throws IOException {
+    private static String tipoConteudoPorExtensao(String extensao) {
+        return switch (extensao) {
+            case ".jpg" -> "image/jpeg";
+            case ".png" -> "image/png";
+            case ".gif" -> "image/gif";
+            default -> "image/webp";
+        };
+    }
+
+    private static String obterExtensao(String tipoConteudo, Path arquivo) throws IOException {
         byte[] assinatura = new byte[12];
         int bytesLidos;
         try (var entrada = Files.newInputStream(arquivo)) {
@@ -124,21 +129,5 @@ public class DroneImageStorageService {
         }
 
         throw new ValidationException("Formato inválido. Envie uma imagem JPEG, PNG, GIF ou WebP", "arquivo");
-    }
-
-    private Path diretorioUploads() {
-        return Path.of(uploadDirectory).toAbsolutePath().normalize();
-    }
-
-    private Path resolverArquivo(String nomeArquivo) {
-        if (nomeArquivo == null || nomeArquivo.isBlank()
-                || !Path.of(nomeArquivo).getFileName().toString().equals(nomeArquivo)) {
-            throw new ValidationException("Caminho de imagem inválido", "caminho");
-        }
-        Path caminho = diretorioUploads().resolve(nomeArquivo).normalize();
-        if (!caminho.getParent().equals(diretorioUploads())) {
-            throw new ValidationException("Caminho de imagem inválido", "caminho");
-        }
-        return caminho;
     }
 }

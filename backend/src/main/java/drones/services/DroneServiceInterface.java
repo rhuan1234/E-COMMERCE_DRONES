@@ -10,6 +10,7 @@ public interface DroneServiceInterface {
     List<Drone> buscarTodos(int page, int pageSize);
     Drone buscarPorId(Long id);
     Drone criar(Drone drone);
+    void validarCapacidadeImagem(Long droneId);
     Drone adicionarImagem(Long droneId, DroneImage imagem);
     void deletarImagem(Long droneId, Long imagemId);
     DroneImage buscarImagem(Long imagemId);

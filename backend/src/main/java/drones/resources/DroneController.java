@@ -12,7 +12,7 @@ import drones.exception.ValidationException;
 import drones.mapper.DroneMapper;
 import drones.model.drones.Drone;
 import drones.model.drones.DroneImage;
-import drones.services.DroneImageStorageService;
+import drones.model.drones.DroneImageStorage;
 import drones.services.DroneServiceInterface;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -37,8 +37,6 @@ import jakarta.ws.rs.core.StreamingOutput;
 import org.jboss.resteasy.reactive.RestForm;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 
-import java.nio.file.Files;
-
 @ApplicationScoped
 @Path("/drones")
 @Produces(MediaType.APPLICATION_JSON)
@@ -48,7 +46,7 @@ public class DroneController {
     @Inject
     DroneServiceInterface droneService;
     @Inject
-    DroneImageStorageService droneImageStorageService;
+    DroneImageStorage droneImageStorage;
 
     @POST
     @Path("/admin")
@@ -74,9 +72,10 @@ public class DroneController {
         if (ordem < 0) {
             throw new ValidationException("A ordem da imagem deve ser zero ou maior", "ordem");
         }
-        var caminhoArquivo = droneImageStorageService.salvar(arquivo);
+        droneService.validarCapacidadeImagem(id);
+        String chaveObjeto = droneImageStorage.salvar(id, arquivo);
         DroneImage novaImagem = new DroneImage();
-        novaImagem.setCaminho(caminhoArquivo.getFileName().toString());
+        novaImagem.setCaminho(chaveObjeto);
         novaImagem.setPrincipal(principal);
         novaImagem.setOrdem(ordem);
 
@@ -85,7 +84,7 @@ public class DroneController {
             droneAtualizado = droneService.adicionarImagem(id, novaImagem);
         } catch (RuntimeException e) {
             try {
-                droneImageStorageService.deletar(novaImagem.getCaminho());
+                droneImageStorage.deletar(novaImagem.getCaminho());
             } catch (RuntimeException cleanupFailure) {
                 e.addSuppressed(cleanupFailure);
             }
@@ -112,12 +111,19 @@ public class DroneController {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response buscarArquivoImagem(@PathParam("imagemId") Long imagemId) {
         DroneImage imagem = droneService.buscarImagem(imagemId);
-        var arquivo = droneImageStorageService.buscar(imagem.getCaminho());
-        StreamingOutput conteudo = output -> Files.copy(arquivo, output);
-        return Response.ok(conteudo)
-                .type(droneImageStorageService.obterTipoConteudo(imagem.getCaminho()))
-                .header("Content-Disposition", "inline")
-                .build();
+        var conteudo = droneImageStorage.buscar(imagem.getCaminho());
+        StreamingOutput stream = output -> {
+            try (conteudo) {
+                conteudo.stream().transferTo(output);
+            }
+        };
+        Response.ResponseBuilder resposta = Response.ok(stream)
+                .type(conteudo.contentType())
+                .header("Content-Disposition", "inline");
+        if (conteudo.contentLength() >= 0) {
+            resposta.header("Content-Length", conteudo.contentLength());
+        }
+        return resposta.build();
     }
 
     @GET
