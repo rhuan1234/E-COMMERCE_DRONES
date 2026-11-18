@@ -16,7 +16,9 @@ import { CarrinhoService, ResultadoAdicaoCarrinho } from '../../../../core/servi
 import { DroneService } from '../../../../core/services/DroneService';
 import { EcommerceCatalogSearchService } from '../../../../core/services/EcommerceCatalogSearchService';
 import { FavoritoService } from '../../../../core/services/FavoritoService';
+import { DroneMarkComponent } from '../../../../shared/components/drone-mark/drone-mark';
 import { TituloPagina } from '../../../../shared/components/titulo-pagina/titulo-pagina';
+import { formatarAlcance, formatarNumero, formatarPreco } from '../../../../shared/utils/drone-formatters';
 
 interface FilterGroup {
   title: string;
@@ -25,14 +27,14 @@ interface FilterGroup {
 }
 
 @Component({
-  imports: [FormsModule, MatIconModule, NgTemplateOutlet, RouterLink, TituloPagina],
+  imports: [DroneMarkComponent, FormsModule, MatIconModule, NgTemplateOutlet, RouterLink, TituloPagina],
   selector: 'app-home',
   styleUrl: './home.css',
   templateUrl: './home.html',
 })
 export class Home implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
-  private readonly filtros$ = new Subject<DroneCatalogFilters>();
+  private readonly filtros$ = new Subject<{ filtros: DroneCatalogFilters; pagina: number }>();
   private filtrosAplicados: DroneCatalogFilters = {};
   private termoBusca = '';
   readonly dronesPorPagina = 12;
@@ -76,6 +78,10 @@ export class Home implements OnInit {
   readonly selectedFilters = new Set<string>();
   readonly selectedFeatures = new Set<DroneCatalogFeature>();
   readonly drones = signal<Drone[]>([]);
+  readonly paginaAtual = signal(0);
+  readonly totalPaginas = signal(0);
+  readonly totalItens = signal(0);
+  readonly filtrosPendentes = signal(false);
   readonly carregandoDrones = signal(true);
   readonly mensagemErroDrones = signal('');
   readonly imagensComFalha = new Set<number>();
@@ -86,10 +92,9 @@ export class Home implements OnInit {
   readonly mensagemSucessoFavoritos = signal('');
   precoMinimo: number | null = null;
   precoMaximo: number | null = null;
-  private readonly formatadorMoeda = new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  });
+  readonly formatarPreco = formatarPreco;
+  readonly formatarAlcance = formatarAlcance;
+  readonly formatarNumero = formatarNumero;
 
   /** Maiores valores do catálogo carregado: base das barras de autonomia e alcance. */
   readonly maximos = computed(() => {
@@ -107,10 +112,14 @@ export class Home implements OnInit {
           this.carregandoDrones.set(true);
           this.mensagemErroDrones.set('');
         }),
-        switchMap((filtros) =>
-          this.buscarCatalogo(filtros).pipe(
+        switchMap(({ filtros, pagina }) =>
+          this.buscarCatalogo(filtros, pagina).pipe(
             tap((response) => {
-              this.drones.set(response.items ?? []);
+              const items = response.items ?? [];
+              this.drones.set(items);
+              this.paginaAtual.set(response.page ?? pagina);
+              this.totalPaginas.set(response.totalPages ?? 0);
+              this.totalItens.set(response.totalItems ?? items.length);
               this.imagensComFalha.clear();
               this.carregandoDrones.set(false);
             }),
@@ -149,7 +158,7 @@ export class Home implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((termo) => {
         this.termoBusca = termo;
-        this.filtros$.next(this.filtrosAplicados);
+        this.filtros$.next({ filtros: this.filtrosAplicados, pagina: 0 });
       });
   }
 
@@ -261,9 +270,9 @@ export class Home implements OnInit {
     this.favoritosEmAtualizacao.set(ids);
   }
 
-  private buscarCatalogo(filtros: DroneCatalogFilters) {
+  private buscarCatalogo(filtros: DroneCatalogFilters, pagina: number = 0) {
     if (!this.termoBusca) {
-      return this.droneService.findAllEcommerce(0, this.dronesPorPagina, filtros);
+      return this.droneService.findAllEcommerce(pagina, this.dronesPorPagina, filtros);
     }
 
     return forkJoin([
@@ -282,6 +291,7 @@ export class Home implements OnInit {
         ).values()];
         return {
           ...porNome,
+          page: 0,
           items,
           totalItems: items.length,
           totalPages: Math.ceil(items.length / this.dronesPorPagina),
@@ -313,8 +323,21 @@ export class Home implements OnInit {
 
   aplicarFiltros(): void {
     this.filtrosAbertos.set(false);
+    this.filtrosPendentes.set(false);
     this.montarFiltros();
-    this.filtros$.next(this.filtrosAplicados);
+    this.filtros$.next({ filtros: this.filtrosAplicados, pagina: 0 });
+  }
+
+  irParaPagina(pagina: number): void {
+    if (
+      pagina < 0
+      || (this.totalPaginas() > 0 && pagina >= this.totalPaginas())
+      || pagina === this.paginaAtual()
+      || this.carregandoDrones()
+    ) {
+      return;
+    }
+    this.filtros$.next({ filtros: this.filtrosAplicados, pagina });
   }
 
   private montarFiltros(): void {
@@ -342,10 +365,6 @@ export class Home implements OnInit {
     this.imagensComFalha.add(droneId);
   }
 
-  formatarPreco(valor: number): string {
-    return this.formatadorMoeda.format(valor);
-  }
-
   get totalSelectedFilters(): number {
     const priceFilterSelected = this.precoMinimo !== null || this.precoMaximo !== null ? 1 : 0;
     return this.selectedFilters.size + this.selectedFeatures.size + priceFilterSelected;
@@ -355,8 +374,13 @@ export class Home implements OnInit {
     return this.totalSelectedFilters > 0;
   }
 
-  alternarFiltro(group: FilterGroup['key'], option: string): void {
+  marcarFiltrosAlterados(): void {
     this.tipoDeVooAtivo.set(null);
+    this.filtrosPendentes.set(true);
+  }
+
+  alternarFiltro(group: FilterGroup['key'], option: string): void {
+    this.marcarFiltrosAlterados();
     const key = this.chaveFiltro(group, option);
     if (this.selectedFilters.has(key)) {
       this.selectedFilters.delete(key);
@@ -375,7 +399,7 @@ export class Home implements OnInit {
   }
 
   aoAlterarRecurso(feature: DroneCatalogFeature, event: Event): void {
-    this.tipoDeVooAtivo.set(null);
+    this.marcarFiltrosAlterados();
     const checkbox = event.target;
     if (checkbox instanceof HTMLInputElement) {
       this.alternarRecurso(feature, checkbox.checked);
@@ -388,11 +412,13 @@ export class Home implements OnInit {
     this.selectedFeatures.clear();
     this.precoMinimo = null;
     this.precoMaximo = null;
+    this.filtrosPendentes.set(Object.keys(this.filtrosAplicados).length > 0);
   }
 
   aplicarTipoDeVoo(tipo: TipoDeVoo): void {
     this.selecionarTipoDeVoo(tipo);
-    this.filtros$.next(this.filtrosAplicados);
+    this.filtrosPendentes.set(false);
+    this.filtros$.next({ filtros: this.filtrosAplicados, pagina: 0 });
   }
 
   /** Marca os filtros do atalho e monta os parâmetros, sem disparar a busca. */
@@ -403,6 +429,7 @@ export class Home implements OnInit {
     }
     tipo.recursos.forEach((recurso) => this.selectedFeatures.add(recurso));
     this.montarFiltros();
+    this.filtrosPendentes.set(false);
     this.tipoDeVooAtivo.set(tipo.id);
   }
 
@@ -412,23 +439,4 @@ export class Home implements OnInit {
     }
     return Math.min(100, Math.round((valor / maximo) * 100));
   }
-
-  formatarAlcance(metros: number | undefined): string {
-    if (typeof metros !== 'number' || !Number.isFinite(metros)) {
-      return '—';
-    }
-    if (metros >= 1000) {
-      return `${this.formatarNumero(metros / 1000)} km`;
-    }
-    return `${this.formatarNumero(metros)} m`;
-  }
-
-  formatarNumero(valor: number | undefined): string {
-    if (typeof valor !== 'number' || !Number.isFinite(valor)) {
-      return '—';
-    }
-    return this.formatadorNumero.format(valor);
-  }
-
-  private readonly formatadorNumero = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 });
 }

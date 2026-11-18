@@ -30,10 +30,10 @@ export const TIPOS_DE_VOO: readonly TipoDeVoo[] = [
   {
     id: 'viagem',
     titulo: 'Viagem e vlog',
-    descricao: 'Câmera 4K e bateria para cobrir o passeio inteiro.',
-    resumo: '4K · 20 a 40 min',
+    descricao: 'Câmera nítida e bateria para cobrir o passeio inteiro.',
+    resumo: 'Full HD / 4K · 20 a 40 min',
     icone: 'landscape',
-    filtros: { camera: ['4K'], autonomia: ['DE_20_A_40_MIN'] },
+    filtros: { camera: ['4K', 'FULL_HD'], autonomia: ['DE_20_A_40_MIN'] },
     recursos: [],
   },
   {
@@ -49,9 +49,9 @@ export const TIPOS_DE_VOO: readonly TipoDeVoo[] = [
     id: 'longo-alcance',
     titulo: 'Longo alcance',
     descricao: 'Transmissão estável para inspeções e áreas abertas.',
-    resumo: 'Acima de 20 km',
+    resumo: 'Acima de 10 km',
     icone: 'settings_input_antenna',
-    filtros: { alcance: ['DE_20_A_50KM', 'ACIMA_50KM'] },
+    filtros: { alcance: ['DE_10_A_20KM', 'DE_20_A_50KM', 'ACIMA_50KM'] },
     recursos: [],
   },
 ];

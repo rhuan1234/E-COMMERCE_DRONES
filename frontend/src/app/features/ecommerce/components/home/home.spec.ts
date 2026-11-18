@@ -295,7 +295,7 @@ describe('Home', () => {
     expect(droneService.findAllEcommerce).toHaveBeenCalledWith(
       0,
       12,
-      expect.objectContaining({ alcance: ['DE_20_A_50KM', 'ACIMA_50KM'] }),
+      expect.objectContaining({ alcance: ['DE_10_A_20KM', 'DE_20_A_50KM', 'ACIMA_50KM'] }),
     );
     const ativo = atalhoFixture.nativeElement.querySelector('.flight-type[aria-pressed="true"]') as HTMLButtonElement;
     expect(ativo.textContent).toContain('Longo alcance');
