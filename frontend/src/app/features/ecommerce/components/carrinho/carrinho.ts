@@ -12,12 +12,14 @@ import { CheckoutApiService } from '../../../../core/services/CheckoutApiService
 import { DroneService } from '../../../../core/services/DroneService';
 import { EnderecoApiService } from '../../../../core/services/EnderecoApiService';
 import { PerfilService } from '../../../../core/services/PerfilService';
+import { DroneMarkComponent } from '../../../../shared/components/drone-mark/drone-mark';
 import { TituloPagina } from '../../../../shared/components/titulo-pagina/titulo-pagina';
+import { formatarPreco } from '../../../../shared/utils/drone-formatters';
 
 type EtapaCheckout = 'carrinho' | 'endereco' | 'pagamento' | 'concluido';
 
 @Component({
-  imports: [MatIconModule, RouterLink, TituloPagina],
+  imports: [DroneMarkComponent, MatIconModule, RouterLink, TituloPagina],
   selector: 'app-carrinho',
   standalone: true,
   templateUrl: './carrinho.html',
@@ -39,10 +41,7 @@ export class Carrinho implements OnInit {
   private readonly perfilService = inject(PerfilService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
-  private readonly moeda = new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  });
+  readonly formatarPreco = formatarPreco;
 
   ngOnInit(): void {
     this.route.queryParamMap.pipe(take(1)).subscribe((params) => {
@@ -50,10 +49,6 @@ export class Carrinho implements OnInit {
         this.iniciarCheckout();
       }
     });
-  }
-
-  formatarPreco(valor: number): string {
-    return this.moeda.format(valor);
   }
 
   obterUrlImagem(imagem: DroneImagem): string {

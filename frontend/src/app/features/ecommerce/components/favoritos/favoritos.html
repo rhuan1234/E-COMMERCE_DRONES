@@ -33,20 +33,17 @@
     <div class="favorites-grid">
       @for (drone of drones(); track drone.id) {
         <article class="favorite-card">
-          <div class="favorite-visual">
+          <a class="favorite-visual" [routerLink]="['/drone-info', drone.id]" [attr.aria-label]="'Ver detalhes de ' + drone.nome">
             @if (imagemPrincipal(drone); as imagem) {
               <img [src]="obterUrlImagem(imagem)" [alt]="drone.nome">
             } @else {
-              <svg class="favorite-placeholder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
-                <circle cx="5" cy="5" r="3"></circle><circle cx="19" cy="5" r="3"></circle>
-                <circle cx="5" cy="19" r="3"></circle><circle cx="19" cy="19" r="3"></circle>
-                <path d="M7.2 7.2l2.6 2.6M16.8 7.2l-2.6 2.6M7.2 16.8l2.6-2.6M16.8 16.8l-2.6-2.6"></path>
-                <rect x="9.5" y="9.5" width="5" height="5" rx="1.6" fill="currentColor" stroke="none"></rect>
-              </svg>
+              <app-drone-mark class="w-[52%]" variante="ilustracao"></app-drone-mark>
             }
-          </div>
+          </a>
           <div class="favorite-details">
-            <h2>{{ drone.nome }}</h2>
+            <h2>
+              <a class="favorite-link" [routerLink]="['/drone-info', drone.id]">{{ drone.nome }}</a>
+            </h2>
             @if (drone.modelo?.nome) {
               <p class="favorite-model">{{ drone.modelo.nome }}</p>
             }

@@ -31,12 +31,7 @@
             }
           } @else {
             <div class="image-fallback" role="img" [attr.aria-label]="'Nenhuma imagem disponível para ' + produto.nome">
-              <svg class="fallback-drone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
-                <circle cx="5" cy="5" r="3"></circle><circle cx="19" cy="5" r="3"></circle>
-                <circle cx="5" cy="19" r="3"></circle><circle cx="19" cy="19" r="3"></circle>
-                <path d="M7.2 7.2l2.6 2.6M16.8 7.2l-2.6 2.6M7.2 16.8l2.6-2.6M16.8 16.8l-2.6-2.6"></path>
-                <rect x="9.5" y="9.5" width="5" height="5" rx="1.6" fill="currentColor" stroke="none"></rect>
-              </svg>
+              <app-drone-mark class="w-[140px]" variante="ilustracao"></app-drone-mark>
               <span>Foto em breve</span>
             </div>
           }
@@ -79,7 +74,7 @@
         }
 
         <p class="product-price">{{ formatarPreco(produto.preco) }}</p>
-        <p class="installment-info">Consulte as opções de pagamento ao finalizar sua compra.</p>
+        <p class="installment-info">PIX ou cartão de crédito (simulado) ao finalizar sua compra.</p>
 
         <p class="stock-status" [class.out-of-stock]="produto.quantidadeDisponivel <= 0">
           <mat-icon>{{ produto.quantidadeDisponivel > 0 ? 'check_circle' : 'error' }}</mat-icon>
@@ -91,6 +86,18 @@
         </p>
 
         <div class="purchase-actions">
+          <button
+            class="cart-action"
+            type="button"
+            [disabled]="produto.quantidadeDisponivel <= 0"
+            (click)="adicionarAoCarrinho()">
+            @if (produto.quantidadeDisponivel > 0) {
+              <mat-icon>shopping_cart</mat-icon>
+              Adicionar ao carrinho
+            } @else {
+              Esgotado
+            }
+          </button>
           <button
             class="favorite-action"
             type="button"
@@ -105,14 +112,6 @@
             } @else {
               {{ favorito() ? 'Remover dos favoritos' : 'Adicionar aos favoritos' }}
             }
-          </button>
-          <button
-            class="cart-action"
-            type="button"
-            [disabled]="produto.quantidadeDisponivel <= 0"
-            (click)="adicionarAoCarrinho()">
-            <mat-icon>shopping_cart</mat-icon>
-            Adicionar ao carrinho
           </button>
         </div>
 
@@ -176,7 +175,6 @@
             <div><dt>Nome</dt><dd>{{ produto.nome }}</dd></div>
             <div><dt>Marca</dt><dd>{{ produto.marca?.nome || 'Não informado' }}</dd></div>
             <div><dt>Modelo</dt><dd>{{ produto.modelo?.nome || 'Não informado' }}</dd></div>
-            <div><dt>Produto ativo</dt><dd>{{ produto.ativa ? 'Sim' : 'Não' }}</dd></div>
           </dl>
         </article>
 
@@ -196,17 +194,17 @@
           <dl>
             <div><dt>Possui câmera</dt><dd>{{ produto.possuiCamera ? 'Sim' : 'Não' }}</dd></div>
             @if (produto.camera; as camera) {
-              <div><dt>Resolução</dt><dd>{{ camera.resolucao }}</dd></div>
-              <div><dt>Zoom</dt><dd>{{ camera.zoom }}x</dd></div>
+              <div><dt>Resolução</dt><dd>{{ formatarResolucao(camera.resolucao) }}</dd></div>
+              <div><dt>Zoom</dt><dd>{{ formatarZoom(camera.zoom) }}</dd></div>
               <div><dt>Estabilização</dt><dd>{{ camera.estabilizacao ? 'Sim' : 'Não' }}</dd></div>
-              <div><dt>Taxa de quadros</dt><dd>{{ camera.fps }}</dd></div>
+              <div><dt>Taxa de quadros</dt><dd>{{ formatarFps(camera.fps) }}</dd></div>
               <div><dt>Marca da câmera</dt><dd>{{ camera.marca?.nome || 'Não informado' }}</dd></div>
               <div><dt>Modelo da câmera</dt><dd>{{ camera.modelo?.nome || 'Não informado' }}</dd></div>
             } @else if (produto.possuiCamera) {
               <div><dt>Detalhes da câmera</dt><dd>Não informados</dd></div>
             }
             <div><dt>GPS</dt><dd>{{ produto.possuiGPS ? 'Possui' : 'Não possui' }}</dd></div>
-            <div><dt>Frequência Wi-Fi</dt><dd>{{ produto.frequenciaWifi || 'Não informado' }}</dd></div>
+            <div><dt>Frequência Wi-Fi</dt><dd>{{ formatarFrequencia(produto.frequenciaWifi) }}</dd></div>
           </dl>
         </article>
 
@@ -217,7 +215,7 @@
             <div><dt>Controle remoto</dt><dd>{{ produto.comControleRemoto ? 'Incluído' : 'Não incluído' }}</dd></div>
             <div><dt>Controle por aplicativo</dt><dd>{{ produto.controladoPorAplicativo ? 'Sim' : 'Não' }}</dd></div>
             <div><dt>Quantidade de baterias</dt><dd>{{ produto.quantidadeBaterias }}</dd></div>
-            <div><dt>Duração da bateria</dt><dd>{{ produto.duracaoBateria || 'Não informado' }}</dd></div>
+            <div><dt>Duração da bateria</dt><dd>{{ formatarDuracaoBateria(produto.duracaoBateria) }}</dd></div>
           </dl>
         </article>
       </div>

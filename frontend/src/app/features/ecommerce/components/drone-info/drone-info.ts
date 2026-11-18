@@ -15,9 +15,19 @@ import { CarrinhoService, ResultadoAdicaoCarrinho } from '../../../../core/servi
 import { ComparacaoService } from '../../../../core/services/ComparacaoService';
 import { DroneService } from '../../../../core/services/DroneService';
 import { FavoritoService } from '../../../../core/services/FavoritoService';
+import { DroneMarkComponent } from '../../../../shared/components/drone-mark/drone-mark';
+import {
+  formatarDuracaoBateria,
+  formatarFps,
+  formatarFrequencia,
+  formatarNumero,
+  formatarPreco,
+  formatarResolucao,
+  formatarZoom,
+} from '../../../../shared/utils/drone-formatters';
 
 @Component({
-  imports: [MatIconModule, ReactiveFormsModule, RouterLink],
+  imports: [DroneMarkComponent, MatIconModule, ReactiveFormsModule, RouterLink],
   selector: 'app-drone-info',
   styleUrl: './drone-info.css',
   templateUrl: './drone-info.html',
@@ -27,11 +37,13 @@ export class DroneInfo implements OnInit {
   readonly comparacao = inject(ComparacaoService);
   readonly carrinho = inject(CarrinhoService);
   readonly mensagemComparacao = signal('');
-  private readonly moeda = new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  });
-  private readonly numero = new Intl.NumberFormat('pt-BR');
+  readonly formatarPreco = formatarPreco;
+  readonly formatarNumero = formatarNumero;
+  readonly formatarResolucao = formatarResolucao;
+  readonly formatarFps = formatarFps;
+  readonly formatarFrequencia = formatarFrequencia;
+  readonly formatarDuracaoBateria = formatarDuracaoBateria;
+  readonly formatarZoom = formatarZoom;
   private readonly paginaFavoritos = 100;
   readonly tamanhoPaginaAvaliacoes = 5;
   readonly estrelas = [1, 2, 3, 4, 5];
@@ -139,14 +151,6 @@ export class DroneInfo implements OnInit {
 
   obterUrlImagem(imagem: DroneImagem): string {
     return this.droneService.obterUrlImagem(imagem);
-  }
-
-  formatarPreco(valor: number): string {
-    return this.moeda.format(valor);
-  }
-
-  formatarNumero(valor: number): string {
-    return this.numero.format(valor);
   }
 
   get usuarioAutenticado(): boolean {

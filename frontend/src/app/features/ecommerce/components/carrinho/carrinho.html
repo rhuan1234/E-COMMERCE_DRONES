@@ -162,7 +162,7 @@
               @if (item.imagem) {
                 <img class="size-full object-contain p-3" [src]="obterUrlImagem(item.imagem)" [alt]="item.nome">
               } @else {
-                <mat-icon class="!size-10 !text-4xl text-subtle" aria-hidden="true">flight</mat-icon>
+                <app-drone-mark class="w-16" variante="ilustracao"></app-drone-mark>
               }
             </div>
             <div class="flex min-w-0 flex-col">

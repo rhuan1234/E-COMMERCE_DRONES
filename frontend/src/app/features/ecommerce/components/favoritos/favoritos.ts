@@ -7,10 +7,12 @@ import { PagedResponse } from '../../../../core/models/PagedResponse';
 import { AuthService } from '../../../../core/services/auth/AuthService';
 import { DroneService } from '../../../../core/services/DroneService';
 import { FavoritoService } from '../../../../core/services/FavoritoService';
+import { DroneMarkComponent } from '../../../../shared/components/drone-mark/drone-mark';
 import { TituloPagina } from '../../../../shared/components/titulo-pagina/titulo-pagina';
+import { formatarPreco } from '../../../../shared/utils/drone-formatters';
 
 @Component({
-  imports: [MatIconModule, RouterLink, TituloPagina],
+  imports: [DroneMarkComponent, MatIconModule, RouterLink, TituloPagina],
   selector: 'app-favoritos',
   styleUrl: './favoritos.css',
   templateUrl: './favoritos.html',
@@ -18,10 +20,7 @@ import { TituloPagina } from '../../../../shared/components/titulo-pagina/titulo
 export class Favoritos implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly pageSize = 12;
-  private readonly formatadorMoeda = new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  });
+  readonly formatarPreco = formatarPreco;
   readonly drones = signal<Drone[]>([]);
   readonly pagina = signal(0);
   readonly totalPaginas = signal(0);
@@ -99,10 +98,6 @@ export class Favoritos implements OnInit {
 
   obterUrlImagem(imagem: DroneImagem): string {
     return this.droneService.obterUrlImagem(imagem);
-  }
-
-  formatarPreco(valor: number): string {
-    return this.formatadorMoeda.format(valor);
   }
 
   private atualizarEmRemocao(droneId: number, removendo: boolean): void {

@@ -6,7 +6,16 @@ import { Observable, catchError, forkJoin, map, of, switchMap } from 'rxjs';
 import { Drone, DroneImagem } from '../../../../core/models/drone/Drone';
 import { ComparacaoService } from '../../../../core/services/ComparacaoService';
 import { DroneService } from '../../../../core/services/DroneService';
+import { DroneMarkComponent } from '../../../../shared/components/drone-mark/drone-mark';
 import { TituloPagina } from '../../../../shared/components/titulo-pagina/titulo-pagina';
+import {
+  formatarAlcance,
+  formatarDuracaoBateria,
+  formatarFrequencia,
+  formatarNumero,
+  formatarPreco,
+  formatarResolucao,
+} from '../../../../shared/utils/drone-formatters';
 
 type Criterio = 'maior' | 'menor';
 
@@ -30,7 +39,7 @@ export interface GrupoComparacao {
 type Busca = { id: number; drone: Drone | null; falhou: boolean };
 
 @Component({
-  imports: [MatIconModule, RouterLink, TituloPagina],
+  imports: [DroneMarkComponent, MatIconModule, RouterLink, TituloPagina],
   selector: 'app-comparar',
   styleUrl: './comparar.css',
   templateUrl: './comparar.html',
@@ -72,20 +81,20 @@ export class Comparar implements OnInit {
       {
         titulo: 'Desempenho',
         linhas: [
-          this.numerica(drones, 'Autonomia de voo', (d) => d.tempoVooPratico, (n) => `${this.numero(n)} min`, 'maior', 'maior'),
-          this.numerica(drones, 'Alcance de transmissão', (d) => d.alcanceTransmissao, (n) => this.alcance(n), 'maior', 'maior'),
-          this.numerica(drones, 'Velocidade máxima', (d) => d.velocidadeMaxima, (n) => `${this.numero(n)} km/h`, 'maior', 'maior'),
-          this.numerica(drones, 'Altitude máxima', (d) => d.altitudeMaxima, (n) => `${this.numero(n)} m`, 'maior', 'maior'),
-          this.numerica(drones, 'Peso de decolagem', (d) => d.pesoDecolagem, (n) => `${this.numero(n)} g`, 'menor', 'mais leve'),
+          this.numerica(drones, 'Autonomia de voo', (d) => d.tempoVooPratico, (n) => `${formatarNumero(n)} min`, 'maior', 'maior'),
+          this.numerica(drones, 'Alcance de transmissão', (d) => d.alcanceTransmissao, (n) => formatarAlcance(n), 'maior', 'maior'),
+          this.numerica(drones, 'Velocidade máxima', (d) => d.velocidadeMaxima, (n) => `${formatarNumero(n)} km/h`, 'maior', 'maior'),
+          this.numerica(drones, 'Altitude máxima', (d) => d.altitudeMaxima, (n) => `${formatarNumero(n)} m`, 'maior', 'maior'),
+          this.numerica(drones, 'Peso de decolagem', (d) => d.pesoDecolagem, (n) => `${formatarNumero(n)} g`, 'menor', 'mais leve'),
         ],
       },
       {
         titulo: 'Câmera e conectividade',
         linhas: [
-          this.texto(drones, 'Câmera', (d) => (d.possuiCamera ? d.camera?.resolucao || 'Sim' : 'Não')),
+          this.texto(drones, 'Câmera', (d) => (d.possuiCamera ? (d.camera?.resolucao ? formatarResolucao(d.camera.resolucao) : 'Sim') : 'Não')),
           this.texto(drones, 'Estabilização', (d) => (d.camera ? sim(d.camera.estabilizacao) : '—')),
           this.texto(drones, 'GPS', (d) => sim(d.possuiGPS)),
-          this.texto(drones, 'Frequência Wi-Fi', (d) => d.frequenciaWifi || '—'),
+          this.texto(drones, 'Frequência Wi-Fi', (d) => (d.frequenciaWifi ? formatarFrequencia(d.frequenciaWifi) : '—')),
         ],
       },
       {
@@ -93,20 +102,19 @@ export class Comparar implements OnInit {
         linhas: [
           this.texto(drones, 'Controle remoto', (d) => (d.comControleRemoto ? 'Incluído' : 'Não incluído')),
           this.texto(drones, 'Controle por aplicativo', (d) => sim(d.controladoPorAplicativo)),
-          this.numerica(drones, 'Baterias inclusas', (d) => d.quantidadeBaterias, (n) => this.numero(n), 'maior', 'mais'),
-          this.texto(drones, 'Duração da bateria', (d) => d.duracaoBateria || '—'),
-          this.texto(drones, 'Motores', (d) => this.numero(d.quantidadeMotores)),
+          this.numerica(drones, 'Baterias inclusas', (d) => d.quantidadeBaterias, (n) => formatarNumero(n), 'maior', 'mais'),
+          this.texto(drones, 'Duração da bateria', (d) => (d.duracaoBateria ? formatarDuracaoBateria(d.duracaoBateria) : '—')),
+          this.texto(drones, 'Motores', (d) => formatarNumero(d.quantidadeMotores)),
         ],
       },
     ];
   });
 
   readonly linhaPreco = computed(() =>
-    this.numerica(this.drones(), 'Preço', (d) => d.preco, (n) => this.preco(n), 'menor', 'menor preço'),
+    this.numerica(this.drones(), 'Preço', (d) => d.preco, (n) => formatarPreco(n), 'menor', 'menor preço'),
   );
 
-  private readonly formatadorMoeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
-  private readonly formatadorNumero = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 });
+  readonly preco = formatarPreco;
 
   ngOnInit(): void {
     this.ids$
@@ -151,10 +159,6 @@ export class Comparar implements OnInit {
 
   marcarImagemComFalha(id: number): void {
     this.imagensComFalha.update((ids) => new Set(ids).add(id));
-  }
-
-  preco(valor: number): string {
-    return this.formatadorMoeda.format(valor);
   }
 
   private buscar(id: number): Observable<Busca> {
@@ -213,13 +217,5 @@ export class Comparar implements OnInit {
 
   private texto(drones: Drone[], rotulo: string, valor: (drone: Drone) => string): LinhaComparacao {
     return { rotulo, valores: drones.map((drone) => ({ texto: valor(drone), melhor: false })) };
-  }
-
-  private numero(valor: number | undefined): string {
-    return typeof valor === 'number' && Number.isFinite(valor) ? this.formatadorNumero.format(valor) : '—';
-  }
-
-  private alcance(metros: number): string {
-    return metros >= 1000 ? `${this.numero(metros / 1000)} km` : `${this.numero(metros)} m`;
   }
 }
