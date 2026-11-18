@@ -1,0 +1,11 @@
+services:
+  aws-emulator:
+    build:
+      context: ./docker/aws-emulator
+    container_name: drones-aws-emulator
+    ports:
+      - "127.0.0.1:9297:9297"
+    volumes:
+      - ./.aws-emulator:/root/.aws/emulator
+    mem_limit: 1g
+    restart: unless-stopped
