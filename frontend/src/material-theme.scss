@@ -1,8 +1,4 @@
 // Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 @use './theme-colors' as theme;
 
@@ -15,35 +11,40 @@ html {
         primary: theme.$primary-palette,
         tertiary: theme.$tertiary-palette,
       ),
-      typography: Roboto,
+      typography: #{"'Roboto Flex', 'Segoe UI', system-ui, sans-serif"},
       density: 0,
     )
   );
 
-  --mat-sys-surface: #f5f6f4;
-  --mat-sys-surface-dim: #e5e8e2;
+  --mat-sys-surface: #f7f9f6;
+  --mat-sys-surface-dim: #eef3ea;
   --mat-sys-surface-container: #ffffff;
   --mat-sys-surface-container-low: #fafbf9;
-  --mat-sys-surface-container-high: #eef1eb;
-  --mat-sys-surface-container-highest: #e6e9e2;
-  --mat-sys-outline: #747b70;
-  --mat-sys-outline-variant: #d4d9d0;
-  --mat-sys-on-surface: #1b1f18;
-  --mat-sys-on-surface-variant: #454b42;
+  --mat-sys-surface-container-high: #eef3ea;
+  --mat-sys-surface-container-highest: #e3e9e3;
+  --mat-sys-outline: #5e6b62;
+  --mat-sys-outline-variant: #e3e9e3;
+  --mat-sys-on-surface: #17211b;
+  --mat-sys-on-surface-variant: #4a574e;
+  --mat-sys-primary: #3f6a1e;
+  --mat-sys-on-primary: #ffffff;
+  --mat-sys-primary-container: #eef5e6;
+  --mat-sys-on-primary-container: #2e5114;
+  --mat-sys-error: #9b2c20;
+  --mat-sys-error-container: #fdf0ee;
+  --mat-sys-on-error-container: #731d13;
 }
 
 body {
   color-scheme: light;
-
-  background-color: var(--mat-sys-surface, #f5f6f4);
-  color: var(--mat-sys-on-surface, #1b1f18);
-  font: var(--mat-sys-body-medium);
-
+  background-color: var(--color-paper, #f7f9f6);
+  color: var(--color-ink, #17211b);
+  font-family: var(--font-body);
   margin: 0;
   height: 100%;
 }
 
-// Diálogos (painel e loja): cantos e sombra da identidade Skyline.
+// Diálogos (painel e loja): cantos da identidade Skyline.
 html {
   @include mat.dialog-overrides(
     (
@@ -61,7 +62,7 @@ html {
 // com os tokens da loja (ink #17211b, leaf #3f6a1e, lime #8cc63f, line #e3e9e3, paper #f7f9f6).
 .admin-shell,
 .storefront {
-  $fonte-painel: #{"'Roboto Flex', Roboto, 'Segoe UI', system-ui, sans-serif"};
+  $fonte-painel: #{"'Roboto Flex', 'Segoe UI', system-ui, sans-serif"};
 
   @include mat.table-overrides(
     (
@@ -102,11 +103,18 @@ html {
       outlined-focus-label-text-color: #3f6a1e,
       outlined-caret-color: #3f6a1e,
       outlined-label-text-color: #4a574e,
+      outlined-input-text-placeholder-color: #627067,
       leading-icon-color: #5e6b62,
       trailing-icon-color: #5e6b62,
       focus-select-arrow-color: #3f6a1e,
     )
   );
+
+  input.mat-mdc-input-element::placeholder,
+  textarea.mat-mdc-input-element::placeholder {
+    color: #627067;
+    opacity: 1;
+  }
 
   @include mat.button-overrides(
     (
@@ -225,7 +233,7 @@ html {
   }
 
   tr.mat-mdc-row:focus-visible {
-    outline: 2px solid #8cc63f;
+    outline: 2px solid #3f6a1e;
     outline-offset: -2px;
   }
 

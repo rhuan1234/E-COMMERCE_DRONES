@@ -5,8 +5,8 @@
 @import './app/shared/fx/sites-incriveis.css';
 
 /*
- * Tokens da identidade Skyline Drones (refinamento do visual original).
- * Geram utilitários Tailwind: bg-ink, text-leaf, border-line, font-display etc.
+ * Tokens da identidade Skyline Drones.
+ * Geram utilitários Tailwind: bg-ink, text-leaf, border-line, text-placeholder, font-display etc.
  */
 @theme {
   --color-ink: #17211b;
@@ -19,6 +19,7 @@
   --color-line-strong: #c9d3c8;
   --color-muted: #4a574e;
   --color-subtle: #5e6b62;
+  --color-placeholder: #627067;
   --color-lime: #8cc63f;
   --color-lime-hover: #9fd650;
   --color-lime-glow: #b7ee75;
@@ -30,8 +31,8 @@
   --color-danger: #9b2c20;
   --color-danger-soft: #fdf0ee;
 
-  --font-display: 'Archivo', 'Roboto Flex', Roboto, system-ui, sans-serif;
-  --font-body: 'Roboto Flex', Roboto, 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Archivo', 'Roboto Flex', system-ui, sans-serif;
+  --font-body: 'Roboto Flex', 'Segoe UI', system-ui, sans-serif;
   --font-data: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
 }
 
@@ -54,15 +55,87 @@
   color-scheme: light;
 }
 
-html, body {
-  background-color: var(--mat-sys-surface, #f5f6f4);
-  color: var(--mat-sys-on-surface, #1b1f18);
-  font-family: Roboto, 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+html,
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  caret-color: var(--color-leaf);
   min-height: 100%;
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-strong) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background-color: var(--color-line-strong);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-subtle);
+}
+
+.admin-sidenav {
+  scrollbar-color: rgb(255 255 255 / 0.22) transparent;
+}
+
+::selection {
+  background-color: var(--color-lime-glow);
+  color: var(--color-ink);
+}
+
+::placeholder {
+  color: var(--color-placeholder);
+  opacity: 1;
+}
+
+.font-data {
+  font-variant-numeric: tabular-nums;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: from-font;
+}
+
+:focus-visible {
+  outline: 2.5px solid var(--color-leaf);
+  outline-offset: 2px;
+}
+
+.store-footer :focus-visible,
+.admin-sidenav :focus-visible,
+.cena-pico :focus-visible,
+.cena-ficha :focus-visible,
+.cena-pouso :focus-visible,
+.compare-tray :focus-visible,
+.auth-paisagem :focus-visible {
+  outline-color: var(--color-lime-glow);
+}
+
+.search-form input:focus-visible,
+.price-input input:focus-visible {
+  outline: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
