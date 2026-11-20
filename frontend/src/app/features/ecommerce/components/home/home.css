@@ -26,3 +26,18 @@ input:focus-visible {
 .price-input input:focus-visible {
   outline: none;
 }
+
+.telemetry-bar {
+  transition: width 600ms var(--ease-editorial);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drone-card:hover {
+    transform: none;
+  }
+
+  .product-image,
+  .telemetry-bar {
+    transition: none;
+  }
+}

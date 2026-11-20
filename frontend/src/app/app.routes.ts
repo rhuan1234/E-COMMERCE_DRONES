@@ -1,77 +1,88 @@
 import { Routes } from '@angular/router';
 import { adminGuard, authGuard } from './core/services/auth/AuthGuard';
-import { Login } from './features/auth/login/login';
-import { Register } from './features/auth/register/register';
-import { CameraList } from './features/admin/components/camera-list/camera-list';
-import { FornecedorList } from './features/admin/components/fornecedor-list/fornecedor-list';
-import { FornecedorForm } from './features/admin/components/fornecedor-form/fornecedor-form';
 import { fornecedorResolver } from './core/resolvers/FornecedorResolver';
-import { DroneForm } from './features/admin/components/drone-form/drone-form';
-import { DroneList } from './features/admin/components/drone-list/drone-list';
 import { droneResolver } from './core/resolvers/DroneResolver';
-import { AdminLayoutComponent } from './features/admin/layout/admin-layout/admin-layout';
-import { AdmnistradorList } from './features/admin/components/admnistrador-list/admnistrador-list';
-import { AdministradorForm } from './features/admin/components/administrador-form/administrador-form';
-import { PromocaoList } from './features/admin/components/promocao-list/promocao-list';
-import { PromocaoForm } from './features/admin/components/promocao-form/promocao-form';
-import { PerfilPage } from './features/admin/components/perfil-page/perfil-page';
-import { EnderecosPage } from './features/admin/components/enderecos-page/enderecos-page';
-import { AlterarSenhaPage } from './features/admin/components/alterar-senha-page/alterar-senha-page';
-import { CameraForm } from './features/admin/components/camera-form/camera-form';
 import { cameraResolver } from './core/resolvers/CameraResolver';
-import { EcommerceLayout } from './features/ecommerce/layout/ecommerce-layout/ecommerce-layout';
-import { Home } from './features/ecommerce/components/home/home';
-import { Favoritos } from './features/ecommerce/components/favoritos/favoritos';
-import { DroneInfo } from './features/ecommerce/components/drone-info/drone-info';
-import { Comparar } from './features/ecommerce/components/comparar/comparar';
-import { MinhaConta } from './features/ecommerce/components/minha-conta/minha-conta';
-import { Carrinho } from './features/ecommerce/components/carrinho/carrinho';
-import { ModeloList } from './features/admin/components/modelo-list/modelo-list';
-import { ModeloForm } from './features/admin/components/modelo-form/modelo-form';
-import { MarcaList } from './features/admin/components/marca-list/marca-list';
-import { MarcaForm } from './features/admin/components/marca-form/marca-form';
 import { modeloResolver } from './core/resolvers/ModeloResolver';
 import { marcaResolver } from './core/resolvers/MarcaResolver';
-
+import { EcommerceLayout } from './features/ecommerce/layout/ecommerce-layout/ecommerce-layout';
+import { Home } from './features/ecommerce/components/home/home';
 
 export const routes: Routes = [
-  // Rotas auth
-  { path: 'login', component: Login, title: 'Login' },
-  { path: 'register', component: Register, title: 'Cadastro' },
+  // Rotas auth (sob demanda)
+  {
+    path: 'login',
+    loadComponent: () => import('./features/auth/login/login').then((m) => m.Login),
+    title: 'Login',
+  },
+  {
+    path: 'register',
+    loadComponent: () => import('./features/auth/register/register').then((m) => m.Register),
+    title: 'Cadastro',
+  },
 
   // Loja (vitrine e área do cliente)
   {
     path: '',
     component: EcommerceLayout,
     children: [
-        // Página de apresentação (raiz do sistema)
-        {
-          path: '',
-          pathMatch: 'full',
-          // Carregada sob demanda: a apresentação animada não pesa no bundle inicial da loja
-          loadComponent: () => import('./features/ecommerce/components/landing/landing').then((m) => m.Landing),
-          title: 'Skyline Drones',
-        },
-        // Catálogo da loja
-        {path: 'home', component: Home, title: 'Catálogo de drones'},
-        {path: 'comparar', component: Comparar, title: 'Comparar drones'},
-        {path: 'favoritos', component: Favoritos, title: 'Meus Favoritos'},
-        {path: 'carrinho', component: Carrinho, title: 'Carrinho de compras'},
-        {path: 'drone-info/:id', component: DroneInfo, title: 'Detalhes do Drone'},
+      // Página de apresentação (raiz do sistema)
+      {
+        path: '',
+        pathMatch: 'full',
+        // Carregada sob demanda: a apresentação animada não pesa no bundle inicial da loja
+        loadComponent: () => import('./features/ecommerce/components/landing/landing').then((m) => m.Landing),
+        title: 'Skyline Drones',
+      },
+      // Catálogo da loja
+      { path: 'home', component: Home, title: 'Catálogo de drones' },
+      {
+        path: 'comparar',
+        loadComponent: () => import('./features/ecommerce/components/comparar/comparar').then((m) => m.Comparar),
+        title: 'Comparar drones',
+      },
+      {
+        path: 'favoritos',
+        loadComponent: () => import('./features/ecommerce/components/favoritos/favoritos').then((m) => m.Favoritos),
+        title: 'Meus Favoritos',
+      },
+      {
+        path: 'carrinho',
+        loadComponent: () => import('./features/ecommerce/components/carrinho/carrinho').then((m) => m.Carrinho),
+        title: 'Carrinho de compras',
+      },
+      {
+        path: 'drone-info/:id',
+        loadComponent: () => import('./features/ecommerce/components/drone-info/drone-info').then((m) => m.DroneInfo),
+        title: 'Detalhes do Drone',
+      },
 
-        // Minha conta: dados pessoais, endereços e senha de qualquer usuário autenticado
-        {
-          path: 'minha-conta',
-          component: MinhaConta,
-          canActivate: [authGuard],
-          children: [
-            {path: '', redirectTo: 'dados', pathMatch: 'full'},
-            {path: 'dados', component: PerfilPage, title: 'Meus dados'},
-            {path: 'enderecos', component: EnderecosPage, title: 'Meus endereços'},
-            {path: 'seguranca', component: AlterarSenhaPage, title: 'Segurança da conta'},
-          ]
-        },
-    ]
+      // Minha conta: dados pessoais, endereços e senha de qualquer usuário autenticado
+      {
+        path: 'minha-conta',
+        loadComponent: () => import('./features/ecommerce/components/minha-conta/minha-conta').then((m) => m.MinhaConta),
+        canActivate: [authGuard],
+        children: [
+          { path: '', redirectTo: 'dados', pathMatch: 'full' },
+          {
+            path: 'dados',
+            loadComponent: () => import('./features/admin/components/perfil-page/perfil-page').then((m) => m.PerfilPage),
+            title: 'Meus dados',
+          },
+          {
+            path: 'enderecos',
+            loadComponent: () => import('./features/admin/components/enderecos-page/enderecos-page').then((m) => m.EnderecosPage),
+            title: 'Meus endereços',
+          },
+          {
+            path: 'seguranca',
+            loadComponent: () =>
+              import('./features/admin/components/alterar-senha-page/alterar-senha-page').then((m) => m.AlterarSenhaPage),
+            title: 'Segurança da conta',
+          },
+        ],
+      },
+    ],
   },
 
   // Endereços antigos da área do usuário
@@ -79,58 +90,177 @@ export const routes: Routes = [
   { path: 'perfil', redirectTo: 'minha-conta/dados' },
   { path: 'enderecos', redirectTo: 'minha-conta/enderecos' },
   // Telas administrativas que antes ficavam na raiz
-  ...['drones', 'marcas', 'modelos', 'cameras', 'fornecedores', 'administradores', 'promocoes']
-    .map((secao) => ({ path: secao, redirectTo: `admin/${secao}` })),
+  ...['drones', 'marcas', 'modelos', 'cameras', 'fornecedores', 'administradores', 'promocoes'].map((secao) => ({
+    path: secao,
+    redirectTo: `admin/${secao}`,
+  })),
 
-  // Painel administrativo (somente perfil ADMIN)
+  // Painel administrativo (somente perfil ADMIN, carregado sob demanda para não pesar na loja)
   {
     path: 'admin',
-    component: AdminLayoutComponent,
+    loadComponent: () =>
+      import('./features/admin/layout/admin-layout/admin-layout').then((m) => m.AdminLayoutComponent),
     canActivate: [adminGuard],
     children: [
       { path: '', redirectTo: 'drones', pathMatch: 'full' },
 
       // Drones
-      { path: 'drones', component: DroneList, title: 'Drones' },
-      { path: 'drones/new', component: DroneForm, title: 'Novo Drone' },
-      { path: 'drones/:id/edit', component: DroneForm, title: 'Editar Drone', resolve: { drone: droneResolver } },
+      {
+        path: 'drones',
+        loadComponent: () => import('./features/admin/components/drone-list/drone-list').then((m) => m.DroneList),
+        title: 'Drones',
+      },
+      {
+        path: 'drones/new',
+        loadComponent: () => import('./features/admin/components/drone-form/drone-form').then((m) => m.DroneForm),
+        title: 'Novo Drone',
+      },
+      {
+        path: 'drones/:id/edit',
+        loadComponent: () => import('./features/admin/components/drone-form/drone-form').then((m) => m.DroneForm),
+        title: 'Editar Drone',
+        resolve: { drone: droneResolver },
+      },
 
       // Marcas
-      { path: 'marcas', component: MarcaList, title: 'Lista de Marcas' },
-      { path: 'marcas/new', component: MarcaForm, title: 'Nova Marca' },
-      { path: 'marcas/:id/edit', component: MarcaForm, title: 'Editar Marca', resolve: { marca: marcaResolver } },
-      { path: 'marcas/filtro/nome/:nome', component: MarcaList, title: 'Marcas por nome' },
+      {
+        path: 'marcas',
+        loadComponent: () => import('./features/admin/components/marca-list/marca-list').then((m) => m.MarcaList),
+        title: 'Lista de Marcas',
+      },
+      {
+        path: 'marcas/new',
+        loadComponent: () => import('./features/admin/components/marca-form/marca-form').then((m) => m.MarcaForm),
+        title: 'Nova Marca',
+      },
+      {
+        path: 'marcas/:id/edit',
+        loadComponent: () => import('./features/admin/components/marca-form/marca-form').then((m) => m.MarcaForm),
+        title: 'Editar Marca',
+        resolve: { marca: marcaResolver },
+      },
+      {
+        path: 'marcas/filtro/nome/:nome',
+        loadComponent: () => import('./features/admin/components/marca-list/marca-list').then((m) => m.MarcaList),
+        title: 'Marcas por nome',
+      },
 
       // Modelos
-      { path: 'modelos', component: ModeloList, title: 'Lista de Modelos' },
-      { path: 'modelos/new', component: ModeloForm, title: 'Novo Modelo' },
-      { path: 'modelos/:id/edit', component: ModeloForm, title: 'Editar Modelo', resolve: { modelo: modeloResolver } },
-      { path: 'modelos/filtro/nome/:nome', component: ModeloList, title: 'Modelos por nome' },
+      {
+        path: 'modelos',
+        loadComponent: () => import('./features/admin/components/modelo-list/modelo-list').then((m) => m.ModeloList),
+        title: 'Lista de Modelos',
+      },
+      {
+        path: 'modelos/new',
+        loadComponent: () => import('./features/admin/components/modelo-form/modelo-form').then((m) => m.ModeloForm),
+        title: 'Novo Modelo',
+      },
+      {
+        path: 'modelos/:id/edit',
+        loadComponent: () => import('./features/admin/components/modelo-form/modelo-form').then((m) => m.ModeloForm),
+        title: 'Editar Modelo',
+        resolve: { modelo: modeloResolver },
+      },
+      {
+        path: 'modelos/filtro/nome/:nome',
+        loadComponent: () => import('./features/admin/components/modelo-list/modelo-list').then((m) => m.ModeloList),
+        title: 'Modelos por nome',
+      },
 
       // Câmeras
-      { path: 'cameras', component: CameraList, title: 'Lista de Câmeras' },
-      { path: 'cameras/new', component: CameraForm, title: 'Nova Câmera' },
-      { path: 'cameras/:id/edit', component: CameraForm, title: 'Editar Câmera', resolve: { camera: cameraResolver } },
-      { path: 'cameras/filtro/modelo/:modelo', component: CameraList, title: 'Câmeras por modelo' },
+      {
+        path: 'cameras',
+        loadComponent: () => import('./features/admin/components/camera-list/camera-list').then((m) => m.CameraList),
+        title: 'Lista de Câmeras',
+      },
+      {
+        path: 'cameras/new',
+        loadComponent: () => import('./features/admin/components/camera-form/camera-form').then((m) => m.CameraForm),
+        title: 'Nova Câmera',
+      },
+      {
+        path: 'cameras/:id/edit',
+        loadComponent: () => import('./features/admin/components/camera-form/camera-form').then((m) => m.CameraForm),
+        title: 'Editar Câmera',
+        resolve: { camera: cameraResolver },
+      },
+      {
+        path: 'cameras/filtro/modelo/:modelo',
+        loadComponent: () => import('./features/admin/components/camera-list/camera-list').then((m) => m.CameraList),
+        title: 'Câmeras por modelo',
+      },
 
       // Fornecedores
-      { path: 'fornecedores', component: FornecedorList, title: 'Lista de Fornecedores' },
-      { path: 'fornecedores/filtro/nome/:nome', component: FornecedorList, title: 'Fornecedores por nome' },
-      { path: 'fornecedores/new', component: FornecedorForm, title: 'Novo Fornecedor' },
-      { path: 'fornecedores/:id/edit', component: FornecedorForm, title: 'Editar Fornecedor', resolve: { fornecedor: fornecedorResolver } },
+      {
+        path: 'fornecedores',
+        loadComponent: () =>
+          import('./features/admin/components/fornecedor-list/fornecedor-list').then((m) => m.FornecedorList),
+        title: 'Lista de Fornecedores',
+      },
+      {
+        path: 'fornecedores/filtro/nome/:nome',
+        loadComponent: () =>
+          import('./features/admin/components/fornecedor-list/fornecedor-list').then((m) => m.FornecedorList),
+        title: 'Fornecedores por nome',
+      },
+      {
+        path: 'fornecedores/new',
+        loadComponent: () =>
+          import('./features/admin/components/fornecedor-form/fornecedor-form').then((m) => m.FornecedorForm),
+        title: 'Novo Fornecedor',
+      },
+      {
+        path: 'fornecedores/:id/edit',
+        loadComponent: () =>
+          import('./features/admin/components/fornecedor-form/fornecedor-form').then((m) => m.FornecedorForm),
+        title: 'Editar Fornecedor',
+        resolve: { fornecedor: fornecedorResolver },
+      },
 
-      {path: 'administradores', component: AdmnistradorList, title: 'Lista de Administradores'},
-      {path: 'administradores/filtro/login/:login', component: AdmnistradorList, title: 'Administradores por login'},
-      {path: 'administradores/new', component: AdministradorForm, title: 'Novo Administrador'},
+      // Administradores
+      {
+        path: 'administradores',
+        loadComponent: () =>
+          import('./features/admin/components/admnistrador-list/admnistrador-list').then((m) => m.AdmnistradorList),
+        title: 'Lista de Administradores',
+      },
+      {
+        path: 'administradores/filtro/login/:login',
+        loadComponent: () =>
+          import('./features/admin/components/admnistrador-list/admnistrador-list').then((m) => m.AdmnistradorList),
+        title: 'Administradores por login',
+      },
+      {
+        path: 'administradores/new',
+        loadComponent: () =>
+          import('./features/admin/components/administrador-form/administrador-form').then((m) => m.AdministradorForm),
+        title: 'Novo Administrador',
+      },
 
       // Promoções
-      { path: 'promocoes', component: PromocaoList, title: 'Lista de Promoções' },
-      { path: 'promocoes/filtro/nome/:nome', component: PromocaoList, title: 'Promoções por nome' },
-      { path: 'promocoes/new', component: PromocaoForm, title: 'Nova Promoção' },
-      { path: 'promocoes/:id/edit', component: PromocaoForm, title: 'Editar Promoção' },
-
-    ]
+      {
+        path: 'promocoes',
+        loadComponent: () => import('./features/admin/components/promocao-list/promocao-list').then((m) => m.PromocaoList),
+        title: 'Lista de Promoções',
+      },
+      {
+        path: 'promocoes/filtro/nome/:nome',
+        loadComponent: () => import('./features/admin/components/promocao-list/promocao-list').then((m) => m.PromocaoList),
+        title: 'Promoções por nome',
+      },
+      {
+        path: 'promocoes/new',
+        loadComponent: () => import('./features/admin/components/promocao-form/promocao-form').then((m) => m.PromocaoForm),
+        title: 'Nova Promoção',
+      },
+      {
+        path: 'promocoes/:id/edit',
+        loadComponent: () => import('./features/admin/components/promocao-form/promocao-form').then((m) => m.PromocaoForm),
+        title: 'Editar Promoção',
+      },
+    ],
   },
   // Fallback
-  { path: '**', redirectTo: 'home' }
+  { path: '**', redirectTo: 'home' },
 ];

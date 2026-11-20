@@ -16,10 +16,13 @@
   } @else if (drone(); as produto) {
     <div class="product-page">
       <section class="product-gallery" aria-label="Imagens do produto">
-        <div class="main-image">
+        <div class="main-image" appTilt [tiltMaxX]="3.5" [tiltMaxY]="5">
+          <span class="tilt-glare" aria-hidden="true"></span>
           @if (imagemPrincipal(); as imagem) {
             @if (!imagensComFalha().has(imagem.id)) {
               <img
+                fetchpriority="high"
+                decoding="async"
                 [src]="obterUrlImagem(imagem)"
                 [alt]="produto.nome"
                 (error)="marcarImagemComFalha(imagem.id)">
@@ -89,6 +92,8 @@
           <button
             class="cart-action"
             type="button"
+            appMagnetic
+            [magneticMax]="4"
             [disabled]="produto.quantidadeDisponivel <= 0"
             (click)="adicionarAoCarrinho()">
             @if (produto.quantidadeDisponivel > 0) {
@@ -104,7 +109,7 @@
             [disabled]="!favoritoPodeSerExibido() || atualizandoFavorito() || !!erroFavorito()"
             [attr.aria-pressed]="favorito()"
             (click)="alternarFavorito()">
-            <mat-icon>{{ favorito() ? 'favorite' : 'favorite_border' }}</mat-icon>
+            <mat-icon [class.pop-confirm]="favorito()">{{ favorito() ? 'favorite' : 'favorite_border' }}</mat-icon>
             @if (carregandoFavorito()) {
               Carregando favoritos...
             } @else if (atualizandoFavorito()) {

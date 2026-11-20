@@ -123,4 +123,20 @@ describe('Landing', () => {
     expect(depoimento.querySelector('[data-fx="digitar"]')?.textContent).toContain('coisa de profissional');
     expect(fixture.nativeElement.querySelector('.altimetro')?.getAttribute('aria-hidden')).toBe('true');
   });
+
+  it('renders the 3D animated drone rig with 4 independent rotors in both ground and takeoff scenes', async () => {
+    droneService.findAllEcommerce.mockReturnValue(of({ items: [], totalPages: 0 }));
+    const fixture = await criar();
+
+    const droneHero = fixture.nativeElement.querySelector('.cena-chao app-drone-3d-rig img.rig-corpo') as HTMLImageElement | null;
+    const droneVoo = fixture.nativeElement.querySelector('.cena-pico app-drone-3d-rig img.rig-corpo') as HTMLImageElement | null;
+    const rotoresHero = fixture.nativeElement.querySelectorAll('.cena-chao .rig-rotor-pa');
+    const rotoresVoo = fixture.nativeElement.querySelectorAll('.cena-pico .rig-rotor-pa');
+
+    expect(droneHero?.getAttribute('src')).toBe('/landing/drone-3d-body.webp');
+    expect(droneHero?.getAttribute('fetchpriority')).toBe('high');
+    expect(droneVoo?.getAttribute('src')).toBe('/landing/drone-3d-body.webp');
+    expect(rotoresHero).toHaveLength(4);
+    expect(rotoresVoo).toHaveLength(4);
+  });
 });

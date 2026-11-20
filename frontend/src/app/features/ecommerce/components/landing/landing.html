@@ -3,13 +3,13 @@
   <!-- Cena 1 · Chão: a vontade, ainda parada -->
   <section class="cena-chao mx-auto grid max-w-[1240px] items-center gap-10 px-5 py-12 md:px-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16 lg:py-16" data-fx-fundo="#f7f9f6" data-fx-tinta="#17211b" aria-labelledby="hero-title">
     <div class="flex flex-col gap-7">
-      <p class="m-0 font-data text-[13px] font-semibold uppercase tracking-[0.12em] text-leaf">Skyline Drones · primeiro voo</p>
+      <p class="hero-kicker m-0 font-data text-[13px] font-semibold uppercase tracking-[0.12em] text-leaf">Skyline Drones · primeiro voo</p>
       <h1 id="hero-title" class="m-0 font-display font-wide text-[48px] font-extrabold leading-[0.95] tracking-[-1.5px] sm:text-[64px] xl:text-[84px]">Você ainda não voou.</h1>
-      <p class="m-0 max-w-[30rem] text-lg leading-relaxed text-muted sm:text-[19px]">
+      <p class="hero-lead m-0 max-w-[30rem] text-lg leading-relaxed text-muted sm:text-[19px]">
         Escolha o seu primeiro drone pela ficha técnica, guarde os favoritos e pague com PIX ou cartão. O resto é céu.
       </p>
-      <div class="flex flex-wrap items-center gap-x-7 gap-y-4">
-        <a class="landing-cta inline-flex h-[54px] items-center gap-2.5 rounded-[14px] bg-ink px-6 text-base font-bold text-white no-underline transition-colors hover:bg-ink-soft" routerLink="/home">
+      <div class="hero-actions flex flex-wrap items-center gap-x-7 gap-y-4">
+        <a class="landing-cta inline-flex h-[54px] items-center gap-2.5 rounded-[14px] bg-ink px-6 text-base font-bold text-white no-underline shadow-[var(--shadow-card)] transition-[background-color,box-shadow] duration-200 hover:bg-ink-soft hover:shadow-[var(--shadow-lift)]" routerLink="/home" appMagnetic>
           Ver catálogo
           <mat-icon aria-hidden="true">arrow_forward</mat-icon>
         </a>
@@ -21,19 +21,33 @@
       </div>
     </div>
 
-    <!-- O drone espera no chão: a mesma paisagem que a decolagem vai deixar para trás -->
-    <figure class="chao-moldura relative m-0 aspect-[4/5] max-h-[calc(100dvh-var(--topo,80px)-96px)] w-full overflow-hidden rounded-[28px] bg-[#dfe9d6] lg:justify-self-end">
+    <!-- O drone 3D flutua baixo no chão: a mesma paisagem que a decolagem vai deixar para trás -->
+    <figure class="chao-moldura relative m-0 aspect-[4/5] max-h-[calc(100dvh-var(--topo,80px)-96px)] w-full overflow-hidden rounded-[28px] bg-[#dfe9d6] shadow-[var(--shadow-lift)] lg:justify-self-end">
       <ng-container [ngTemplateOutlet]="paisagemChao"></ng-container>
-      <img class="foto-chao absolute inset-0 size-full object-cover" src="/landing/chao.webp" alt="" (error)="esconderFoto($event)">
-      <div class="absolute inset-x-0 bottom-[9%] flex flex-col items-center" data-fx-mouse="8">
-        <div class="w-[46%]"><ng-container [ngTemplateOutlet]="droneSvg"></ng-container></div>
-        <span class="mt-1 h-3 w-[34%] rounded-[50%] bg-ink/25 blur-[6px]" aria-hidden="true"></span>
+      <img
+        class="foto-chao hero-chao-foto absolute inset-0 size-full object-cover"
+        src="/landing/chao.webp"
+        alt=""
+        fetchpriority="high"
+        decoding="async"
+        (error)="esconderFoto($event)">
+      <div class="hero-drone-wrap absolute inset-x-0 bottom-[8%] flex flex-col items-center" data-fx-mouse="10">
+        <app-drone-3d-rig
+          class="drone-hover-idle w-[88%] max-w-[440px]"
+          modo="pronto"
+          alt="Drone 3D Skyline com hélices em marcha lenta, pronto para decolar"
+          [prioridadeAlta]="true">
+        </app-drone-3d-rig>
+        <span class="drone-chao-sombra mt-2 h-3.5 w-[44%] rounded-[50%] bg-ink/30 blur-[8px]" aria-hidden="true"></span>
       </div>
-      <figcaption class="absolute left-4 top-4 rounded-lg bg-white/85 px-2.5 py-1.5 font-data text-xs font-medium tracking-wide text-ink">ALT 000 m · pronto</figcaption>
+      <figcaption class="absolute left-4 top-4 inline-flex items-center gap-2 rounded-lg bg-white/88 px-3 py-1.5 font-data text-xs font-medium tracking-wide text-ink shadow-sm backdrop-blur-sm">
+        <span class="size-2 rounded-full bg-lime" aria-hidden="true"></span>
+        ALT 000 m · pronto
+      </figcaption>
     </figure>
   </section>
 
-  <!-- Cena 2 · Decolagem (o pico): o drone sobe, o chão vira mapa -->
+  <!-- Cena 2 · Decolagem (o pico): o drone 3D sobe, inclina conforme a velocidade e o chão vira mapa -->
   <section #pico class="cena-pico" data-fx-fixa data-fx-altura="5" data-fx-etapas="4" data-fx-fundo="#121a15" data-fx-tinta="#f7f9f6" aria-labelledby="pico-titulo">
     <div class="fx-palco">
       <h2 id="pico-titulo" class="sr-only">A decolagem</h2>
@@ -42,13 +56,13 @@
         <div class="absolute inset-0 bg-[#dfe9d6]" data-fx-opacidade="1,0" data-fx-faixa="0.34,0.5">
           <div class="absolute inset-0" data-fx-escala="1.18,1" data-fx-faixa="0.12,0.5">
             <ng-container [ngTemplateOutlet]="paisagemChao"></ng-container>
-            <img class="foto-chao absolute inset-0 size-full object-cover" src="/landing/chao.webp" alt="" (error)="esconderFoto($event)">
+            <img class="foto-chao absolute inset-0 size-full object-cover" src="/landing/chao.webp" alt="" loading="lazy" decoding="async" (error)="esconderFoto($event)">
           </div>
         </div>
         <div class="absolute inset-0 bg-[#cfe0c2]" data-fx-opacidade="0,1" data-fx-faixa="0.34,0.5">
           <div class="absolute inset-0" data-fx-escala="1.7,1" data-fx-faixa="0.34,1">
             <ng-container [ngTemplateOutlet]="paisagemAerea"></ng-container>
-            <img class="absolute inset-0 size-full object-cover" src="/landing/aerea.webp" alt="" (error)="esconderFoto($event)">
+            <img class="absolute inset-0 size-full object-cover" src="/landing/aerea.webp" alt="" loading="lazy" decoding="async" (error)="esconderFoto($event)">
           </div>
         </div>
         <div class="absolute inset-0" data-fx-opacidade="0,1" data-fx-faixa="0.5,0.9">
@@ -72,10 +86,14 @@
         </div>
       </div>
 
-      <!-- O drone: sobe e se afasta; as hélices respondem à velocidade da rolagem -->
-      <div class="pico-drone absolute inset-x-0 top-[26%] flex justify-center" data-fx-y="90,-30" data-fx-faixa="0.12,0.6">
-        <div class="w-[min(40vw,280px)]" data-fx-escala="1.05,0.62" data-fx-faixa="0.12,0.92">
-          <ng-container [ngTemplateOutlet]="droneSvg" [ngTemplateOutletContext]="{ $implicit: true }"></ng-container>
+      <!-- O drone 3D vivo: 4 hélices reais aceleram com a rolagem, inclina em voo e projeta sombra dinâmica -->
+      <div class="pico-drone absolute inset-x-0 top-[22%] flex flex-col items-center" data-fx-y="96,-34" data-fx-faixa="0.12,0.62">
+        <div class="flex flex-col items-center" data-fx-escala="1.08,0.64" data-fx-faixa="0.12,0.92">
+          <div #droneVoo class="pico-drone-rig relative w-[min(82vw,520px)]">
+            <span #droneAura class="pico-drone-aura" aria-hidden="true"></span>
+            <app-drone-3d-rig #rigVoo class="relative z-[1] block w-full" modo="voo"></app-drone-3d-rig>
+          </div>
+          <span #droneSombra class="pico-drone-sombra mt-4 h-4 w-[44%] rounded-[50%] bg-ink/35 blur-[12px]" aria-hidden="true"></span>
         </div>
       </div>
 
@@ -89,11 +107,11 @@
   </section>
 
   <!-- Cena 3 · Os números viram sensação (dados reais do drone em destaque) -->
-  <section class="cena-ficha bg-ink text-paper" data-fx-fundo="#17211b" data-fx-tinta="#f7f9f6" aria-labelledby="ficha-titulo">
-    <div class="mx-auto grid max-w-[1240px] gap-14 px-5 py-24 md:px-8 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.85fr)] lg:items-end lg:py-32">
+  <section class="cena-ficha surface-grid-dark surface-grain bg-ink text-paper" data-fx-fundo="#17211b" data-fx-tinta="#f7f9f6" aria-labelledby="ficha-titulo">
+    <div class="relative z-[2] mx-auto grid max-w-[1240px] gap-14 px-5 py-24 md:px-8 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.85fr)] lg:items-end lg:py-32">
       <div>
         <p class="m-0 font-data text-[13px] font-semibold uppercase tracking-[0.12em] text-lime-glow">Ficha real · drone em destaque</p>
-        <h2 id="ficha-titulo" class="m-0 mt-4 max-w-[16ch] font-display font-wide text-[36px] font-extrabold leading-[1.02] tracking-[-0.8px] md:text-[56px]" data-fx="subir">Lá em cima, ficha técnica vira tempo de voo.</h2>
+        <h2 id="ficha-titulo" class="m-0 mt-4 max-w-[16ch] font-display font-wide text-[36px] font-extrabold leading-[1.02] tracking-[-0.8px] md:text-[56px]" data-reveal-lines>Lá em cima, ficha técnica vira tempo de voo.</h2>
 
         @if (destaque(); as drone) {
           <dl class="ficha-numeros m-0 mt-12 flex flex-col">
@@ -122,19 +140,20 @@
       </div>
 
       @if (destaque(); as drone) {
-        <article class="featured-drone flex flex-col gap-5 rounded-[28px] bg-paper p-6 text-ink md:p-8" data-fx="direita">
+        <article class="featured-drone relative flex flex-col gap-5 overflow-hidden rounded-[28px] bg-paper p-6 text-ink shadow-[var(--shadow-floating)] md:p-8" data-fx="direita" appTilt [tiltMaxX]="4" [tiltMaxY]="6">
+          <span class="tilt-glare" aria-hidden="true"></span>
           <div class="relative grid aspect-[4/3] place-items-center overflow-hidden rounded-[20px] bg-mist-green">
             @if (imagemPrincipal(drone); as imagem) {
               @if (!imagemComFalha()) {
-                <img class="size-full object-contain p-4" [src]="obterUrlImagem(imagem)" [alt]="drone.nome" (error)="imagemComFalha.set(true)">
+                <img class="size-full object-contain p-4 transition-transform duration-500 ease-[var(--ease-editorial)] hover:scale-[1.04]" loading="lazy" decoding="async" [src]="obterUrlImagem(imagem)" [alt]="drone.nome" (error)="imagemComFalha.set(true)">
               } @else {
-                <div class="w-[52%]"><ng-container [ngTemplateOutlet]="droneSvg"></ng-container></div>
+                <app-drone-3d-rig class="w-[92%]" modo="estatico"></app-drone-3d-rig>
               }
             } @else {
-              <div class="w-[52%]"><ng-container [ngTemplateOutlet]="droneSvg"></ng-container></div>
+              <app-drone-3d-rig class="w-[92%]" modo="estatico"></app-drone-3d-rig>
             }
             @if (drone.possuiGPS) {
-              <span class="absolute right-3 top-3 inline-flex items-center gap-2 rounded-lg bg-white/90 px-2.5 py-1.5 font-data text-xs font-medium"><span class="size-[7px] rounded-full bg-leaf" aria-hidden="true"></span>GPS</span>
+              <span class="absolute right-3 top-3 inline-flex items-center gap-2 rounded-lg bg-white/90 px-2.5 py-1.5 font-data text-xs font-medium backdrop-blur-sm"><span class="size-[7px] rounded-full bg-leaf" aria-hidden="true"></span>GPS</span>
             }
           </div>
           <div>
@@ -148,7 +167,7 @@
               <p class="m-0 text-xs uppercase tracking-[0.08em] text-subtle">Preço</p>
               <p class="m-0 mt-1 font-data text-2xl font-semibold">{{ formatarPreco(drone.preco) }}</p>
             </div>
-            <a class="inline-flex min-h-11 items-center gap-1.5 whitespace-nowrap rounded-xl border border-line-strong px-4 py-2 text-sm font-semibold text-ink no-underline transition-colors hover:border-ink" [routerLink]="['/drone-info', drone.id]">
+            <a class="inline-flex min-h-11 items-center gap-1.5 whitespace-nowrap rounded-xl border border-line-strong px-4 py-2 text-sm font-semibold text-ink no-underline transition-colors hover:border-ink hover:bg-mist" [routerLink]="['/drone-info', drone.id]" appMagnetic [magneticMax]="4">
               Ficha completa<mat-icon class="!size-[18px] !text-[18px]" aria-hidden="true">arrow_forward</mat-icon>
             </a>
           </div>
@@ -164,20 +183,20 @@
     <div class="fx-palco palco-tipos">
       <div class="mx-auto w-full max-w-[1240px] px-5 md:px-8">
         <p class="m-0 font-data text-[13px] font-semibold uppercase tracking-[0.12em] text-leaf">Quatro jeitos de voar</p>
-        <h2 id="tipos-title" class="m-0 mt-3 font-display font-wide text-[34px] font-extrabold leading-[1.02] tracking-[-0.8px] md:text-[52px]">Que voo você imagina?</h2>
+        <h2 id="tipos-title" class="m-0 mt-3 font-display font-wide text-[34px] font-extrabold leading-[1.02] tracking-[-0.8px] md:text-[52px]" data-reveal-lines>Que voo você imagina?</h2>
         <p class="m-0 mt-3 max-w-[34rem] text-[17px] text-muted">Cada atalho abre o catálogo com os filtros de autonomia, alcance, câmera e recursos já aplicados.</p>
       </div>
       <ul class="trilho-tipos m-0 mt-8 list-none gap-5 p-0 md:mt-10" data-fx="trilho">
         @for (tipo of tiposDeVoo; track tipo.id) {
           <li class="flex w-[78vw] shrink-0 sm:w-[400px] xl:w-[440px]">
             <a
-              class="flight-type-link group flex w-full flex-col overflow-hidden rounded-[24px] border border-line bg-white text-ink no-underline transition-colors hover:border-ink"
+              class="flight-type-link group flex w-full flex-col overflow-hidden rounded-[24px] border border-line bg-white text-ink no-underline shadow-[var(--shadow-card)] transition-[border-color,box-shadow,transform] duration-300 ease-[var(--ease-editorial)] hover:-translate-y-1 hover:border-ink hover:shadow-[var(--shadow-lift)]"
               routerLink="/home"
               [queryParams]="{ tipo: tipo.id }">
               <span class="relative grid aspect-[16/10] place-items-center overflow-hidden bg-mist-green text-leaf">
                 <mat-icon class="!size-14 !text-[56px]" aria-hidden="true">{{ tipo.icone }}</mat-icon>
                 @if (fotoDoTipo(tipo.id); as foto) {
-                  <img class="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" [src]="foto" alt="" (error)="esconderFoto($event)">
+                  <img class="absolute inset-0 size-full object-cover transition-transform duration-700 ease-[var(--ease-editorial)] group-hover:scale-[1.06]" [src]="foto" alt="" loading="lazy" decoding="async" (error)="esconderFoto($event)">
                 }
               </span>
               <span class="flex flex-1 flex-col gap-2.5 p-6">
@@ -185,7 +204,7 @@
                 <span class="text-[15px] leading-normal text-muted">{{ tipo.descricao }}</span>
                 <span class="mt-auto flex items-center justify-between border-t border-dashed border-line-strong pt-3 font-data text-[13px] text-ink-soft">
                   {{ tipo.resumo }}
-                  <mat-icon class="text-leaf transition-transform group-hover:translate-x-1" aria-hidden="true">arrow_forward</mat-icon>
+                  <mat-icon class="text-leaf transition-transform duration-300 ease-[var(--ease-editorial)] group-hover:translate-x-1.5" aria-hidden="true">arrow_forward</mat-icon>
                 </span>
               </span>
             </a>
@@ -223,7 +242,7 @@
       <div class="mx-auto grid w-full max-w-[1240px] items-center gap-10 px-5 md:px-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-16">
         <div>
           <p class="m-0 font-data text-[13px] font-semibold uppercase tracking-[0.12em] text-leaf">Descendo para comprar</p>
-          <h2 id="como-funciona-title" class="m-0 mt-3 font-display font-wide text-[34px] font-extrabold leading-[1.02] tracking-[-0.8px] md:text-[52px]">Da escolha ao voo, em três passos.</h2>
+          <h2 id="como-funciona-title" class="m-0 mt-3 font-display font-wide text-[34px] font-extrabold leading-[1.02] tracking-[-0.8px] md:text-[52px]" data-reveal-lines>Da escolha ao voo, em três passos.</h2>
           <ol class="passos-indice m-0 mt-8 flex list-none gap-2 p-0" aria-hidden="true">
             <li></li><li></li><li></li>
           </ol>
@@ -253,7 +272,7 @@
   </section>
 
   <!-- Cena 7 · Pouso: a crença final e UMA chamada -->
-  <section #pouso class="cena-pouso relative overflow-hidden" data-fx-fundo="#121a15" data-fx-tinta="#f7f9f6" aria-labelledby="cta-title">
+  <section #pouso class="cena-pouso surface-grain relative overflow-hidden" data-fx-fundo="#121a15" data-fx-tinta="#f7f9f6" aria-labelledby="cta-title">
     <svg class="pointer-events-none absolute inset-0 size-full" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
       <g fill="none" stroke="#b7ee75" stroke-opacity="0.1" stroke-width="1.2">
         <path d="M0 470 C 240 390, 480 540, 720 450 S 1100 400, 1200 460"></path>
@@ -261,8 +280,8 @@
         <path d="M0 610 C 260 530, 520 680, 760 590 S 1120 540, 1200 600"></path>
       </g>
     </svg>
-    <img class="absolute inset-0 size-full object-cover" src="/landing/pouso.jpg" alt="" (error)="esconderFoto($event)">
-    <div class="pouso-conteudo relative mx-auto flex min-h-[calc(100dvh-var(--topo,80px))] max-w-[1240px] flex-col justify-end px-5 pb-20 pt-32 md:px-8 lg:pb-28">
+    <img class="absolute inset-0 size-full object-cover" src="/landing/pouso.webp" alt="" loading="lazy" decoding="async" (error)="esconderFoto($event)">
+    <div class="pouso-conteudo relative z-[2] mx-auto flex min-h-[calc(100dvh-var(--topo,80px))] max-w-[1240px] flex-col justify-end px-5 pb-20 pt-32 md:px-8 lg:pb-28">
       <div class="pouso-protecao max-w-[720px]">
         <p class="m-0 font-data text-[13px] font-semibold uppercase tracking-[0.12em] text-lime-glow">ALT 000 m · pouso</p>
         <h2 id="cta-title" class="m-0 mt-4 font-display font-wide text-[40px] font-extrabold leading-[0.98] tracking-[-1px] md:text-[68px]" data-fx="palavras" data-fx-duracao="700">Voar está mais perto do que você pensava.</h2>
@@ -274,7 +293,7 @@
           }
         </p>
         <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4" data-fx="subir" data-fx-atraso="700">
-          <a class="landing-cta-final inline-flex h-[58px] items-center gap-2.5 rounded-[16px] bg-lime-glow px-7 text-[17px] font-bold text-ink no-underline transition-colors hover:bg-[#c6f28c]" routerLink="/home">
+          <a class="landing-cta-final inline-flex h-[58px] items-center gap-2.5 rounded-[16px] bg-lime-glow px-7 text-[17px] font-bold text-ink no-underline shadow-[var(--shadow-floating)] transition-[background-color,box-shadow] duration-200 hover:bg-[#c6f28c]" routerLink="/home" appMagnetic>
             Explorar catálogo
             <mat-icon aria-hidden="true">arrow_forward</mat-icon>
           </a>
@@ -327,9 +346,4 @@
     <path d="M330 260 C 420 330, 520 300, 600 380 S 700 470, 760 520" fill="none" stroke="#9fc0b8" stroke-width="16" stroke-linecap="round"></path>
     <g fill="#8cb174"><circle cx="470" cy="420" r="16"></circle><circle cx="500" cy="440" r="12"></circle><circle cx="900" cy="380" r="14"></circle><circle cx="140" cy="380" r="18"></circle></g>
   </svg>
-</ng-template>
-
-<!-- Ilustração do drone; com `true` no contexto, as hélices ficam prontas para girar -->
-<ng-template #droneSvg let-animado>
-  <app-drone-mark class="block w-full" variante="ilustracao" [animado]="!!animado"></app-drone-mark>
 </ng-template>

@@ -18,6 +18,7 @@ import { EcommerceCatalogSearchService } from '../../../../core/services/Ecommer
 import { FavoritoService } from '../../../../core/services/FavoritoService';
 import { DroneMarkComponent } from '../../../../shared/components/drone-mark/drone-mark';
 import { TituloPagina } from '../../../../shared/components/titulo-pagina/titulo-pagina';
+import { MagneticDirective } from '../../../../shared/motion/magnetic.directive';
 import { formatarAlcance, formatarNumero, formatarPreco } from '../../../../shared/utils/drone-formatters';
 
 interface FilterGroup {
@@ -27,7 +28,7 @@ interface FilterGroup {
 }
 
 @Component({
-  imports: [DroneMarkComponent, FormsModule, MatIconModule, NgTemplateOutlet, RouterLink, TituloPagina],
+  imports: [DroneMarkComponent, FormsModule, MagneticDirective, MatIconModule, NgTemplateOutlet, RouterLink, TituloPagina],
   selector: 'app-home',
   styleUrl: './home.css',
   templateUrl: './home.html',

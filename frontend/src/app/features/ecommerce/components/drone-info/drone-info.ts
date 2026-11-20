@@ -16,6 +16,8 @@ import { ComparacaoService } from '../../../../core/services/ComparacaoService';
 import { DroneService } from '../../../../core/services/DroneService';
 import { FavoritoService } from '../../../../core/services/FavoritoService';
 import { DroneMarkComponent } from '../../../../shared/components/drone-mark/drone-mark';
+import { MagneticDirective } from '../../../../shared/motion/magnetic.directive';
+import { TiltDirective } from '../../../../shared/motion/tilt.directive';
 import {
   formatarDuracaoBateria,
   formatarFps,
@@ -27,7 +29,7 @@ import {
 } from '../../../../shared/utils/drone-formatters';
 
 @Component({
-  imports: [DroneMarkComponent, MatIconModule, ReactiveFormsModule, RouterLink],
+  imports: [DroneMarkComponent, MagneticDirective, MatIconModule, ReactiveFormsModule, RouterLink, TiltDirective],
   selector: 'app-drone-info',
   styleUrl: './drone-info.css',
   templateUrl: './drone-info.html',

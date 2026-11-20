@@ -39,13 +39,20 @@
 }
 
 .main-image {
+  position: relative;
   display: grid;
   min-height: 420px;
   overflow: hidden;
   place-items: center;
   border: 1px solid var(--color-line);
-  border-radius: 20px;
+  border-radius: 24px;
   background: var(--color-mist-green);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 260ms var(--ease-editorial);
+}
+
+.main-image:hover {
+  box-shadow: var(--shadow-lift);
 }
 
 .main-image img {
@@ -54,6 +61,11 @@
   height: 480px;
   padding: 24px;
   object-fit: contain;
+  transition: transform 500ms var(--ease-editorial);
+}
+
+.main-image:hover img {
+  transform: scale(1.03);
 }
 
 .image-fallback {
@@ -93,10 +105,17 @@
   background: var(--color-mist);
   color: var(--color-subtle);
   cursor: pointer;
+  transition: border-color 180ms ease, transform 220ms var(--ease-editorial), box-shadow 180ms ease;
+}
+
+.image-thumbnails button:hover {
+  border-color: var(--color-line-strong);
+  transform: translateY(-2px);
 }
 
 .image-thumbnails button.selected {
   border-color: var(--color-leaf);
+  box-shadow: var(--shadow-card);
 }
 
 .image-thumbnails button:focus-visible,
@@ -573,6 +592,25 @@
   border: 1px solid var(--color-line);
   border-radius: 20px;
   background: #fff;
+  box-shadow: var(--shadow-card);
+  transition: border-color 220ms ease, box-shadow 260ms var(--ease-editorial);
+}
+
+.technical-card:hover {
+  border-color: var(--color-line-strong);
+  box-shadow: var(--shadow-lift);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .main-image:hover img,
+  .image-thumbnails button:hover {
+    transform: none;
+  }
+
+  .main-image img,
+  .image-thumbnails button {
+    transition: none;
+  }
 }
 
 .technical-card h3 {

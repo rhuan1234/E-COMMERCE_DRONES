@@ -208,18 +208,21 @@
         } @else {
           <div class="drone-grid grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
             @for (drone of drones(); track drone.id) {
-              <article class="drone-card relative flex flex-col overflow-hidden rounded-[20px] border border-line bg-white transition-[border-color,box-shadow] duration-200 hover:border-line-strong hover:shadow-[0_18px_40px_rgb(23_33_27/8%)]">
+              <article
+                class="drone-card card-reveal group relative flex flex-col overflow-hidden rounded-[20px] border border-line bg-white shadow-[var(--shadow-card)] transition-[border-color,box-shadow,transform] duration-300 ease-[var(--ease-editorial)] hover:-translate-y-1 hover:border-line-strong hover:shadow-[var(--shadow-lift)]"
+                [style.--stagger]="$index">
                 <a
                   class="drone-card-link absolute inset-0 z-[1] rounded-[20px]"
                   [routerLink]="['/drone-info', drone.id]"
                   [attr.aria-label]="'Ver detalhes de ' + drone.nome">
                 </a>
-                <div class="product-visual relative grid aspect-[4/3] place-items-center bg-mist">
+                <div class="product-visual relative grid aspect-[4/3] place-items-center overflow-hidden bg-mist">
                   @if (imagemPrincipal(drone); as imagem) {
                     @if (!imagensComFalha.has(drone.id)) {
                       <img
-                        class="product-image size-full object-contain p-6"
+                        class="product-image size-full object-contain p-6 transition-transform duration-500 ease-[var(--ease-editorial)] group-hover:scale-[1.06]"
                         loading="lazy"
+                        decoding="async"
                         [src]="obterUrlImagem(imagem)"
                         [alt]="drone.nome"
                         (error)="marcarImagemComFalha(drone.id)"
@@ -236,7 +239,7 @@
                   }
 
                   <button
-                    class="compare-toggle absolute left-2.5 top-2.5 z-[2] inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-lg border-0 px-2.5 text-[13px] font-semibold shadow-sm transition-shadow hover:shadow-md"
+                    class="compare-toggle absolute left-2.5 top-2.5 z-[2] inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-lg border-0 px-2.5 text-[13px] font-semibold shadow-sm transition-[box-shadow,background-color,color] duration-200 hover:shadow-md"
                     type="button"
                     [class.bg-white]="!comparacao.contem(drone.id)"
                     [class.text-ink]="!comparacao.contem(drone.id)"
@@ -250,14 +253,14 @@
                   </button>
 
                   <button
-                    class="favorite-button absolute right-2.5 top-2.5 z-[2] grid size-11 cursor-pointer place-items-center rounded-xl border-0 bg-white text-ink shadow-sm transition-colors hover:text-red-700 disabled:opacity-50"
+                    class="favorite-button absolute right-2.5 top-2.5 z-[2] grid size-11 cursor-pointer place-items-center rounded-xl border-0 bg-white text-ink shadow-sm transition-[color,box-shadow] duration-200 hover:text-red-700 hover:shadow-md disabled:opacity-50"
                     type="button"
                     [class.text-red-700]="favoritosIds().has(drone.id)"
                     [disabled]="favoritosEmAtualizacao().has(drone.id)"
                     [attr.aria-label]="favoritosIds().has(drone.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'"
                     [attr.aria-pressed]="favoritosIds().has(drone.id)"
                     (click)="$event.stopPropagation(); alternarFavorito(drone)">
-                    <mat-icon aria-hidden="true">{{ favoritosIds().has(drone.id) ? 'favorite' : 'favorite_border' }}</mat-icon>
+                    <mat-icon [class.pop-confirm]="favoritosIds().has(drone.id)" aria-hidden="true">{{ favoritosIds().has(drone.id) ? 'favorite' : 'favorite_border' }}</mat-icon>
                   </button>
                 </div>
 
@@ -277,11 +280,11 @@
                   <dl class="m-0 flex flex-col gap-2.5">
                     <div>
                       <div class="flex justify-between text-[13px]"><dt class="text-subtle">Autonomia</dt><dd class="m-0 font-data font-semibold">{{ formatarNumero(drone.tempoVooPratico) }} min</dd></div>
-                      <div class="mt-1.5 h-1 rounded-sm bg-mist" aria-hidden="true"><div class="h-1 rounded-sm bg-ink" [style.width.%]="percentual(drone.tempoVooPratico, maximos().autonomia)"></div></div>
+                      <div class="mt-1.5 h-1 overflow-hidden rounded-sm bg-mist" aria-hidden="true"><div class="telemetry-bar h-1 rounded-sm bg-ink" [style.width.%]="percentual(drone.tempoVooPratico, maximos().autonomia)"></div></div>
                     </div>
                     <div>
                       <div class="flex justify-between text-[13px]"><dt class="text-subtle">Alcance</dt><dd class="m-0 font-data font-semibold">{{ formatarAlcance(drone.alcanceTransmissao) }}</dd></div>
-                      <div class="mt-1.5 h-1 rounded-sm bg-mist" aria-hidden="true"><div class="h-1 rounded-sm bg-ink" [style.width.%]="percentual(drone.alcanceTransmissao, maximos().alcance)"></div></div>
+                      <div class="mt-1.5 h-1 overflow-hidden rounded-sm bg-mist" aria-hidden="true"><div class="telemetry-bar h-1 rounded-sm bg-ink" [style.width.%]="percentual(drone.alcanceTransmissao, maximos().alcance)"></div></div>
                     </div>
                   </dl>
 
@@ -347,9 +350,9 @@
   <!-- Seleção para comparar: a tabela fica na página /comparar -->
   @if (comparacao.quantidade() > 0) {
     <aside
-      class="compare-tray fixed inset-x-0 bottom-0 z-30 px-3 pb-3 md:px-6 md:pb-5"
+      class="compare-tray tray-reveal fixed inset-x-0 bottom-0 z-30 px-3 pb-3 md:px-6 md:pb-5"
       aria-label="Drones selecionados para comparar">
-      <div class="mx-auto flex max-w-[1000px] flex-wrap items-center gap-x-4 gap-y-2.5 rounded-2xl bg-ink px-4 py-3 text-white shadow-[0_18px_40px_rgb(23_33_27/30%)] md:px-5">
+      <div class="mx-auto flex max-w-[1000px] flex-wrap items-center gap-x-4 gap-y-2.5 rounded-2xl border border-[var(--border-subtle-dark)] bg-ink px-4 py-3 text-white shadow-[var(--shadow-floating)] md:px-5">
         <p class="m-0 shrink-0 text-sm font-semibold">
           Comparar <span class="font-data text-lime-glow">{{ comparacao.quantidade() }}/{{ comparacao.limite }}</span>
         </p>
@@ -376,7 +379,9 @@
           </button>
           <a
             class="compare-now inline-flex h-10 items-center gap-1.5 rounded-lg bg-lime px-4 text-sm font-bold text-ink no-underline transition-colors hover:bg-lime-hover"
-            routerLink="/comparar">
+            routerLink="/comparar"
+            appMagnetic
+            [magneticMax]="4">
             {{ comparacao.quantidade() >= 2 ? 'Comparar agora' : 'Ver comparação' }}
             <mat-icon class="!size-[18px] !text-[18px]" aria-hidden="true">arrow_forward</mat-icon>
           </a>

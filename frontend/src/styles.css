@@ -53,6 +53,17 @@
   --color-brand-card: #ffffff;
   --color-brand-border: #e3e9e3;
   color-scheme: light;
+
+  /* Atmosfera, elevação e profundidade em duas camadas */
+  --shadow-card: 0 10px 26px -16px rgb(23 33 27 / 0.14), 0 1px 3px rgb(23 33 27 / 0.06);
+  --shadow-lift: 0 24px 48px -20px rgb(23 33 27 / 0.22), 0 4px 12px -4px rgb(23 33 27 / 0.08);
+  --shadow-floating: 0 24px 52px -18px rgb(12 18 14 / 0.48), 0 6px 16px -6px rgb(12 18 14 / 0.28);
+  --grid-line-dark: color-mix(in srgb, var(--color-lime-glow) 6%, transparent);
+  --grid-line-light: color-mix(in srgb, var(--color-ink) 4.5%, transparent);
+  --border-subtle-dark: color-mix(in srgb, var(--color-paper) 14%, transparent);
+  --glare-sheen: linear-gradient(112deg, transparent 28%, rgb(255 255 255 / 0.26) 49%, transparent 70%);
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 html,
@@ -141,5 +152,117 @@ a {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* ---------- Atmosfera editorial: grade técnica, grain sutil e brilho especular ---------- */
+
+.surface-grid-dark {
+  background-image:
+    linear-gradient(to right, var(--grid-line-dark) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line-dark) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.surface-grain {
+  position: relative;
+  isolation: isolate;
+}
+
+.surface-grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+.tilt-glare {
+  position: absolute;
+  inset: -20%;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  background: var(--glare-sheen);
+  will-change: transform, opacity;
+}
+
+/* ---------- View Transitions entre páginas da loja ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: vt-fade-out 180ms var(--ease-editorial) both;
+  }
+
+  ::view-transition-new(root) {
+    animation: vt-fade-in 260ms var(--ease-editorial) both;
+  }
+
+  @keyframes vt-fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+
+  @keyframes vt-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Entrada escalonada leve de cards (GPU-only) */
+  .card-reveal {
+    animation: skyline-card-in 420ms var(--ease-editorial) backwards;
+    animation-delay: calc(min(var(--stagger, 0), 8) * 45ms);
+  }
+
+  @keyframes skyline-card-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Feedback elástico sutil (favoritos, badge do carrinho, barra de comparação) */
+  .pop-confirm {
+    animation: skyline-pop 380ms var(--ease-spring) both;
+  }
+
+  @keyframes skyline-pop {
+    0% { transform: scale(0.82); }
+    60% { transform: scale(1.12); }
+    100% { transform: scale(1); }
+  }
+
+  .tray-reveal {
+    animation: skyline-tray-in 320ms var(--ease-editorial) both;
+  }
+
+  @keyframes skyline-tray-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 }

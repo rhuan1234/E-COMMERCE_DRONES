@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideRouter, withInMemoryScrolling } from '@angular/router';
+import { provideRouter, withInMemoryScrolling, withViewTransitions } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -14,6 +14,18 @@ export const appConfig: ApplicationConfig = {
     provideRouter(
       routes,
       withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' }),
+      withViewTransitions({
+        skipInitialTransition: true,
+        onViewTransitionCreated({ transition }) {
+          // Roteamento de foco acessível ao finalizar a transição de rota (same-document-transitions)
+          void transition.finished.finally(() => {
+            const main = document.getElementById('conteudo-loja');
+            if (main && document.activeElement === document.body) {
+              main.focus({ preventScroll: true });
+            }
+          });
+        },
+      }),
     ),
     provideClientHydration(),
     provideHttpClient(

@@ -24,7 +24,7 @@
           <a class="inline-flex items-center gap-1.5 rounded-[10px] px-3.5 py-2.5 text-[15px] font-medium text-muted no-underline transition-colors hover:bg-mist hover:text-ink" routerLink="/comparar" routerLinkActive="!text-ink !bg-mist" ariaCurrentWhenActive="page">
             Comparar
             @if (comparacao.quantidade() > 0) {
-              <span class="compare-count grid h-5 min-w-5 place-items-center rounded-full bg-ink px-1.5 font-data text-[11px] font-semibold text-lime-glow" [attr.aria-label]="comparacao.quantidade() + ' selecionados'">{{ comparacao.quantidade() }}</span>
+              <span class="compare-count pop-confirm grid h-5 min-w-5 place-items-center rounded-full bg-ink px-1.5 font-data text-[11px] font-semibold text-lime-glow" [attr.aria-label]="comparacao.quantidade() + ' selecionados'">{{ comparacao.quantidade() }}</span>
             }
           </a>
         </nav>
@@ -87,7 +87,7 @@
           <mat-icon class="text-leaf" aria-hidden="true">shopping_cart</mat-icon>
           <span class="hidden md:inline">Carrinho</span>
           @if (carrinho.quantidadeItens() > 0) {
-            <span class="absolute right-0.5 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-ink px-1 font-data text-[11px] font-semibold text-lime-glow md:static md:h-5 md:min-w-5 md:px-1.5" aria-hidden="true">
+            <span class="pop-confirm absolute right-0.5 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-ink px-1 font-data text-[11px] font-semibold text-lime-glow md:static md:h-5 md:min-w-5 md:px-1.5" aria-hidden="true">
               {{ carrinho.quantidadeItens() }}
             </span>
           }
@@ -146,8 +146,8 @@
     </ul>
   </section>
 
-  <footer class="store-footer bg-night text-[#c3cfc6]">
-    <div class="mx-auto max-w-[1240px] px-5 pb-7 pt-16 md:px-8">
+  <footer class="store-footer surface-grid-dark surface-grain bg-night text-[#c3cfc6]">
+    <div class="relative z-[2] mx-auto max-w-[1240px] px-5 pb-7 pt-16 md:px-8">
       <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div class="flex flex-col gap-4">
           <a class="store-brand inline-flex w-fit items-center gap-3 rounded-xl text-white no-underline" routerLink="/" aria-label="Skyline Drones - página inicial">
