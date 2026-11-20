@@ -60,14 +60,15 @@ Colocar em `frontend/public/landing/` (`.webp` ou `.jpg`, ~2400 px de largura, h
 | Arquivo | Uso | Descrição |
 |---|---|---|
 | `chao.webp` ✅ | Cena 1 e início do pico | Campo/mirante ao amanhecer, visto do chão, com céu aberto em cima (espaço livre para o título) |
-| `aerea.webp` ✅ | Cena 2 (pico) | **O mesmo tipo de paisagem visto de cima**, bem alto (vista zenital/aérea). Quanto mais parecida com `chao.jpg`, melhor a ilusão da subida |
-| `tipo-primeiro-voo.jpg` | Cena 4 | Pessoa iniciante pilotando num parque/campo |
-| `tipo-viagem.jpg` | Cena 4 | Paisagem de viagem (praia, montanha, estrada) |
-| `tipo-cinema.jpg` | Cena 4 | Plano cinematográfico aéreo (cidade, cachoeira) |
-| `tipo-longo-alcance.jpg` | Cena 4 | Horizonte amplo, lago/serra a perder de vista |
-| `pouso.jpg` | Cena 7 | Horizonte ao entardecer (céu quente, silhueta) |
+| `aerea.webp` ✅ | Cena 2 (pico) | **O mesmo tipo de paisagem visto de cima**, bem alto (vista zenital/aérea). Quanto mais parecida com `chao.webp`, melhor a ilusão da subida |
+| `drone-3d-body.webp` ✅ | Cena 1 e Cena 2 (pico) | Corpo do drone 3D recortado sem hélices (~39 KB, 880×459), combinado ao componente `Drone3dRigComponent` com 4 rotores independentes em perspectiva 3D que giram, contra-rotacionam, ganham motion-blur e disco aerodinâmico conforme a velocidade da rolagem, além de LEDs dianteiros ativos |
+| `tipo-primeiro-voo.webp` ✅ | Cena 4 | Pessoa iniciante pilotando num parque/campo (otimizada em WebP) |
+| `tipo-viagem.webp` ✅ | Cena 4 | Paisagem de viagem (praia, montanha, estrada; otimizada em WebP) |
+| `tipo-cinema.webp` ✅ | Cena 4 | Plano cinematográfico aéreo (cidade, cachoeira; otimizada em WebP) |
+| `tipo-longo-alcance.webp` ✅ | Cena 4 | Horizonte amplo, lago/serra a perder de vista (otimizada em WebP) |
+| `pouso.webp` ✅ | Cena 7 | Horizonte ao entardecer (céu quente, silhueta; otimizada em WebP) |
 
-Fotos sem texto nem logotipos. `chao.webp` e `aerea.webp` foram geradas (WebP, ~190 KB) a partir dos originais enviados (`aerea.jpg` = vista do chão, `ceu.jpg` = vista aérea; PNGs de 2,3 MB que podem ser removidos). Até elas chegarem, a página usa SVG/cor sólida no lugar, e nada fica quebrado.
+Todas as fotos da landing estão otimizadas em WebP (`drone-3d.webp` 49 KB; conversão dos 5 JPEGs de 4,3 MB para 448 KB). Imagens da dobra inicial usam `fetchpriority="high"` e as demais usam `loading="lazy" decoding="async"`.
 
 ## Avaliação em destaque (decisão do dono)
 
