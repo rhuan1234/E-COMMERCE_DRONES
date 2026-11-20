@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Fornecedor } from '../../../../core/models/fornecedor/FornecedorRequest';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { FornecedorService } from '../../../../core/services/FornecedorService';
@@ -32,6 +33,7 @@ import { FornecedorDetalhesDialog } from '../fornecedor-detalhes-dialog/forneced
 export class FornecedorList implements OnInit {
   /** O app roda sem Zone.js: avisa o Angular quando uma resposta assíncrona muda o estado. */
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   displayedColumns: string[] = ['id', 'nome', 'cnpj', 'telefone', 'email', 'acao'];
   dataSource = new MatTableDataSource<Fornecedor>();
@@ -50,35 +52,41 @@ export class FornecedorList implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      const nome = params['nome'];
-      if (nome && nome.trim()) {
-        this.filtroNome = nome.trim();
-        this.carregarFornecedorPorNome(this.filtroNome);
-      } else {
-        this.filtroNome = '';
-        this.carregarFornecedores();
-      }
-    });
+    this.route.params
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        const nome = params['nome'];
+        if (nome && nome.trim()) {
+          this.filtroNome = nome.trim();
+          this.carregarFornecedorPorNome(this.filtroNome);
+        } else {
+          this.filtroNome = '';
+          this.carregarFornecedores();
+        }
+      });
   }
 
   carregarFornecedores(): void {
     this.carregando = true;
     this.erroCarregamento = false;
-    this.fornecedorService.findAll(this.pageIndex, this.pageSize).subscribe({
+    this.cdr.markForCheck();
+    this.fornecedorService
+      .findAll(this.pageIndex, this.pageSize)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (response) => {
         this.carregando = false;
-        this.cdr.markForCheck();
         this.dataSource.data = response.items;
         this.pageIndex = response.page;
         this.pageSize = response.pageSize;
         this.totalItems = response.totalItems;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.carregando = false;
-        this.cdr.markForCheck();
         this.erroCarregamento = true;
         console.error('Erro ao carregar fornecedores', err);
+        this.cdr.markForCheck();
       },
     });
   }
@@ -86,20 +94,24 @@ export class FornecedorList implements OnInit {
   carregarFornecedorPorNome(nome: string): void {
     this.carregando = true;
     this.erroCarregamento = false;
-    this.fornecedorService.findByNome(this.pageIndex, this.pageSize, nome).subscribe({
+    this.cdr.markForCheck();
+    this.fornecedorService
+      .findByNome(this.pageIndex, this.pageSize, nome)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (response) => {
         this.carregando = false;
-        this.cdr.markForCheck();
         this.dataSource.data = response.items;
         this.pageIndex = response.page;
         this.pageSize = response.pageSize;
         this.totalItems = response.totalItems;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.carregando = false;
-        this.cdr.markForCheck();
         this.erroCarregamento = true;
         console.error('Erro ao carregar fornecedores por nome', err);
+        this.cdr.markForCheck();
       },
     });
   }
@@ -140,16 +152,22 @@ export class FornecedorList implements OnInit {
       }
     });
 
-    dialogRef.afterClosed().subscribe((confirmado) => {
-      if (!confirmado) {
-        return;
-      }
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmado) => {
+        if (!confirmado) {
+          return;
+        }
 
-      this.fornecedorService.delete(fornecedor.id).subscribe({
-        next: () => this.carregarListaAtual(),
-        error: (err) => console.error('Erro ao excluir fornecedor', err)
+        this.fornecedorService
+          .delete(fornecedor.id)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: () => this.carregarListaAtual(),
+            error: (err) => console.error('Erro ao excluir fornecedor', err)
+          });
       });
-    });
   }
 
   onPageChange(event: PageEvent): void {

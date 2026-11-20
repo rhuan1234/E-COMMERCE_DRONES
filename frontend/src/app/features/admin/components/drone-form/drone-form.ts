@@ -1,5 +1,7 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
@@ -48,11 +50,15 @@ import { MatStepperModule } from '@angular/material/stepper';
 
 })
 export class DroneForm implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
   readonly form: FormGroup;
   cameras: Camera[] = [];
   fornecedores: Fornecedor[] = [];
   marcas: Marca[] = [];
   modelos: Modelo[] = [];
+  salvando = false;
+  private modelosSub?: Subscription;
   private readonly location = inject(Location);
 
   constructor(
@@ -108,22 +114,28 @@ export class DroneForm implements OnInit {
       cameraIdControl.updateValueAndValidity({ emitEvent: false });
     };
 
-    possuiCameraControl.valueChanges.subscribe(atualizarValidacaoCamera);
+    possuiCameraControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(atualizarValidacaoCamera);
     atualizarValidacaoCamera(possuiCameraControl.value);
 
     const marcaIdControl = this.form.controls['marcaId'];
     const modeloIdControl = this.form.controls['modeloId'];
 
-    marcaIdControl.valueChanges.subscribe((marcaId: number | null) => {
-      modeloIdControl.setValue(null, { emitEvent: false });
-      if (marcaId) {
-        modeloIdControl.enable({ emitEvent: false });
-        this.carregarModelosPorMarca(marcaId);
-      } else {
-        this.modelos = [];
-        modeloIdControl.disable({ emitEvent: false });
-      }
-    });
+    marcaIdControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((marcaId: number | null) => {
+        modeloIdControl.setValue(null, { emitEvent: false });
+        if (marcaId) {
+          modeloIdControl.enable({ emitEvent: false });
+          this.carregarModelosPorMarca(marcaId);
+        } else {
+          this.modelosSub?.unsubscribe();
+          this.modelos = [];
+          modeloIdControl.disable({ emitEvent: false });
+          this.cdr.markForCheck();
+        }
+      });
 
     this.carregarMarcas();
     this.carregarCameras();
@@ -143,6 +155,7 @@ export class DroneForm implements OnInit {
         },
         { emitEvent: false }
       );
+      atualizarValidacaoCamera(Boolean(drone.possuiCamera));
 
       if (marcaIdInicial) {
         modeloIdControl.enable({ emitEvent: false });
@@ -153,64 +166,90 @@ export class DroneForm implements OnInit {
 
 
   carregarMarcas(): void {
-    this.marcaService.findAll(0, 100).subscribe({
-      next: (response) => {
-        this.marcas = response.items;
-      },
-      error: (error) => {
-        console.error('Erro ao carregar marcas:', error);
-        this.exibirMensagem('Erro ao carregar as marcas.');
-      }
-    });
+    this.marcaService
+      .findAll(0, 100)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.marcas = response.items;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          console.error('Erro ao carregar marcas:', error);
+          this.exibirMensagem('Erro ao carregar as marcas.');
+          this.cdr.markForCheck();
+        }
+      });
   }
 
   carregarModelosPorMarca(marcaId: number, modeloSelecionadoId?: number | null): void {
-    this.modeloService.findByMarca(marcaId, 0, 100).subscribe({
-      next: (response) => {
-        this.modelos = response.items;
-        if (modeloSelecionadoId) {
-          const pertence = this.modelos.some((m) => m.id === modeloSelecionadoId);
-          if (pertence) {
-            this.form.controls['modeloId'].setValue(modeloSelecionadoId, { emitEvent: false });
+    this.modelosSub?.unsubscribe();
+    this.modelosSub = this.modeloService
+      .findByMarca(marcaId, 0, 100)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.modelos = response.items;
+          if (modeloSelecionadoId) {
+            const pertence = this.modelos.some((m) => m.id === modeloSelecionadoId);
+            if (pertence) {
+              this.form.controls['modeloId'].setValue(modeloSelecionadoId, { emitEvent: false });
+            }
           }
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          console.error('Erro ao carregar modelos da marca:', error);
+          this.modelos = [];
+          this.exibirMensagem('Erro ao carregar os modelos da marca selecionada.');
+          this.cdr.markForCheck();
         }
-      },
-      error: (error) => {
-        console.error('Erro ao carregar modelos da marca:', error);
-        this.modelos = [];
-        this.exibirMensagem('Erro ao carregar os modelos da marca selecionada.');
-      }
-    });
+      });
   }
 
   carregarCameras(): void {
-    this.cameraService.findAll(0, 100).subscribe({
-      next: (response) => {
-        this.cameras = response.items;
-      },
-      error: (error) => {
-        console.error('Erro ao carregar câmeras:', error);
-        this.exibirMensagem('Erro ao carregar as câmeras.');
-      }
-    });
+    this.cameraService
+      .findAll(0, 100)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.cameras = response.items;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          console.error('Erro ao carregar câmeras:', error);
+          this.exibirMensagem('Erro ao carregar as câmeras.');
+          this.cdr.markForCheck();
+        }
+      });
   }
 
   carregarFornecedores(): void {
-    this.fornecedorService.findAll(0, 100).subscribe({
-      next: (response) => {
-        this.fornecedores = response.items;
-      },
+    this.fornecedorService
+      .findAll(0, 100)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.fornecedores = response.items;
+          this.cdr.markForCheck();
+        },
 
-      error: (error) => {
-        console.error('Erro ao carregar fornecedores:', error);
-        this.exibirMensagem('Erro ao carregar os fornecedores.');
-      }
-    });
+        error: (error) => {
+          console.error('Erro ao carregar fornecedores:', error);
+          this.exibirMensagem('Erro ao carregar os fornecedores.');
+          this.cdr.markForCheck();
+        }
+      });
   }
 
    salvar(): void {
+    if (this.salvando) {
+      return;
+    }
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.cdr.markForCheck();
       this.exibirMensagem('Revise os campos destacados antes de salvar.');
       return;
     }
@@ -221,20 +260,28 @@ export class DroneForm implements OnInit {
     if (!modeloEscolhido || marcaDoModelo !== drone.marcaId) {
       this.form.controls['modeloId'].setErrors({ marcaIncompativel: true });
       this.form.controls['modeloId'].markAsTouched();
+      this.cdr.markForCheck();
       this.exibirMensagem('O modelo selecionado deve pertencer à marca escolhida.');
       return;
     }
+
+    this.salvando = true;
+    this.cdr.markForCheck();
 
     const resultado = drone.id
       ? this.droneService.update(drone.id, drone)
       : this.droneService.create(drone);
 
-    resultado.subscribe({
+    resultado.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
+        this.salvando = false;
+        this.cdr.markForCheck();
         this.exibirMensagem('Drone salvo com sucesso!');
         this.router.navigate(['/admin/drones']);
       },
       error: (error) => {
+        this.salvando = false;
+        this.cdr.markForCheck();
         console.error('Erro ao salvar drone:', error);
         this.exibirMensagem('Erro ao salvar o drone.');
       }
@@ -254,23 +301,29 @@ export class DroneForm implements OnInit {
         mensagem: `Deseja realmente excluir o drone "${drone.nome}"?`
       }
     });
-    dialogRef.afterClosed().subscribe((confirmado) => {
-      if (!confirmado) {
-        return;
-      }
-
-      this.droneService.delete(drone.id).subscribe({
-        next: () => {
-          this.exibirMensagem('Drone excluído com sucesso!');
-          this.router.navigate(['/admin/drones']);
-        },
-        error: (error) => {
-          this.exibirMensagem('Erro ao excluir o drone.');
-          console.log('Erro ao excluir o drone:', error);
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmado) => {
+        if (!confirmado) {
+          return;
         }
-      });
 
-    });
+        this.droneService
+          .delete(drone.id)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: () => {
+              this.exibirMensagem('Drone excluído com sucesso!');
+              this.router.navigate(['/admin/drones']);
+            },
+            error: (error) => {
+              this.exibirMensagem('Erro ao excluir o drone.');
+              console.log('Erro ao excluir o drone:', error);
+            }
+          });
+
+      });
 
   }
 

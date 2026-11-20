@@ -94,16 +94,16 @@
 
     <div class="mt-2 flex flex-col-reverse gap-3 border-t border-line pt-5 sm:flex-row sm:items-center">
       @if (form.controls['id'].value) {
-        <button type="button" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#f1c9c2] bg-white px-4 text-sm font-semibold text-danger transition-colors hover:bg-danger-soft disabled:cursor-not-allowed disabled:opacity-40" (click)="excluir()">
+        <button type="button" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#f1c9c2] bg-white px-4 text-sm font-semibold text-danger transition-colors hover:bg-danger-soft disabled:cursor-not-allowed disabled:opacity-40" (click)="excluir()" [disabled]="salvando">
           <mat-icon aria-hidden="true">delete</mat-icon>
           Excluir
         </button>
       }
       <span class="hidden flex-1 sm:block"></span>
       <button type="button" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-white px-4 text-sm font-semibold text-ink transition-colors hover:bg-mist disabled:cursor-not-allowed disabled:opacity-50" (click)="voltar()">Cancelar</button>
-      <button type="submit" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:bg-line-strong" [disabled]="form.invalid">
-        <mat-icon class="!text-lime-glow" aria-hidden="true">check</mat-icon>
-        Salvar câmera
+      <button type="submit" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-ink bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:border-line disabled:bg-paper disabled:text-subtle" [disabled]="form.invalid || salvando" [attr.aria-busy]="salvando">
+        <mat-icon [class.!text-lime-glow]="!(form.invalid || salvando)" aria-hidden="true">check</mat-icon>
+        {{ salvando ? 'Salvando...' : 'Salvar câmera' }}
       </button>
     </div>
   </form>

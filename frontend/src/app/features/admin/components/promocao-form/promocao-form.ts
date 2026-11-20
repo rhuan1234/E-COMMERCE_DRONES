@@ -1,5 +1,6 @@
 import { Location } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,11 +18,13 @@ import {
   ValidationErrors,
   Validators
 } from '@angular/forms';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { Subject, catchError, debounceTime, distinctUntilChanged, forkJoin, of, switchMap } from 'rxjs';
 import { Drone } from '../../../../core/models/drone/Drone';
 import { DroneService } from '../../../../core/services/DroneService';
 import { PromocaoRequest } from '../../../../core/models/promocao/PromocaoRequest';
 import { PromocaoService } from '../../../../core/services/PromocaoService';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog';
 import { DroneMarkComponent } from '../../../../shared/components/drone-mark/drone-mark';
 
 function validarIntervaloPromocao(control: AbstractControl): ValidationErrors | null {
@@ -47,9 +50,16 @@ export class PromocaoForm implements OnInit {
   readonly form: FormGroup;
   private readonly location = inject(Location);
   private readonly droneService = inject(DroneService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly dialog = inject(MatDialog);
+  private readonly termoPesquisa$ = new Subject<string>();
   drones: Drone[] = [];
   dronesFiltrados: Drone[] = [];
   dronesSelecionados: Drone[] = [];
+  pesquisandoDrones = false;
+  erroPesquisaDrones = false;
+  salvando = false;
 
   constructor(
     private fb: FormBuilder,
@@ -77,6 +87,37 @@ export class PromocaoForm implements OnInit {
   }
 
   ngOnInit(): void {
+    this.termoPesquisa$
+      .pipe(
+        debounceTime(250),
+        distinctUntilChanged(),
+        switchMap((termo) => {
+          if (!termo) {
+            this.pesquisandoDrones = false;
+            this.erroPesquisaDrones = false;
+            return of({ items: [] as Drone[] });
+          }
+
+          this.pesquisandoDrones = true;
+          this.erroPesquisaDrones = false;
+          this.cdr.markForCheck();
+
+          return this.droneService.findByModelo(0, 10, termo).pipe(
+            catchError((error) => {
+              console.error('Erro ao pesquisar drones:', error);
+              this.erroPesquisaDrones = true;
+              return of({ items: [] as Drone[] });
+            })
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((response) => {
+        this.pesquisandoDrones = false;
+        this.dronesFiltrados = response.items;
+        this.cdr.markForCheck();
+      });
+
     this.carregarPromocao();
   }
 
@@ -91,6 +132,7 @@ export class PromocaoForm implements OnInit {
 
     this.promocaoService
       .findById(Number(id))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (promocao) => {
 
@@ -115,6 +157,7 @@ export class PromocaoForm implements OnInit {
           this.carregarDronesSelecionados(
             promocao.droneIds
           );
+          this.cdr.markForCheck();
         },
 
         error: (error) => {
@@ -126,33 +169,25 @@ export class PromocaoForm implements OnInit {
           this.exibirMensagem(
             'Erro ao carregar promoção.'
           );
+          this.cdr.markForCheck();
         }
       });
   }
 
   pesquisarDrone(modelo: string): void {
 
-    const termo = modelo.trim();
+    const termo = (modelo ?? '').trim();
 
     if (!termo) {
       this.dronesFiltrados = [];
+      this.pesquisandoDrones = false;
+      this.erroPesquisaDrones = false;
+      this.termoPesquisa$.next('');
+      this.cdr.markForCheck();
       return;
     }
 
-    this.droneService
-      .findByModelo(0, 10, termo)
-      .subscribe({
-        next: (response) => {
-          this.dronesFiltrados = response.items;
-        },
-
-        error: (error) => {
-          console.error(
-            'Erro ao pesquisar drones:',
-            error
-          );
-        }
-      });
+    this.termoPesquisa$.next(termo);
   }
 
   adicionarDrone(drone: Drone): void {
@@ -164,6 +199,7 @@ export class PromocaoForm implements OnInit {
 
     if (!jaSelecionado) {
       this.dronesSelecionados.push(drone);
+      this.cdr.markForCheck();
     }
   }
 
@@ -173,45 +209,58 @@ export class PromocaoForm implements OnInit {
       this.dronesSelecionados.filter(
         d => d.id !== drone.id
       );
+    this.cdr.markForCheck();
   }
 
   carregarDronesSelecionados(ids: number[]): void {
 
     this.dronesSelecionados = [];
 
-    ids.forEach(id => {
+    if (!ids?.length) {
+      this.cdr.markForCheck();
+      return;
+    }
 
-      this.droneService
-        .findById(id)
-        .subscribe({
-          next: (drone) => {
-
-            this.dronesSelecionados.push(
-              drone
-            );
-          },
-
-          error: (error) => {
-
+    forkJoin(
+      ids.map((id) =>
+        this.droneService.findById(id).pipe(
+          catchError((error) => {
             console.error(
               `Erro ao carregar drone ${id}:`,
               error
             );
-          }
-        });
-    });
+            return of(null);
+          })
+        )
+      )
+    )
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((drones) => {
+        this.dronesSelecionados = drones.filter(
+          (d): d is Drone => d !== null
+        );
+        this.cdr.markForCheck();
+      });
   }
 
   salvar(): void {
+    if (this.salvando) {
+      return;
+    }
+
     if (this.form.invalid) {
 
       this.form.markAllAsTouched();
+      this.cdr.markForCheck();
 
       this.exibirMensagem(
         'Preencha todos os campos obrigatórios.'
       );
       return;
     }
+
+    this.salvando = true;
+    this.cdr.markForCheck();
 
     const valores = this.form.getRawValue();
     const dataInicio = this.form.get('dataInicio')?.value as string | null;
@@ -239,9 +288,11 @@ export class PromocaoForm implements OnInit {
     const requisicao = id ? this.promocaoService.update(id, promocao)
       : this.promocaoService.create(promocao);
 
-    requisicao.subscribe({
+    requisicao.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
 
       next: () => {
+        this.salvando = false;
+        this.cdr.markForCheck();
 
         this.snack.open(
           id
@@ -259,6 +310,8 @@ export class PromocaoForm implements OnInit {
       },
 
       error: (error) => {
+        this.salvando = false;
+        this.cdr.markForCheck();
 
         console.error(
           'Erro ao salvar promoção:',
@@ -281,37 +334,54 @@ export class PromocaoForm implements OnInit {
       return;
     }
 
-    this.promocaoService
-      .delete(id)
-      .subscribe({
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        titulo: 'Excluir Promoção',
+        mensagem: `Deseja realmente excluir a promoção "${this.form.value.nome || id}"?`
+      }
+    });
 
-        next: () => {
-
-          this.snack.open(
-            'Promoção excluída com sucesso!',
-            'Fechar',
-            {
-              duration: 3000
-            }
-          );
-
-          this.router.navigate([
-            '/admin/promocoes'
-          ]);
-        },
-
-        error: (error) => {
-
-          console.error(
-            'Erro ao excluir promoção:',
-            error
-          );
-
-          this.exibirMensagem(
-            'Erro ao excluir promoção.'
-          );
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmado) => {
+        if (!confirmado) {
+          return;
         }
-      });
+
+        this.promocaoService
+          .delete(id)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+
+          next: () => {
+
+            this.snack.open(
+              'Promoção excluída com sucesso!',
+              'Fechar',
+              {
+                duration: 3000
+              }
+            );
+
+            this.router.navigate([
+              '/admin/promocoes'
+            ]);
+          },
+
+          error: (error) => {
+
+            console.error(
+              'Erro ao excluir promoção:',
+              error
+            );
+
+            this.exibirMensagem(
+              'Erro ao excluir promoção.'
+            );
+          }
+        });
+    });
   }
 
   exibirMensagem(mensagem: string): void {

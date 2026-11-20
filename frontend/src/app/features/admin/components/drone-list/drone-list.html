@@ -65,7 +65,7 @@
               <input matInput [(ngModel)]="filtroNome" (keyup.enter)="aplicarFiltro()" placeholder="Ex.: DJI Air 3" />
               @if (filtroNome) {
                 <button matSuffix mat-icon-button type="button" aria-label="Limpar nome" (click)="filtroNome = ''">
-                  <mat-icon>close</mat-icon>
+                  <mat-icon aria-hidden="true">close</mat-icon>
                 </button>
               }
             </mat-form-field>
@@ -76,7 +76,7 @@
                 <input matInput [(ngModel)]="filtroMarca" (keyup.enter)="aplicarFiltro()" placeholder="Ex.: DJI" />
                 @if (filtroMarca) {
                   <button matSuffix mat-icon-button type="button" aria-label="Limpar marca" (click)="filtroMarca = ''">
-                    <mat-icon>close</mat-icon>
+                    <mat-icon aria-hidden="true">close</mat-icon>
                   </button>
                 }
               </mat-form-field>
@@ -86,7 +86,7 @@
                 <input matInput [(ngModel)]="filtroModelo" (keyup.enter)="aplicarFiltro()" placeholder="Ex.: Mavic 3 Pro" />
                 @if (filtroModelo) {
                   <button matSuffix mat-icon-button type="button" aria-label="Limpar modelo" (click)="filtroModelo = ''">
-                    <mat-icon>close</mat-icon>
+                    <mat-icon aria-hidden="true">close</mat-icon>
                   </button>
                 }
               </mat-form-field>
@@ -132,31 +132,31 @@
         @if (nomeAplicado) {
           <mat-chip-row (removed)="removerFiltroIndividual('nome')">
             Nome: {{ nomeAplicado }}
-            <button matChipRemove aria-label="Remover filtro de nome"><mat-icon>cancel</mat-icon></button>
+            <button matChipRemove aria-label="Remover filtro de nome"><mat-icon aria-hidden="true">cancel</mat-icon></button>
           </mat-chip-row>
         }
         @if (marcaAplicada) {
           <mat-chip-row (removed)="removerFiltroIndividual('marca')">
             Marca: {{ marcaAplicada }}
-            <button matChipRemove aria-label="Remover filtro de marca"><mat-icon>cancel</mat-icon></button>
+            <button matChipRemove aria-label="Remover filtro de marca"><mat-icon aria-hidden="true">cancel</mat-icon></button>
           </mat-chip-row>
         }
         @if (modeloAplicado) {
           <mat-chip-row (removed)="removerFiltroIndividual('modelo')">
             Modelo: {{ modeloAplicado }}
-            <button matChipRemove aria-label="Remover filtro de modelo"><mat-icon>cancel</mat-icon></button>
+            <button matChipRemove aria-label="Remover filtro de modelo"><mat-icon aria-hidden="true">cancel</mat-icon></button>
           </mat-chip-row>
         }
         @if (precoMinAplicado !== null) {
           <mat-chip-row (removed)="removerFiltroIndividual('min')">
             Mín.: {{ precoMinAplicado | brl }}
-            <button matChipRemove aria-label="Remover filtro de preço mínimo"><mat-icon>cancel</mat-icon></button>
+            <button matChipRemove aria-label="Remover filtro de preço mínimo"><mat-icon aria-hidden="true">cancel</mat-icon></button>
           </mat-chip-row>
         }
         @if (precoMaxAplicado !== null) {
           <mat-chip-row (removed)="removerFiltroIndividual('max')">
             Máx.: {{ precoMaxAplicado | brl }}
-            <button matChipRemove aria-label="Remover filtro de preço máximo"><mat-icon>cancel</mat-icon></button>
+            <button matChipRemove aria-label="Remover filtro de preço máximo"><mat-icon aria-hidden="true">cancel</mat-icon></button>
           </mat-chip-row>
         }
       </mat-chip-set>
@@ -227,9 +227,11 @@
         <th mat-header-cell *matHeaderCellDef>GPS</th>
         <td mat-cell *matCellDef="let drone">
           @if (drone.possuiGPS) {
-            <mat-icon class="!size-5 !text-[20px] !text-leaf" aria-label="Possui GPS">check_circle</mat-icon>
+            <span class="inline-flex items-center" role="img" aria-label="Possui GPS">
+              <mat-icon class="!size-5 !text-[20px] !text-leaf" aria-hidden="true">check_circle</mat-icon>
+            </span>
           } @else {
-            <span class="text-subtle" aria-label="Sem GPS">—</span>
+            <span class="text-subtle" role="img" aria-label="Sem GPS">—</span>
           }
         </td>
       </ng-container>
@@ -296,11 +298,13 @@
         <td class="mat-mdc-cell" [attr.colspan]="displayedColumns.length">
           <div class="flex flex-col items-center gap-2 px-6 py-14 text-center">
             @if (carregando) {
-              <p class="m-0 text-sm text-muted">Carregando drones...</p>
+              <p class="m-0 text-sm text-muted" role="status">Carregando drones...</p>
             } @else if (erroCarregamento) {
-              <span class="grid size-12 place-items-center rounded-2xl bg-danger-soft text-danger"><mat-icon aria-hidden="true">cloud_off</mat-icon></span>
-              <p class="m-0 font-semibold text-ink">Não foi possível carregar os drones</p>
-              <p class="m-0 text-sm text-muted">Verifique a conexão com o servidor e tente novamente.</p>
+              <div class="flex flex-col items-center gap-2" role="alert">
+                <span class="grid size-12 place-items-center rounded-2xl bg-danger-soft text-danger"><mat-icon aria-hidden="true">cloud_off</mat-icon></span>
+                <p class="m-0 font-semibold text-ink">Não foi possível carregar os drones</p>
+                <p class="m-0 text-sm text-muted">Verifique a conexão com o servidor e tente novamente.</p>
+              </div>
             } @else {
               <span class="grid size-12 place-items-center rounded-2xl bg-mist text-leaf"><mat-icon aria-hidden="true">search_off</mat-icon></span>
               <p class="m-0 font-semibold text-ink">Nenhum drone encontrado</p>

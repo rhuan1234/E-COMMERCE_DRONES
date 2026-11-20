@@ -37,7 +37,7 @@
               formControlName="nome"
               placeholder="Ex.: Semana do Drone"
             />
-            <mat-icon matSuffix>sell</mat-icon>
+            <mat-icon matSuffix aria-hidden="true">sell</mat-icon>
 
             @if (form.controls['nome'].hasError('required') && form.controls['nome'].touched) {
               <mat-error>Informe o nome da promoção.</mat-error>
@@ -75,7 +75,7 @@
                 type="datetime-local"
                 formControlName="dataInicio"
               />
-              <mat-icon matSuffix>event</mat-icon>
+              <mat-icon matSuffix aria-hidden="true">event</mat-icon>
 
               @if (form.controls['dataInicio'].hasError('required') && form.controls['dataInicio'].touched) {
                 <mat-error>Informe a data e hora de início.</mat-error>
@@ -89,7 +89,7 @@
                 type="datetime-local"
                 formControlName="dataFim"
               />
-              <mat-icon matSuffix>event_available</mat-icon>
+              <mat-icon matSuffix aria-hidden="true">event_available</mat-icon>
 
               @if (form.controls['dataFim'].hasError('required') && form.controls['dataFim'].touched) {
                 <mat-error>Informe a data e hora de fim.</mat-error>
@@ -117,12 +117,12 @@
               placeholder="Digite o nome, a marca ou o modelo"
               (input)="pesquisarDrone(modelo.value)"
             />
-            <mat-icon matSuffix>search</mat-icon>
+            <mat-icon matSuffix aria-hidden="true">search</mat-icon>
           </mat-form-field>
       </div>
 
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div class="flex min-h-0 flex-col overflow-hidden rounded-2xl border border-line bg-paper">
+        <div class="flex min-h-0 flex-col overflow-hidden rounded-2xl border border-line bg-paper" [attr.aria-busy]="pesquisandoDrones">
             <div class="flex items-center justify-between border-b border-line bg-white px-4 py-3">
               <h4 class="m-0 text-sm font-bold text-ink">Drones disponíveis</h4>
               <span class="grid h-6 min-w-6 place-items-center rounded-full bg-mist px-2 font-data text-xs font-semibold text-muted">{{ dronesFiltrados.length }}</span>
@@ -143,10 +143,21 @@
                   </button>
                 </li>
               } @empty {
-                <li class="flex flex-col items-center gap-1.5 px-4 py-10 text-center">
-                  <mat-icon class="!text-subtle" aria-hidden="true">search_off</mat-icon>
-                  <p class="m-0 text-sm text-muted">Nenhum drone encontrado.</p>
-                </li>
+                @if (pesquisandoDrones) {
+                  <li class="flex flex-col items-center gap-1.5 px-4 py-10 text-center" role="status">
+                    <p class="m-0 text-sm text-muted">Buscando drones...</p>
+                  </li>
+                } @else if (erroPesquisaDrones) {
+                  <li class="flex flex-col items-center gap-1.5 px-4 py-10 text-center" role="alert">
+                    <span class="grid size-10 place-items-center rounded-xl bg-danger-soft text-danger"><mat-icon aria-hidden="true">error_outline</mat-icon></span>
+                    <p class="m-0 text-sm font-semibold text-ink">Não foi possível buscar drones.</p>
+                  </li>
+                } @else {
+                  <li class="flex flex-col items-center gap-1.5 px-4 py-10 text-center">
+                    <mat-icon class="!text-subtle" aria-hidden="true">search_off</mat-icon>
+                    <p class="m-0 text-sm text-muted">Nenhum drone encontrado.</p>
+                  </li>
+                }
               }
             </ul>
           </div>
@@ -186,16 +197,16 @@
 
   <div class="flex flex-col-reverse gap-3 border-t border-line px-5 py-5 sm:flex-row sm:items-center sm:px-7">
     @if (form.value.id) {
-      <button type="button" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#f1c9c2] bg-white px-4 text-sm font-semibold text-danger transition-colors hover:bg-danger-soft disabled:cursor-not-allowed disabled:opacity-40" (click)="excluir()">
+      <button type="button" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#f1c9c2] bg-white px-4 text-sm font-semibold text-danger transition-colors hover:bg-danger-soft disabled:cursor-not-allowed disabled:opacity-40" (click)="excluir()" [disabled]="salvando">
         <mat-icon aria-hidden="true">delete</mat-icon>
         Excluir
       </button>
     }
     <span class="hidden flex-1 sm:block"></span>
     <button type="button" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-white px-4 text-sm font-semibold text-ink transition-colors hover:bg-mist disabled:cursor-not-allowed disabled:opacity-50" (click)="voltar()">Cancelar</button>
-    <button type="button" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:bg-line-strong" (click)="salvar()" [disabled]="form.invalid">
-      <mat-icon class="!text-lime-glow" aria-hidden="true">check</mat-icon>
-      Salvar promoção
+    <button type="button" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-ink bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:border-line disabled:bg-paper disabled:text-subtle" (click)="salvar()" [disabled]="form.invalid || salvando" [attr.aria-busy]="salvando">
+      <mat-icon [class.!text-lime-glow]="!(form.invalid || salvando)" aria-hidden="true">check</mat-icon>
+      {{ salvando ? 'Salvando...' : 'Salvar promoção' }}
     </button>
   </div>
 </section>

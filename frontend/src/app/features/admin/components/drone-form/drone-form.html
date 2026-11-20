@@ -125,10 +125,10 @@
             </div>
 
             <div class="mt-6 flex flex-wrap items-center justify-end gap-3 border-t border-line pt-5">
-              <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:bg-line-strong"
+              <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-ink bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:border-line disabled:bg-paper disabled:text-subtle"
                 type="button" matStepperNext>
                 Próximo
-                <mat-icon>arrow_forward</mat-icon>
+                <mat-icon aria-hidden="true">arrow_forward</mat-icon>
               </button>
             </div>
           </div>
@@ -225,13 +225,13 @@
 
             <div class="mt-6 flex flex-wrap items-center justify-end gap-3 border-t border-line pt-5">
               <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-transparent px-3 text-sm font-semibold text-muted transition-colors hover:bg-mist hover:text-ink" type="button" matStepperPrevious>
-                <mat-icon>arrow_back</mat-icon>
+                <mat-icon aria-hidden="true">arrow_back</mat-icon>
                 Voltar
               </button>
-              <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:bg-line-strong"
+              <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-ink bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:border-line disabled:bg-paper disabled:text-subtle"
                 type="button" matStepperNext>
                 Próximo
-                <mat-icon>arrow_forward</mat-icon>
+                <mat-icon aria-hidden="true">arrow_forward</mat-icon>
               </button>
             </div>
           </div>
@@ -332,13 +332,13 @@
 
             <div class="mt-6 flex flex-wrap items-center justify-end gap-3 border-t border-line pt-5">
               <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-transparent px-3 text-sm font-semibold text-muted transition-colors hover:bg-mist hover:text-ink" type="button" matStepperPrevious>
-                <mat-icon>arrow_back</mat-icon>
+                <mat-icon aria-hidden="true">arrow_back</mat-icon>
                 Voltar
               </button>
-              <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:bg-line-strong"
+              <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-ink bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:border-line disabled:bg-paper disabled:text-subtle"
                 type="button" matStepperNext>
                 Próximo
-                <mat-icon>arrow_forward</mat-icon>
+                <mat-icon aria-hidden="true">arrow_forward</mat-icon>
               </button>
             </div>
           </div>
@@ -376,7 +376,7 @@
 
             <div class="mt-6 flex flex-col-reverse gap-3 border-t border-line pt-5 sm:flex-row sm:items-center">
               <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-transparent px-3 text-sm font-semibold text-muted transition-colors hover:bg-mist hover:text-ink" type="button" matStepperPrevious>
-                <mat-icon>arrow_back</mat-icon>
+                <mat-icon aria-hidden="true">arrow_back</mat-icon>
                 Voltar
               </button>
 
@@ -384,8 +384,8 @@
 
               @if (form.value.id) {
 
-                <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#f1c9c2] bg-white px-4 text-sm font-semibold text-danger transition-colors hover:bg-danger-soft disabled:cursor-not-allowed disabled:opacity-40" type="button" (click)="excluir()">
-                <mat-icon>delete</mat-icon>
+                <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#f1c9c2] bg-white px-4 text-sm font-semibold text-danger transition-colors hover:bg-danger-soft disabled:cursor-not-allowed disabled:opacity-40" type="button" (click)="excluir()" [disabled]="salvando">
+                <mat-icon aria-hidden="true">delete</mat-icon>
                 Excluir
               </button>
 
@@ -396,11 +396,12 @@
                 Cancelar
               </button>
 
-              <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:bg-line-strong"
+              <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-ink bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:border-line disabled:bg-paper disabled:text-subtle"
                 type="button" (click)="salvar()"
-                [disabled]="form.invalid">
-                <mat-icon>save</mat-icon>
-                Salvar drone
+                [disabled]="form.invalid || salvando"
+                [attr.aria-busy]="salvando">
+                <mat-icon aria-hidden="true">save</mat-icon>
+                {{ salvando ? 'Salvando...' : 'Salvar drone' }}
               </button>
             </div>
           </div>

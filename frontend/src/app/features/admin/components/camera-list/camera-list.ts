@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -31,6 +32,7 @@ import { CameraDetalhesDialog } from '../camera-detalhes-dialog/camera-detalhes-
 export class CameraList implements OnInit {
   /** O app roda sem Zone.js: avisa o Angular quando uma resposta assíncrona muda o estado. */
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
 
 
   displayedColumns: string[] = ['id', 'modelo', 'marca', 'resolucao', 'zoom', 'estabilizacao', 'fps', 'acao'];
@@ -50,35 +52,41 @@ export class CameraList implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      const modelo = params['modelo'];
-      if (modelo && modelo.trim()) {
-        this.filtroModelo = modelo.trim();
-        this.carregarCameraPorModelo(this.filtroModelo);
-      } else {
-        this.filtroModelo = '';
-        this.carregarCameras();
-      }
-    });
+    this.route.params
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        const modelo = params['modelo'];
+        if (modelo && modelo.trim()) {
+          this.filtroModelo = modelo.trim();
+          this.carregarCameraPorModelo(this.filtroModelo);
+        } else {
+          this.filtroModelo = '';
+          this.carregarCameras();
+        }
+      });
   }
 
   carregarCameras(): void {
     this.carregando = true;
     this.erroCarregamento = false;
-    this.cameraService.findAll(this.pageIndex, this.pageSize).subscribe({
+    this.cdr.markForCheck();
+    this.cameraService
+      .findAll(this.pageIndex, this.pageSize)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (response) => {
         this.carregando = false;
-        this.cdr.markForCheck();
         this.dataSource.data = response.items;
         this.pageIndex = response.page;
         this.pageSize = response.pageSize;
         this.totalItems = response.totalItems;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.carregando = false;
-        this.cdr.markForCheck();
         this.erroCarregamento = true;
         console.error('Erro ao carregar câmeras', err);
+        this.cdr.markForCheck();
       },
     });
   }
@@ -86,20 +94,24 @@ export class CameraList implements OnInit {
   carregarCameraPorModelo(modelo: string): void {
     this.carregando = true;
     this.erroCarregamento = false;
-    this.cameraService.findByModelo(this.pageIndex, this.pageSize, modelo).subscribe({
+    this.cdr.markForCheck();
+    this.cameraService
+      .findByModelo(this.pageIndex, this.pageSize, modelo)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (response) => {
         this.carregando = false;
-        this.cdr.markForCheck();
         this.dataSource.data = response.items;
         this.pageIndex = response.page;
         this.pageSize = response.pageSize;
         this.totalItems = response.totalItems;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.carregando = false;
-        this.cdr.markForCheck();
         this.erroCarregamento = true;
         console.error('Erro ao carregar câmeras por modelo', err);
+        this.cdr.markForCheck();
       },
     });
   }
@@ -148,16 +160,22 @@ export class CameraList implements OnInit {
       }
     });
 
-    dialogRef.afterClosed().subscribe((confirmado) => {
-      if (!confirmado) {
-        return;
-      }
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmado) => {
+        if (!confirmado) {
+          return;
+        }
 
-      this.cameraService.delete(camera.id!).subscribe({
-        next: () => this.carregarListaAtual(),
-        error: (err) => console.error('Erro ao excluir', err)
+        this.cameraService
+          .delete(camera.id!)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: () => this.carregarListaAtual(),
+            error: (err) => console.error('Erro ao excluir', err)
+          });
       });
-    });
   }
 
   onPageChange(event: PageEvent): void {

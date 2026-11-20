@@ -1,4 +1,5 @@
-import { Component, HostListener, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, HostListener, OnInit, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Drone } from '../../../../core/models/drone/Drone';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -49,6 +50,7 @@ type CampoFiltroDrone = 'nome' | 'marca' | 'modelo' | 'min' | 'max';
 export class DroneList implements OnInit {
   /** O app roda sem Zone.js: avisa o Angular quando uma resposta assíncrona muda o estado. */
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   displayedColumns: string[] = [
     'id',
@@ -90,27 +92,29 @@ export class DroneList implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
-      this.filtroNome = params['nome'] ? String(params['nome']).trim() : '';
-      this.filtroMarca = params['marca'] ? String(params['marca']).trim() : '';
-      this.filtroModelo = params['modelo'] ? String(params['modelo']).trim() : '';
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        this.filtroNome = params['nome'] ? String(params['nome']).trim() : '';
+        this.filtroMarca = params['marca'] ? String(params['marca']).trim() : '';
+        this.filtroModelo = params['modelo'] ? String(params['modelo']).trim() : '';
 
-      const minParam = params['min'] !== undefined && params['min'] !== '' ? Number(params['min']) : null;
-      const maxParam = params['max'] !== undefined && params['max'] !== '' ? Number(params['max']) : null;
+        const minParam = params['min'] !== undefined && params['min'] !== '' ? Number(params['min']) : null;
+        const maxParam = params['max'] !== undefined && params['max'] !== '' ? Number(params['max']) : null;
 
-      this.precoMin = minParam !== null && !Number.isNaN(minParam) ? minParam : null;
-      this.precoMax = maxParam !== null && !Number.isNaN(maxParam) ? maxParam : null;
+        this.precoMin = minParam !== null && !Number.isNaN(minParam) ? minParam : null;
+        this.precoMax = maxParam !== null && !Number.isNaN(maxParam) ? maxParam : null;
 
-      this.nomeAplicado = this.filtroNome;
-      this.marcaAplicada = this.filtroMarca;
-      this.modeloAplicado = this.filtroModelo;
-      this.precoMinAplicado = this.precoMin;
-      this.precoMaxAplicado = this.precoMax;
+        this.nomeAplicado = this.filtroNome;
+        this.marcaAplicada = this.filtroMarca;
+        this.modeloAplicado = this.filtroModelo;
+        this.precoMinAplicado = this.precoMin;
+        this.precoMaxAplicado = this.precoMax;
 
-      this.filtroAtivo = this.quantidadeFiltrosAtivos > 0;
+        this.filtroAtivo = this.quantidadeFiltrosAtivos > 0;
 
-      this.carregarListaAtual();
-    });
+        this.carregarListaAtual();
+      });
   }
 
   @HostListener('document:keydown.escape')
@@ -146,6 +150,7 @@ export class DroneList implements OnInit {
 
   fecharMenuFiltros(): void {
     this.menuFiltrosAberto = false;
+    this.cdr.markForCheck();
   }
 
   aplicarFiltro(): void {
@@ -238,18 +243,21 @@ export class DroneList implements OnInit {
 
     this.carregando = true;
     this.erroCarregamento = false;
-    this.droneService.findAll(this.pageIndex, this.pageSize, filtros).subscribe({
+    this.cdr.markForCheck();
+    this.droneService
+      .findAll(this.pageIndex, this.pageSize, filtros)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (drones) => {
         this.carregando = false;
-        this.cdr.markForCheck();
         this.dataSource.data = drones.items ?? [];
         this.pageIndex = drones.page ?? 0;
         this.pageSize = drones.pageSize ?? this.pageSize;
         this.totalItems = drones.totalItems ?? 0;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.carregando = false;
-        this.cdr.markForCheck();
         this.dataSource.data = [];
         this.totalItems = 0;
         this.erroCarregamento = Boolean(err?.status !== 400 && err?.status !== 404);
@@ -258,6 +266,7 @@ export class DroneList implements OnInit {
             duration: 3500,
           });
         }
+        this.cdr.markForCheck();
       },
     });
   }
@@ -270,22 +279,28 @@ export class DroneList implements OnInit {
       },
     });
 
-    dialogRef.afterClosed().subscribe((confirmado) => {
-      if (!confirmado) {
-        return;
-      }
-      this.droneService.delete(drone.id!).subscribe({
-        next: () => {
-          this.carregarListaAtual();
-        },
-        error: (err) => {
-          console.error('Erro ao excluir drone', err);
-          this.snackBar.open('Não foi possível excluir o drone.', 'Fechar', {
-            duration: 3500,
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmado) => {
+        if (!confirmado) {
+          return;
+        }
+        this.droneService
+          .delete(drone.id!)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: () => {
+              this.carregarListaAtual();
+            },
+            error: (err) => {
+              console.error('Erro ao excluir drone', err);
+              this.snackBar.open('Não foi possível excluir o drone.', 'Fechar', {
+                duration: 3500,
+              });
+            },
           });
-        },
       });
-    });
   }
 
   onPageChange(event: PageEvent): void {

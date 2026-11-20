@@ -39,7 +39,7 @@
                   formControlName="nome"
                   placeholder="Ex.: Drone Tecnologia Ltda."
                 />
-                <mat-icon matSuffix>store</mat-icon>
+                <mat-icon matSuffix aria-hidden="true">store</mat-icon>
 
                 @if (form.controls['nome'].hasError('required')
                   && form.controls['nome'].touched) {
@@ -62,7 +62,7 @@
                   formControlName="cnpj"
                   placeholder="00.000.000/0000-00"
                 />
-                <mat-icon matSuffix>badge</mat-icon>
+                <mat-icon matSuffix aria-hidden="true">badge</mat-icon>
 
                 @if (form.controls['cnpj'].hasError('required')
                   && form.controls['cnpj'].touched) {
@@ -83,7 +83,7 @@
                   formControlName="telefone"
                   placeholder="(63) 99999-9999"
                 />
-                <mat-icon matSuffix>phone</mat-icon>
+                <mat-icon matSuffix aria-hidden="true">phone</mat-icon>
 
                 @if (form.controls['telefone'].hasError('required')
                   && form.controls['telefone'].touched) {
@@ -102,7 +102,7 @@
                   formControlName="email"
                   placeholder="contato@empresa.com.br"
                 />
-                <mat-icon matSuffix>mail</mat-icon>
+                <mat-icon matSuffix aria-hidden="true">mail</mat-icon>
 
                 @if (form.controls['email'].hasError('required')
                   && form.controls['email'].touched) {
@@ -120,12 +120,12 @@
 
             <div class="mt-6 flex flex-wrap items-center justify-end gap-3 border-t border-line pt-5">
               <button
-                class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:bg-line-strong"
+                class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-ink bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:border-line disabled:bg-paper disabled:text-subtle"
                 type="button"
                 matStepperNext
               >
                 Continuar para endereço
-                <mat-icon>arrow_forward</mat-icon>
+                <mat-icon aria-hidden="true">arrow_forward</mat-icon>
               </button>
             </div>
           </section>
@@ -150,7 +150,7 @@
             <div formGroupName="endereco">
 
               <!-- Consulta de CEP -->
-              <div class="flex flex-col gap-x-3 sm:flex-row sm:items-start">
+              <div class="mb-4 flex flex-col gap-x-3 gap-y-2 sm:flex-row sm:items-start">
                 <mat-form-field appearance="outline" class="w-full sm:max-w-[260px]">
                   <mat-label>CEP</mat-label>
                   <input
@@ -161,7 +161,7 @@
                     (keydown.enter)="$event.preventDefault(); buscarCep(true)"
                   />
 
-                  <mat-icon matSuffix>markunread_mailbox</mat-icon>
+                  <mat-icon matSuffix aria-hidden="true">markunread_mailbox</mat-icon>
 
                   @if (form.get('endereco.cep')?.hasError('required')
                     && form.get('endereco.cep')?.touched) {
@@ -172,17 +172,16 @@
                 </mat-form-field>
 
                 <button
-                  class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-white px-4 text-sm font-semibold text-ink transition-colors hover:bg-mist disabled:cursor-not-allowed disabled:opacity-50"
+                  class="inline-flex h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-white px-4 text-sm font-semibold text-ink transition-colors hover:bg-mist disabled:cursor-not-allowed disabled:border-line disabled:bg-paper disabled:text-subtle sm:mt-1"
                   type="button"
-                  class="sm:mt-1"
                   (click)="buscarCep(true)"
                   [disabled]="carregandoCep"
-                  aria-label="Consultar CEP"
+                  [attr.aria-busy]="carregandoCep"
                 >
                   @if (carregandoCep) {
-                    <mat-spinner diameter="18"></mat-spinner>
+                    <mat-spinner diameter="18" aria-hidden="true"></mat-spinner>
                   } @else {
-                    <mat-icon>search</mat-icon>
+                    <mat-icon aria-hidden="true">search</mat-icon>
                   }
                   <span>{{ carregandoCep ? 'Consultando...' : 'Consultar CEP' }}</span>
                 </button>
@@ -200,7 +199,7 @@
                     formControlName="rua"
                     placeholder="Nome da rua ou avenida"
                   />
-                  <mat-icon matSuffix>signpost</mat-icon>
+                  <mat-icon matSuffix aria-hidden="true">signpost</mat-icon>
 
                   @if (form.get('endereco.rua')?.hasError('required')
                     && form.get('endereco.rua')?.touched) {
@@ -220,7 +219,7 @@
                     formControlName="bairro"
                     placeholder="Nome do bairro"
                   />
-                  <mat-icon matSuffix>location_city</mat-icon>
+                  <mat-icon matSuffix aria-hidden="true">location_city</mat-icon>
 
                   @if (form.get('endereco.bairro')?.hasError('required')
                     && form.get('endereco.bairro')?.touched) {
@@ -243,7 +242,7 @@
                       formControlName="nome"
                       placeholder="Nome da cidade"
                     />
-                    <mat-icon matSuffix>location_city</mat-icon>
+                    <mat-icon matSuffix aria-hidden="true">location_city</mat-icon>
 
                     @if (
                       form.get('endereco.cidade.nome')?.hasError('required')
@@ -278,7 +277,7 @@
                         maxlength="2"
                         autocapitalize="characters"
                       />
-                      <mat-icon matSuffix>map</mat-icon>
+                      <mat-icon matSuffix aria-hidden="true">map</mat-icon>
 
                       @if (
                         form.get('endereco.cidade.estado.nome')?.hasError('required')
@@ -307,7 +306,7 @@
                 type="button"
                 matStepperPrevious
               >
-                <mat-icon>arrow_back</mat-icon>
+                <mat-icon aria-hidden="true">arrow_back</mat-icon>
                 Voltar
               </button>
 
@@ -315,8 +314,8 @@
 
               @if (form.value.id) {
 
-                <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#f1c9c2] bg-white px-4 text-sm font-semibold text-danger transition-colors hover:bg-danger-soft disabled:cursor-not-allowed disabled:opacity-40" type="button" (click)="excluir()">
-                <mat-icon>delete</mat-icon>
+                <button class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#f1c9c2] bg-white px-4 text-sm font-semibold text-danger transition-colors hover:bg-danger-soft disabled:cursor-not-allowed disabled:opacity-40" type="button" (click)="excluir()" [disabled]="salvando">
+                <mat-icon aria-hidden="true">delete</mat-icon>
                 Excluir
               </button>
 
@@ -331,13 +330,14 @@
               </button>
 
               <button
-                class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:bg-line-strong"
+                class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-ink bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:border-line disabled:bg-paper disabled:text-subtle"
                 type="button"
                 (click)="salvar()"
-                [disabled]="form.invalid"
+                [disabled]="form.invalid || salvando"
+                [attr.aria-busy]="salvando"
               >
-                <mat-icon>save</mat-icon>
-                Salvar fornecedor
+                <mat-icon aria-hidden="true">save</mat-icon>
+                {{ salvando ? 'Salvando...' : 'Salvar fornecedor' }}
               </button>
 
             </div>

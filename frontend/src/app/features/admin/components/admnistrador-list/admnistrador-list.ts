@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -31,6 +32,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 export class AdmnistradorList implements OnInit {
   /** O app roda sem Zone.js: avisa o Angular quando uma resposta assíncrona muda o estado. */
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   displayedColumns: string[] = ['id', 'login', 'email', 'acao'];
   dataSource = new MatTableDataSource<Administrador>();
@@ -49,35 +51,41 @@ export class AdmnistradorList implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      const login = params['login'];
-      if (login && login.trim()) {
-        this.filtroLogin = login.trim();
-        this.carregarAdministradorPorLogin(this.filtroLogin);
-      } else {
-        this.filtroLogin = '';
-        this.carregarAdministradores();
-      }
-    });
+    this.route.params
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        const login = params['login'];
+        if (login && login.trim()) {
+          this.filtroLogin = login.trim();
+          this.carregarAdministradorPorLogin(this.filtroLogin);
+        } else {
+          this.filtroLogin = '';
+          this.carregarAdministradores();
+        }
+      });
   }
 
   carregarAdministradores(): void {
     this.carregando = true;
     this.erroCarregamento = false;
-    this.administradorService.findAll(this.pageIndex, this.pageSize).subscribe({
+    this.cdr.markForCheck();
+    this.administradorService
+      .findAll(this.pageIndex, this.pageSize)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (response) => {
         this.carregando = false;
-        this.cdr.markForCheck();
         this.dataSource.data = response.items;
         this.pageIndex = response.page;
         this.pageSize = response.pageSize;
         this.totalItems = response.totalItems;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.carregando = false;
-        this.cdr.markForCheck();
         this.erroCarregamento = true;
         console.error('Erro ao carregar administradores', err);
+        this.cdr.markForCheck();
       },
     });
   }
@@ -85,20 +93,24 @@ export class AdmnistradorList implements OnInit {
   carregarAdministradorPorLogin(login: string): void {
     this.carregando = true;
     this.erroCarregamento = false;
-    this.administradorService.findByLogin(this.pageIndex, this.pageSize, login).subscribe({
+    this.cdr.markForCheck();
+    this.administradorService
+      .findByLogin(this.pageIndex, this.pageSize, login)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (response) => {
         this.carregando = false;
-        this.cdr.markForCheck();
         this.dataSource.data = response.items;
         this.pageIndex = response.page;
         this.pageSize = response.pageSize;
         this.totalItems = response.totalItems;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.carregando = false;
-        this.cdr.markForCheck();
         this.erroCarregamento = true;
         console.error('Erro ao carregar administradores por login', err);
+        this.cdr.markForCheck();
       },
     });
   }
@@ -130,16 +142,22 @@ export class AdmnistradorList implements OnInit {
       }
     });
 
-    dialogRef.afterClosed().subscribe((confirmado) => {
-      if (!confirmado) {
-        return;
-      }
-      
-      this.administradorService.delete(administrador.id).subscribe({
-        next: () => this.carregarListaAtual(),
-        error: (err) => console.error('Erro ao excluir administrador', err)
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmado) => {
+        if (!confirmado) {
+          return;
+        }
+
+        this.administradorService
+          .delete(administrador.id)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: () => this.carregarListaAtual(),
+            error: (err) => console.error('Erro ao excluir administrador', err)
+          });
       });
-    });
   }
 
   onPageChange(event: PageEvent): void {

@@ -1,5 +1,6 @@
 import { Location } from '@angular/common';
-import { Component, inject, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from "@angular/core";
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from "@angular/router";
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
@@ -43,7 +44,10 @@ export class FornecedorForm implements OnInit {
   readonly form: FormGroup;
   private readonly location = inject(Location);
   private readonly enderecoService = inject(EnderecoService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
   carregandoCep = false;
+  salvando = false;
 
   constructor(
     private fb: FormBuilder,
@@ -84,6 +88,10 @@ export class FornecedorForm implements OnInit {
   }
 
   buscarCep(mostrarAlertaSeVazio: boolean = true): void {
+    if (this.carregandoCep) {
+      return;
+    }
+
     const cepControl = this.form.get('endereco.cep');
     const cep = cepControl?.value;
 
@@ -103,34 +111,39 @@ export class FornecedorForm implements OnInit {
     }
 
     this.carregandoCep = true;
-    this.enderecoService.buscarCep(cleanCep).subscribe({
-      next: (dados) => {
-        this.carregandoCep = false;
-        if (dados.erro === true || dados.erro === 'true') {
-          this.exibirMensagem('CEP não encontrado!');
-          return;
-        }
-
-        this.form.patchValue({
-          endereco: {
-            cep: dados.cep || cleanCep,
-            rua: dados.logradouro || '',
-            bairro: dados.bairro || '',
-            cidade: {
-              nome: dados.localidade || '',
-              estado: {
-                nome: dados.uf || ''
+    this.cdr.markForCheck();
+    this.enderecoService
+      .buscarCep(cleanCep)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (dados) => {
+          this.carregandoCep = false;
+          if (dados.erro === true || dados.erro === 'true') {
+            this.exibirMensagem('CEP não encontrado!');
+          } else {
+            this.form.patchValue({
+              endereco: {
+                cep: dados.cep || cleanCep,
+                rua: dados.logradouro || '',
+                bairro: dados.bairro || '',
+                cidade: {
+                  nome: dados.localidade || '',
+                  estado: {
+                    nome: dados.uf || ''
+                  }
+                }
               }
-            }
+            });
           }
-        });
-      },
-      error: (error) => {
-        this.carregandoCep = false;
-        this.exibirMensagem('Erro ao consultar o CEP no ViaCEP.');
-        console.error('Erro ao consultar o CEP: ', error);
-      }
-    });
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.carregandoCep = false;
+          this.exibirMensagem('Erro ao consultar o CEP no ViaCEP.');
+          console.error('Erro ao consultar o CEP: ', error);
+          this.cdr.markForCheck();
+        }
+      });
   }
 
   consultarCep(mostrarAlertaSeVazio: boolean = true): void {
@@ -138,11 +151,19 @@ export class FornecedorForm implements OnInit {
   }
 
   salvar() {
+    if (this.salvando) {
+      return;
+    }
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.cdr.markForCheck();
       this.exibirMensagem('Revise os campos destacados antes de salvar.');
       return;
     }
+
+    this.salvando = true;
+    this.cdr.markForCheck();
 
     const fornecedor = this.form.value;
 
@@ -150,12 +171,20 @@ export class FornecedorForm implements OnInit {
       this.fornecedorService.update(fornecedor.id, fornecedor) :
       this.fornecedorService.create(fornecedor);
       
-    resultado.subscribe({
+    resultado.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
+        this.salvando = false;
+        this.cdr.markForCheck();
         this.exibirMensagem('Fornecedor salvo com sucesso!');
         this.router.navigate(['/admin/fornecedores']);
+      },
+      error: (error) => {
+        this.salvando = false;
+        this.cdr.markForCheck();
+        console.error('Erro ao salvar fornecedor:', error);
+        this.exibirMensagem('Erro ao salvar o fornecedor.');
       }
-  });
+    });
   }
 
   excluir() {
@@ -172,22 +201,28 @@ export class FornecedorForm implements OnInit {
       }
     });
 
-    dialogRef.afterClosed().subscribe((confirmado) => {
-      if (!confirmado) {
-        return;
-      }
-
-      this.fornecedorService.delete(fornecedor.id).subscribe({
-        next: () => {
-          this.exibirMensagem('Fornecedor excluído com sucesso!');
-          this.router.navigate(['/admin/fornecedores']);
-        },
-        error: (error) => {
-          this.exibirMensagem('Erro ao excluir o fornecedor: ');
-          console.log('Erro ao excluir o fornecedor: ', error);
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmado) => {
+        if (!confirmado) {
+          return;
         }
+
+        this.fornecedorService
+          .delete(fornecedor.id)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: () => {
+              this.exibirMensagem('Fornecedor excluído com sucesso!');
+              this.router.navigate(['/admin/fornecedores']);
+            },
+            error: (error) => {
+              this.exibirMensagem('Erro ao excluir o fornecedor.');
+              console.log('Erro ao excluir o fornecedor: ', error);
+            }
+          });
       });
-    });
   }
 
   exibirMensagem(mensagem: string): void {

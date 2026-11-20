@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -28,6 +29,7 @@ export class PerfilPage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly perfilService = inject(PerfilService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   carregando = false;
   erroCarregamento = '';
@@ -48,8 +50,12 @@ export class PerfilPage implements OnInit {
   carregarPerfil(): void {
     this.carregando = true;
     this.erroCarregamento = '';
+    this.cdr.markForCheck();
 
-    this.perfilService.obterPerfil().subscribe({
+    this.perfilService
+      .obterPerfil()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (perfil) => {
         this.perfilForm.patchValue({
           login: perfil.login,
@@ -81,6 +87,7 @@ export class PerfilPage implements OnInit {
 salvarPerfil(): void {
   if (this.perfilForm.invalid || this.salvando) {
     this.perfilForm.markAllAsTouched();
+    this.cdr.markForCheck();
     return;
   }
 
@@ -98,8 +105,12 @@ salvarPerfil(): void {
   this.salvando = true;
   this.mensagemSucesso = '';
   this.erroSalvamento = '';
+  this.cdr.markForCheck();
 
-  this.perfilService.atualizarPerfil(dados).subscribe({
+  this.perfilService
+    .atualizarPerfil(dados)
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe({
     next: (perfilAtualizado) => {
       this.perfilForm.patchValue({
         login: perfilAtualizado.login,

@@ -1,5 +1,6 @@
 import { Location } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { AdminPageHeader } from '../admin-page-header/admin-page-header';
@@ -33,6 +34,9 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
 export class AdministradorForm implements OnInit {
   readonly form: FormGroup;
   private readonly location = inject(Location);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
+  salvando = false;
 
   constructor(
     private fb: FormBuilder,
@@ -60,23 +64,35 @@ export class AdministradorForm implements OnInit {
   }
 
   salvar(): void {
+    if (this.salvando) {
+      return;
+    }
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.cdr.markForCheck();
       this.exibirMensagem('Preencha todos os campos obrigatórios.');
       return;
     }
+
+    this.salvando = true;
+    this.cdr.markForCheck();
 
     const administrador = this.form.value as Administrador;
     const resultado = administrador.id
       ? this.administradorService.update(administrador.id, administrador)
       : this.administradorService.create(administrador);
 
-    resultado.subscribe({
+    resultado.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
+        this.salvando = false;
+        this.cdr.markForCheck();
         this.exibirMensagem('Administrador salvo com sucesso!');
         this.router.navigate(['/admin/administradores']);
       },
       error: (error) => {
+        this.salvando = false;
+        this.cdr.markForCheck();
         this.exibirMensagem('Erro ao salvar o administrador.');
         console.error('Erro ao salvar administrador:', error);
       }
@@ -97,22 +113,28 @@ export class AdministradorForm implements OnInit {
       }
     });
 
-    dialogRef.afterClosed().subscribe((confirmado) => {
-      if (!confirmado) {
-        return;
-      }
-
-      this.administradorService.delete(administrador.id).subscribe({
-        next: () => {
-          this.exibirMensagem('Administrador excluído com sucesso!');
-          this.router.navigate(['/admin/administradores']);
-        },
-        error: (error) => {
-          this.exibirMensagem('Erro ao excluir o administrador.');
-          console.error('Erro ao excluir administrador:', error);
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmado) => {
+        if (!confirmado) {
+          return;
         }
+
+        this.administradorService
+          .delete(administrador.id)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: () => {
+              this.exibirMensagem('Administrador excluído com sucesso!');
+              this.router.navigate(['/admin/administradores']);
+            },
+            error: (error) => {
+              this.exibirMensagem('Erro ao excluir o administrador.');
+              console.error('Erro ao excluir administrador:', error);
+            }
+          });
       });
-    });
   }
 
   exibirMensagem(mensagem: string): void {

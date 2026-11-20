@@ -1,6 +1,6 @@
 <app-admin-page-header
   secao="Acesso"
-  [titulo]="'Novo administrador'"
+  [titulo]="form.value.id ? 'Editar administrador' : 'Novo administrador'"
   descricao="Cadastre as credenciais de acesso de quem vai gerenciar a loja.">
   <button actions type="button" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-transparent px-3 text-sm font-semibold text-muted transition-colors hover:bg-mist hover:text-ink" (click)="voltar()">
     <mat-icon aria-hidden="true">arrow_back</mat-icon>
@@ -31,7 +31,7 @@
       <div class="grid grid-cols-1 gap-x-5 md:grid-cols-2 *:w-full *:min-w-0">
         <mat-form-field appearance="outline">
             <mat-label>Login</mat-label>
-            <mat-icon matPrefix>account_circle</mat-icon>
+            <mat-icon matPrefix aria-hidden="true">account_circle</mat-icon>
             <input
               matInput
               formControlName="login"
@@ -50,7 +50,7 @@
 
         <mat-form-field appearance="outline">
             <mat-label>E-mail</mat-label>
-            <mat-icon matPrefix>mail</mat-icon>
+            <mat-icon matPrefix aria-hidden="true">mail</mat-icon>
             <input
               matInput
               type="email"
@@ -81,7 +81,7 @@
       <div class="grid grid-cols-1 gap-x-5 md:grid-cols-2 *:w-full *:min-w-0">
         <mat-form-field appearance="outline">
             <mat-label>Senha</mat-label>
-            <mat-icon matPrefix>lock</mat-icon>
+            <mat-icon matPrefix aria-hidden="true">lock</mat-icon>
             <input
               matInput
               type="password"
@@ -106,16 +106,16 @@
 
   <div class="flex flex-col-reverse gap-3 border-t border-line px-5 py-5 sm:flex-row sm:items-center sm:px-7">
     @if (form.value.id) {
-      <button type="button" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#f1c9c2] bg-white px-4 text-sm font-semibold text-danger transition-colors hover:bg-danger-soft disabled:cursor-not-allowed disabled:opacity-40" (click)="excluir()">
+      <button type="button" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#f1c9c2] bg-white px-4 text-sm font-semibold text-danger transition-colors hover:bg-danger-soft disabled:cursor-not-allowed disabled:opacity-40" (click)="excluir()" [disabled]="salvando">
         <mat-icon aria-hidden="true">delete</mat-icon>
         Excluir
       </button>
     }
     <span class="hidden flex-1 sm:block"></span>
     <button type="button" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-white px-4 text-sm font-semibold text-ink transition-colors hover:bg-mist disabled:cursor-not-allowed disabled:opacity-50" (click)="voltar()">Cancelar</button>
-    <button type="button" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-0 bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:bg-line-strong" (click)="salvar()" [disabled]="form.invalid">
-      <mat-icon class="!text-lime-glow" aria-hidden="true">check</mat-icon>
-      Salvar administrador
+    <button type="button" class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-ink bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:border-line disabled:bg-paper disabled:text-subtle" (click)="salvar()" [disabled]="form.invalid || salvando" [attr.aria-busy]="salvando">
+      <mat-icon [class.!text-lime-glow]="!(form.invalid || salvando)" aria-hidden="true">check</mat-icon>
+      {{ salvando ? 'Salvando...' : 'Salvar administrador' }}
     </button>
   </div>
 </section>
