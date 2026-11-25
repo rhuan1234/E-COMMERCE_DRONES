@@ -31,6 +31,10 @@ input:focus-visible {
   transition: width 600ms var(--ease-editorial);
 }
 
+.compare-tray {
+  padding-bottom: max(12px, env(safe-area-inset-bottom, 12px));
+}
+
 @media (prefers-reduced-motion: reduce) {
   .drone-card:hover {
     transform: none;

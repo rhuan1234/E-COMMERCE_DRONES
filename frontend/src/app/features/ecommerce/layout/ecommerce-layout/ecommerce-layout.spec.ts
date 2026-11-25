@@ -85,4 +85,27 @@ describe('EcommerceLayout', () => {
     expect(menu.querySelector('a[href="/minha-conta/dados"]')).not.toBeNull();
     expect(menu.querySelector('a[href="/admin"]')).not.toBeNull();
   });
+
+  it('toggles the mobile navigation drawer and search bar cleanly and closes them with Escape', async () => {
+    const header = await criar(null);
+    const menuToggle = header.querySelector('.mobile-menu-toggle') as HTMLButtonElement;
+    const searchToggle = header.querySelector('.search-toggle') as HTMLButtonElement;
+
+    expect(header.querySelector('#mobile-store-drawer')).toBeNull();
+    menuToggle.click();
+    fixture.detectChanges();
+    expect(header.querySelector('#mobile-store-drawer')).not.toBeNull();
+    expect(menuToggle.getAttribute('aria-expanded')).toBe('true');
+
+    // Abrir busca fecha o menu mobile
+    searchToggle.click();
+    fixture.detectChanges();
+    expect(header.querySelector('#mobile-store-drawer')).toBeNull();
+    expect(searchToggle.getAttribute('aria-expanded')).toBe('true');
+
+    // Escape fecha a busca mobile
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    fixture.detectChanges();
+    expect(searchToggle.getAttribute('aria-expanded')).toBe('false');
+  });
 });

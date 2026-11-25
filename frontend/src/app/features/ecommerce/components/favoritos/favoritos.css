@@ -196,11 +196,26 @@
 
 .favorites-pagination {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 12px 20px;
   margin-top: 28px;
   color: var(--color-muted);
   font-family: var(--font-data);
   font-size: 0.88rem;
+}
+
+@media (max-width: 560px) {
+  .favorites-page {
+    padding: 20px 16px 36px;
+  }
+
+  .back-to-store {
+    width: 100%;
+  }
+
+  .favorites-pagination {
+    justify-content: space-between;
+  }
 }

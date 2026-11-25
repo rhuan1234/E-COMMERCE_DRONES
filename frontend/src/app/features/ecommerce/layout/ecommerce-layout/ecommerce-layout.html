@@ -1,4 +1,4 @@
-<div class="storefront min-h-screen bg-paper font-body text-ink antialiased">
+<div class="storefront min-h-dvh bg-paper font-body text-ink antialiased">
   <a
     class="sr-only z-50 rounded-xl bg-ink px-4 py-3 text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
     href="#conteudo-loja">
@@ -6,18 +6,35 @@
   </a>
 
   <header class="store-header sticky top-0 z-40 border-b border-line bg-white/95 backdrop-blur">
-    <div class="mx-auto grid max-w-[1240px] grid-cols-[auto_auto] items-center gap-x-3 gap-y-3 px-4 py-3.5 sm:gap-x-6 sm:px-5 md:px-8 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-8">
-      <a class="store-brand inline-flex w-fit items-center gap-3 rounded-xl text-ink no-underline" routerLink="/" aria-label="Skyline Drones - página inicial">
-        <span class="brand-mark grid size-11 place-items-center rounded-[13px] bg-ink text-lime-glow" aria-hidden="true">
-          <app-drone-mark class="w-[26px]"></app-drone-mark>
-        </span>
-        <span class="flex flex-col leading-none">
-          <span class="font-display font-extra-wide text-[17px] font-extrabold tracking-[1.6px]">SKYLINE</span>
-          <span class="font-display font-extra-wide mt-1 text-[11px] font-bold tracking-[3.6px] text-leaf">DRONES</span>
-        </span>
-      </a>
+    <div class="mx-auto grid max-w-[1240px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 px-3 py-2.5 sm:gap-x-5 sm:px-5 sm:py-3 md:px-8 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-6">
+      <!-- Marca + gatilho do menu mobile (mantém o cabeçalho em 1 linha limpa no celular) -->
+      <div class="flex min-w-0 items-center gap-1.5 sm:gap-2.5">
+        <button
+          class="mobile-menu-toggle inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-xl border-0 bg-transparent text-ink transition-colors hover:bg-mist xl:hidden"
+          type="button"
+          aria-controls="mobile-store-drawer"
+          [attr.aria-expanded]="menuMobileAberto()"
+          [attr.aria-label]="menuMobileAberto() ? 'Fechar menu da loja' : 'Abrir menu da loja'"
+          (click)="alternarMenuMobile()">
+          <mat-icon aria-hidden="true">{{ menuMobileAberto() ? 'close' : 'menu' }}</mat-icon>
+        </button>
 
-      <div class="col-span-2 flex min-w-0 items-center gap-5 lg:col-span-1">
+        <a class="store-brand inline-flex min-w-0 items-center gap-2.5 rounded-xl text-ink no-underline sm:gap-3" routerLink="/" aria-label="Skyline Drones - página inicial">
+          <span class="brand-mark grid size-9 shrink-0 place-items-center rounded-[11px] bg-ink text-lime-glow sm:size-11 sm:rounded-[13px]" aria-hidden="true">
+            <app-drone-mark class="w-[22px] sm:w-[26px]"></app-drone-mark>
+          </span>
+          <span class="flex min-w-0 flex-col leading-none">
+            <span class="truncate font-display font-extra-wide text-[15px] font-extrabold tracking-[1.4px] sm:text-[17px] sm:tracking-[1.6px]">SKYLINE</span>
+            <span class="mt-0.5 font-display font-extra-wide text-[10px] font-bold tracking-[3px] text-leaf sm:mt-1 sm:text-[11px] sm:tracking-[3.6px]">DRONES</span>
+          </span>
+        </a>
+      </div>
+
+      <!-- Navegação desktop + busca (no mobile, a busca abre sob demanda sem inflar o header) -->
+      <div
+        class="col-span-2 min-w-0 items-center gap-4 pt-2.5 lg:col-span-1 lg:flex lg:pt-0"
+        [class.flex]="buscaMobileAberta()"
+        [class.hidden]="!buscaMobileAberta()">
         <nav class="hidden shrink-0 items-center gap-1 xl:flex" aria-label="Navegação da loja">
           <a class="rounded-[10px] px-3.5 py-2.5 text-[15px] font-medium text-muted no-underline transition-colors hover:bg-mist hover:text-ink" routerLink="/" routerLinkActive="!text-ink !bg-mist" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page">Início</a>
           <a class="rounded-[10px] px-3.5 py-2.5 text-[15px] font-medium text-muted no-underline transition-colors hover:bg-mist hover:text-ink" routerLink="/home" routerLinkActive="!text-ink !bg-mist" ariaCurrentWhenActive="page">Catálogo</a>
@@ -30,58 +47,70 @@
         </nav>
 
         <form
-          class="search-form flex h-12 min-w-0 flex-1 items-center gap-2 rounded-xl border border-[#dce4dc] bg-paper pl-3.5 pr-1.5 transition focus-within:border-lime focus-within:ring-4 focus-within:ring-lime/20"
+          class="search-form flex h-11 min-w-0 flex-1 items-center gap-2 rounded-xl border border-[#dce4dc] bg-paper pl-3 pr-1.5 transition focus-within:border-lime focus-within:ring-4 focus-within:ring-lime/20 sm:h-12 sm:pl-3.5"
           role="search"
           (submit)="$event.preventDefault(); pesquisar()">
           <label class="sr-only" for="store-search">Buscar drones</label>
           <mat-icon class="shrink-0 text-subtle" aria-hidden="true">search</mat-icon>
           <input
+            #campoBusca
             id="store-search"
-            class="h-full min-w-0 flex-1 border-0 bg-transparent text-[15px] text-ink outline-none placeholder:text-placeholder"
+            class="h-full min-w-0 flex-1 border-0 bg-transparent text-base text-ink outline-none placeholder:text-placeholder sm:text-[15px]"
             name="termoBusca"
             type="search"
             placeholder="Buscar drones"
             [(ngModel)]="termoBusca">
           <button
-            class="h-9 shrink-0 cursor-pointer rounded-lg bg-ink px-4 text-sm font-semibold text-white transition-colors hover:bg-ink-soft"
+            class="h-9 shrink-0 cursor-pointer rounded-lg bg-ink px-3.5 text-sm font-semibold text-white transition-colors hover:bg-ink-soft sm:px-4"
             type="submit">
             Buscar
           </button>
         </form>
       </div>
 
-      <nav class="header-actions col-start-2 row-start-1 flex items-center justify-end gap-1 lg:col-start-3" aria-label="Acesso à conta e ao carrinho">
+      <!-- Ações principais: no celular ficam compactas (busca, conta e carrinho com alvo >= 44px) -->
+      <nav class="header-actions col-start-2 row-start-1 flex items-center justify-end gap-0.5 sm:gap-1 lg:col-start-3" aria-label="Acesso à conta e ao carrinho">
+        <button
+          class="header-action search-toggle inline-flex size-11 cursor-pointer items-center justify-center rounded-xl border-0 bg-transparent text-ink transition-colors hover:bg-mist lg:hidden"
+          type="button"
+          [attr.aria-expanded]="buscaMobileAberta()"
+          [attr.aria-label]="buscaMobileAberta() ? 'Fechar busca' : 'Buscar drones'"
+          (click)="alternarBuscaMobile()">
+          <mat-icon class="text-leaf" aria-hidden="true">{{ buscaMobileAberta() ? 'close' : 'search' }}</mat-icon>
+        </button>
+
         @if (auth.administrador()) {
-          <a class="header-action admin-link inline-flex h-11 items-center gap-2 rounded-xl px-2.5 text-sm font-semibold text-ink no-underline transition-colors hover:bg-mist" routerLink="/admin" aria-label="Painel administrativo">
+          <a class="header-action admin-link hidden h-11 items-center gap-2 rounded-xl px-2.5 text-sm font-semibold text-ink no-underline transition-colors hover:bg-mist sm:inline-flex" routerLink="/admin" aria-label="Painel administrativo">
             <mat-icon class="text-leaf" aria-hidden="true">admin_panel_settings</mat-icon>
             <span class="hidden lg:inline">Painel</span>
           </a>
         }
         @if (auth.autenticado()) {
           <button
-            class="header-action account-trigger inline-flex h-11 cursor-pointer items-center gap-1.5 rounded-xl border-0 bg-transparent px-2.5 text-sm font-semibold text-ink transition-colors hover:bg-mist"
+            class="header-action account-trigger inline-flex h-11 min-w-11 cursor-pointer items-center justify-center gap-1.5 rounded-xl border-0 bg-transparent px-2 text-sm font-semibold text-ink transition-colors hover:bg-mist sm:px-2.5"
             type="button"
             aria-label="Abrir menu da conta"
             [matMenuTriggerFor]="menuConta">
             <mat-icon class="text-leaf" aria-hidden="true">account_circle</mat-icon>
             <span class="hidden max-w-[140px] truncate md:inline">{{ auth.usuario() || 'Minha conta' }}</span>
-            <mat-icon class="!size-[18px] !text-[18px] text-subtle" aria-hidden="true">expand_more</mat-icon>
+            <mat-icon class="!hidden !size-[18px] !text-[18px] text-subtle md:!inline-block" aria-hidden="true">expand_more</mat-icon>
           </button>
         } @else {
           <a
-            class="header-action login-link inline-flex h-11 items-center gap-2 rounded-xl px-2.5 text-sm font-semibold text-ink no-underline transition-colors hover:bg-mist"
+            class="header-action login-link inline-flex h-11 min-w-11 items-center justify-center gap-2 rounded-xl px-2 text-sm font-semibold text-ink no-underline transition-colors hover:bg-mist sm:px-2.5"
             routerLink="/login"
-            [queryParams]="{ returnUrl: urlAtual() }">
+            [queryParams]="{ returnUrl: urlAtual() }"
+            aria-label="Entrar na conta">
             <mat-icon class="text-leaf" aria-hidden="true">account_circle</mat-icon>
             <span class="hidden md:inline">Entrar</span>
           </a>
         }
-        <a class="header-action inline-flex h-11 items-center gap-2 rounded-xl px-2.5 text-sm font-semibold text-ink no-underline transition-colors hover:bg-mist" routerLink="/favoritos" aria-label="Meus favoritos">
+        <a class="header-action hidden h-11 items-center gap-2 rounded-xl px-2.5 text-sm font-semibold text-ink no-underline transition-colors hover:bg-mist sm:inline-flex" routerLink="/favoritos" aria-label="Meus favoritos">
           <mat-icon class="text-leaf" aria-hidden="true">favorite_border</mat-icon>
           <span class="hidden md:inline">Favoritos</span>
         </a>
         <a
-          class="header-action cart-action relative inline-flex h-11 items-center gap-2 rounded-xl px-2.5 text-sm font-semibold text-ink no-underline transition-colors hover:bg-mist"
+          class="header-action cart-action relative inline-flex h-11 min-w-11 items-center justify-center gap-2 rounded-xl px-2 text-sm font-semibold text-ink no-underline transition-colors hover:bg-mist sm:px-2.5"
           routerLink="/carrinho"
           [attr.aria-label]="'Carrinho de compras, ' + carrinho.quantidadeItens() + ' itens'">
           <mat-icon class="text-leaf" aria-hidden="true">shopping_cart</mat-icon>
@@ -93,18 +122,54 @@
           }
         </a>
       </nav>
-
-      <nav class="mobile-store-nav col-span-full flex items-center gap-1.5 overflow-x-auto border-t border-line/70 pt-2.5 xl:hidden" aria-label="Navegação rápida da loja">
-        <a class="inline-flex min-h-10 shrink-0 items-center rounded-[10px] px-3.5 py-2 text-sm font-semibold text-muted no-underline transition-colors hover:bg-mist hover:text-ink" routerLink="/" routerLinkActive="!bg-mist !text-ink" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page">Início</a>
-        <a class="inline-flex min-h-10 shrink-0 items-center rounded-[10px] px-3.5 py-2 text-sm font-semibold text-muted no-underline transition-colors hover:bg-mist hover:text-ink" routerLink="/home" routerLinkActive="!bg-mist !text-ink" ariaCurrentWhenActive="page">Catálogo</a>
-        <a class="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-[10px] px-3.5 py-2 text-sm font-semibold text-muted no-underline transition-colors hover:bg-mist hover:text-ink" routerLink="/comparar" routerLinkActive="!bg-mist !text-ink" ariaCurrentWhenActive="page">
-          Comparar
-          @if (comparacao.quantidade() > 0) {
-            <span class="grid h-5 min-w-5 place-items-center rounded-full bg-ink px-1.5 font-data text-[11px] font-semibold text-lime-glow" aria-hidden="true">{{ comparacao.quantidade() }}</span>
-          }
-        </a>
-      </nav>
     </div>
+
+    <!-- Menu mobile/tablet expansível (fecha com Esc ou ao navegar) -->
+    @if (menuMobileAberto()) {
+      <nav
+        id="mobile-store-drawer"
+        class="mobile-drawer border-t border-line bg-white px-4 pb-4 pt-3 shadow-[var(--shadow-lift)] xl:hidden"
+        aria-label="Navegação da loja">
+        <ul class="m-0 grid list-none gap-1 p-0">
+          <li>
+            <a class="flex min-h-11 items-center justify-between rounded-xl px-3.5 py-2.5 text-[15px] font-semibold text-ink no-underline transition-colors hover:bg-mist" routerLink="/" routerLinkActive="!bg-mist-green !text-leaf-deep" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" (click)="fecharMenuMobile()">
+              <span class="inline-flex items-center gap-3"><mat-icon class="text-leaf" aria-hidden="true">flight_takeoff</mat-icon>Início</span>
+              <mat-icon class="!size-[18px] !text-[18px] text-subtle" aria-hidden="true">chevron_right</mat-icon>
+            </a>
+          </li>
+          <li>
+            <a class="flex min-h-11 items-center justify-between rounded-xl px-3.5 py-2.5 text-[15px] font-semibold text-ink no-underline transition-colors hover:bg-mist" routerLink="/home" routerLinkActive="!bg-mist-green !text-leaf-deep" ariaCurrentWhenActive="page" (click)="fecharMenuMobile()">
+              <span class="inline-flex items-center gap-3"><mat-icon class="text-leaf" aria-hidden="true">storefront</mat-icon>Catálogo de drones</span>
+              <mat-icon class="!size-[18px] !text-[18px] text-subtle" aria-hidden="true">chevron_right</mat-icon>
+            </a>
+          </li>
+          <li>
+            <a class="flex min-h-11 items-center justify-between rounded-xl px-3.5 py-2.5 text-[15px] font-semibold text-ink no-underline transition-colors hover:bg-mist" routerLink="/comparar" routerLinkActive="!bg-mist-green !text-leaf-deep" ariaCurrentWhenActive="page" (click)="fecharMenuMobile()">
+              <span class="inline-flex items-center gap-3"><mat-icon class="text-leaf" aria-hidden="true">compare_arrows</mat-icon>Comparar</span>
+              @if (comparacao.quantidade() > 0) {
+                <span class="grid h-6 min-w-6 place-items-center rounded-full bg-ink px-2 font-data text-xs font-semibold text-lime-glow">{{ comparacao.quantidade() }}</span>
+              } @else {
+                <mat-icon class="!size-[18px] !text-[18px] text-subtle" aria-hidden="true">chevron_right</mat-icon>
+              }
+            </a>
+          </li>
+          <li class="sm:hidden">
+            <a class="flex min-h-11 items-center justify-between rounded-xl px-3.5 py-2.5 text-[15px] font-semibold text-ink no-underline transition-colors hover:bg-mist" routerLink="/favoritos" routerLinkActive="!bg-mist-green !text-leaf-deep" ariaCurrentWhenActive="page" (click)="fecharMenuMobile()">
+              <span class="inline-flex items-center gap-3"><mat-icon class="text-leaf" aria-hidden="true">favorite_border</mat-icon>Favoritos</span>
+              <mat-icon class="!size-[18px] !text-[18px] text-subtle" aria-hidden="true">chevron_right</mat-icon>
+            </a>
+          </li>
+          @if (auth.administrador()) {
+            <li class="sm:hidden">
+              <a class="flex min-h-11 items-center justify-between rounded-xl px-3.5 py-2.5 text-[15px] font-semibold text-ink no-underline transition-colors hover:bg-mist" routerLink="/admin" (click)="fecharMenuMobile()">
+                <span class="inline-flex items-center gap-3"><mat-icon class="text-leaf" aria-hidden="true">admin_panel_settings</mat-icon>Painel administrativo</span>
+                <mat-icon class="!size-[18px] !text-[18px] text-subtle" aria-hidden="true">chevron_right</mat-icon>
+              </a>
+            </li>
+          }
+        </ul>
+      </nav>
+    }
   </header>
 
   <main id="conteudo-loja" class="store-main" tabindex="-1">
@@ -114,7 +179,7 @@
   </main>
 
   <section class="service-benefits border-t border-line bg-white" aria-label="Vantagens da loja">
-    <ul class="mx-auto grid max-w-[1240px] list-none grid-cols-1 gap-6 px-5 py-10 sm:grid-cols-2 md:px-8 lg:grid-cols-4">
+    <ul class="mx-auto grid max-w-[1240px] list-none grid-cols-1 gap-5 px-4 py-8 sm:grid-cols-2 sm:gap-6 sm:px-5 sm:py-10 md:px-8 lg:grid-cols-4">
       <li class="benefit flex items-start gap-3.5">
         <span class="benefit-icon grid size-11 shrink-0 place-items-center rounded-xl bg-ink text-lime-glow"><mat-icon aria-hidden="true">local_shipping</mat-icon></span>
         <div>
@@ -147,8 +212,8 @@
   </section>
 
   <footer class="store-footer surface-grid-dark surface-grain bg-night text-[#c3cfc6]">
-    <div class="relative z-[2] mx-auto max-w-[1240px] px-5 pb-7 pt-16 md:px-8">
-      <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+    <div class="relative z-[2] mx-auto max-w-[1240px] px-4 pb-8 pt-12 sm:px-5 md:px-8 md:pt-16">
+      <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-10 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div class="flex flex-col gap-4">
           <a class="store-brand inline-flex w-fit items-center gap-3 rounded-xl text-white no-underline" routerLink="/" aria-label="Skyline Drones - página inicial">
             <span class="grid size-11 place-items-center rounded-[13px] bg-[#223029] text-lime-glow" aria-hidden="true">
@@ -162,29 +227,29 @@
           <p class="m-0 max-w-[300px] text-[15px] leading-relaxed">Tecnologia e liberdade para você ir mais longe. Encontre o drone ideal para o seu próximo destino.</p>
         </div>
 
-        <nav class="flex flex-col gap-2.5 text-[15px]" aria-labelledby="footer-institucional">
+        <nav class="flex flex-col gap-2 text-[15px]" aria-labelledby="footer-institucional">
           <h2 id="footer-institucional" class="m-0 mb-1 text-base font-bold text-white">Institucional</h2>
-          <a class="w-fit text-[#c3cfc6] no-underline hover:text-white" href="mailto:contato@skylinedrones.com.br">Sobre a Skyline</a>
-          <a class="w-fit text-[#c3cfc6] no-underline hover:text-white" href="mailto:contato@skylinedrones.com.br">Fale conosco</a>
-          <a class="w-fit text-[#c3cfc6] no-underline hover:text-white" href="mailto:contato@skylinedrones.com.br">Trabalhe conosco</a>
+          <a class="inline-flex w-fit items-center py-1 text-[#c3cfc6] no-underline hover:text-white" href="mailto:contato@skylinedrones.com.br">Sobre a Skyline</a>
+          <a class="inline-flex w-fit items-center py-1 text-[#c3cfc6] no-underline hover:text-white" href="mailto:contato@skylinedrones.com.br">Fale conosco</a>
+          <a class="inline-flex w-fit items-center py-1 text-[#c3cfc6] no-underline hover:text-white" href="mailto:contato@skylinedrones.com.br">Trabalhe conosco</a>
         </nav>
 
-        <nav class="flex flex-col gap-2.5 text-[15px]" aria-labelledby="footer-suporte">
+        <nav class="flex flex-col gap-2 text-[15px]" aria-labelledby="footer-suporte">
           <h2 id="footer-suporte" class="m-0 mb-1 text-base font-bold text-white">Ajuda e suporte</h2>
-          <a class="w-fit text-[#c3cfc6] no-underline hover:text-white" href="mailto:suporte@skylinedrones.com.br">Dúvidas frequentes</a>
-          <a class="w-fit text-[#c3cfc6] no-underline hover:text-white" href="mailto:suporte@skylinedrones.com.br">Trocas e devoluções</a>
-          <a class="w-fit text-[#c3cfc6] no-underline hover:text-white" href="mailto:suporte@skylinedrones.com.br">Acompanhe seu pedido</a>
+          <a class="inline-flex w-fit items-center py-1 text-[#c3cfc6] no-underline hover:text-white" href="mailto:suporte@skylinedrones.com.br">Dúvidas frequentes</a>
+          <a class="inline-flex w-fit items-center py-1 text-[#c3cfc6] no-underline hover:text-white" href="mailto:suporte@skylinedrones.com.br">Trocas e devoluções</a>
+          <a class="inline-flex w-fit items-center py-1 text-[#c3cfc6] no-underline hover:text-white" href="mailto:suporte@skylinedrones.com.br">Acompanhe seu pedido</a>
         </nav>
 
-        <div class="flex flex-col gap-2.5 text-[15px]">
+        <div class="flex flex-col gap-2 text-[15px]">
           <h2 class="m-0 mb-1 text-base font-bold text-white">Atendimento</h2>
           <p class="m-0">Segunda a sexta, das 9h às 18h</p>
-          <a class="w-fit text-[#c3cfc6] no-underline hover:text-white" href="mailto:oi@skylinedrones.com.br">oi&#64;skylinedrones.com.br</a>
+          <a class="inline-flex w-fit items-center py-1 text-[#c3cfc6] no-underline hover:text-white" href="mailto:oi@skylinedrones.com.br">oi&#64;skylinedrones.com.br</a>
           <p class="m-0 font-data text-sm">(11) 4000-2025</p>
         </div>
       </div>
 
-      <div class="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-[#26332b] pt-6 text-[13px]">
+      <div class="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-[#26332b] pt-6 text-[13px] md:mt-12">
         <p class="m-0">© 2026 Skyline Drones. Todos os direitos reservados.</p>
         <ul class="payment-methods m-0 flex list-none flex-wrap gap-2 p-0 font-data text-xs font-semibold text-white" aria-label="Formas de pagamento aceitas">
           <li class="rounded-md border border-[#34413a] px-2.5 py-1">PIX</li>

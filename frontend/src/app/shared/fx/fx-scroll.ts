@@ -41,6 +41,8 @@ interface Cena {
   videoAlvo: number;
   trilho: HTMLElement | null;
   etapas: number;
+  alturaBase: number;
+  mobileLivre: boolean;
 }
 
 function limitar(v: number, min: number, max: number): number {
@@ -147,11 +149,15 @@ export class FxScroll {
 
     if (!this.reduzido) {
       const aoRolar = () => this.aoRolar();
+      const aoRedimensionar = () => {
+        this.aplicarAlturasCenas();
+        this.aoRolar();
+      };
       win.addEventListener('scroll', aoRolar, { passive: true });
-      win.addEventListener('resize', aoRolar);
+      win.addEventListener('resize', aoRedimensionar);
       this.limpezas.push(() => {
         win.removeEventListener('scroll', aoRolar);
-        win.removeEventListener('resize', aoRolar);
+        win.removeEventListener('resize', aoRedimensionar);
       });
       this.aoRolar();
     }
@@ -284,12 +290,32 @@ export class FxScroll {
 
   /* ---------- 2. Cenas fixas ---------- */
 
+  private ehMobile(): boolean {
+    const win = this.doc.defaultView;
+    return !!win && win.innerWidth < 768;
+  }
+
+  private aplicarAlturasCenas(): void {
+    const mobile = this.ehMobile();
+    this.cenas.forEach((cena) => {
+      if (this.reduzido || (mobile && cena.mobileLivre)) {
+        cena.secao.style.height = 'auto';
+        if (cena.trilho) cena.trilho.style.transform = '';
+        if (cena.etapas) cena.secao.setAttribute('data-etapa', String(cena.etapas));
+        return;
+      }
+      // Em telas móveis, reduz ligeiramente a altura das cenas fixas para manter o ritmo ágil no toque.
+      const fator = mobile ? 0.72 : 1;
+      cena.secao.style.height = `${Math.round(cena.alturaBase * 100 * fator)}dvh`;
+    });
+  }
+
   private armarCenas(): void {
     const anteriores = new Map(this.cenas.map((c) => [c.secao, c]));
     this.cenas = [];
     this.host.querySelectorAll<HTMLElement>('[data-fx-fixa]').forEach((secao) => {
       const altura = parseFloat(secao.dataset['fxAltura'] || '3');
-      secao.style.height = this.reduzido ? 'auto' : altura * 100 + 'vh';
+      const mobileLivre = secao.hasAttribute('data-fx-mobile-livre');
 
       const atores: Ator[] = [];
       secao.querySelectorAll<HTMLElement>(SELETOR_ATORES).forEach((el) => {
@@ -324,8 +350,12 @@ export class FxScroll {
         videoAlvo: anteriores.get(secao)?.videoAlvo ?? 0,
         trilho: secao.querySelector<HTMLElement>('[data-fx="trilho"]'),
         etapas,
+        alturaBase: altura,
+        mobileLivre,
       });
     });
+
+    this.aplicarAlturasCenas();
 
     if (!this.reduzido && !this.quadroVideo && this.cenas.some((c) => c.video)) {
       const laco = () => {
@@ -338,6 +368,9 @@ export class FxScroll {
   }
 
   private atualizarCena(cena: Cena, alturaTela: number): void {
+    if (this.ehMobile() && cena.mobileLivre) {
+      return;
+    }
     const ret = cena.secao.getBoundingClientRect();
     const topoPalco = cena.palco ? parseFloat(getComputedStyle(cena.palco).top) || 0 : 0;
     const percurso = cena.secao.offsetHeight - (alturaTela - topoPalco);

@@ -5,7 +5,22 @@
 }
 
 a:focus-visible,
-button:focus-visible {
+button:focus-visible,
+.compare-table-wrap:focus-visible {
   outline: 3px solid #8cc63f;
   outline-offset: 3px;
+}
+
+/* Mantém a coluna de especificações fixa à esquerda ao deslizar horizontalmente no mobile */
+.compare-sticky-col {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  box-shadow: 1px 0 0 var(--color-line);
+}
+
+@media (min-width: 768px) {
+  .compare-sticky-col {
+    box-shadow: none;
+  }
 }

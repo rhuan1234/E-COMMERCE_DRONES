@@ -73,10 +73,38 @@ body {
   font-family: var(--font-body);
   caret-color: var(--color-leaf);
   min-height: 100%;
+  overflow-wrap: break-word;
 }
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+  scroll-padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p,
+li {
+  text-wrap: pretty;
+}
+
+@media (pointer: coarse) {
+  :where(button, [role='button'], nav a) {
+    min-block-size: 44px;
+  }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 * {
@@ -118,10 +146,6 @@ html {
 
 .font-data {
   font-variant-numeric: tabular-nums;
-}
-
-p {
-  text-wrap: pretty;
 }
 
 a {

@@ -675,17 +675,31 @@
 }
 
 @media (max-width: 820px) {
+  .drone-info-page {
+    padding: 20px 16px 36px;
+  }
+
+  .back-link {
+    margin-bottom: 16px;
+  }
+
   .product-page {
     grid-template-columns: minmax(0, 1fr);
-    gap: 28px;
+    gap: 24px;
   }
 
   .main-image {
-    min-height: 320px;
+    min-height: 260px;
+    border-radius: 20px;
   }
 
   .main-image img {
-    height: min(72vw, 440px);
+    height: min(68vw, 340px);
+    padding: 16px;
+  }
+
+  .product-price {
+    margin: 20px 0 8px;
   }
 }
 
@@ -699,9 +713,29 @@
   }
 
   .review-login,
-  .review-feedback {
-    align-items: flex-start;
+  .review-feedback,
+  .review-form-footer,
+  .review-pagination {
+    align-items: stretch;
     flex-direction: column;
+  }
+
+  .review-pagination {
+    text-align: center;
+  }
+
+  .review-login a,
+  .review-form-footer button,
+  .review-pagination button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .review-card-header {
+    flex-wrap: wrap;
+    align-items: flex-start;
   }
 
   .review-card {
@@ -709,7 +743,12 @@
   }
 
   .technical-card dl > div {
-    gap: 10px;
-    font-size: 0.82rem;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    font-size: 0.85rem;
+  }
+
+  .technical-card dd {
+    margin-left: auto;
   }
 }
