@@ -3,9 +3,6 @@ package drones.services;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
-import org.eclipse.microprofile.jwt.JsonWebToken;
-
 import drones.dto.fornecedores.EnderecoRequestClienteDTO;
 import drones.dto.fornecedores.EnderecoResponseClienteDTO;
 import drones.dto.usuarios.AlterarSenhaClienteDTO;
@@ -41,13 +38,10 @@ public class ClienteService implements ClienteServiceInterface {
     UsuarioRepository usuarioRepository;
 
     @Inject
-    HashService hashService;
+    KeycloakIdentityProvider keycloakIdentityProvider;
 
     @Inject
     tokenRepository tokenRepository;
-
-    @Inject
-    JsonWebToken jwt;
 
     @Inject
     EmailService emailService;
@@ -66,7 +60,7 @@ public class ClienteService implements ClienteServiceInterface {
     public Usuario criar(ClienteRequestSimplesDTO dto) {
         Usuario usuario = ClienteMapper.toEntitySimples(dto);
         usuario.setPerfil(Perfil.CLIENTE);
-        return usuarioService.criar(usuario);
+        return usuarioService.criar(usuario, dto.senha());
     }
 
     @Override
@@ -82,9 +76,15 @@ public class ClienteService implements ClienteServiceInterface {
         }
 
         cliente = ClienteMapper.updateEntityCompleto(cliente, dto);
-        
-        ClienteResponseCompletoDTO response = ClienteMapper.toResponseCompletoDTO(cliente);
-        return response;
+        if (cliente.getKeycloakId() != null && !cliente.getKeycloakId().isBlank()) {
+            keycloakIdentityProvider.updateUserProfile(
+                    cliente.getKeycloakId(),
+                    cliente.getNomeCompleto(),
+                    cliente.getEmail()
+            );
+        }
+
+        return ClienteMapper.toResponseCompletoDTO(cliente);
     }
     @Override
     public ClienteResponseCompletoDTO obterDados(String login) {
@@ -121,16 +121,12 @@ public class ClienteService implements ClienteServiceInterface {
             throw new ValidationException("Usuário não encontrado");
         }
 
-        
-
-        // Verifica se a senha atual está correta
-        if (!hashService.verificarBcrypt(dto.senhaAtual(), cliente.getSenhaHash())) {
-            throw new ValidationException("Senha atual está incorreta");
+        if (!keycloakIdentityProvider.verifyCredentials(login, dto.senhaAtual())) {
+            throw new ValidationException("Senha atual está incorreta", "senhaAtual");
         }
 
-        // Gera o hash da nova senha com BCrypt
-        cliente.setSenhaHash(hashService.bcrypt(dto.novaSenha()));
-        usuarioRepository.persist(cliente);
+        String keycloakId = resolverKeycloakId(cliente);
+        keycloakIdentityProvider.updatePassword(keycloakId, dto.novaSenha());
     }
 
     @Override
@@ -186,8 +182,19 @@ public class ClienteService implements ClienteServiceInterface {
         }
 
         Usuario usuario = reset.getUsuario();
-        usuario.setSenhaHash(hashService.bcrypt(dto.novaSenha()));
+        String keycloakId = resolverKeycloakId(usuario);
+        keycloakIdentityProvider.updatePassword(keycloakId, dto.novaSenha());
         reset.setUsado(true);
+    }
+
+    private String resolverKeycloakId(Usuario usuario) {
+        if (usuario.getKeycloakId() != null && !usuario.getKeycloakId().isBlank()) {
+            return usuario.getKeycloakId();
+        }
+        String keycloakId = keycloakIdentityProvider.findUserIdByUsername(usuario.getLogin())
+                .orElseThrow(() -> new ValidationException("Usuário não encontrado no provedor de identidade"));
+        usuario.setKeycloakId(keycloakId);
+        return keycloakId;
     }
 
     @Override

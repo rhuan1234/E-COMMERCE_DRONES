@@ -25,11 +25,11 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "keycloak_id", unique = true)
+    private String keycloakId;
+
     @Column(unique = true, nullable = false)
     private String login;
-
-    @Column(name = "senha_hash", nullable = false)
-    private String senhaHash;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -80,20 +80,20 @@ public class Usuario {
 
 
 
+    public String getKeycloakId() {
+        return keycloakId;
+    }
+
+    public void setKeycloakId(String keycloakId) {
+        this.keycloakId = keycloakId;
+    }
+
     public String getLogin() {
         return login;
     }
 
     public void setLogin(String login) {
         this.login = login;
-    }
-
-    public String getSenhaHash() {
-        return senhaHash;
-    }
-
-    public void setSenhaHash(String senhaHash) {
-        this.senhaHash = senhaHash;
     }
 
     public Perfil getPerfil() {

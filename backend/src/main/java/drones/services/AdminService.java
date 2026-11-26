@@ -21,7 +21,7 @@ public class AdminService implements AdminServiceInterface {
     UsuarioRepository repository;
 
     @Inject
-    HashService hashService;
+    KeycloakIdentityProvider keycloakIdentityProvider;
 
     @Override
     public List<Usuario> buscarTodos() {
@@ -70,30 +70,57 @@ public class AdminService implements AdminServiceInterface {
 
     @Override
     @Transactional
-    public Usuario criar(Usuario usuario) {
-        // Verifica se o login ja existe
+    public Usuario criar(Usuario usuario, String senha) {
         if (repository.findByLogin(usuario.getLogin()).isPresent()) {
-            throw new WebApplicationException("Login ja existe", Status.BAD_REQUEST);
+            throw new ValidationException("Login já cadastrado", "login");
+        }
+        if (usuario.getEmail() != null && repository.findByEmail(usuario.getEmail()) != null) {
+            throw new ValidationException("Email já cadastrado", "email");
         }
 
-        // Gera o hash da senha com BCrypt
-        usuario.setSenhaHash(hashService.bcrypt(usuario.getSenhaHash()));
-        repository.persist(usuario);
-        return usuario;
-    }
+        Perfil perfil = usuario.getPerfil() != null ? usuario.getPerfil() : Perfil.CLIENTE;
+        String keycloakId = keycloakIdentityProvider.createUser(
+                usuario.getLogin(),
+                usuario.getEmail(),
+                senha,
+                usuario.getNomeCompleto(),
+                perfil
+        );
+        usuario.setKeycloakId(keycloakId);
+        usuario.setPerfil(perfil);
 
-  
+        try {
+            repository.persist(usuario);
+            repository.flush();
+            return usuario;
+        } catch (RuntimeException ex) {
+            try {
+                keycloakIdentityProvider.deleteUser(keycloakId);
+            } catch (RuntimeException ignored) {
+                // Compensação em caso de falha ao persistir no banco
+            }
+            throw ex;
+        }
+    }
 
     @Override
     @Transactional
     public void deletar(Long id) {
-         boolean excluido = repository.softDelete(id);
+        Usuario usuario = repository.find("id = ?1 and ativo = true", id).firstResult();
+        if (usuario == null) {
+            throw new NotFoundException("Usuario não encontrado ou já desativado");
+        }
 
-    if (!excluido) {
-        throw new NotFoundException(
-            "Usuario não encontrado ou já desativado"
-        );
-    }
+        String keycloakId = usuario.getKeycloakId();
+        boolean excluido = repository.softDelete(id);
+        if (!excluido) {
+            throw new NotFoundException("Usuario não encontrado ou já desativado");
+        }
+
+        if (keycloakId != null && !keycloakId.isBlank()) {
+            keycloakIdentityProvider.disableUser(keycloakId);
+            keycloakIdentityProvider.logoutUserSessions(keycloakId);
+        }
     }
 
     @Override
@@ -104,10 +131,10 @@ public class AdminService implements AdminServiceInterface {
             throw new ValidationException("Usuário não autenticado");
         }
         if (dto.senhaAtual() == null || dto.senhaAtual().isBlank()) {
-            throw new ValidationException("Senha atual não pode estar vazia");
+            throw new ValidationException("Senha atual não pode estar vazia", "senhaAtual");
         }
         if (dto.novaSenha() == null || dto.novaSenha().isBlank()) {
-            throw new ValidationException("Nova senha não pode estar vazia");
+            throw new ValidationException("Nova senha não pode estar vazia", "novaSenha");
         }
 
         Usuario usuario = buscarPorLogin(login);
@@ -115,13 +142,21 @@ public class AdminService implements AdminServiceInterface {
             throw new ValidationException("Usuário não encontrado");
         }
 
-        // Verifica se a senha atual está correta
-        if (!hashService.verificarBcrypt(dto.senhaAtual(), usuario.getSenhaHash())) {
-            throw new ValidationException("Senha atual está incorreta");
+        if (!keycloakIdentityProvider.verifyCredentials(login, dto.senhaAtual())) {
+            throw new ValidationException("Senha atual está incorreta", "senhaAtual");
         }
 
-        // Gera o hash da nova senha com BCrypt
-        usuario.setSenhaHash(hashService.bcrypt(dto.novaSenha()));
-        repository.persist(usuario);
+        String keycloakId = resolverKeycloakId(usuario);
+        keycloakIdentityProvider.updatePassword(keycloakId, dto.novaSenha());
+    }
+
+    private String resolverKeycloakId(Usuario usuario) {
+        if (usuario.getKeycloakId() != null && !usuario.getKeycloakId().isBlank()) {
+            return usuario.getKeycloakId();
+        }
+        String keycloakId = keycloakIdentityProvider.findUserIdByUsername(usuario.getLogin())
+                .orElseThrow(() -> new ValidationException("Usuário não encontrado no provedor de identidade"));
+        usuario.setKeycloakId(keycloakId);
+        return keycloakId;
     }
 }

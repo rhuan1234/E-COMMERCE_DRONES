@@ -3,8 +3,6 @@ package drones.resources;
 
 import java.util.List;
 
-import org.eclipse.microprofile.jwt.JsonWebToken;
-
 import drones.dto.PageResponse;
 import drones.dto.fornecedores.EnderecoRequestClienteDTO;
 import drones.dto.fornecedores.EnderecoResponseClienteDTO;
@@ -14,13 +12,12 @@ import drones.dto.usuarios.ClienteRequestSimplesDTO;
 import drones.dto.usuarios.ClienteResponseCompletoDTO;
 import drones.dto.usuarios.EsqueceuSenhaDTO;
 import drones.dto.usuarios.ResetarSenhaDTO;
-import drones.exception.UnauthorizedException;
 import drones.exception.ValidationException;
 import drones.mapper.ClienteMapper;
 import drones.model.usuario.Usuario;
+import drones.security.AuthenticatedUserResolver;
 import drones.services.AdminServiceInterface;
 import drones.services.ClienteServiceInterface;
-import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -49,13 +46,8 @@ public class ClienteController {
     @Inject
     AdminServiceInterface usuarioService;
 
-
-
     @Inject
-    JsonWebToken jwt;
-
-    @Inject
-    SecurityIdentity securityIdentity;
+    AuthenticatedUserResolver authenticatedUserResolver;
 
 
 
@@ -86,13 +78,7 @@ public class ClienteController {
             );
         }
 
-        String login = jwt.getName();
-
-        if (login == null || login.isBlank()) {
-            throw new UnauthorizedException(
-                "Usuário não autenticado"
-            );
-        }
+        String login = authenticatedUserResolver.getLogin();
 
         ClienteResponseCompletoDTO usuarioAtualizado = clienteService.atualizar(login, dto);
 
@@ -103,13 +89,7 @@ public class ClienteController {
     @RolesAllowed({"CLIENTE", "ADMIN"})
     public Response obterDados() {
 
-        String login = jwt.getName();
-
-        if (login == null || login.isBlank()) {
-            throw new UnauthorizedException(
-                "Usuário não autenticado"
-            );
-        }
+        String login = authenticatedUserResolver.getLogin();
 
         ClienteResponseCompletoDTO usuario = clienteService.obterDados(login);
 
@@ -127,13 +107,7 @@ public class ClienteController {
             );
         }
 
-        String login = jwt.getName();
-
-        if (login == null || login.isBlank()) {
-            throw new UnauthorizedException(
-                "Usuário não autenticado"
-            );
-        }
+        String login = authenticatedUserResolver.getLogin();
 
         clienteService.alterarSenha(login, dto);
 
@@ -177,13 +151,7 @@ public class ClienteController {
             @QueryParam("page") @DefaultValue("0") int page,
             @QueryParam("pageSize") @DefaultValue("10") int pageSize) {
 
-        String login = jwt.getName();
-
-        if (login == null || login.isBlank()) {
-            throw new UnauthorizedException(
-                "Usuário não autenticado"
-            );
-        }
+        String login = authenticatedUserResolver.getLogin();
 
         List<EnderecoResponseClienteDTO> enderecos = clienteService.listarEnderecos(login, page, pageSize);
         long totalItems = clienteService.countEnderecos(login);
@@ -202,13 +170,7 @@ public class ClienteController {
             );
         }
 
-        String login = jwt.getName();
-
-        if (login == null || login.isBlank()) {
-            throw new UnauthorizedException(
-                "Usuário não autenticado"
-            );
-        }
+        String login = authenticatedUserResolver.getLogin();
 
         EnderecoResponseClienteDTO enderecoDTO = clienteService.adicionarEndereco(login, dto);
 
@@ -227,13 +189,7 @@ public class ClienteController {
             );
         }
 
-        String login = jwt.getName();
-
-        if (login == null || login.isBlank()) {
-            throw new UnauthorizedException(
-                "Usuário não autenticado"
-            );
-        }
+        String login = authenticatedUserResolver.getLogin();
 
         clienteService.removerEndereco(login, enderecoId);
 
@@ -258,13 +214,7 @@ public class ClienteController {
             );
         }
 
-        String login = jwt.getName();
-
-        if (login == null || login.isBlank()) {
-            throw new UnauthorizedException(
-                "Usuário não autenticado"
-            );
-        }
+        String login = authenticatedUserResolver.getLogin();
 
         EnderecoResponseClienteDTO enderecoDTO = clienteService.editarEndereco(login, enderecoId, dto);
 
@@ -276,13 +226,7 @@ public class ClienteController {
     @RolesAllowed({"CLIENTE", "ADMIN"})
     public Response obterEnderecoPrincipal() {
 
-        String login = jwt.getName();
-
-        if (login == null || login.isBlank()) {
-            throw new UnauthorizedException(
-                "Usuário não autenticado"
-            );
-        }
+        String login = authenticatedUserResolver.getLogin();
 
         EnderecoResponseClienteDTO enderecoDTO = clienteService.obterEnderecoPrincipal(login);
 

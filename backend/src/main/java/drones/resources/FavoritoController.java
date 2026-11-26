@@ -1,11 +1,10 @@
 package drones.resources;
 
-import org.eclipse.microprofile.jwt.JsonWebToken;
-
 import drones.dto.PageResponse;
 import drones.dto.drones.DroneResponseEcommerceDTO;
 import drones.exception.ValidationException;
 import drones.mapper.DroneMapper;
+import drones.security.AuthenticatedUserResolver;
 import drones.services.FavoritoServiceInterface;
 
 import java.util.List;
@@ -27,7 +26,7 @@ import jakarta.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 public class FavoritoController {
     @Inject
-    JsonWebToken jwt;
+    AuthenticatedUserResolver authenticatedUserResolver;
 
     @Inject
     FavoritoServiceInterface favoritoService;
@@ -76,10 +75,6 @@ public class FavoritoController {
     }
 
     private String loginAutenticado() {
-        String login = jwt.getName();
-        if (login == null || login.isBlank()) {
-            throw new ValidationException("Usuário não autenticado");
-        }
-        return login;
+        return authenticatedUserResolver.getLogin();
     }
 }

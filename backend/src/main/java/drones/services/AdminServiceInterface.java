@@ -13,7 +13,7 @@ public interface AdminServiceInterface {
     long countLogins(String login);
     Usuario buscarPorId(Long id);
     Usuario buscarPorLogin(String login);
-    Usuario criar(Usuario usuario);
+    Usuario criar(Usuario usuario, String senha);
     void deletar(Long id);
     void alterarSenha(AlterarSenhaAdminDTO dto);
 }

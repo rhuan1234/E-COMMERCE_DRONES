@@ -116,7 +116,7 @@ public class AdminController {
         }
 
         Usuario usuario = UsuarioMapper.toEntity(dto);
-        Usuario usuarioCriado = usuarioService.criar(usuario);
+        Usuario usuarioCriado = usuarioService.criar(usuario, dto.senha());
 
         return Response.status(Status.CREATED)
                 .entity(UsuarioMapper.toResponseDTO(usuarioCriado))

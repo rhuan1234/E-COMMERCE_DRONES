@@ -17,6 +17,10 @@ public class UsuarioRepository implements PanacheRepository<Usuario> {
         return find("login", login).firstResultOptional();
     }
 
+    public Optional<Usuario> findByKeycloakId(String keycloakId) {
+        return find("keycloakId", keycloakId).firstResultOptional();
+    }
+
     public PanacheQuery<Usuario> findActiveByLoginContaining(String login) {
         return find("ativo = true AND perfil = ?1 AND login ILIKE ?2", Perfil.ADMIN, "%" + login + "%");
     }

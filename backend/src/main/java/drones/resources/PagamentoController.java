@@ -2,8 +2,6 @@ package drones.resources;
 
 import java.util.List;
 
-import org.eclipse.microprofile.jwt.JsonWebToken;
-
 import drones.dto.PageResponse;
 import drones.dto.pedidos.PagamentoCartaoResponseDTO;
 import drones.dto.pedidos.PagamentoPixResponseDTO;
@@ -12,6 +10,7 @@ import drones.mapper.PagamentoCartaoMapper;
 import drones.mapper.PagamentoPixMapper;
 import drones.model.pedido.PagamentoCartao;
 import drones.model.pedido.PagamentoPix;
+import drones.security.AuthenticatedUserResolver;
 import drones.services.PagamentoCartaoServiceInterface;
 import drones.services.PagamentoPixServiceInterface;
 import jakarta.annotation.security.RolesAllowed;
@@ -44,7 +43,7 @@ public class PagamentoController {
     PagamentoPixServiceInterface pagamentoPixService;
 
     @Inject
-    JsonWebToken jwt;
+    AuthenticatedUserResolver authenticatedUserResolver;
 
     @POST
     @Path("/{pedidoId}/pagamento/cartao")
@@ -59,7 +58,7 @@ public class PagamentoController {
             );
         }
 
-        String login = jwt.getName();
+        String login = authenticatedUserResolver.getLogin();
 
         if (login == null || login.isBlank()) {
             throw new ValidationException(
@@ -95,7 +94,7 @@ public class PagamentoController {
             );
         }
 
-        String login = jwt.getName();
+        String login = authenticatedUserResolver.getLogin();
 
         if (login == null || login.isBlank()) {
             throw new ValidationException(
@@ -130,7 +129,7 @@ public class PagamentoController {
             );
         }
 
-        String login = jwt.getName();
+        String login = authenticatedUserResolver.getLogin();
 
         if (login == null || login.isBlank()) {
             throw new ValidationException(
@@ -166,7 +165,7 @@ public class PagamentoController {
             );
         }
 
-        String login = jwt.getName();
+        String login = authenticatedUserResolver.getLogin();
 
         if (login == null || login.isBlank()) {
             throw new ValidationException(
@@ -205,7 +204,7 @@ public class PagamentoController {
             );
         }
 
-        String login = jwt.getName();
+        String login = authenticatedUserResolver.getLogin();
 
         if (login == null || login.isBlank()) {
             throw new ValidationException(
@@ -234,7 +233,7 @@ public class PagamentoController {
             );
         }
 
-        String login = jwt.getName();
+        String login = authenticatedUserResolver.getLogin();
 
         if (login == null || login.isBlank()) {
             throw new ValidationException(
@@ -260,7 +259,7 @@ public class PagamentoController {
             );
         }
 
-        String login = jwt.getName();
+        String login = authenticatedUserResolver.getLogin();
 
         if (login == null || login.isBlank()) {
             throw new ValidationException(
@@ -285,7 +284,7 @@ public class PagamentoController {
             );
         }
 
-        String login = jwt.getName();
+        String login = authenticatedUserResolver.getLogin();
 
         if (login == null || login.isBlank()) {
             throw new ValidationException(
@@ -310,7 +309,7 @@ public class PagamentoController {
             );
         }
 
-        String login = jwt.getName();
+        String login = authenticatedUserResolver.getLogin();
 
         if (login == null || login.isBlank()) {
             throw new ValidationException(
@@ -335,7 +334,7 @@ public class PagamentoController {
             );
         }
 
-        String login = jwt.getName();
+        String login = authenticatedUserResolver.getLogin();
 
         if (login == null || login.isBlank()) {
             throw new ValidationException(

@@ -13,7 +13,6 @@ public class ClienteMapper {
     public static Usuario toEntitySimples(ClienteRequestSimplesDTO dto) {
         Usuario usuario = new Usuario();
         usuario.setLogin(dto.login());
-        usuario.setSenhaHash(dto.senha());
         usuario.setEmail(dto.email());
         return usuario;
     }

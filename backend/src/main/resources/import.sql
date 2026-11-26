@@ -20,13 +20,13 @@ INSERT INTO telefone (id, numero) VALUES (1, '(63) 3215-1000');
 INSERT INTO telefone (id, numero) VALUES (2, '(11) 3456-7890');
 ALTER SEQUENCE telefone_id_seq RESTART WITH 3;
 
--- 4. Usuários
-INSERT INTO usuario (id, login, email, senha_hash, perfil, nomecompleto, cpf, telefone, ativo)
+-- 4. Usuários (senhas gerenciadas exclusivamente no Keycloak)
+INSERT INTO usuario (id, keycloak_id, login, email, perfil, nomecompleto, cpf, telefone, ativo)
 VALUES (
     1,
+    '11111111-1111-4111-8111-111111111111',
     'rhuan',
     'rhuan@example.com',
-    '$2a$10$A3KTUbjTaAi1Gi65/EGEfuaab0vjVsQNmxAqVZTjLrYhiuEQSwkji',
     'ADMIN',
     'Rhuan Administrador',
     '111.222.333-44',
@@ -34,12 +34,12 @@ VALUES (
     true
 );
 
-INSERT INTO usuario (id, login, email, senha_hash, perfil, nomecompleto, cpf, telefone, ativo)
+INSERT INTO usuario (id, keycloak_id, login, email, perfil, nomecompleto, cpf, telefone, ativo)
 VALUES (
     2,
+    '22222222-2222-4222-8222-222222222222',
     'cliente',
     'cliente@example.com',
-    '$2a$10$A3KTUbjTaAi1Gi65/EGEfuaab0vjVsQNmxAqVZTjLrYhiuEQSwkji',
     'CLIENTE',
     'Lucas Silva',
     '555.666.777-88',

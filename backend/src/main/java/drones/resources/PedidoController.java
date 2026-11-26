@@ -21,8 +21,6 @@ import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 
-import org.eclipse.microprofile.jwt.JsonWebToken;
-
 import drones.dto.PageResponse;
 import drones.dto.pedidos.CheckoutRequestDTO;
 import drones.dto.pedidos.PedidoRequestDTO;
@@ -32,6 +30,7 @@ import drones.exception.ValidationException;
 import drones.mapper.PedidoMapper;
 import drones.model.pedido.Pedido;
 import drones.model.usuario.Usuario;
+import drones.security.AuthenticatedUserResolver;
 import drones.services.AdminServiceInterface;
 import drones.services.CheckoutServiceInterface;
 import drones.services.PedidoService;
@@ -49,7 +48,7 @@ public class PedidoController {
     CheckoutServiceInterface checkoutService;
 
     @Inject
-    JsonWebToken jwt;
+    AuthenticatedUserResolver authenticatedUserResolver;
 
     @Inject
     AdminServiceInterface usuarioService;
@@ -58,7 +57,7 @@ public class PedidoController {
     @Path("/checkout")
     @RolesAllowed({"CLIENTE", "ADMIN"})
     public Response finalizarCheckout(@Valid CheckoutRequestDTO dados) {
-        String login = jwt.getName();
+        String login = authenticatedUserResolver.getLogin();
         return Response.status(Response.Status.CREATED)
             .entity(checkoutService.finalizar(dados, login))
             .build();
@@ -73,7 +72,7 @@ public class PedidoController {
             throw new ValidationException("Dados do pedido são obrigatórios");
         }
 
-        String login = jwt.getName();
+        String login = authenticatedUserResolver.getLogin();
 
         if (login == null || login.isBlank()) {
             throw new ValidationException("Usuário não autenticado");
@@ -115,7 +114,7 @@ public class PedidoController {
             @QueryParam("page") @DefaultValue("0") int page,
             @QueryParam("pageSize") @DefaultValue("10") int pageSize) {
 
-        String login = jwt.getName();
+        String login = authenticatedUserResolver.getLogin();
 
         if (login == null || login.isBlank()) {
             throw new ValidationException("Usuário não autenticado");
@@ -166,7 +165,7 @@ public class PedidoController {
             throw new ValidationException("Id do pedido inválido","id");
         }
 
-        String login = jwt.getName();
+        String login = authenticatedUserResolver.getLogin();
 
         if (login == null || login.isBlank()) {
             throw new ValidationException("Usuário não autenticado");
@@ -222,7 +221,7 @@ public class PedidoController {
             throw new ValidationException("Id do pedido inválido","id");
         }
 
-        String login = jwt.getName();
+        String login = authenticatedUserResolver.getLogin();
 
         if (login == null || login.isBlank()) {
             throw new ValidationException("Usuário não autenticado","login");
@@ -250,7 +249,7 @@ public class PedidoController {
             );
         }
 
-        String login = jwt.getName();
+        String login = authenticatedUserResolver.getLogin();
 
         if (login == null || login.isBlank()) {
             throw new ValidationException(
@@ -285,7 +284,7 @@ public class PedidoController {
             );
         }
 
-        String login = jwt.getName();
+        String login = authenticatedUserResolver.getLogin();
 
         if (login == null || login.isBlank()) {
             throw new ValidationException(

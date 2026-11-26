@@ -2,14 +2,12 @@ package drones.resources;
 
 import java.util.List;
 
-import org.eclipse.microprofile.jwt.JsonWebToken;
-
 import drones.dto.PageResponse;
 import drones.dto.drones.AvaliacaoRequestDTO;
 import drones.dto.drones.AvaliacaoResponseDTO;
-import drones.exception.UnauthorizedException;
 import drones.mapper.AvaliacaoMapper;
 import drones.model.drones.Avaliacao;
+import drones.security.AuthenticatedUserResolver;
 import drones.services.AvaliacaoServiceInterface;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
@@ -41,7 +39,7 @@ public class AvaliacaoController {
     AvaliacaoServiceInterface avaliacaoService;
 
     @Inject
-    JsonWebToken jwt;
+    AuthenticatedUserResolver authenticatedUserResolver;
 
     @POST
     @RolesAllowed({"CLIENTE", "ADMIN"})
@@ -97,11 +95,7 @@ public class AvaliacaoController {
     }
 
     private String loginAutenticado() {
-        String login = jwt.getName();
-        if (login == null || login.isBlank()) {
-            throw new UnauthorizedException("Usuário não autenticado");
-        }
-        return login;
+        return authenticatedUserResolver.getLogin();
     }
 
 }
