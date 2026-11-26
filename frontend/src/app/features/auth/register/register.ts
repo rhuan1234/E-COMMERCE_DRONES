@@ -63,18 +63,26 @@ export class Register {
   private aplicarErros(err: unknown): string {
     if (err instanceof HttpErrorResponse) {
       if (err.status === 0) return 'Não foi possível falar com a loja. Verifique sua conexão e tente de novo.';
-      const detalhes: { field?: string; issue?: string }[] = err.error?.error?.details ?? [];
-      detalhes.forEach((detalhe) => {
-        const campo = detalhe.field?.split('.').pop() as CampoCadastro | undefined;
-        const controle = campo ? this.form.controls[campo] : undefined;
-        if (controle && detalhe.issue) {
-          controle.setErrors({ serverError: detalhe.issue });
-          controle.markAsTouched();
-        }
-      });
-      const mensagem = err.error?.message;
+      const detalhesLegado: { field?: string; issue?: string }[] = err.error?.error?.details ?? [];
+      const detalhesRfc7807: { field?: string; message?: string }[] = err.error?.errors ?? [];
+      for (const detalhe of detalhesLegado) {
+        this.aplicarErroCampo(detalhe.field, detalhe.issue);
+      }
+      for (const detalhe of detalhesRfc7807) {
+        this.aplicarErroCampo(detalhe.field, detalhe.message);
+      }
+      const mensagem = err.error?.message ?? err.error?.detail;
       if (typeof mensagem === 'string' && mensagem.trim()) return mensagem;
     }
     return 'Não foi possível criar sua conta agora. Tente de novo em instantes.';
+  }
+
+  private aplicarErroCampo(field?: string, issue?: string): void {
+    const campo = field?.split('.').pop() as CampoCadastro | undefined;
+    const controle = campo ? this.form.controls[campo] : undefined;
+    if (controle && issue) {
+      controle.setErrors({ serverError: issue });
+      controle.markAsTouched();
+    }
   }
 }

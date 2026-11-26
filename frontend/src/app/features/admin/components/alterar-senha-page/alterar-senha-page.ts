@@ -122,6 +122,7 @@ export class AlterarSenhaPage {
 
         this.erroSenha =
           erro.error?.message ||
+          erro.error?.detail ||
           'Não foi possível alterar a senha. Verifique sua senha atual e tente novamente.';
 
         this.alterandoSenha = false;

@@ -59,7 +59,7 @@ export class Login {
     if (err instanceof HttpErrorResponse) {
       if (err.status === 401 || err.status === 403) return 'Login ou senha incorretos.';
       if (err.status === 0) return 'Não foi possível falar com a loja. Verifique sua conexão e tente de novo.';
-      const mensagem = err.error?.message;
+      const mensagem = err.error?.message ?? err.error?.detail;
       if (typeof mensagem === 'string' && mensagem.trim()) return mensagem;
     }
     return 'Não foi possível entrar agora. Tente de novo em instantes.';
