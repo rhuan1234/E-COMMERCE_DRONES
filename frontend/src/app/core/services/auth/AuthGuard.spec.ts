@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree, provideRouter } from '@angular/router';
-import { adminGuard, authGuard } from './AuthGuard';
+import { adminGuard, authGuard, roleGuard } from './AuthGuard';
 import { AuthService } from './AuthService';
 
 /** JWT sem assinatura válida: o frontend só lê o payload para decidir a navegação. */
@@ -64,5 +64,22 @@ describe('AuthGuard', () => {
     const resultado = executar(adminGuard, '/admin');
 
     expect(TestBed.inject(Router).serializeUrl(resultado as UrlTree)).toBe('/login?returnUrl=%2Fadmin');
+  });
+
+  it('supports Keycloak OIDC preferred_username and realm_access roles', () => {
+    iniciarCom(token({ preferred_username: 'rhuan', realm_access: { roles: ['ADMIN'] }, exp: futuro }));
+
+    expect(executar(adminGuard, '/admin/drones')).toBe(true);
+    expect(TestBed.inject(AuthService).usuario()).toBe('rhuan');
+    expect(TestBed.inject(AuthService).possuiPapel('ADMIN')).toBe(true);
+  });
+
+  it('enforces custom roles with roleGuard', () => {
+    iniciarCom(token({ preferred_username: 'cliente', realm_access: { roles: ['CLIENTE'] }, exp: futuro }));
+    const clientePermitido = executar(roleGuard('CLIENTE', 'ADMIN'), '/minha-conta');
+    const apenasAdmin = executar(roleGuard('ADMIN'), '/admin');
+
+    expect(clientePermitido).toBe(true);
+    expect(TestBed.inject(Router).serializeUrl(apenasAdmin as UrlTree)).toBe('/minha-conta');
   });
 });
