@@ -16,8 +16,8 @@ package "drones.model.usuario" {
 
     class Usuario {
         - id: Long
+        - keycloakId: String
         - login: String
-        - senhaHash: String
         - perfil: Perfil
         - email: String
         - nomeCompleto: String

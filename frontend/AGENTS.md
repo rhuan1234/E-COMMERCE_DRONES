@@ -172,14 +172,16 @@ Antes de criar componentes, rotas ou modelos, consulte os seguintes documentos:
 
 ## 7. Segurança e Limites
 
-1. **Armazenamento de Tokens e Sessão**:
-   - O JWT deve ser gerenciado exclusivamente através do `AuthService` e persistido em `localStorage`.
-   - O interceptor `authInterceptor` deve anexar o header `Authorization: Bearer <token>` nas requisições aos endpoints protegidos da API.
+1. **Armazenamento de Tokens e Sessão (Intermediada pelo Backend)**:
+   - O frontend comunica-se exclusivamente com o backend Quarkus (`/auth/login`, `/auth/refresh`, `/auth/me`, `/auth/logout`, `/clientes`), nunca diretamente com a API do Keycloak nem armazenando credenciais de client.
+   - Tokens (`token` e `refreshToken`) e o usuário autenticado são gerenciados exclusivamente pelo `AuthService` (com `provideAppInitializer` consultando `GET /auth/me`).
+   - O interceptor `authInterceptor` anexa `Authorization: Bearer <token>` apenas nas rotas protegidas da API.
 2. **Proteção de Rotas com Guards**:
-   - Rotas sob `/admin/*` devem exigir perfil `ADMIN`.
+   - Rotas sob `/admin/*` devem exigir perfil `ADMIN` (`adminGuard` / `roleGuard`).
    - Rotas de checkout, histórico de pedidos e perfil devem ser protegidas pelo `authGuard`.
-3. **Tratamento de Sessão Expirada (HTTP 401)**:
-   - Em caso de retorno 401 não autorizado, o cliente deve limpar o token do `localStorage`, atualizar o estado de autenticação e redirecionar para `/login`.
+3. **Tratamento de Sessão Expirada (HTTP 401) e Acesso Negado (HTTP 403)**:
+   - Em retorno 401 com `refreshToken`, o interceptor tenta uma renovação via `POST /auth/refresh`; sem `refreshToken` ou se a renovação falhar, limpa a sessão local e redireciona para `/login`.
+   - Em retorno 403 dentro de `/admin` sem papel `ADMIN`, redireciona para `/minha-conta`.
 4. **Ações Proibidas**:
    - NUNCA armazene dados sensíveis de pagamento (número de cartão, CVV) em `localStorage`, `sessionStorage` ou logs do console.
    - NUNCA confie apenas em validação client-side; exiba sempre o feedback retornado pela API.

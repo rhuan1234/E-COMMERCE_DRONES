@@ -11,7 +11,7 @@ O domínio do sistema é particionado nos seguintes pacotes e entidades:
 ### 1.1 Usuários e Segurança (`drones.model.usuario`)
 - **`Usuario`**:
   - Representa os atores do sistema, tanto administradores (`ADMIN`) quanto clientes compradores (`CLIENTE`).
-  - Atributos principais: `id`, `login` (único, obrigatório), `senhaHash` (criptografia BCrypt), `perfil` (`ADMIN` ou `CLIENTE`), `email` (único, formato de email válido), `nomeCompleto`, `cpf` (único, formato com máscara ou 11 dígitos), `telefone`, `ativo` (flag booleano), `enderecos` (lista 1:N) e `enderecoPrincipalId` (identificador do endereço padrão).
+  - Atributos principais: `id`, `keycloakId` (identificador único `sub` do usuário no Keycloak), `login` (único, obrigatório), `perfil` (`ADMIN` ou `CLIENTE`), `email` (único, formato de email válido), `nomeCompleto`, `cpf` (único, formato com máscara ou 11 dígitos), `telefone`, `ativo` (flag booleano), `enderecos` (lista 1:N) e `enderecoPrincipalId` (identificador do endereço padrão). **Nenhuma senha é armazenada no banco de dados do e-commerce**; credenciais e tokens são gerenciados exclusivamente pelo Keycloak.
 - **`Perfil` (Enum)**:
   - `ADMIN`: Acesso irrestrito a funcionalidades de gestão de catálogo, fornecedores, promoções, análise de pedidos e criação de outros administradores.
   - `CLIENTE`: Acesso a compras, vitrine, favoritos, avaliações, gestão do próprio perfil e pedidos próprios.
@@ -85,26 +85,27 @@ O domínio do sistema é particionado nos seguintes pacotes e entidades:
 
 ## 2. Fluxos e Regras Operacionais
 
-### 2.1 Fluxo de Autenticação e Gestão de Usuários
+### 2.1 Fluxo de Autenticação e Gestão de Usuários (Keycloak OAuth 2.0 / OIDC)
 1. **Cadastro de Clientes (`POST /clientes`)**:
    - Qualquer visitante pode se cadastrar como cliente informando `login`, `senha` e `email`.
-   - O sistema valida a unicidade do login e email.
-   - A senha é criptografada com algoritmo BCrypt antes de ser persistida.
-   - O perfil atribuído é obrigatoriamente `Perfil.CLIENTE`.
-2. **Cadastro de Administradores (`POST /usuarios/admin`)**:
-   - Somente usuários autenticados com a Role `ADMIN` podem registrar novos administradores.
-   - O perfil atribuído é `Perfil.ADMIN`.
+   - O backend valida a unicidade do `login` e `email`, cria o usuário no Realm `drones` do Keycloak (atribuindo a role `CLIENTE`) via Keycloak Admin REST API e persiste o `Usuario` local com `keycloakId` e `Perfil.CLIENTE` (sem armazenar senha no PostgreSQL). Em falha na persistência local, o usuário criado no Keycloak é removido por compensação.
+2. **Cadastro e Desativação de Administradores (`POST /usuarios/admin`, `DELETE /usuarios/admin/{id}`)**:
+   - Somente usuários autenticados com a Role `ADMIN` podem registrar novos administradores ou desativá-los.
+   - A criação registra o usuário no Keycloak com a role `ADMIN` e o perfil local `Perfil.ADMIN`. A desativação marca `ativo = false` localmente, desabilita a conta no Keycloak e encerra suas sessões ativas.
 3. **Autenticação (`POST /auth/login`)**:
-   - O usuário informa `login` e `senha`.
-   - Caso as credenciais coincidam com o hash armazenado e o usuário esteja ativo (`ativo = true`), o sistema gera um token JWT assinado com as claims do usuário (`sub`, `id`, `groups` contendo o perfil).
-4. **Recuperação de Senha ("Esqueci minha senha")**:
-   - O cliente solicita recuperação informando seu login/email (`POST /clientes/esqueci-senha`).
-   - Se o usuário existir, o sistema gera um registro `TokenResetarSenha` com token UUID aleatório e expiração definida para 2 horas no futuro.
-   - Um email é disparado via Quarkus Mailer para o endereço cadastrado contendo o link de recuperação.
-   - Na redefinição (`POST /clientes/resetar-senha`), o sistema valida se o token existe, não expirou e não foi utilizado (`usado == false`).
-   - Sendo válido, a nova senha é hasheada e gravada, e o token é marcado como `usado = true`.
-5. **Alteração de Senha**:
-   - O usuário autenticado pode alterar sua própria senha fornecendo a senha atual e a nova senha. O sistema valida se a senha atual confere com o hash gravado.
+   - O frontend Angular envia `login` e `senha` exclusivamente ao backend Quarkus, que intermedia o fluxo OAuth 2.0 / OIDC contra o Keycloak.
+   - Estando ativo (`ativo = true`), o backend sincroniza o vínculo local (ou provisiona o usuário JIT caso exista apenas no Keycloak) e devolve `accessToken`, `refreshToken`, `expiresIn` e os dados do usuário autenticado (`AuthUserResponseDTO`).
+4. **Identificação e Renovação de Sessão (`GET /auth/me` e `POST /auth/refresh`)**:
+   - `GET /auth/me` valida o token OIDC no backend (`quarkus-oidc`) e retorna os dados e papéis (`ADMIN`/`CLIENTE`) do usuário autenticado.
+   - `POST /auth/refresh` renova os tokens junto ao Keycloak sem expor segredos de cliente no frontend.
+5. **Logout (`POST /auth/logout`)**:
+   - O frontend limpa os tokens armazenados localmente e aciona o backend (`POST /auth/logout`), que invalida o `refreshToken` ou as sessões do usuário diretamente no endpoint OIDC de logout/admin do Keycloak.
+6. **Recuperação de Senha ("Esqueci minha senha")**:
+   - O cliente solicita recuperação informando seu email (`POST /clientes/esqueci-senha`).
+   - Se o usuário existir, o sistema gera um registro `TokenResetarSenha` com token UUID aleatório e expiração definida e dispara email via Quarkus Mailer.
+   - Na redefinição (`POST /clientes/resetar-senha`), o backend valida o token e atualiza a senha do usuário diretamente no Keycloak, marcando `usado = true`.
+7. **Alteração de Senha**:
+   - O usuário autenticado pode alterar sua própria senha fornecendo a senha atual e a nova senha. O backend valida a senha atual contra o Keycloak e atualiza a nova senha via Keycloak Admin REST API.
 
 ### 2.2 Fluxo de Endereços do Cliente
 1. Um cliente pode cadastrar múltiplos endereços residenciais ou de entrega.

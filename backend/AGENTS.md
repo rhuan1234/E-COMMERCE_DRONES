@@ -22,7 +22,7 @@ A API atende a dois perfis principais de usuários:
 - **Documentação de API**: SmallRye OpenAPI (`quarkus-smallrye-openapi` / Swagger UI em `/q/swagger-ui/`).
 - **Persistência de Dados**: Hibernate ORM com Panache (`quarkus-hibernate-orm-panache`), PostgreSQL (`quarkus-jdbc-postgresql`). Banco local padrão: `dronesDb` na porta `5432` (`postgres:123456`).
 - **Validação**: Hibernate Validator (`quarkus-hibernate-validator` com Bean Validation 3.0 e `@CNPJ`).
-- **Segurança & Criptografia**: SmallRye JWT (`quarkus-smallrye-jwt`) com assinatura por chaves assimétricas RSA (`privateKey.pem` e `publicKey.pem`), e BCrypt (`jbcrypt` 0.4) para hash de senhas.
+- **Segurança & IAM**: **Keycloak** (OAuth 2.0 / OpenID Connect, Realm `drones`, Client confidencial `drones-backend`) validado via **Quarkus OIDC** (`quarkus-oidc`) com `AuthenticatedUserResolver` sobre `SecurityIdentity`. Senhas são gerenciadas exclusivamente no Keycloak (nenhuma senha armazenada no PostgreSQL).
 - **E-mails Transacionais**: Quarkus Mailer (`quarkus-mailer`), configurado para Mailtrap em desenvolvimento.
 - **Agendamento de Tarefas**: Quarkus Scheduler (`quarkus-scheduler`).
 - **Armazenamento de Imagens**: Quarkus Amazon S3 (`quarkus-amazon-s3` + AWS SDK v2 `S3Client`) apontando para o **AWS Emulator** em desenvolvimento (`https://127.0.0.1:9297`).
@@ -167,18 +167,17 @@ Antes de codificar, consulte os documentos centrais no diretório `docs/`:
 
 ## 7. Segurança e Limites
 
-1. **Autenticação Stateless com JWT**:
-   - Assinatura com chave privada RSA (`META-INF/resources/privateKey.pem`).
-   - Validação com chave pública RSA (`META-INF/resources/publicKey.pem`).
-   - NUNCA exponha ou compartilhe chaves privadas em endpoints públicos ou logs.
+1. **Autenticação e Autorização OAuth 2.0 / OIDC via Keycloak**:
+   - Toda comunicação com o Keycloak (login, refresh, logout, criação de usuários, alteração/redefinição de senha e desativação) é intermediada pelo backend via `KeycloakHttpClient`.
+   - A validação de tokens OIDC nos endpoints usa `quarkus-oidc` com `realm_access/roles` e `preferred_username`.
+   - NUNCA armazene senhas de usuários no banco do e-commerce nem exponha segredos do client (`client-secret`) no frontend.
 2. **Controle de Acesso por Papel**:
    - Endpoints administrativos devem conter obrigatoriamente `@RolesAllowed("ADMIN")`.
    - Endpoints de clientes autenticados devem utilizar `@RolesAllowed({"CLIENTE", "ADMIN"})` ou `@Authenticated`.
-   - O usuário autenticado DEVE ser identificado através do `JsonWebToken jwt` injetado (`jwt.getName()`), e NUNCA por um ID arbitrário fornecido no payload da requisição pelo cliente para ações de perfil próprio.
-3. **Criptografia e Dados Sensíveis**:
-   - Senhas devem ser sempre criptografadas com BCrypt antes de persistir.
+   - O usuário autenticado DEVE ser identificado através de `AuthenticatedUserResolver` (`SecurityIdentity`), e NUNCA por um ID arbitrário fornecido no payload da requisição pelo cliente para ações de perfil próprio.
+3. **Dados Sensíveis**:
    - NUNCA trafegue dados de cartão de crédito em texto plano ou armazene o código CVV de forma definitiva.
-   - Dados sensíveis e hashes não devem ser expostos nos DTOs de resposta nem impressos nos logs do console.
+   - Dados sensíveis e tokens administrativos não devem ser expostos nos DTOs de resposta nem impressos nos logs do console.
 4. **Prevenção de Vulnerabilidades**:
    - Proibido uso de consultas nativas com concatenação direta de strings (SQL Injection). Utilize métodos do Panache com bind parameters nomeados.
    - O upload de imagens deve validar a extensão, tipo MIME e restringir o caminho de gravação para impedir ataques de *Path Traversal*.

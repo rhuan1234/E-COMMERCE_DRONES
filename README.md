@@ -24,7 +24,7 @@ Este projeto resolve esses problemas entregando:
 - **Controle Atômico de Estoque**: Reserva e baixa imediata de estoque na criação do pedido, com estorno transacional automático em caso de cancelamento.
 - **Snapshot Imutável de Endereço**: Gravação estática dos dados de entrega no ato do fechamento do pedido, protegendo o histórico fiscal e logístico contra edições cadastrais posteriores do cliente.
 - **Pagamentos Polimórficos**: Suporte a PIX (com geração de chave UUID e dados de pagamento) e Cartão de Crédito via modelagem polimórfica relacional com herança JPA.
-- **Autenticação e Autorização Stateless (RBAC)**: Autenticação via SmallRye JWT assinado com par de chaves assimétricas RSA (SHA-256), controle de perfis (`CLIENTE` e `ADMIN`), senhas com hash BCrypt e recuperação de conta por e-mail com token temporário.
+- **Autenticação e Autorização OAuth 2.0 / OIDC (Keycloak)**: Integração com **Keycloak** (Realm `drones`, Client confidencial `drones-backend`, papéis `ADMIN` e `CLIENTE`) intermediada exclusivamente pelo backend Quarkus (`quarkus-oidc` + Keycloak Admin REST API), sem persistência de senhas no PostgreSQL.
 - **Experiência do Usuário (Cliente)**: Sistema de lista de favoritos, avaliações com nota (1 a 5 estrelas) e comentários em produtos adquiridos, gerenciador de múltiplos endereços e painel de pedidos.
 
 ---
@@ -36,7 +36,7 @@ Este projeto resolve esses problemas entregando:
 - **Framework Principal**: [Quarkus 3.32](https://quarkus.io/) (Supersonic Subatomic Java)
 - **Persistência & ORM**: Hibernate ORM com Panache e PostgreSQL JDBC Driver
 - **Camada REST & Validação**: Quarkus REST (Jackson), Hibernate Validator com validações customizadas (ex: `@CNPJ`) e SmallRye OpenAPI (Swagger UI)
-- **Segurança**: SmallRye JWT com chaves assimétricas RSA (`privateKey.pem` / `publicKey.pem`) e BCrypt (`jbcrypt`)
+- **Segurança & IAM**: **Keycloak 26** (OAuth 2.0 / OpenID Connect) validado com `quarkus-oidc` e integração via backend (`KeycloakHttpClient`)
 - **Comunicação & Tarefas**: Quarkus Mailer (integração Mailtrap para recuperação de senha) e Quarkus Scheduler
 - **Testes**: JUnit 5, RestAssured, Mockito e Quarkus Security Test
 
@@ -65,17 +65,17 @@ Este projeto resolve esses problemas entregando:
 
 ---
 
-### 1. Banco de Dados (PostgreSQL) & AWS Emulator (S3)
+### 1. Banco de Dados (PostgreSQL), AWS Emulator (S3) & Keycloak (IAM)
 
 Certifique-se de que o PostgreSQL esteja em execução na porta `5432` com uma base de dados chamada `dronesDb`.
 
-**Subir o AWS Emulator (S3 local na porta `9297`):**
+**Subir o AWS Emulator (S3 local na porta `9297`) e o Keycloak (porta `8180`, Realm `drones`):**
 ```bash
-podman compose up -d --build aws-emulator
+podman compose up -d --build aws-emulator keycloak
 # ou, com Docker:
-docker-compose up -d --build aws-emulator
+docker-compose up -d --build aws-emulator keycloak
 ```
-> O emulador mantém buckets e objetos S3 em memória RAM e gera o truststore TLS local em `./.aws-emulator/9297/truststore.p12`. Inicie o container antes de rodar o backend em modo desenvolvimento.
+> O emulador S3 mantém buckets e objetos em memória RAM e gera o truststore TLS local em `./.aws-emulator/9297/truststore.p12`. O Keycloak importa automaticamente `docker/keycloak/realm-drones.json` com os papéis `ADMIN` e `CLIENTE`, client `drones-backend` e usuários semente (`rhuan` / `123456` e `cliente` / `123456`). Inicie os containers antes de rodar o backend em modo desenvolvimento.
 
 **Opção via Docker:**
 ```bash

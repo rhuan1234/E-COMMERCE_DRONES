@@ -32,8 +32,8 @@ O projeto é estruturado em um monorepo contendo backend e frontend desacoplados
 ```
 E-COMMERCE_DRONES/
 ├── AGENTS.md                 # Diretrizes para agentes de IA e desenvolvedores
-├── compose.yaml              # Orquestração local do AWS Emulator (S3)
-├── docker/                   # Dockerfiles de infraestrutura local (aws-emulator)
+├── compose.yaml              # Orquestração local do AWS Emulator (S3) e Keycloak (IAM)
+├── docker/                   # Dockerfiles e configurações locais (aws-emulator e keycloak)
 ├── docs/                     # Documentação viva do projeto
 │   ├── CONTEXTO_PROJETO.md   # Visão, stack, arquitetura, progresso e roadmap
 │   ├── REGRAS_NEGOCIO.md     # Entidades, validações, fluxos e regras de negócio
@@ -65,7 +65,7 @@ E-COMMERCE_DRONES/
 - **Camada REST & OpenAPI**: Quarkus REST (`quarkus-rest`, `quarkus-rest-jackson`) e SmallRye OpenAPI (`quarkus-smallrye-openapi` / Swagger UI).
 - **Persistência**: Hibernate ORM com Panache (`quarkus-hibernate-orm-panache`), utilizando PostgreSQL (`quarkus-jdbc-postgresql`).
 - **Validação de Dados**: Hibernate Validator (`quarkus-hibernate-validator` com anotações padrão e customizadas como `@CNPJ`).
-- **Segurança & Criptografia**: SmallRye JWT (`quarkus-smallrye-jwt`) com assinatura de chaves assimétricas RSA (`publicKey.pem` e `privateKey.pem`) e hash de senhas com BCrypt (`jbcrypt` 0.4).
+- **Segurança & IAM**: **Keycloak** (OAuth 2.0 / OpenID Connect, Realm `drones`, Client confidencial `drones-backend`, roles `ADMIN` e `CLIENTE`) integrado via **Quarkus OIDC** (`quarkus-oidc`) e Keycloak Admin REST API intermediados pelo backend; nenhuma senha armazenada no PostgreSQL.
 - **Comunicação / Notificações**: Quarkus Mailer (`quarkus-mailer`), configurado para envio de emails transacionais (recuperação de senhas via Mailtrap).
 - **Agendamento**: Quarkus Scheduler (`quarkus-scheduler`) para tarefas recorrentes de background.
 - **Armazenamento de Mídia**: Object Storage compatível com Amazon S3 via `quarkus-amazon-s3` (AWS SDK v2), integrado ao **AWS Emulator** (`aws/aws-emulator`, HTTPS na porta `9297`) em desenvolvimento via container (`compose.yaml`).
@@ -102,10 +102,11 @@ E-COMMERCE_DRONES/
    - Listagens paginadas utilizam o encapsulador `PageResponse<T>` com metadados `{ page, pageSize, totalItems, totalPages }`.
    - Respostas de erro utilizam formato padronizado `{ success: false, message: ..., error: { code, details } }`.
 
-4. **Autenticação Stateless com JWT Assimétrico**:
-   - O backend emite tokens assinados com chave privada RSA (`privateKey.pem`).
-   - As rotas protegidas validam o token utilizando a chave pública RSA (`publicKey.pem`).
-   - Perfis de acesso baseados em Role (`@RolesAllowed({"ADMIN", "CLIENTE"})`).
+4. **Autenticação e Autorização OAuth 2.0 / OIDC via Keycloak (Intermediada pelo Backend)**:
+   - O **Keycloak** (`realm: drones`, porta `8180` em dev via `compose.yaml`) atua como provedor de identidade (IAM), emitindo tokens JWT/OIDC e armazenando credenciais e papéis (`ADMIN`, `CLIENTE`).
+   - O frontend Angular comunica-se exclusivamente com o backend Quarkus (`/auth/login`, `/auth/refresh`, `/auth/me`, `/auth/logout`, `/clientes`), nunca diretamente com o Keycloak nem armazenando segredos do client.
+   - Os endpoints protegidos validam o token via `quarkus-oidc` (`realm_access/roles`, `preferred_username`) com `quarkus.http.auth.proactive=false` para rotas públicas e `AuthenticatedUserResolver` baseado em `SecurityIdentity`.
+   - Erros 401 e 403 do Quarkus Security são padronizados em RFC 7807 (`application/problem+json`).
 
 5. **Integridade Relacional do Domínio de Catálogo**:
    - As entidades `Marca` e `Modelo` foram separadas em tabelas relacionais próprias para evitar inconsistências de digitação.
@@ -160,7 +161,7 @@ E-COMMERCE_DRONES/
 - [x] Governança e padronização de persistência PostgreSQL/JPA/Flyway via skill `persistencia-postgresql`.
 - [x] Governança, arquitetura e execução obrigatória de testes automatizados via skill `testes-backend` (JUnit 5, REST Assured, PostgreSQL e concorrência).
 - [x] Banco de dados PostgreSQL com script de carga inicial completo (`import.sql`).
-- [x] Autenticação e Autorização via JWT (Login, geração e validação de token).
+- [x] Autenticação, cadastro, renovação de sessão, identificação (`/auth/me`), autorização RBAC e logout integrados ao **Keycloak (OAuth 2.0 / OIDC)** via `quarkus-oidc` e `KeycloakHttpClient`, sem persistência de senhas no banco local.
 - [x] CRUD completo de Drones com filtros (nome, marca, modelo, faixa de preço, câmera).
 - [x] Sistema de upload e gerenciamento de múltiplas imagens por drone (até 5 fotos, marcação de foto principal e ordenação), persistidas em Object Storage S3 (`quarkus-amazon-s3` + AWS Emulator local em container) e entregues por streaming pelo backend.
 - [x] CRUD de Marcas e Modelos com validação de integridade.
